@@ -7,10 +7,8 @@
 
 #include <math.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include "shader.h"
+#include "texture.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -40,6 +38,7 @@ GLint polygonModes[] = {
 
 
 int polygonMode;
+int textures;
 
 int main()
 {
@@ -73,71 +72,16 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
+
+
 	//glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
 	// Texture loading
 
-	stbi_set_flip_vertically_on_load(true);  
-
-	unsigned int texture1;
-	glGenTextures(1,&texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-
-	// Wrapping / Filtering settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-	int width, height, channels;
-	unsigned char *data = stbi_load("images/box.jpg", &width, &height, &channels, 0);
-
-	if(data){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		printf("Texture 1 loaded successfully\n");
-	}else{
-		printf("Unable to load texture\n");
-	}
-
-	stbi_image_free(data);
-/*
-	unsigned int texture2;
-	glGenTextures(1,&texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-
-	// Wrapping / Filtering settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	data = stbi_load("images/awesomeface.png", &width, &height, &channels, 0);
-	if (data)
-	{
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	    glGenerateMipmap(GL_TEXTURE_2D);
-	    printf("Texture 2 loaded successfully\n");
-	}
-
-	stbi_image_free(data);
-*/
+	Texture tex1("images/box.jpg", &textures, GL_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	// Create shader
 	Shader shader1("shaders/textured_box.vs", "shaders/textured_box.fs");
-/*
-	float vertices[] = {
-		// Plane Vertices    // colors          // Texture coords
-         0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,	0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,  1.0f, 1.0f, 1.0f,	0.0f, 1.0f  // top left 
-    };
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-	*/
+
 	float vertices[] = {
 	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -181,27 +125,6 @@ int main()
 	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
-	unsigned int cube_elements[] = {
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// right
-		1, 5, 6,
-		6, 2, 1,
-		// back
-		7, 6, 5,
-		5, 4, 7,
-		// left
-		4, 0, 3,
-		3, 7, 4,
-		// bottom
-		4, 5, 1,
-		1, 0, 4,
-		// top
-		3, 2, 6,
-		6, 7, 3
-	};
-
 	glm::vec3 cubePositions[] = {
 	    glm::vec3( 0.0f,  0.0f,  0.0f), 
 	    glm::vec3( 2.0f,  5.0f, -15.0f), 
@@ -287,9 +210,7 @@ int main()
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    	glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		tex1.use();
 
 		shader1.use();
 

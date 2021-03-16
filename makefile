@@ -2,13 +2,13 @@ ODIR = .
 IDIR = .
 IMGUIDIR = ./imgui
 
-_OBJ = main.cpp shader.cpp glad/glad.c 
+_OBJ = main.cpp shader.cpp glad/glad.c texture.cpp 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _OBJ_TEST = example.cpp glad/glad.c
 OBJS_TEST = $(patsubst %,$(ODIR)/%,$(_OBJ_TEST))
 
-_DEPS = shader.h stb_image.h
+_DEPS = shader.h texture.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 CC = g++
