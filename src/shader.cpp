@@ -27,14 +27,17 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	char *vertexShaderSource = NULL;
 	char *fragmentShaderSource = NULL;
 
-	vertexShaderSource = (char*)malloc(vertexShaderSize*sizeof(char));
-	fragmentShaderSource = (char*)malloc(fragmentShaderSize*sizeof(char));
+	vertexShaderSource = (char*)malloc(1+vertexShaderSize);
+	fragmentShaderSource = (char*)malloc(1+fragmentShaderSize);
 
 	fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
 	fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
 
 	fclose(vertexFile);
 	fclose(fragmentFile);
+
+	vertexShaderSource[vertexShaderSize] = '\0';
+	fragmentShaderSource[fragmentShaderSize] = '\0';
 
 	compile(vertexShaderSource, fragmentShaderSource);
 

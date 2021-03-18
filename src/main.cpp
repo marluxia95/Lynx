@@ -126,7 +126,7 @@ int main()
 	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};*/
-
+	/*
 	// Non textured cube
 
 	float vertices[] = {
@@ -172,6 +172,51 @@ int main()
         -0.5f,  0.5f,  0.5f, 
         -0.5f,  0.5f, -0.5f, 
     };
+    */
+    // Non-Textured cube with normal vectors for diffuse lightning 
+    float vertices[] = {
+	    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+	     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+	     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+	    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+	    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+
+	    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	};
 	glm::vec3 cubePositions[] = {
 	    glm::vec3( 0.0f,  0.0f,  0.0f),
 	    glm::vec3(1.2f, 1.0f, 2.0f)
@@ -203,8 +248,11 @@ int main()
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	
 	
@@ -214,7 +262,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	*/
 
-	Shader shader1("res/shaders/light_box.vs", "res/shaders/ambient_light.fs");
+	Shader shader1("res/shaders/diffuse.vs", "res/shaders/diffuse.fs");
     Shader shader2("res/shaders/lamp_cube.vs", "res/shaders/lamp_cube.fs");
 
 
@@ -236,8 +284,6 @@ int main()
 		glm::mat4 view = camera.GetView();
 		glm::mat4 projection = camera.GetProjection();
 
-		printf("%s\n",glm::to_string(view).c_str());
-
 		VAO.Bind();
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
 			glm::mat4 model = glm::mat4(1.0f);
@@ -245,15 +291,18 @@ int main()
 
 			if(i%2){
 				// Lighted cube	
+				printf("%f\n", cubePositions[i].x);
 				shader1.use();
 				shader1.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
     			shader1.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    			shader1.setVec3("lightPos", cubePositions[i-1].x, cubePositions[i-1].y, cubePositions[i-1].z);
     			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 				
 			}else{
 				// Lamp cube
+				model = glm::scale(model, glm::vec3(0.2f));
 				shader2.use();
 				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
