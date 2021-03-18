@@ -1,17 +1,17 @@
 #include <stdio.h>
+#include <math.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-
-#include <math.h>
+#include <glm/gtx/string_cast.hpp>
 
 #include "shader.h"
 #include "texture.h"
 #include "vertexArray.h"
 #include "vertexBuffer.h"
+#include "camera.h"
 #include "renderer.h"	
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -28,10 +28,6 @@ float delta_time = 0.0f;
 float last_FrameTime = 0.0f;
 float camera_Speed_Multiplier = 1.0f;
 
-glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-glm::vec3 cameraDirection;
 float lastX = 400, lastY = 300;
 float pitch, yaw;
 bool firstMouse = true;
@@ -40,11 +36,10 @@ GLint polygonModes[] = {
 	GL_FILL,
 	GL_LINE
 };
-
-
-
 int polygonMode;
 int textures;
+
+Camera camera(SCR_WIDTH, SCR_HEIGHT);
 
 int main()
 {
@@ -84,7 +79,11 @@ int main()
 	// Create shader
 	
 	/*
+
+	//Textured Cube
+
 	float vertices[] = {
+
 	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
 	     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -127,6 +126,8 @@ int main()
 	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};*/
+
+	// Non textured cube
 
 	float vertices[] = {
         -0.5f, -0.5f, -0.5f, 
@@ -198,9 +199,14 @@ int main()
 	VertexArray VAO;
 	VAO.Bind();
 
+	camera.pos = glm::vec3(0.0f,0.0f,3.0f);
+	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
+	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	
 	
 
 	/*
@@ -208,7 +214,7 @@ int main()
 	glEnableVertexAttribArray(1);
 	*/
 
-	Shader shader1("res/shaders/light_box.vs", "res/shaders/light_box.fs");
+	Shader shader1("res/shaders/light_box.vs", "res/shaders/ambient_light.fs");
     Shader shader2("res/shaders/lamp_cube.vs", "res/shaders/lamp_cube.fs");
 
 
@@ -224,17 +230,13 @@ int main()
 	    processInput(window);
 
 	   
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 projection = glm::mat4(1.0f);;
+		glm::mat4 view = camera.GetView();
+		glm::mat4 projection = camera.GetProjection();
 
-		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		projection = glm::perspective(glm::radians(60.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		
-
-		
+		printf("%s\n",glm::to_string(view).c_str());
 
 		VAO.Bind();
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
@@ -304,7 +306,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(direction);
+	camera.front = glm::normalize(direction);
 }
 
 void processInput(GLFWwindow *window)
@@ -313,13 +315,13 @@ void processInput(GLFWwindow *window)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        camera.pos += cameraSpeed * camera.front;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        camera.pos -= cameraSpeed * camera.front;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.pos -= glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.pos += glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
     	camera_Speed_Multiplier = 3.0f;
     }else{
