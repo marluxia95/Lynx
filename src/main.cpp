@@ -57,7 +57,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
   
-  	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+  	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Game engine", NULL, NULL);
 	if (window == NULL)
 	{
 	    printf("Failed to create window\n");
@@ -78,14 +78,12 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	//glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
 	// Texture loading
 
 	Texture tex1("res/images/box.jpg", &textures, GL_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	// Create shader
 	
-
+	/*
 	float vertices[] = {
 	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -128,11 +126,54 @@ int main()
 	     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 	    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-	};
+	};*/
+
+	float vertices[] = {
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f, -0.5f,  
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f, -0.5f,  0.5f, 
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f,  0.5f,  0.5f, 
+
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+
+        -0.5f, -0.5f, -0.5f, 
+         0.5f, -0.5f, -0.5f,  
+         0.5f, -0.5f,  0.5f,  
+         0.5f, -0.5f,  0.5f,  
+        -0.5f, -0.5f,  0.5f, 
+        -0.5f, -0.5f, -0.5f, 
+
+        -0.5f,  0.5f, -0.5f, 
+         0.5f,  0.5f, -0.5f,  
+         0.5f,  0.5f,  0.5f,  
+         0.5f,  0.5f,  0.5f,  
+        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f, -0.5f, 
+    };
 	glm::vec3 cubePositions[] = {
 	    glm::vec3( 0.0f,  0.0f,  0.0f),
-	    glm::vec3(1.2f, 1.0f, 2.0f),
-	    glm::vec3(1.2f, 5.0f, 5.0f)
+	    glm::vec3(1.2f, 1.0f, 2.0f)
 	};
 	/*
 	unsigned int VBO, VAO;
@@ -148,23 +189,26 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	*/
 
-	VertexArray VAO;
-	VAO.Bind();
-
-	VertexBuffer VBO(vertices, sizeof(vertices));
+	// Renderer, VBO and VAO's setup
 
 	Renderer renderer;
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);
+	VertexBuffer VBO(vertices, sizeof(vertices));
+
+	VertexArray VAO;
+	VAO.Bind();
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	
+
+	/*
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+	*/
 
 	Shader shader1("res/shaders/light_box.vs", "res/shaders/light_box.fs");
-    shader1.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
-    shader1.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-
     Shader shader2("res/shaders/lamp_cube.vs", "res/shaders/lamp_cube.fs");
 
 
@@ -180,28 +224,41 @@ int main()
 	    processInput(window);
 
 	   
-		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);;
 
-
-
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		projection = glm::perspective(glm::radians(60.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		
 
-		glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+		
 
+		VAO.Bind();
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
-			if(i%2){shader2.use();}else{shader1.use();}
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model,cubePositions[i]);
-			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			//glDrawArrays(GL_TRIANGLES, 0, 36);
 
+			if(i%2){
+				// Lighted cube	
+				shader1.use();
+				shader1.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
+    			shader1.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+				
+			}else{
+				// Lamp cube
+				shader2.use();
+				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+			}
+			
+			
 			renderer.draw(36);
 		}
 
