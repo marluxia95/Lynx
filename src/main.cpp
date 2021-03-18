@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <math.h>
-#include <glad/glad.h>
+#include <GL/glew.h> 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 
 #include "shader.h"
 #include "texture.h"
@@ -14,12 +18,17 @@
 #include "camera.h"
 #include "renderer.h"	
 
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void gui_createWindow();
 
+static void glfw_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
@@ -31,6 +40,7 @@ float camera_Speed_Multiplier = 1.0f;
 float lastX = 400, lastY = 300;
 float pitch, yaw;
 bool firstMouse = true;
+bool lockMouse = true;
 
 GLint polygonModes[] = {
 	GL_FILL,
@@ -43,9 +53,10 @@ Camera camera(SCR_WIDTH, SCR_HEIGHT);
 
 int main()
 {
+	glfwSetErrorCallback(glfw_error_callback);
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -59,19 +70,33 @@ int main()
 	    glfwTerminate();
 	    return -1;
 	}
+
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
 	glfwSetCursorPosCallback(window, mouse_callback);  
 	glfwSetKeyCallback(window, key_callback);
 
+	/*
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 	    printf("Failed to load GLAD\n");
 	    return -1;
-	}    
+	} 
+	*/
+
+	bool err = glewInit() != GLEW_OK;   
 
 	glEnable(GL_DEPTH_TEST);
+
+	IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
 	// Texture loading
 
@@ -268,6 +293,10 @@ int main()
 
 	while(!glfwWindowShouldClose(window))
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
 		// Get current frametime and calculate deltaTime
 		float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
@@ -277,6 +306,9 @@ int main()
 		
 	    processInput(window);
 
+	    ImGui::Begin("Lightning example");  
+		ImGui::Text("FPS : %f", 1/delta_time);
+		ImGui::End();
 	   
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -284,25 +316,29 @@ int main()
 		glm::mat4 view = camera.GetView();
 		glm::mat4 projection = camera.GetProjection();
 
+		
+
 		VAO.Bind();
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model,cubePositions[i]);
+			float modelX = sin(glfwGetTime()) * 4;
+			float modelZ = cos(glfwGetTime()) * 4;
+			glm::vec3 lightPos = glm::vec3(cubePositions[i]+glm::vec3(modelX, 0, modelZ));
 
 			if(i%2){
 				// Lighted cube	
-				printf("%f\n", cubePositions[i].x);
+				model = glm::translate(model,cubePositions[i]);
 				shader1.use();
 				shader1.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
     			shader1.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-    			shader1.setVec3("lightPos", cubePositions[i-1].x, cubePositions[i-1].y, cubePositions[i-1].z);
+    			shader1.setVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
     			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 				
 			}else{
 				// Lamp cube
-				model = glm::scale(model, glm::vec3(0.2f));
+				model = glm::translate(model,lightPos);
 				shader2.use();
 				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader2.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
@@ -313,18 +349,23 @@ int main()
 			renderer.draw(36);
 		}
 
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	    glfwSwapBuffers(window);  
 	    glfwPollEvents();
 	    
 	}
-    
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     shader1.destroy();
+    shader2.destroy();
     glfwTerminate();
 	return 0;
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-
+	if(lockMouse){return;}
 	if (firstMouse) // initially set to true
 	{
 	    lastX = xpos;
@@ -388,6 +429,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     	glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
 
     }
+    if(key == GLFW_KEY_L && action == GLFW_PRESS){
+    	if(lockMouse){
+    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    		lockMouse = false;
+    	}else{
+    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    		lockMouse = true;
+    	}
+    }
 }
 
 
@@ -395,3 +445,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }  
+
+void gui_createWindow(){
+
+}
