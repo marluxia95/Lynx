@@ -5,15 +5,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 #include <math.h>
 
 #include "shader.h"
 #include "texture.h"
 
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void gui_createWindow();
+
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
@@ -43,8 +47,8 @@ int textures;
 int main()
 {
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -72,15 +76,13 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-
-
 	//glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
 	// Texture loading
 
 	Texture tex1("images/box.jpg", &textures, GL_NEAREST, GL_LINEAR, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	// Create shader
-	Shader shader1("shaders/textured_box.vs", "shaders/textured_box.fs");
+	
 
 	float vertices[] = {
 	    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -126,20 +128,12 @@ int main()
 	    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 	glm::vec3 cubePositions[] = {
-	    glm::vec3( 0.0f,  0.0f,  0.0f), 
-	    glm::vec3( 2.0f,  5.0f, -15.0f), 
-	    glm::vec3(-1.5f, -2.2f, -2.5f),  
-	    glm::vec3(-3.8f, -2.0f, -12.3f),  
-	    glm::vec3( 2.4f, -0.4f, -3.5f),  
-	    glm::vec3(-1.7f,  3.0f, -7.5f),  
-	    glm::vec3( 1.3f, -2.0f, -2.5f),  
-	    glm::vec3( 1.5f,  2.0f, -2.5f), 
-	    glm::vec3( 1.5f,  0.2f, -1.5f), 
-	    glm::vec3(-1.3f,  1.0f, -1.5f),
-	    glm::vec3(-1.3f,  19.0f, -1.5f)  
+	    glm::vec3( 0.0f,  0.0f,  0.0f),
+	    glm::vec3(1.2f, 1.0f, 2.0f),
+	    glm::vec3(1.2f, 5.0f, 5.0f)
 	};
 
-	unsigned int VBO, VAO, EBO;
+	unsigned int VBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -151,70 +145,36 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-/*
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-*/
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
-	/*
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(6*sizeof(float)));
-	glEnableVertexAttribArray(2);
-	*/
-	//glBindBuffer(GL_ARRAY_BUFFER, 0); 
-	//glBindVertexArray(0); 
-	
-	/*
-	float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
 
-    };
+	Shader shader1("shaders/light_box.vs", "shaders/light_box.fs");
+    shader1.setVec3("objectColor", 1.0f, 0.5f, 0.5f);
+    shader1.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 
-    unsigned int VBO, VAO;
+    Shader shader2("shaders/lamp_cube.vs", "shaders/lamp_cube.fs");
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	// Copies triangle's vertices into the vertex buffer's memory 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-	*/
-    shader1.use();
-    shader1.setInt("texture1", 0);
-    //shader1.setInt("texture2", 1);
+    Shader shader3("shaders/lamp_cube.shader");
 
 	while(!glfwWindowShouldClose(window))
 	{
-		// input
-		
+		// Get current frametime and calculate deltaTime
 		float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
+		printf("FPS : %f\n", 1/delta_time);
+		glfwPollEvents();
+		// input
+		
 	    processInput(window);
+
+	    
 
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		tex1.use();
-
-		shader1.use();
-
-		
 		
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);;
@@ -230,18 +190,12 @@ int main()
 
 		glBindVertexArray(VAO);
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
+			if(i%2){shader2.use();}else{shader1.use();}
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model,cubePositions[i]);
-			if(i % 3){
-				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-			}
-			
 			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
-		
-        
-
 
 	    glfwSwapBuffers(window);  
 	    glfwPollEvents();
@@ -252,7 +206,6 @@ int main()
     glDeleteBuffers(1, &VBO);
     //glDeleteBuffers(1, &EBO);
     shader1.destroy();
-
     glfwTerminate();
 	return 0;
 }
