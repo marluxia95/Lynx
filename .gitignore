@@ -1,4 +1,4 @@
-*./glad
-*./glm
-*./KHR
+./glad/*
+./glm/*
+./KHR/*
 stb_image.h
