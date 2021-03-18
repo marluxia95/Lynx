@@ -365,7 +365,7 @@ int main()
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-	if(lockMouse){return;}
+	if(!lockMouse){return;}
 	if (firstMouse) // initially set to true
 	{
 	    lastX = xpos;
