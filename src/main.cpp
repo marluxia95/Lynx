@@ -12,7 +12,7 @@
 #include "texture.h"
 #include "vertexArray.h"
 #include "vertexBuffer.h"
-#include "renderer.h"
+#include "renderer.h"	
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -134,7 +134,7 @@ int main()
 	    glm::vec3(1.2f, 1.0f, 2.0f),
 	    glm::vec3(1.2f, 5.0f, 5.0f)
 	};
-
+	/*
 	unsigned int VBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
@@ -146,6 +146,14 @@ int main()
 	// Copies triangle's vertices into the vertex buffer's memory 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	*/
+
+	VertexArray VAO;
+	VAO.Bind();
+
+	VertexBuffer VBO(vertices, sizeof(vertices));
+
+	Renderer renderer;
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -166,14 +174,12 @@ int main()
 		float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
-		printf("FPS : %f\n", 1/delta_time);
 		glfwPollEvents();
 		// input
 		
 	    processInput(window);
 
-	    
-
+	   
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -189,13 +195,14 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-		glBindVertexArray(VAO);
 		for(unsigned int i = 0;i<(sizeof(cubePositions)/sizeof(glm::vec3));i++){
 			if(i%2){shader2.use();}else{shader1.use();}
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model,cubePositions[i]);
 			glUniformMatrix4fv(glGetUniformLocation(shader1.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			//glDrawArrays(GL_TRIANGLES, 0, 36);
+
+			renderer.draw(36);
 		}
 
 	    glfwSwapBuffers(window);  
@@ -203,9 +210,6 @@ int main()
 	    
 	}
     
-	glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    //glDeleteBuffers(1, &EBO);
     shader1.destroy();
     glfwTerminate();
 	return 0;

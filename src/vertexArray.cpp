@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <glad/glad.h>
+#include "vertexArray.h"
 
-VertexArray::VertexArray(float* vertices){
+VertexArray::VertexArray(){
 	glGenVertexArrays(1, &VAO_ID);
 	glBindVertexArray(VAO_ID);
 
 
+}
+
+VertexArray::~VertexArray(){
+	glDeleteVertexArrays(1, &VAO_ID);
 }
 
 void VertexArray::Bind(){

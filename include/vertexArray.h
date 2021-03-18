@@ -3,7 +3,8 @@
 
 class VertexArray {
 public:
-	VertexArray(float* vertices);
+	VertexArray();
+	~VertexArray();
 	void Bind();
 	void Unbind();
 private:
