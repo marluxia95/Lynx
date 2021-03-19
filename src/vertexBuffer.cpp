@@ -1,4 +1,4 @@
-#include <GL/glew.h> 
+#include <GL/glew.h> 	
 #include "vertexBuffer.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size){

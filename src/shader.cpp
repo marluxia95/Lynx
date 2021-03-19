@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <glm/glm.hpp>
 #include <GL/glew.h> 
 #include "shader.h"
 
@@ -222,6 +222,11 @@ void Shader::setFloat(const char* name, float value){
 
 void Shader::setVec3(const char* name, float value1, float value2, float value3){
 	glUniform3f(glGetUniformLocation(ID, name), value1, value2, value3);
+}
+
+void Shader::setVec3(const char* name, const glm::vec3 &value)
+{ 
+	glUniform3fv(glGetUniformLocation(ID, name), 1, &value[0]); 
 }
 
 void Shader::setVec4(const char* name, float value1, float value2, float value3, float value4){

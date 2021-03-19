@@ -3,9 +3,14 @@
 
 #include <glm/glm.hpp>
 
+enum CameraType {
+	CAMERA_ORTHOGRAPHIC,
+	CAMERA_PERSPECTIVE
+};
+
 class Camera {
 public:
-	Camera(int sizex, int sizey);
+	Camera(CameraType type, int sizex, int sizey);
 	void SetDirection(glm::vec3 direction);
 	glm::mat4 GetView();
 	glm::mat4 GetProjection();
@@ -13,6 +18,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	float FOV = 60;
+	CameraType type;
 private:	
 	int resX;
 	int resY;
