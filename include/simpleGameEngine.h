@@ -11,51 +11,60 @@
 #include "renderer.h"
 #include "logger.h"
 
-enum GameState{
-	GAME_PAUSE,
-	GAME_ACTIVE
-};
+namespace Lynx{
 
-class Game {
-public:
-	Game(unsigned int width, unsigned int height);
-	~Game();
-	void Run();
-	GameState State;
-	bool keys[1024];
-	unsigned int WINDOW_WIDTH = 1280;
-	unsigned int WINDOW_HEIGHT = 720;
-	Renderer renderer;
-	Logger logger;
-	GLFWwindow* window;
+	enum GameState{
+		GAME_PAUSE,
+		GAME_ACTIVE
+	};
 
-private:
-	bool running;
-	bool debugMode = false;
+	class Game {
+	public:
+		Game(unsigned int width, unsigned int height);
+		~Game();
+		void Run();
+		GameState State;
+		
+		unsigned int WINDOW_WIDTH = 1280;
+		unsigned int WINDOW_HEIGHT = 720;
+		Renderer renderer;
+		Logger logger;
+		GLFWwindow* window;
 
-	float delta_time = 0.0f;
-	float last_FrameTime = 0.0f;
-	float camera_Speed_Multiplier = 1.0f;
+	private:
+		bool running;
+		bool debugMode = false;
 
-	
-	char* windowName = "Simple Game Engine";
+		float delta_time = 0.0f;
+		float last_FrameTime = 0.0f;
+		float camera_Speed_Multiplier = 1.0f;
 
-	void initWindow();
+		
+		char* windowName = "Simple Game Engine";
+		
+		static bool mouseLock;
 
+		static int polygonMode;
 
-	//void MouseCallback(GLFWwindow* window, double xpos, double ypos);
-	void ProcessInput(GLFWwindow *window);
-	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	//void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+		static bool keys[1024];
 
-	void DebugWindow();
-
-	virtual void OnInit();
-	virtual void OnUpdate();
-	virtual void OnRender();
-	virtual void OnLast();
+		void initWindow();
 
 
-};
+		static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+		static void ProcessInput(GLFWwindow *window);
+		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
+		void DebugWindow();
+
+		virtual void OnInit();
+		virtual void OnUpdate();
+		virtual void OnRender();
+		virtual void OnLast();
+
+
+	};
+
+}
 #endif

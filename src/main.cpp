@@ -2,8 +2,11 @@
 #include "simpleGameEngine.h"
 #include <GLFW/glfw3.h>
 
+using namespace Lynx;
+
 Game game(1280,720);
 
+/*
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 
@@ -15,15 +18,14 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
     }
 }
+*/
 
 void Game::OnInit(){
 
 }
 
 void Game::OnUpdate(){
-	if(game.keys[GLFW_KEY_ESCAPE]){
-		glfwSetWindowShouldClose(game.window, true);
-	}
+
 }
 
 void Game::OnRender(){
@@ -35,7 +37,7 @@ void Game::OnLast(){
 }
 
 int main(){
-	glfwSetKeyCallback(game.window, KeyCallback);
+	//glfwSetKeyCallback(game.window, KeyCallback);
 	game.Run();
 	return 0;
 }

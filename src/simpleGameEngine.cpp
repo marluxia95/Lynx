@@ -13,11 +13,11 @@
 #include "imgui_impl_opengl3.h"
 #include "simpleGameEngine.h"
 
+namespace Lynx {
 
-static void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}  
+bool Game::mouseLock;
+int Game::polygonMode;
+bool Game::keys[1024];
 
 Game::Game(unsigned int width, unsigned int height):
 	logger("main.log", LOG_INFO, false)
@@ -60,10 +60,10 @@ void Game::initWindow(){
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 	//glfwSetUserPointer(game_, this);
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
-	//glfwSetFramebufferSizeCallback(, FramebufferSizeCallback);  
-	//glfwSetCursorPosCallback(window, mouseCallback);  
-	//glfwSetKeyCallback(window, keyCallback);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);  
+	glfwSetCursorPosCallback(window, MouseCallback);  
+	glfwSetKeyCallback(window, KeyCallback);
 
 	bool err = glewInit() != GLEW_OK;   
 
@@ -114,8 +114,8 @@ void Game::Run(){
     }
 }
 
-/*
-void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
+
+void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){/*
 	if(!lockMouse){return;}
 	if (firstMouse) // initially set to true
 	{
@@ -147,12 +147,13 @@ void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camera.front = glm::normalize(direction);
+	camera.front = glm::normalize(direction);*/
 }
 
 void Game::ProcessInput(GLFWwindow *window)
-{
+{	
 	/*
+	
 	float cameraSpeed = 2.5f * delta_time * camera_Speed_Multiplier;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -169,6 +170,7 @@ void Game::ProcessInput(GLFWwindow *window)
     }else{
     	camera_Speed_Multiplier = 1.0f;
     }
+    */
 
     	
     	
@@ -176,20 +178,24 @@ void Game::ProcessInput(GLFWwindow *window)
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	/*
+	
     if (key ==  GLFW_KEY_I && action == GLFW_PRESS){
         if(polygonMode<1){polygonMode++;}else{polygonMode = 0;}
-    	glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
+    	//glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
 
     }
     if(key == GLFW_KEY_L && action == GLFW_PRESS){
-    	if(lockMouse){
+    	if(mouseLock){
     		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    		lockMouse = false;
+    		mouseLock = false;
     	}else{
     		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    		lockMouse = true;
+    		mouseLock = true;
     	}
+    }
+
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    	glfwSetWindowShouldClose(window, true);
 
     if(key >= 0 && key < 1024){
     	if(action == GLFW_PRESS)
@@ -198,12 +204,19 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     		keys[key] = false;
 
     }
+
+
 }
 
-*/
+void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}  
 
 void Game::DebugWindow(){
 	ImGui::Begin("Lightning example");  
 	ImGui::Text("FPS : %f", round(1/delta_time));
 	ImGui::End();
+}
+
 }
