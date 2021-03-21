@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <math.h>
 #include <GL/glew.h> 
 #include <GLFW/glfw3.h>
@@ -6,21 +8,28 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "renderer.h"
-#include "logger.h"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include "renderer.h"
+#include "logger.h"
 #include "simpleGameEngine.h"
+#include "camera.h"
+#include "scene.h"
+
 
 namespace Lynx {
 
 bool Game::mouseLock;
 int Game::polygonMode;
 bool Game::keys[1024];
+bool Game::debugMode;
+int Game::activeScene;
+std::vector<Scene*> Game::Scenes;
 
 Game::Game(unsigned int width, unsigned int height):
-	logger("main.log", LOG_INFO, false)
+	logger("main.log", LOG_DEBUG, false)
 {
 
 	WINDOW_WIDTH = width;
@@ -39,6 +48,9 @@ Game::~Game(){
 	glfwTerminate();
 }
 
+void Game::SetDebugMode(bool mode){
+	debugMode = mode;
+}
 
 void Game::initWindow(){
     glfwInit();
@@ -79,6 +91,32 @@ void Game::initWindow(){
 
     OnInit();
 
+
+}
+
+int Game::CreateScene(const char* name){
+    Scenes.push_back(new Scene(name, &resourceManager));
+    printf("Scene %s created\n", Scenes[Scenes.size()-1]->name);
+    return Scenes.size()-1;
+}
+
+int Game::BindScene(Scene* scene){
+    Scenes.push_back(scene);
+    return Scenes.size()-1;
+}
+
+Scene* Game::GetActiveScene(){
+    return Scenes[activeScene];
+}
+
+bool Game::SetActiveScene(int id){
+    if(id <= (Scenes.size()-1)){
+        activeScene = id;
+        return true;
+    }else{
+        logger.log(LOG_ERROR, "Scene does not exist");
+        return false;
+    }
 }
 
 void Game::Run(){
@@ -105,6 +143,7 @@ void Game::Run(){
 		}
 
 		OnRender();
+        Scenes[activeScene]->Render();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -179,6 +218,7 @@ void Game::ProcessInput(GLFWwindow *window)
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	
+
     if (key ==  GLFW_KEY_I && action == GLFW_PRESS){
         if(polygonMode<1){polygonMode++;}else{polygonMode = 0;}
     	//glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
@@ -197,6 +237,8 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, true);
 
+
+
     if(key >= 0 && key < 1024){
     	if(action == GLFW_PRESS)
     		keys[key] = true;
@@ -205,17 +247,88 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
     }
 
+    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F1]){
+    	if(debugMode){debugMode = false;}else{debugMode = true;}
+    }
+
+    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F2]){
+    	if(mouseLock){
+    		mouseLock = false; 
+    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    	}else{
+    		mouseLock = true; 
+    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    	}
+    }
+
 
 }
 
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+    // Loop through current scene's cameras
+    for(const auto &cam : Scenes[activeScene]->Cameras){
+        cam.second->resX = width;
+        cam.second->resY = height;
+    }
     glViewport(0, 0, width, height);
 }  
 
 void Game::DebugWindow(){
-	ImGui::Begin("Lightning example");  
-	ImGui::Text("FPS : %f", round(1/delta_time));
+	ImGui::Begin("Game");
+    ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
+	ImGui::Text("FPS : %d", (int)round(1/delta_time));
+	if (ImGui::CollapsingHeader("Objects"))
+    {
+    	if (ImGui::TreeNode("Cameras"))
+        {
+        	for(const auto &cam : Scenes[activeScene]->Cameras){
+        		if(ImGui::TreeNode((void*)(const char*)cam.first,"%s", cam.first)){
+        			ImGui::Text("Resolution : %dx%d", cam.second->resX, cam.second->resY);
+        			char* type = "";
+        			if(cam.second->type == CAMERA_ORTHOGRAPHIC){type = "Orthographic";}else{type = "Perspective";}
+        			ImGui::Text("Type : %s", type );
+        			ImGui::Text("Position : ");
+        			ImGui::SameLine(); ImGui::Text("x: %f y: %f z: %f", cam.second->pos.x, cam.second->pos.y, cam.second->pos.z);
+        			ImGui::TreePop();
+        		}
+        	}
+        	ImGui::TreePop();
+		}
+        if (ImGui::TreeNode("Sprites"))
+        {
+            for(const auto &spr : Scenes[activeScene]->Sprites){
+                if(ImGui::TreeNode((void*)(const char*)spr.first,"%s", spr.first)){
+                    ImGui::Text("Position : ");
+                    ImGui::SameLine(); ImGui::Text("x: %f y: %f", spr.second->pos.x, spr.second->pos.y);
+                    ImGui::Text("Color : ");
+                    ImGui::SameLine(); ImGui::Text("r: %f g: %f b: %f", spr.second->color.x, spr.second->color.y, spr.second->color.z);
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::TreePop();
+        }
+	}	
+    if(ImGui::CollapsingHeader("Resources")){
+        if(ImGui::TreeNode("Textures")){
+            for(const auto &tex : resourceManager.TextureMap){
+                if(ImGui::TreeNode((void*)(const char*)tex.first,"%s", tex.first)){
+                    ImGui::Text("Texture ID : %d", tex.second->id);
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::TreePop();
+        }
+        if(ImGui::TreeNode("Shaders")){
+            for(const auto &shdr : resourceManager.ShaderMap){
+                if(ImGui::TreeNode((void*)(const char*)shdr.first,"%s", shdr.first)){
+                    ImGui::Text("Shader Program ID : %d", shdr.second->ID);
+                    ImGui::TreePop();
+                }
+            }
+            ImGui::TreePop();
+        }
+    }
 	ImGui::End();
 }
 

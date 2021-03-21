@@ -9,6 +9,7 @@ Camera::Camera(CameraType type, int sizex, int sizey){
 	resY = sizey;
 	type = type;
 	pos = glm::vec3(0.0f);
+	printf("Camera loaded\n");
 }
 
 glm::mat4 Camera::GetView(){
@@ -22,7 +23,7 @@ glm::mat4 Camera::GetProjection(){
 	if(type == CAMERA_PERSPECTIVE){
 		projection = glm::perspective(glm::radians(FOV), (float)resX / (float)resY, 0.1f, 100.0f); 
 	}else{
-		projection = glm::ortho(0.0f, (float)resX, 0.0f, (float)resY, 0.1f, 1000.0f);
+		projection = glm::ortho(0.0f, (float)resX, (float)resY, 0.0f, -1.0f, 1.0f);
 	}
 	return projection;
 }

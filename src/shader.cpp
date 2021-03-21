@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h> 
 #include "shader.h"
 
@@ -231,4 +232,8 @@ void Shader::setVec3(const char* name, const glm::vec3 &value)
 
 void Shader::setVec4(const char* name, float value1, float value2, float value3, float value4){
 	glUniform4f(glGetUniformLocation(ID, name), value1, value2, value3, value4);
+}
+
+void Shader::setMat4(const char* name, const glm::mat4 &value){
+	glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
 }

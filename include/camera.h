@@ -19,9 +19,9 @@ public:
 	glm::vec3 up;
 	float FOV = 60;
 	CameraType type;
-private:	
 	int resX;
 	int resY;
+
 
 };
 
