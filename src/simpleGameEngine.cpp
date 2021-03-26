@@ -12,7 +12,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "renderer.h"
 #include "logger.h"
 #include "simpleGameEngine.h"
 #include "camera.h"
@@ -26,6 +25,11 @@ int Game::polygonMode;
 bool Game::keys[1024];
 bool Game::debugMode;
 int Game::activeScene;
+float Game::pitch;
+float Game::yaw;
+float Game::lastX;
+float Game::lastY;
+bool Game::firstMouse;
 std::vector<Scene*> Game::Scenes;
 
 Game::Game(unsigned int width, unsigned int height):
@@ -154,8 +158,9 @@ void Game::Run(){
 }
 
 
-void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){/*
-	if(!lockMouse){return;}
+void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
+    /*
+	if(!mouseLock){return;}
 	if (firstMouse) // initially set to true
 	{
 	    lastX = xpos;
@@ -186,13 +191,14 @@ void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){/*
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camera.front = glm::normalize(direction);*/
+	Scenes[activeScene]->Cameras["penis"]->front = glm::normalize(direction);
+    */
 }
 
 void Game::ProcessInput(GLFWwindow *window)
 {	
-	/*
 	
+	/*
 	float cameraSpeed = 2.5f * delta_time * camera_Speed_Multiplier;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -208,8 +214,8 @@ void Game::ProcessInput(GLFWwindow *window)
     	camera_Speed_Multiplier = 3.0f;
     }else{
     	camera_Speed_Multiplier = 1.0f;
-    }
-    */
+    }*/
+    
 
     	
     	
@@ -275,9 +281,53 @@ void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 }  
 
 void Game::DebugWindow(){
-	ImGui::Begin("Game");
-    ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
-	ImGui::Text("FPS : %d", (int)round(1/delta_time));
+	ImGui::Begin("Objects");
+    //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
+	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
+    
+    for(const auto &spr : Scenes[activeScene]->Sprites){
+        if (ImGui::Button(spr.first))
+        {
+            selectedType = 1;
+            selectedSprite = spr.second;
+            selectedName = spr.first;
+        }
+    }
+    for(const auto &cam : Scenes[activeScene]->Cameras){
+        if (ImGui::Button(cam.first))
+        {
+            selectedType = 2;
+            selectedCamera = cam.second;
+            selectedName = cam.first;
+        }
+    }
+    ImGui::End();
+
+    ImGui::Begin("Inspector");
+
+    if(selectedType == 1){
+        ImGui::Text("Selected : %s",  selectedName);
+        ImGui::Text("Type : 2D Sprite");
+
+        ImGui::Text("XYZ : ");
+        ImGui::SameLine();
+        ImGui::InputFloat3("##1",glm::value_ptr(selectedSprite->pos));
+        ImGui::Text("Colour : ");
+        ImGui::SameLine();
+        ImGui::SliderFloat3("##2", glm::value_ptr(selectedSprite->color), 0.0f, 1.0f);
+    }else if(selectedType == 2){
+        ImGui::Text("Selected : %s", selectedName);
+        ImGui::Text("Type : Camera");
+        ImGui::Text("XYZ : ");
+        ImGui::SameLine();
+        ImGui::InputFloat3("##1",glm::value_ptr(selectedCamera->pos));
+        ImGui::Text("Front (ang) : ");
+        ImGui::SameLine();
+        ImGui::InputFloat3("##2",glm::value_ptr(selectedCamera->front));
+    }
+
+    ImGui::End();
+    /*
 	if (ImGui::CollapsingHeader("Objects"))
     {
     	if (ImGui::TreeNode("Cameras"))
@@ -289,7 +339,10 @@ void Game::DebugWindow(){
         			if(cam.second->type == CAMERA_ORTHOGRAPHIC){type = "Orthographic";}else{type = "Perspective";}
         			ImGui::Text("Type : %s", type );
         			ImGui::Text("Position : ");
-        			ImGui::SameLine(); ImGui::Text("x: %f y: %f z: %f", cam.second->pos.x, cam.second->pos.y, cam.second->pos.z);
+                    ImGui::DragFloat("X",cam.second->pos.x, 0.005f);
+                    ImGui::DragFloat("Y",cam.second->pos.x, 0.005f);
+        			ImGui::DragFloat("Z",cam.second->pos.x, 0.005f);
+                    //ImGui::SameLine(); ImGui::Text("x: %f y: %f z: %f", cam.second->pos.x, cam.second->pos.y, cam.second->pos.z);
         			ImGui::TreePop();
         		}
         	}
@@ -328,8 +381,8 @@ void Game::DebugWindow(){
             }
             ImGui::TreePop();
         }
-    }
-	ImGui::End();
+    }*/
+	
 }
 
 }

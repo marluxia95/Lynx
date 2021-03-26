@@ -11,7 +11,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
-#include "renderer.h"
 #include "camera.h"
 #include "logger.h"
 #include "scene.h"
@@ -38,7 +37,6 @@ namespace Lynx{
 		
 		unsigned int WINDOW_WIDTH = 1280;
 		unsigned int WINDOW_HEIGHT = 720;
-		Renderer renderer;
 		ResourceManager resourceManager;
 		Logger logger;
 		GLFWwindow* window;
@@ -60,11 +58,23 @@ namespace Lynx{
 		
 		static std::vector<Scene*> Scenes;
 
-		
+		// debug variables
+		int selectedType; // 1 for sprite 2 for camera
+	    Camera* selectedCamera;
+	    Sprite* selectedSprite;
+	    const char* selectedName;
+	    const char* buttonName;
 		
 		static bool mouseLock;
 		static int polygonMode;
 		static bool keys[1024];
+
+		static float pitch;
+		static float yaw;
+		static float lastX;
+		static float lastY;
+
+		static bool firstMouse;
 
 		void initWindow();
 

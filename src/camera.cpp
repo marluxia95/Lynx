@@ -20,10 +20,10 @@ glm::mat4 Camera::GetView(){
 
 glm::mat4 Camera::GetProjection(){
 	glm::mat4 projection = glm::mat4(1.0f);
-	if(type == CAMERA_PERSPECTIVE){
-		projection = glm::perspective(glm::radians(FOV), (float)resX / (float)resY, 0.1f, 100.0f); 
-	}else{
-		projection = glm::ortho(0.0f, (float)resX, (float)resY, 0.0f, -1.0f, 1.0f);
-	}
+	//if(type == CAMERA_PERSPECTIVE){
+		projection = glm::perspective(glm::radians(FOV), (float)resX / (float)resY, -5.0f, 100.0f); 
+	//}else {
+	//	projection = glm::ortho(0.0f, (float)resX, (float)resY, 0.0f, -5.0f, 1.0f);
+	//}
 	return projection;
 }

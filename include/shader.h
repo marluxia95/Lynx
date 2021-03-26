@@ -1,13 +1,11 @@
-
 #ifndef SHADER_H
 #define SHADER_H
+
 #include <glm/glm.hpp>
 #include <GL/glew.h> 
-  
 #include <stdio.h>
-#include <fstream>
-#include <iostream>
-  
+
+namespace Lynx {  
 
 class Shader
 {
@@ -33,5 +31,6 @@ class Shader
         const char* vertexFilePath;
         const char* fragmentFilePath;
 };
-  
+
+}
 #endif

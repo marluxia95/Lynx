@@ -7,6 +7,8 @@
 #include "vertexBuffer.h"
 
 namespace Lynx {
+/*
+WIP
 
 Sprite::Sprite():
 	shader("res/shaders/generic/sprite.vs", "res/shaders/generic/sprite.fs")
@@ -21,7 +23,7 @@ Sprite::~Sprite(){
 }
 
 void Sprite::init(){
-
+    
 	float vertices[] = { 
         // pos      // texture
         0.0f, 1.0f, 0.0f, 1.0f,
@@ -50,28 +52,25 @@ void Sprite::init(){
 
 }
 
-void Sprite::Draw(glm::mat4 projection){
-    if(texture == nullptr | texture == NULL){printf("Sprite not bind to a texture !\n");}
-	shader.use();
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(pos, 0.0f));
-
-	model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); 
-    model = glm::rotate(model, glm::radians(ang), glm::vec3(0.0f, 0.0f, 1.0f)); 
-    model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-
-    model = glm::scale(model, glm::vec3(size, 1.0f)); 
+void Sprite::Draw(glm::mat4 projection, glm::mat4 view){
+    if(texture->texture == NULL){printf("Sprite not bind to a texture !\n");}
+    glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::translate(model, glm::vec3(pos, 0.0f));
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); 
+    model = glm::translate(model, glm::vec3(0.0f,0.0f,1.0f));
 
     shader.setMat4("model", model);
     shader.setMat4("projection", projection);
+    shader.setMat4("view", view);
     shader.setVec3("spriteColor", color);
 
     texture->use();
 
     VAO.Bind();
+    shader.use();
     glDrawArrays(GL_TRIANGLES, 0, 6);
     VAO.Unbind();
 
 }
-
+*/
 }

@@ -6,6 +6,10 @@
 #include "camera.h"
 #include "resourceManager.h"
 #include "texture.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace Lynx {
 
@@ -36,7 +40,7 @@ void Scene::Render(){
 		}
 
 		Sprite* curSprite = spr.second;
-		curSprite->Draw(Cameras[activeCamera]->GetProjection());
+		//curSprite->Draw(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
 	}
 
 }

@@ -1,4 +1,5 @@
 lib/
+.vscode/
 src/example.cpp
 src/main_old.cpp
 stb_image.h

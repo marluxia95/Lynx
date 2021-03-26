@@ -5,6 +5,8 @@
 #include <GL/glew.h> 
 #include "shader.h"
 
+namespace Lynx {
+
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	FILE *vertexFile;
 	FILE *fragmentFile;
@@ -236,4 +238,6 @@ void Shader::setVec4(const char* name, float value1, float value2, float value3,
 
 void Shader::setMat4(const char* name, const glm::mat4 &value){
 	glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
 }
