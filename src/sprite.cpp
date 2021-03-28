@@ -73,4 +73,12 @@ void Sprite::Draw(glm::mat4 projection, glm::mat4 view){
 
 }
 */
+
+Sprite::Sprite():
+    Mesh(&sprite_vertices, &sprite_indices, MESH_2D_SPRITE),
+	shader("res/shaders/standard/sprite.vs", "res/shaders/standard/sprite.fs")
+    {
+
+
+}
 }

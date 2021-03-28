@@ -52,7 +52,6 @@ void Logger::log(LogLevel loglvl, const char* str) {
 		printf("%s%s%s", outColor ,msg, COL_NORM);
 		//write( logFile , msg, strlen( msg ) );
 	}else{
-		bool isValid = true;
 		if(loglvl == LOG_INFO){
 			outColor = COL_INFO;
 			sprintf( msg, "%s\tINFO    : ", date ); 

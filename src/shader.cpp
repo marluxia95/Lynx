@@ -16,7 +16,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
 	vertexFile = fopen(vertexPath,"r");
 	fragmentFile = fopen(fragmentPath, "r");
-	if(vertexFile==NULL|fragmentFile==NULL){printf("Error! Couldn't open shaderfiles!\n"); return;}
+	if(!vertexFile|!fragmentFile){printf("Error! Couldn't open shaderfiles!\n"); return;}
 	fseek(vertexFile, 0, SEEK_END);
 	fseek(fragmentFile, 0, SEEK_END);
 	int vertexShaderSize = ftell(vertexFile);
@@ -53,7 +53,7 @@ Shader::Shader(const char* shaderPath){
 	FILE *shaderFile;
 
 	shaderFile = fopen(shaderPath, "r");
-	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile");}
+	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile"); return;}
 	fseek(shaderFile, 0, SEEK_END);
 	int fileSize = ftell(shaderFile);
 	rewind(shaderFile);
@@ -93,15 +93,12 @@ Shader::Shader(const char* shaderPath){
 			case 0:
 				if(vertexHeader != NULL){
 		        	currentShader = 1;
-		        	printf("Found vertex shader %d\n", vertexShader);
 		        }else if(fragmentHeader != NULL){
 		        	currentShader = 2;
-		        	printf("Found fragment shader %d\n", fragmentShader);
 		        }
 		        break;
 		    case 1:
 		    	if(fragmentHeader != NULL){
-		    		printf("Found fragment shader %d\n", fragmentShader);
 		    		printf("Starting to allocate %d from vertex shader ...\n", shaderSize);
 		    		vertexShader = (char*)malloc(shaderSize);
 		    		printf("Starting to copy data from buffer ...\n");
@@ -117,7 +114,6 @@ Shader::Shader(const char* shaderPath){
 		    case 2:
 		    	printf("Beggining of fragment shader \n");
 		    	if(vertexHeader != NULL){
-		    		printf("Found vertex shader %d\n", vertexShader);
 		    		printf("Starting to allocate %d from fragment shader ...\n", shaderSize);
 		    		fragmentShader = (char*)malloc(shaderSize);
 		    		printf("Starting to copy data from buffer ...\n");

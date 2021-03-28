@@ -1,24 +1,28 @@
 #include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <GL/glew.h> 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "vertexArray.h"
 #include "vertexBuffer.h"
 #include "elementBuffer.h"
 #include "mesh.h"
 
+using namespace glm;
+using namespace std;
+
 namespace Lynx {
 
-Mesh::Mesh(float* m_vertices, unsigned int m_numVertices, float* m_indices, unsigned int m_numIndices, MeshType type){
-	vertices = m_vertices;
-	numVertices = m_numVertices;
-	indices = m_indices;
-	numIndices = m_numIndices;
-	type = type;
+Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : vertices(vertices), indices(indices), type(type){
 
-
-	VBO = new VertexBuffer(vertices, numVertices);
-
+	VAO = new VertexArray();
+	VBO = new VertexBuffer(vertices, vertices->size());
+	EBO = new ElementBuffer(indices);
+	
 	VAO->Bind();
+	EBO->Bind();
+	
 
 	// VAO Configuration
 
@@ -56,7 +60,7 @@ Mesh::Mesh(float* m_vertices, unsigned int m_numVertices, float* m_indices, unsi
 
 	VAO->Unbind();
 
-	EBO = new ElementBuffer(&indices, numIndices);
+	
 
 }
 
@@ -65,22 +69,39 @@ Mesh::~Mesh(){
 }
 
 void Mesh::Render(){
-
-	
-	model = glm::mat4(1.0f);
-	
 	VAO->Bind();
-	glDrawElements(GL_TRIANGLES, numVertices, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, vertices->size(), GL_UNSIGNED_INT, 0);
 	VAO->Unbind();
 }
 
 
-Mesh3D::Mesh3D(float* vertices, unsigned int numVertices, float* indices, unsigned int numIndices, Shader* shader, MeshType type)
-	: Mesh(vertices, numVertices, indices, numIndices, type){
+Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
+	: Mesh(vertices, indices, type){
 	if(type<MESH_3D){printf("Invalid mesh type\n"); return;}
-	
+	if(shader == nullptr) {
+		shader = new Shader("res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
+	}else{
+		shader = shader;
+	}
+
 }
 
+void Mesh3D::Render(mat4 projection, mat4 view){
+	model = mat4(1.0f);
+	model = translate(model, pos);
+	
+	// Set model values
+	/*
+	shader->setMat4("projection", projection);
+	shader->setMat4("model", model);
+	shader->setMat4("view", view);
+	*/
+	printf("%d\n", this->vertices->size());
+	VAO->Bind();
+	VBO->Bind();
+	glDrawElements(GL_TRIANGLES, this->vertices->size(), GL_UNSIGNED_INT, 0);
+	VAO->Unbind();
+}
 
 }
 

@@ -83,6 +83,10 @@ void Game::initWindow(){
 
 	bool err = glewInit() != GLEW_OK;   
 
+    if(err){
+        printf("Failed to initialize GLEW ! \n");
+    }
+
 	glEnable(GL_DEPTH_TEST);
 
 	IMGUI_CHECKVERSION();
@@ -124,7 +128,7 @@ bool Game::SetActiveScene(int id){
 }
 
 void Game::Run(){
-	while(!glfwWindowShouldClose(window)|running)
+	while((!glfwWindowShouldClose(window))|running)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -327,61 +331,6 @@ void Game::DebugWindow(){
     }
 
     ImGui::End();
-    /*
-	if (ImGui::CollapsingHeader("Objects"))
-    {
-    	if (ImGui::TreeNode("Cameras"))
-        {
-        	for(const auto &cam : Scenes[activeScene]->Cameras){
-        		if(ImGui::TreeNode((void*)(const char*)cam.first,"%s", cam.first)){
-        			ImGui::Text("Resolution : %dx%d", cam.second->resX, cam.second->resY);
-        			char* type = "";
-        			if(cam.second->type == CAMERA_ORTHOGRAPHIC){type = "Orthographic";}else{type = "Perspective";}
-        			ImGui::Text("Type : %s", type );
-        			ImGui::Text("Position : ");
-                    ImGui::DragFloat("X",cam.second->pos.x, 0.005f);
-                    ImGui::DragFloat("Y",cam.second->pos.x, 0.005f);
-        			ImGui::DragFloat("Z",cam.second->pos.x, 0.005f);
-                    //ImGui::SameLine(); ImGui::Text("x: %f y: %f z: %f", cam.second->pos.x, cam.second->pos.y, cam.second->pos.z);
-        			ImGui::TreePop();
-        		}
-        	}
-        	ImGui::TreePop();
-		}
-        if (ImGui::TreeNode("Sprites"))
-        {
-            for(const auto &spr : Scenes[activeScene]->Sprites){
-                if(ImGui::TreeNode((void*)(const char*)spr.first,"%s", spr.first)){
-                    ImGui::Text("Position : ");
-                    ImGui::SameLine(); ImGui::Text("x: %f y: %f", spr.second->pos.x, spr.second->pos.y);
-                    ImGui::Text("Color : ");
-                    ImGui::SameLine(); ImGui::Text("r: %f g: %f b: %f", spr.second->color.x, spr.second->color.y, spr.second->color.z);
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::TreePop();
-        }
-	}	
-    if(ImGui::CollapsingHeader("Resources")){
-        if(ImGui::TreeNode("Textures")){
-            for(const auto &tex : resourceManager.TextureMap){
-                if(ImGui::TreeNode((void*)(const char*)tex.first,"%s", tex.first)){
-                    ImGui::Text("Texture ID : %d", tex.second->id);
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::TreePop();
-        }
-        if(ImGui::TreeNode("Shaders")){
-            for(const auto &shdr : resourceManager.ShaderMap){
-                if(ImGui::TreeNode((void*)(const char*)shdr.first,"%s", shdr.first)){
-                    ImGui::Text("Shader Program ID : %d", shdr.second->ID);
-                    ImGui::TreePop();
-                }
-            }
-            ImGui::TreePop();
-        }
-    }*/
 	
 }
 

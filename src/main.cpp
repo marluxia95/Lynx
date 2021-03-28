@@ -1,9 +1,13 @@
 #include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <glm/glm.hpp>
 #include "simpleGameEngine.h"
 #include "sprite.h"
 #include "camera.h"
 #include "scene.h"
+#include "mesh.h"
+#include "utils.h"
 
 using namespace Lynx;
 
@@ -27,6 +31,9 @@ void Game::OnLast(){
 }
 
 int main(){
+
+
+
 	game.SetDebugMode(true);
 
 	Camera camera(CAMERA_PERSPECTIVE, 1280, 720);
@@ -37,7 +44,12 @@ int main(){
 	game.SetActiveScene(scene);
 
 	Scene* scn = game.GetActiveScene();
-	scn->AddCamera("penis", &camera);
+	scn->AddCamera("Camera 1", &camera);
+
+	Shader* mesh_shader = new Shader("res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
+
+	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, mesh_shader, MESH_3D);
+	scn->Add3DObject("cube",mesh);
 
 	game.Run();
 	return 0;

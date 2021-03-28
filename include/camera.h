@@ -18,7 +18,7 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	float FOV = 60;
-	CameraType type;
+	CameraType type = CAMERA_PERSPECTIVE;
 	int resX;
 	int resY;
 

@@ -2,12 +2,17 @@
 #define MESH_H
 
 #include <stdio.h>
+#include <iostream>
+#include <vector>
 #include <GL/glew.h> 
 #include <glm/glm.hpp>
 #include "vertexArray.h"
 #include "vertexBuffer.h"
 #include "elementBuffer.h"
 #include "shader.h"
+
+using namespace std;
+using namespace glm;
 
 namespace Lynx {
 
@@ -21,20 +26,17 @@ namespace Lynx {
 	class Mesh {
 
 		public:
-			Mesh(float* m_vertices, unsigned int m_numVertices, float* m_indices, unsigned int m_numIndices, MeshType type);
+			Mesh(vector<Vertex>* m_vertices, vector<GLuint>* m_indices, MeshType type);
 			~Mesh();
 			void Render();
 
-		private:
+		protected:
 			VertexArray* VAO;
 			VertexBuffer* VBO;
 			ElementBuffer* EBO;
-			float* vertices;
-			float* indices;
-			unsigned int numVertices;
-			unsigned int numIndices;
 
-			glm::mat4 model;
+			vector<Vertex>* vertices;
+			vector<GLuint>* indices;
 
 			MeshType type;
 
@@ -44,10 +46,15 @@ namespace Lynx {
 
 	class Mesh3D : Mesh {
 		public:
-			Mesh3D(float* vertices, unsigned int numVertices, float* indices, unsigned int numIndices, Shader* shader, MeshType type);
+			Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type);
 			~Mesh3D();
-		private:
+			void Render(glm::mat4 projection, glm::mat4 view);
+		protected:
 			Shader* shader;
+			mat4 model;
+			vec3 scale = vec3(1.0f);
+			vec3 pos;
+			vec3 color;
 				
 	};
 }
