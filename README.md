@@ -1,4 +1,5 @@
 # SimpleGameEngine
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/43d567336363474da3830f0cd6d01728)](https://www.codacy.com/gh/marluxia95/SimpleGameEngine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marluxia95/SimpleGameEngine&amp;utm_campaign=Badge_Grade)
 Just a simple game engine made in C++ and OpenGL
 
 DISCLAIMER : THIS IS A WIP PROJECT, which means that its NOT finished yet!
