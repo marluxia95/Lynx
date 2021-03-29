@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <string.h>
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h> 
 #include "shader.h"
+
+namespace Lynx {
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	FILE *vertexFile;
@@ -13,7 +16,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
 	vertexFile = fopen(vertexPath,"r");
 	fragmentFile = fopen(fragmentPath, "r");
-	if(vertexFile==NULL|fragmentFile==NULL){printf("Error! Couldn't open shaderfiles!\n"); return;}
+	if(!vertexFile|!fragmentFile){printf("Error! Couldn't open shaderfiles!\n"); return;}
 	fseek(vertexFile, 0, SEEK_END);
 	fseek(fragmentFile, 0, SEEK_END);
 	int vertexShaderSize = ftell(vertexFile);
@@ -50,7 +53,7 @@ Shader::Shader(const char* shaderPath){
 	FILE *shaderFile;
 
 	shaderFile = fopen(shaderPath, "r");
-	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile");}
+	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile"); return;}
 	fseek(shaderFile, 0, SEEK_END);
 	int fileSize = ftell(shaderFile);
 	rewind(shaderFile);
@@ -90,15 +93,12 @@ Shader::Shader(const char* shaderPath){
 			case 0:
 				if(vertexHeader != NULL){
 		        	currentShader = 1;
-		        	printf("Found vertex shader %d\n", vertexShader);
 		        }else if(fragmentHeader != NULL){
 		        	currentShader = 2;
-		        	printf("Found fragment shader %d\n", fragmentShader);
 		        }
 		        break;
 		    case 1:
 		    	if(fragmentHeader != NULL){
-		    		printf("Found fragment shader %d\n", fragmentShader);
 		    		printf("Starting to allocate %d from vertex shader ...\n", shaderSize);
 		    		vertexShader = (char*)malloc(shaderSize);
 		    		printf("Starting to copy data from buffer ...\n");
@@ -114,7 +114,6 @@ Shader::Shader(const char* shaderPath){
 		    case 2:
 		    	printf("Beggining of fragment shader \n");
 		    	if(vertexHeader != NULL){
-		    		printf("Found vertex shader %d\n", vertexShader);
 		    		printf("Starting to allocate %d from fragment shader ...\n", shaderSize);
 		    		fragmentShader = (char*)malloc(shaderSize);
 		    		printf("Starting to copy data from buffer ...\n");
@@ -181,18 +180,18 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 		return;
 	}
 
-	printf("Linking...\n");
-	ID = glCreateProgram();
-	glAttachShader(ID,vertex);
-	glAttachShader(ID,fragment);
-	glLinkProgram(ID);
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	printf("Linking and creating program...\n");
+	this->ID = glCreateProgram();
+	glAttachShader(this->ID,vertex);
+	glAttachShader(this->ID,fragment);
+	glLinkProgram(this->ID);
+	glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
 	if(!success){
 		glGetProgramInfoLog(ID, 512, NULL, log);
 		printf("Error while linking shaders! : %s\n", log);
 		return;
 	}
-	printf("Successfully compiled shader, cleaning up...\n");
+	printf("Successfully compiled shader ID : %d , cleaning up...\n", this->ID);
 	
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
@@ -200,30 +199,45 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 
 void Shader::destroy(){
 	if(ID)
-		glDeleteProgram(ID);
+		glDeleteProgram(this->ID);
 }
 
 void Shader::use(){
-	glUseProgram(ID);
+	glUseProgram(this->ID);
+}
+
+GLuint Shader::getProgram(){
+	return this->ID;
 }
 
 // Uniform set functions 
 void Shader::setBool(const char* name, bool value){
-	glUniform1i(glGetUniformLocation(ID, name), (int)value); 
+	glUniform1i(glGetUniformLocation(this->ID, name), (int)value); 
 }
 
 void Shader::setInt(const char* name, int value){
-	glUniform1i(glGetUniformLocation(ID, name), value);
+	glUniform1i(glGetUniformLocation(this->ID, name), value);
 }
 
 void Shader::setFloat(const char* name, float value){
-	glUniform1f(glGetUniformLocation(ID, name), value);
+	glUniform1f(glGetUniformLocation(this->ID, name), value);
 }
 
 void Shader::setVec3(const char* name, float value1, float value2, float value3){
-	glUniform3f(glGetUniformLocation(ID, name), value1, value2, value3);
+	glUniform3f(glGetUniformLocation(this->ID, name), value1, value2, value3);
+}
+
+void Shader::setVec3(const char* name, const glm::vec3 &value)
+{ 
+	glUniform3fv(glGetUniformLocation(this->ID, name), 1, &value[0]); 
 }
 
 void Shader::setVec4(const char* name, float value1, float value2, float value3, float value4){
-	glUniform4f(glGetUniformLocation(ID, name), value1, value2, value3, value4);
+	glUniform4f(glGetUniformLocation(this->ID, name), value1, value2, value3, value4);
+}
+
+void Shader::setMat4(const char* name, const glm::mat4 &value){
+	glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, GL_FALSE, glm::value_ptr(value));
+}
+
 }

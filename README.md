@@ -3,20 +3,17 @@ Just a simple game engine made in C++ and OpenGL
 
 DISCLAIMER : THIS IS A WIP PROJECT, which means that its NOT finished yet!
 
-
 ## Building
 
 ### Linux
 
-#### Installing dependencies
-
-##### Installing GLFW3
+#### Installing GLFW3
 You can either build it or install it via APT as it is shown here:
 ```bash 
 sudo apt install libglfw3 libglfw3-dev
 ```
 
-##### Intalling GLM
+#### Intalling GLM
 
 Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder so there's a `glm` folder inside it.
 

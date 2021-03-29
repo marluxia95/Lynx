@@ -5,8 +5,6 @@
 VertexArray::VertexArray(){
 	glGenVertexArrays(1, &VAO_ID);
 	glBindVertexArray(VAO_ID);
-
-
 }
 
 VertexArray::~VertexArray(){
