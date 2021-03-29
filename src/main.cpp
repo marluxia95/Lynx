@@ -11,15 +11,75 @@
 
 using namespace Lynx;
 
+// Initialize global variables
 Game game(1280,720);
+Camera camera(1280, 720);
 
 
+double lastX;
+double lastY;
+const float sensitivity = 0.25f;
+bool   firstMouse = true;
+float  camera_Speed_Multiplier;
+float yaw_, pitch_;
 void Game::OnInit(){
 
 }
 
-void Game::OnUpdate(){
+void input(){
+	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
+    if (game.keys[GLFW_KEY_W])
+        camera.pos += cameraSpeed * camera.front;
+    if (game.keys[GLFW_KEY_S])
+        camera.pos -= cameraSpeed * camera.front;
+    if (game.keys[GLFW_KEY_A])
+        camera.pos -= glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
+    if (game.keys[GLFW_KEY_D])
+        camera.pos += glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
+    if (game.keys[GLFW_KEY_LEFT_SHIFT]){
+    	camera_Speed_Multiplier = 3.0f;
+    }else{
+    	camera_Speed_Multiplier = 1.0f;
+    }
+}
 
+void inputMouse(){
+	if(!game.mouseLock){return;}
+	if (firstMouse) // initially set to true
+	{
+	    lastX = game.mouseXPos;
+	    lastY = game.mouseYPos;
+	    firstMouse = false;
+	}
+
+	float xoffset = game.mouseXPos - lastX;
+	float yoffset = lastY - game.mouseYPos;
+	lastX = game.mouseXPos;
+	lastY = game.mouseYPos;
+
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	
+
+	yaw_   += xoffset;
+	pitch_ += yoffset;  
+
+	if(pitch_ > 89.0f)
+	  pitch_ =  89.0f;
+	if(pitch_ < -89.0f)
+	  pitch_ = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+	direction.y = sin(glm::radians(pitch_));
+	direction.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+	camera.front = glm::normalize(direction);
+}
+
+void Game::OnUpdate(){
+	input();
+	inputMouse();
 }
 
 void Game::OnRender(){
@@ -35,21 +95,22 @@ int main(){
 
 
 	game.SetDebugMode(true);
-
-	Camera camera(CAMERA_PERSPECTIVE, 1280, 720);
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	//game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
+	Shader* shader = new Shader("res/shaders/light_box.vs", "res/shaders/light_box.fs");
+	printf("%d\n",shader->getProgram());
+	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices,shader , MESH_3D);
+	printf("cc -> %d\n", &cube_indices[0]);
 
 	unsigned int scene = game.CreateScene("test");
 	game.SetActiveScene(scene);
 
 	Scene* scn = game.GetActiveScene();
 	scn->AddCamera("Camera 1", &camera);
-
-	Shader* mesh_shader = new Shader("res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
-
-	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, mesh_shader, MESH_3D);
 	scn->Add3DObject("cube",mesh);
+
 
 	game.Run();
 	return 0;

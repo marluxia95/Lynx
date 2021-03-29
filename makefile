@@ -12,7 +12,7 @@ LOBJS = $(patsubst %,$(LDIR)/%,$(_LOBJ))
 IMGUI += $(IMGUI_DIR)/imgui.cpp $(IMGUI_DIR)/imgui_demo.cpp $(IMGUI_DIR)/imgui_draw.cpp $(IMGUI_DIR)/imgui_tables.cpp $(IMGUI_DIR)/imgui_widgets.cpp
 IMGUI += $(IMGUI_DIR)/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/backends/imgui_impl_opengl3.cpp
 
-_OBJ_TEST = main_old.cpp simpleGameEngine.cpp logger.cpp shader.cpp texture.cpp vertexArray.cpp vertexBuffer.cpp camera.cpp sprite.cpp resourceManager.cpp scene.cpp mesh.cpp 
+_OBJ_TEST = main_test.cpp logger.cpp shader.cpp texture.cpp vertexArray.cpp vertexBuffer.cpp camera.cpp sprite.cpp resourceManager.cpp scene.cpp mesh.cpp elementBuffer.cpp
 OBJS_TEST = $(patsubst %,$(ODIR)/%,$(_OBJ_TEST))
 
 _DEPS = shader.h texture.h

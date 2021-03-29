@@ -19,7 +19,7 @@ class VertexBuffer{
 public:
 	// "Classic" method
 	VertexBuffer(const void* data, unsigned int size);
-	VertexBuffer(vector<Vertex>* vertices, vector<GLuint>* indices);
+	VertexBuffer(vector<Vertex>* vertices);
 	~VertexBuffer();
 	void Bind();
 	void Unbind();

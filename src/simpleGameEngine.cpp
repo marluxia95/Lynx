@@ -11,7 +11,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-
+#include "mesh.h"
 #include "logger.h"
 #include "simpleGameEngine.h"
 #include "camera.h"
@@ -29,6 +29,7 @@ float Game::pitch;
 float Game::yaw;
 float Game::lastX;
 float Game::lastY;
+double Game::mouseXPos, Game::mouseYPos;
 bool Game::firstMouse;
 std::vector<Scene*> Game::Scenes;
 
@@ -75,7 +76,6 @@ void Game::initWindow(){
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
-	//glfwSetUserPointer(game_, this);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);  
 	glfwSetCursorPosCallback(window, MouseCallback);  
@@ -130,15 +130,15 @@ bool Game::SetActiveScene(int id){
 void Game::Run(){
 	while((!glfwWindowShouldClose(window))|running)
 	{
-		ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
         float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
-		glfwPollEvents();
+        glfwPollEvents();
 
+		ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+		
 		OnUpdate();
 
 		//ProcessInput();
@@ -197,6 +197,8 @@ void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 	Scenes[activeScene]->Cameras["penis"]->front = glm::normalize(direction);
     */
+    mouseXPos = xpos;
+    mouseYPos = ypos;
 }
 
 void Game::ProcessInput(GLFWwindow *window)
@@ -276,11 +278,6 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    // Loop through current scene's cameras
-    for(const auto &cam : Scenes[activeScene]->Cameras){
-        cam.second->resX = width;
-        cam.second->resY = height;
-    }
     glViewport(0, 0, width, height);
 }  
 
@@ -289,20 +286,52 @@ void Game::DebugWindow(){
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
     
-    for(const auto &spr : Scenes[activeScene]->Sprites){
-        if (ImGui::Button(spr.first))
-        {
-            selectedType = 1;
-            selectedSprite = spr.second;
-            selectedName = spr.first;
+    if(Scenes[activeScene]->Sprites.size()>0){
+        ImGui::Text("Sprites");
+        for(const auto &spr : Scenes[activeScene]->Sprites){
+            if (ImGui::Button(spr.first))
+            {
+                selectedType = 1;
+                selectedSprite = spr.second;
+                selectedName = spr.first;
+            }
         }
     }
-    for(const auto &cam : Scenes[activeScene]->Cameras){
-        if (ImGui::Button(cam.first))
+    
+    if(Scenes[activeScene]->Cameras.size()>0){
+        ImGui::Separator();
+        ImGui::Text("Cameras");
+        for(const auto &cam : Scenes[activeScene]->Cameras){
+            if (ImGui::Button(cam.first))
+            {
+                selectedType = 2;
+                selectedCamera = cam.second;
+                selectedName = cam.first;
+            }
+        }
+    }
+
+    if(Scenes[activeScene]->Objects3D.size()>0){
+        ImGui::Separator();
+        ImGui::Text("3D Meshes");
+        for(const auto &obj : Scenes[activeScene]->Objects3D){
+            if (ImGui::Button(obj.first))
+            {
+                selectedType = 3;
+                selectedMesh3D = obj.second;
+                selectedName = obj.first;
+            }
+        }
+    }
+    ImGui::Separator();
+    ImGui::Text("Resources");
+
+    for(const auto &shdr : resourceManager.ShaderMap){
+        if (ImGui::Button(shdr.first))
         {
-            selectedType = 2;
-            selectedCamera = cam.second;
-            selectedName = cam.first;
+            selectedType = 4;
+            selectedShader = shdr.second;
+            selectedName = shdr.first;
         }
     }
     ImGui::End();
@@ -328,10 +357,45 @@ void Game::DebugWindow(){
         ImGui::Text("Front (ang) : ");
         ImGui::SameLine();
         ImGui::InputFloat3("##2",glm::value_ptr(selectedCamera->front));
+    }else if(selectedType == 3){
+        ImGui::Text("Selected : %s", selectedName);
+        ImGui::Text("Type : Mesh 3D");
+        ImGui::Text("XYZ : ");
+        ImGui::SameLine();
+        ImGui::InputFloat3("##1",glm::value_ptr(selectedMesh3D->pos));
+    }else if(selectedType == 4){
+        ImGui::Text("Selected : %s", selectedName);
+        ImGui::Text("Type : Shader");
+        int attrib_count, uniform_count;
+        glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_ATTRIBUTES, &attrib_count);
+        glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_UNIFORMS, &uniform_count);
+        ImGui::Text("Active attributes ( %d ) : ", attrib_count);
+        ImGui::Text("Active uniforms ( %d ) : ", uniform_count);
+        
+        if (ImGui::CollapsingHeader("Attributes"))
+        {
+            
+            for (int i = 0; i < attrib_count; i++)
+            {
+
+                int count;
+                int length;
+                GLsizei size;
+                GLenum type;
+                char name[512];
+                glGetActiveAttrib(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
+                if (ImGui::TreeNode("%s##%d", name, i))
+                {
+                    ImGui::Text("Name %s ", name);
+                    ImGui::Text("Type %u ", type);
+                    ImGui::TreePop();
+                }
+            }
+        }
     }
 
     ImGui::End();
-	
+
 }
 
 }

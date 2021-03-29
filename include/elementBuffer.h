@@ -16,6 +16,7 @@ class ElementBuffer {
         ElementBuffer(vector<GLuint>* indices);
         ~ElementBuffer();
         void Bind();
+        void Unbind();
 
     private:
         unsigned int ID;

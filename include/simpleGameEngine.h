@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "logger.h"
 #include "scene.h"
+#include "mesh.h"
 #include "resourceManager.h"
 
 namespace Lynx{
@@ -41,6 +42,11 @@ namespace Lynx{
 		Logger logger;
 		GLFWwindow* window;
 		static int activeScene;
+		static bool keys[1024];
+		static bool mouseLock;
+		static double mouseXPos, mouseYPos;
+		float delta_time = 0.0f;
+		float last_FrameTime = 0.0f;
 		
 
 
@@ -48,9 +54,7 @@ namespace Lynx{
 		bool running;
 		static bool debugMode;
 
-		float delta_time = 0.0f;
-		float last_FrameTime = 0.0f;
-		float camera_Speed_Multiplier = 1.0f;
+	
 
 		
 		char* windowName = "Simple Game Engine";
@@ -61,13 +65,15 @@ namespace Lynx{
 		// debug variables
 		int selectedType; // 1 for sprite 2 for camera
 	    Camera* selectedCamera;
+		Mesh3D* selectedMesh3D;
 	    Sprite* selectedSprite;
+		Shader* selectedShader;
 	    const char* selectedName;
 	    const char* buttonName;
 		
-		static bool mouseLock;
+		
 		static int polygonMode;
-		static bool keys[1024];
+		
 
 		static float pitch;
 		static float yaw;
@@ -77,7 +83,6 @@ namespace Lynx{
 		static bool firstMouse;
 
 		void initWindow();
-
 
 		static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 		static void ProcessInput(GLFWwindow *window);

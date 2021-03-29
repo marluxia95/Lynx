@@ -4,6 +4,8 @@
 #include <GL/glew.h> 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include "vertexArray.h"
 #include "vertexBuffer.h"
 #include "elementBuffer.h"
@@ -16,12 +18,14 @@ namespace Lynx {
 
 Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : vertices(vertices), indices(indices), type(type){
 
-	VAO = new VertexArray();
-	VBO = new VertexBuffer(vertices, vertices->size());
-	EBO = new ElementBuffer(indices);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
+	glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
 	
+
+	VAO = new VertexArray();
 	VAO->Bind();
-	EBO->Bind();
 	
 
 	// VAO Configuration
@@ -57,10 +61,11 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 			glEnableVertexAttribArray(2);
 			break;
 	}
-
-	VAO->Unbind();
-
-	
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
+    VAO->Unbind();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 
 }
 
@@ -69,38 +74,38 @@ Mesh::~Mesh(){
 }
 
 void Mesh::Render(){
-	VAO->Bind();
-	glDrawElements(GL_TRIANGLES, vertices->size(), GL_UNSIGNED_INT, 0);
-	VAO->Unbind();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 }
 
 
 Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
-	: Mesh(vertices, indices, type){
+	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){printf("Invalid mesh type\n"); return;}
-	if(shader == nullptr) {
-		shader = new Shader("res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
-	}else{
-		shader = shader;
-	}
 
 }
 
 void Mesh3D::Render(mat4 projection, mat4 view){
+	VAO->Bind();
 	model = mat4(1.0f);
-	model = translate(model, pos);
+	model = translate(model, this->pos);
 	
+	if(shader == nullptr) {printf("Shader is NULL!\n"); return;}
 	// Set model values
 	/*
 	shader->setMat4("projection", projection);
 	shader->setMat4("model", model);
 	shader->setMat4("view", view);
 	*/
-	printf("%d\n", this->vertices->size());
-	VAO->Bind();
-	VBO->Bind();
-	glDrawElements(GL_TRIANGLES, this->vertices->size(), GL_UNSIGNED_INT, 0);
-	VAO->Unbind();
+	shader->use();
+	shader->setMat4("projection", projection);
+	shader->setMat4("view", view);
+	shader->setMat4("model", model);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 }
 
 }

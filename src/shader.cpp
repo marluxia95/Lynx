@@ -180,18 +180,18 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 		return;
 	}
 
-	printf("Linking...\n");
-	ID = glCreateProgram();
-	glAttachShader(ID,vertex);
-	glAttachShader(ID,fragment);
-	glLinkProgram(ID);
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	printf("Linking and creating program...\n");
+	this->ID = glCreateProgram();
+	glAttachShader(this->ID,vertex);
+	glAttachShader(this->ID,fragment);
+	glLinkProgram(this->ID);
+	glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
 	if(!success){
 		glGetProgramInfoLog(ID, 512, NULL, log);
 		printf("Error while linking shaders! : %s\n", log);
 		return;
 	}
-	printf("Successfully compiled shader, cleaning up...\n");
+	printf("Successfully compiled shader ID : %d , cleaning up...\n", this->ID);
 	
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
@@ -199,41 +199,45 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 
 void Shader::destroy(){
 	if(ID)
-		glDeleteProgram(ID);
+		glDeleteProgram(this->ID);
 }
 
 void Shader::use(){
-	glUseProgram(ID);
+	glUseProgram(this->ID);
+}
+
+GLuint Shader::getProgram(){
+	return this->ID;
 }
 
 // Uniform set functions 
 void Shader::setBool(const char* name, bool value){
-	glUniform1i(glGetUniformLocation(ID, name), (int)value); 
+	glUniform1i(glGetUniformLocation(this->ID, name), (int)value); 
 }
 
 void Shader::setInt(const char* name, int value){
-	glUniform1i(glGetUniformLocation(ID, name), value);
+	glUniform1i(glGetUniformLocation(this->ID, name), value);
 }
 
 void Shader::setFloat(const char* name, float value){
-	glUniform1f(glGetUniformLocation(ID, name), value);
+	glUniform1f(glGetUniformLocation(this->ID, name), value);
 }
 
 void Shader::setVec3(const char* name, float value1, float value2, float value3){
-	glUniform3f(glGetUniformLocation(ID, name), value1, value2, value3);
+	glUniform3f(glGetUniformLocation(this->ID, name), value1, value2, value3);
 }
 
 void Shader::setVec3(const char* name, const glm::vec3 &value)
 { 
-	glUniform3fv(glGetUniformLocation(ID, name), 1, &value[0]); 
+	glUniform3fv(glGetUniformLocation(this->ID, name), 1, &value[0]); 
 }
 
 void Shader::setVec4(const char* name, float value1, float value2, float value3, float value4){
-	glUniform4f(glGetUniformLocation(ID, name), value1, value2, value3, value4);
+	glUniform4f(glGetUniformLocation(this->ID, name), value1, value2, value3, value4);
 }
 
 void Shader::setMat4(const char* name, const glm::mat4 &value){
-	glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 }

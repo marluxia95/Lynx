@@ -32,8 +32,8 @@ namespace Lynx {
 
 		protected:
 			VertexArray* VAO;
-			VertexBuffer* VBO;
-			ElementBuffer* EBO;
+			GLuint VBO;
+			GLuint EBO;
 
 			vector<Vertex>* vertices;
 			vector<GLuint>* indices;
@@ -49,12 +49,13 @@ namespace Lynx {
 			Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type);
 			~Mesh3D();
 			void Render(glm::mat4 projection, glm::mat4 view);
+			vec3 scale = vec3(1.0f);
+			vec3 pos = vec3(0.0f);
+			vec3 color = vec3(1.0f);
 		protected:
 			Shader* shader;
 			mat4 model;
-			vec3 scale = vec3(1.0f);
-			vec3 pos;
-			vec3 color;
+			
 				
 	};
 }
