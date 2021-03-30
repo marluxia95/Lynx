@@ -12,15 +12,13 @@ std::map<const char*, Texture*> ResourceManager::TextureMap;
 int ResourceManager::textureCount;
 
 Texture* ResourceManager::CreateTexture(const char* name, const char* path){
-	Texture tex(path, textureCount);
-	TextureMap[name] = &tex;
+	TextureMap[name] = new Texture(path, textureCount);
 	textureCount++;
 	return TextureMap[name];
 }
 
 Shader* ResourceManager::CreateShader(const char* name, const char* vertexPath, const char* fragmentPath){
-	Shader shader(vertexPath, fragmentPath);
-	ShaderMap[name] = &shader;
+	ShaderMap[name] = new Shader(vertexPath, fragmentPath);
 	return ShaderMap[name];
 }
 

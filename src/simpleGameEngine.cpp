@@ -281,7 +281,27 @@ void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }  
 
+
 void Game::DebugWindow(){
+    if (ImGui::BeginMainMenuBar())
+    {
+        if(ImGui::BeginMenu("File")){
+            if (ImGui::MenuItem("New")) {}
+            if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+            if (ImGui::MenuItem("Export scene", "Ctrl+LShift+E")) {}
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("Edit")){
+            if (ImGui::MenuItem("Preferences")) {}
+            ImGui::EndMenu();
+        }
+        if(ImGui::BeginMenu("Window")){
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+
 	ImGui::Begin("Objects");
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));

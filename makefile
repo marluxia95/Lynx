@@ -3,7 +3,7 @@ IDIR = ./include
 LDIR = ./lib
 IMGUI_DIR = $(LDIR)/imgui
 
-_OBJ = main.cpp simpleGameEngine.cpp logger.cpp shader.cpp texture.cpp vertexArray.cpp vertexBuffer.cpp camera.cpp sprite.cpp resourceManager.cpp scene.cpp mesh.cpp elementBuffer.cpp
+_OBJ = main.cpp simpleGameEngine.cpp logger.cpp shader.cpp texture.cpp vertexArray.cpp vertexBuffer.cpp camera.cpp sprite.cpp resourceManager.cpp scene.cpp mesh.cpp model.cpp elementBuffer.cpp
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _LOBJ = 

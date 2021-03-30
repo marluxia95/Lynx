@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "mesh.h"
+#include "model.h"
 #include "utils.h"
 
 using namespace Lynx;
@@ -98,11 +99,12 @@ int main(){
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	//game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/textured_box.vs", "res/shaders/standard/textured_box.fs");
-	Shader* shader = new Shader("res/shaders/light_box.vs", "res/shaders/light_box.fs");
-	printf("%d\n",shader->getProgram());
-	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices,shader , MESH_3D);
-	printf("cc -> %d\n", &cube_indices[0]);
+	game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	//Shader* shader = new Shader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	Model model1;
+	model1.load("res/models/monkey.obj");
+	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("mesh_shader") , MESH_3D);
+	Mesh3D* mesh2 = new Mesh3D(&model1.vertices, &model1.vert_indices, game.resourceManager.GetShader("mesh_shader") , MESH_3D);
 
 	unsigned int scene = game.CreateScene("test");
 	game.SetActiveScene(scene);
@@ -110,6 +112,7 @@ int main(){
 	Scene* scn = game.GetActiveScene();
 	scn->AddCamera("Camera 1", &camera);
 	scn->Add3DObject("cube",mesh);
+	scn->Add3DObject("monke",mesh2);
 
 
 	game.Run();
