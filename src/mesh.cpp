@@ -9,7 +9,9 @@
 #include "vertexArray.h"
 #include "vertexBuffer.h"
 #include "elementBuffer.h"
+#include "model.h"
 #include "mesh.h"
+
 
 using namespace glm;
 using namespace std;
@@ -86,18 +88,24 @@ Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader
 
 }
 
+Mesh3D::Mesh3D(Model model, Shader* shader, MeshType type)
+	: Mesh(&model.vertices, &model.indices, type), shader(shader){
+	if(type<MESH_3D){printf("Invalid mesh type\n"); return;}
+
+}
+
+
+Mesh3D::~Mesh3D(){
+	shader->destroy();
+}
+
 void Mesh3D::Render(mat4 projection, mat4 view){
 	VAO->Bind();
 	model = mat4(1.0f);
 	model = translate(model, this->pos);
 	
 	if(shader == nullptr) {printf("Shader is NULL!\n"); return;}
-	// Set model values
-	/*
-	shader->setMat4("projection", projection);
-	shader->setMat4("model", model);
-	shader->setMat4("view", view);
-	*/
+	// Set shader values
 	shader->use();
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);

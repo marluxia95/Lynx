@@ -11,6 +11,7 @@
 #include "resourceManager.h"
 #include "texture.h"
 #include "mesh.h"
+#include "model.h"
 
 
 namespace Lynx {
@@ -41,11 +42,12 @@ void Scene::SetActiveCamera(const char* name){
 
 void Scene::Render(){
 	if(Cameras[activeCamera] == nullptr){printf("No active camera\n"); return;}
+	if(!activeCamera){ // Do not render if there is no camera
+		return;
+	}
 	if(!Sprites.empty()){
 		for(const auto &spr : Sprites){
-			if(!activeCamera){
-				return;
-			}
+			
 
 			Sprite* curSprite = spr.second;
 			//curSprite->Draw(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
@@ -53,9 +55,7 @@ void Scene::Render(){
 	}
 	if(!Objects3D.empty()){
 		for(const auto &obj : Objects3D){
-			if(!activeCamera){
-				return;
-			}
+			
 			obj.second->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView());
 		}
 	}

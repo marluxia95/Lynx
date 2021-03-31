@@ -10,6 +10,7 @@
 #include "vertexBuffer.h"
 #include "elementBuffer.h"
 #include "shader.h"
+#include "model.h"
 
 using namespace std;
 using namespace glm;
@@ -47,6 +48,7 @@ namespace Lynx {
 	class Mesh3D : Mesh {
 		public:
 			Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type);
+			Mesh3D(Model model, Shader* shader, MeshType type);
 			~Mesh3D();
 			void Render(glm::mat4 projection, glm::mat4 view);
 			vec3 scale = vec3(1.0f);

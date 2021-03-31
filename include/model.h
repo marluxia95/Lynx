@@ -7,18 +7,16 @@
 
 using namespace std;
 
-class Model {
-    public:
-    bool load(const char* path);
+namespace Lynx {
 
+typedef struct Model {
     vector<Vertex> vertices;
-    vector<GLuint> vert_indices;
-    vector<GLuint> tex_indices;
-    vector<GLuint> normal_indices;
-    
-    
-
+    vector<GLuint> indices;
 };
+
+Model loadModelFromFile(const char* path);
+
+}
 
 
 #endif

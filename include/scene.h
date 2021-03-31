@@ -6,6 +6,7 @@
 #include <map>
 #include "sprite.h"
 #include "mesh.h"
+#include "model.h"
 #include "camera.h"
 #include "resourceManager.h"
 
@@ -26,7 +27,6 @@ public:
 	std::map<const char*, Mesh3D*> Objects3D;
 	std::map<const char*, Sprite*> Sprites;
 	std::map<const char*, Camera*> Cameras;
-
 	const char* name;
 private:
 	
