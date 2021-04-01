@@ -25,7 +25,7 @@ class Shader
 
         void destroy();
         void use();
-        bool success;
+        bool success = true;
 
         void setBool(const char* name, bool value);  
         void setInt(const char* name, int value);   

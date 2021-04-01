@@ -114,8 +114,6 @@ int main(){
 	game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 	// Or just define a shader :
 	//Shader* shader = new Shader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-
-	game.resourceManager.CreateShader("diffuse_shader", "res/shaders/standard/diffuse.vs", "res/shaders/standard/diffuse.fs");
 	
 
 	printf("Model Loaded\n");
