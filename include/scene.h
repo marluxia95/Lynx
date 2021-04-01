@@ -9,12 +9,14 @@
 #include "model.h"
 #include "camera.h"
 #include "resourceManager.h"
+#include "logger.h"
 
 namespace Lynx {
 
 class Scene{
 public:
-	Scene(const char* name, ResourceManager* reManager);
+	Scene(const char* name, ResourceManager* resourceManager);
+	Scene(const char* name, ResourceManager* resourceManager, Logger* logger);
 	void AddSprite(const char* name, Sprite* sprite);
 	void Add3DObject(const char* name, Mesh3D* obj);
 	void AddCamera(const char* name, Camera* camera);
@@ -29,7 +31,7 @@ public:
 	std::map<const char*, Camera*> Cameras;
 	const char* name;
 private:
-	
+	Logger* logger;
 	ResourceManager* resourceManager;
 	const char* activeCamera;
 };

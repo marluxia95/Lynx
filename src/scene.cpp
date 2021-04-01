@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+
+
 #include "scene.h"
 #include "sprite.h"
 #include "camera.h"
@@ -12,13 +14,17 @@
 #include "texture.h"
 #include "mesh.h"
 #include "model.h"
+#include "logger.h"
 
 
 namespace Lynx {
 
-Scene::Scene(const char* Name, ResourceManager* reManager){
-	name = Name;
-	resourceManager = reManager;
+Scene::Scene(const char* name, ResourceManager* resourceManager) : name(name), resourceManager(resourceManager){
+
+}
+
+Scene::Scene(const char* name, ResourceManager* resourceManager, Logger* logger) : name(name), resourceManager(resourceManager), logger(logger) {
+
 }
 
 void Scene::AddSprite(const char* name, Sprite* sprite){
@@ -57,6 +63,10 @@ void Scene::Render(){
 		for(const auto &obj : Objects3D){
 			
 			obj.second->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView());
+
+			if(logger && obj.second->checkErrors() != true){
+				logger->log(LOG_ERROR, "Error while rendering Mesh3D");
+			}
 		}
 	}
 	

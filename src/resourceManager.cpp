@@ -7,9 +7,12 @@
 
 namespace Lynx {
 
-std::map<const char*, Shader* > ResourceManager::ShaderMap;
-std::map<const char*, Texture*> ResourceManager::TextureMap;
-int ResourceManager::textureCount;
+
+ResourceManager::ResourceManager(Logger* logger) : logger(logger) {
+
+	logger->log(LOG_INFO, "Resource manager started");
+
+}
 
 Texture* ResourceManager::CreateTexture(const char* name, const char* path){
 	TextureMap[name] = new Texture(path, textureCount);
@@ -19,6 +22,9 @@ Texture* ResourceManager::CreateTexture(const char* name, const char* path){
 
 Shader* ResourceManager::CreateShader(const char* name, const char* vertexPath, const char* fragmentPath){
 	ShaderMap[name] = new Shader(vertexPath, fragmentPath);
+	if(ShaderMap[name]->success!=true){
+		logger->log(LOG_ERROR, "There was an error while compiling shader");
+	}
 	return ShaderMap[name];
 }
 

@@ -7,25 +7,26 @@
 #include "vertexBuffer.h"
 #include "model.h"
 
+using namespace std;
+
 namespace Lynx {
 
-Model loadModelFromFile(const char* path) {
-    Model model;
+vector<Vertex>* loadModelFromFile(const char* path) {
+    vector<Vertex>* finalArray = new vector<Vertex>();
 
-    vector<glm::vec3> vertices_temp;
-    vector<glm::vec3> uv_temp;
-    vector<glm::vec3> normal_temp;
+    vector<glm::vec3> vertices;
+    vector<glm::vec2> uv_pos;
+    vector<glm::vec3> n_pos;
 
-    vector<GLuint> tex_indices;
-    vector<GLuint> normal_indices;
-    
-
+    vector<GLuint> v_indices;
+    vector<GLuint> uv_indices;
+    vector<GLuint> n_indices;
 
     FILE* file = fopen(path, "r");
     printf("Loading model %s\n", path);
     if(file == NULL){
         printf("Unable to open model file.\n");
-        return model;
+        return nullptr;
     }
     bool vertexPart = false, uvPart = false, normalPart = false;
     
@@ -42,63 +43,66 @@ Model loadModelFromFile(const char* path) {
             if(!vertexPart){vertexPart = true; count = 0;} 
             glm::vec3 vertex;
             fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-            vertices_temp.push_back(vertex);
-            
+            vertices.push_back(vertex);
         }else if(strcmp(header, "vt") == 0){
             if(!uvPart){uvPart = true; count = 0;}
-            glm::vec3 tex_vertex;
-            fscanf(file, "%f %f %f\n", &tex_vertex.x, &tex_vertex.y, &tex_vertex.z);
-            uv_temp.push_back(tex_vertex);
+            glm::vec2 tex_vertex;
+            fscanf(file, "%f %f\n", &tex_vertex.x, &tex_vertex.y);
+            uv_pos.push_back(tex_vertex);
         }else if(strcmp(header, "vn") == 0) {
             if(!normalPart){normalPart = true; count = 0;}
             glm::vec3 normal_vertex;
             fscanf(file, "%f %f %f\n", &normal_vertex.x, &normal_vertex.y, &normal_vertex.z);
-            normal_temp.push_back(normal_vertex);
+            n_pos.push_back(normal_vertex);
         }else if(strcmp(header, "f") == 0){
             unsigned int v1,t1,n1,v2,t2,n2,v3,t3,n3;
             int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v1, &t1, &n1, &v2, &t2, &n3, &v3, &t3, &n3);
             if(matches < 9){
                 printf("Invalid format \n");
-                return model;
+                return nullptr;
             }
             // Set an offset of 1 because the OBJ format's indices starts at 1 not 0
-            model.indices.push_back(v1-1);
-            model.indices.push_back(v2-1);
-            model.indices.push_back(v3-1);
+            v_indices.push_back(v1-1);
+            v_indices.push_back(v2-1);
+            v_indices.push_back(v3-1);
 
-            tex_indices.push_back(t1-1);
-            tex_indices.push_back(t2-1);
-            tex_indices.push_back(t3-1);
+            uv_indices.push_back(t1-1);
+            uv_indices.push_back(t2-1);
+            uv_indices.push_back(t3-1);
 
-            normal_indices.push_back(n1-1);
-            normal_indices.push_back(n2-1);
-            normal_indices.push_back(n3-1);
+            n_indices.push_back(n1-1);
+            n_indices.push_back(n2-1);
+            n_indices.push_back(n3-1);
         }
 
         
     }
 
-    
-    printf("Converting vertices\n");
-    for(int v=0; v<vertices_temp.size(); v++) { 
-        Vertex vertex;
-        vertex.Position = vertices_temp[v];
-        model.vertices.push_back(vertex);
+    // Convert from indices to arrays ( sorry performance :( )
+    int v_size = vertices.size();
+    int vi_size = v_indices.size();
+    int uv_size = uv_pos.size();
+    int uvi_size = uv_indices.size();
+    int n_size = n_pos.size();
+    int ni_size = n_indices.size();
+    printf("vertices size : %d \n", v_size);
+    printf("vert indices size : %d \n", vi_size);
+    printf("uv's size : %d \n", uv_size);
+    printf("uv indices size : %d \n", uvi_size);
+    printf("normals size : %d \n",n_size);
+    printf("normal indices size : %d \n", ni_size);
+
+    for ( int v=0; v<vi_size; v++){
+        printf("%d ", v_indices[v]+1);
+        Vertex v1;
+        v1.Position = vertices[v_indices[v]];
+        v1.TextureCoords = uv_pos[uv_indices[v]];
+        v1.Normal = n_pos[n_indices[v]];
+        finalArray->push_back(v1);
     }
 
-    printf("Converting UV Coords ...\n");
-    for( int uv=0; uv<tex_indices.size(); uv++) {
-        //model.vertices[uv].TextureCoords = uv_temp[tex_indices[uv]];
-    }
-
-    printf("Converting Normal Coords ...\n");
-    /*for( int n=0; n<normal_indices.size(); n++) {
-        if(normal_indices.size()>model.vertices.size()){printf("bruh");}
-        //model.vertices[n].Normal = normal_temp[normal_indices[n]];
-    }*/
-
-    printf("Finished converting model.\n");
-    return model;
+    printf("Finished converting model. \n");
+    return finalArray;
 }
 
 

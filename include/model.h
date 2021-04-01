@@ -9,12 +9,7 @@ using namespace std;
 
 namespace Lynx {
 
-typedef struct Model {
-    vector<Vertex> vertices;
-    vector<GLuint> indices;
-};
-
-Model loadModelFromFile(const char* path);
+vector<Vertex>* loadModelFromFile(const char* path);
 
 }
 

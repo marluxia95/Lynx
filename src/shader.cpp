@@ -140,7 +140,7 @@ Shader::Shader(const char* shaderPath){
     free(shaderSource);	
 
     printf(fragmentShader);
-    compile(vertexShader, fragmentShader);
+    success = compile(vertexShader, fragmentShader);
 
     free(line);
     free(vertexShader);
@@ -149,10 +149,9 @@ Shader::Shader(const char* shaderPath){
 
 }
 
-void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderSource){
+bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderSource){
 	unsigned int vertex, fragment;
 	int success;
-	char log[512];
 	
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -166,18 +165,18 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	glCompileShader(vertex);
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 	if(!success){
-		glGetShaderInfoLog(vertex,512, NULL, log); 
-		printf("Error while compiling vertex shader %s! :\n %s\n", vertexFilePath, log);
-		return;
+		glGetShaderInfoLog(vertex,512, NULL, errorlog); 
+		printf("Error while compiling vertex shader %s! :\n %s\n", vertexFilePath, errorlog);
+		return false;
 	}
 
 	printf("Compiling fragment shader ...\n");
 	glCompileShader(fragment);
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	if(!success){
-		glGetShaderInfoLog(fragment, 512, NULL, log);
-		printf("Error while compiling fragment shader %s! :\n %s\n", fragmentFilePath, log);
-		return;
+		glGetShaderInfoLog(fragment, 512, NULL, errorlog);
+		printf("Error while compiling fragment shader %s! :\n %s\n", fragmentFilePath, errorlog);
+		return false;
 	}
 
 	printf("Linking and creating program...\n");
@@ -187,14 +186,20 @@ void Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	glLinkProgram(this->ID);
 	glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
 	if(!success){
-		glGetProgramInfoLog(ID, 512, NULL, log);
-		printf("Error while linking shaders! : %s\n", log);
-		return;
+		glGetProgramInfoLog(ID, 512, NULL, errorlog);
+		printf("Error while linking shaders! : %s\n", errorlog);
+		return false;
 	}
 	printf("Successfully compiled shader ID : %d , cleaning up...\n", this->ID);
 	
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+
+	return true;
+}
+
+char* Shader::getError(){
+	return errorlog;
 }
 
 void Shader::destroy(){

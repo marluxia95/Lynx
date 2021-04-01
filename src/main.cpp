@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include "simpleGameEngine.h"
 #include "sprite.h"
+#include "texture.h"
 #include "camera.h"
 #include "scene.h"
 #include "mesh.h"
@@ -95,6 +96,10 @@ void Game::OnLast(){
 
 }
 
+void shaderAttribs(){
+	
+}
+
 int main(){
 
 
@@ -109,13 +114,14 @@ int main(){
 	game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 	// Or just define a shader :
 	//Shader* shader = new Shader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+
+	game.resourceManager.CreateShader("diffuse_shader", "res/shaders/standard/diffuse.vs", "res/shaders/standard/diffuse.fs");
 	
-	// Load an .obj file
-	Model model1 = loadModelFromFile("res/models/monkey.obj");
 
 	printf("Model Loaded\n");
-	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("mesh_shader") , MESH_3D);
-	Mesh3D* monkeMesh = new Mesh3D(model1,game.resourceManager.GetShader("mesh_shader"), MESH_3D);
+	
+	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("mesh_shader") , MESH_3D_NORMAL);
+
 	printf("Generated meshes\n");
 
 	// Creates a scene and then sets it as the default scene
@@ -127,7 +133,7 @@ int main(){
 	Scene* scn = game.GetActiveScene();
 	scn->AddCamera("Camera 1", &camera);
 	scn->Add3DObject("cube",mesh);
-	scn->Add3DObject("monke",monkeMesh);
+	//scn->Add3DObject("cool cube",cube2);
 	printf("All objects are bind to scene\n");
 
 	// Runs the game

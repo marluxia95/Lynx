@@ -90,6 +90,10 @@ namespace Lynx{
 		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
 		void DebugWindow();
+		void InspectorWindow();
+		void DebugOverlay();
+		bool inspectorToggle;
+		bool overlayToggle;
 
 		virtual void OnInit();
 		virtual void OnUpdate();

@@ -11,8 +11,8 @@ using namespace glm;
 
 struct Vertex {
 	vec3 Position;
+	vec2 TextureCoords;
 	vec3 Normal;
-	vec3 TextureCoords;
 };
 
 class VertexBuffer{
