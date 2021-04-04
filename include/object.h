@@ -4,16 +4,18 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include "mesh.h"
+#include "light.h"
 
 namespace Lynx {
 
-class Object3D : Mesh3D {
+class Object3D : public Mesh3D {
     public:
-        Object3D(glm::vec3 LightPos, glm::vec3 LightColor);
+        Object3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, Material material); 
         ~Object3D();
-        void Render();
+        void Render(glm::mat4 view, glm::mat4 projection, glm::vec3 viewPos, std::vector<PointLight*>* pointLights);
     protected:
-
+        Shader* shader;
+        Material material;
 };
 
 }

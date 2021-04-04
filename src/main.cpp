@@ -6,8 +6,9 @@
 #include "sprite.h"
 #include "texture.h"
 #include "camera.h"
+#include "light.h"
 #include "scene.h"
-#include "mesh.h"
+#include "object.h"
 #include "model.h"
 #include "utils.h"
 
@@ -110,15 +111,40 @@ int main(){
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	// You can either use the resource manager to load a shader :
-	game.resourceManager.CreateShader("mesh_shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-	// Or just define a shader :
-	//Shader* shader = new Shader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-	
-
 	printf("Model Loaded\n");
+
+	game.resourceManager.CreateShader("Lightning Shader", "res/shaders/standard/lightning.vs", "res/shaders/standard/lightning.fs");
 	
-	Mesh3D* mesh = new Mesh3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("mesh_shader") , MESH_3D_NORMAL);
+	Material mat = {
+		glm::vec3(0.3f),
+		glm::vec3(0.5f),
+		glm::vec3(0.5f),
+		1.0f
+	};
+
+	Object3D* object = new Object3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("Lightning Shader"), mat);
+
+	PointLight* light = new PointLight{
+		glm::vec3(0.0f, 2.0f, 0.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		1.0f,
+		0.09f,
+		0.032f
+	};
+
+	PointLight* light2 = new PointLight{
+		glm::vec3(2.0f, 2.0f, 0.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		glm::vec3(1.0f),
+		1.0f,
+		0.09f,
+		0.032f
+	};
+
+	
 
 	printf("Generated meshes\n");
 
@@ -130,7 +156,9 @@ int main(){
 	// Bind all objects to the active scene in order to be rendered
 	Scene* scn = game.GetActiveScene();
 	scn->AddCamera("Camera 1", &camera);
-	scn->Add3DObject("cube",mesh);
+	scn->Add3DObject("Cube",object);
+	scn->AddPointLight(light);
+	scn->AddPointLight(light2);
 	//scn->Add3DObject("cool cube",cube2);
 	printf("All objects are bind to scene\n");
 

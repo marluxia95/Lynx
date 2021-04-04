@@ -89,6 +89,10 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 
 }
 
+MeshType Mesh::GetType(){
+	return type;
+}
+
 Mesh::Mesh(){}
 
 bool Mesh::checkErrors(){
@@ -135,11 +139,11 @@ void Mesh3D::Render(mat4 projection, mat4 view){
 	shader->setMat4("view", view);
 	shader->setMat4("model", model);
 	
-	if(type >= MESH_3D_TEXTURED&&texture!=nullptr){
-		if(texture->texture == NULL){
+	if(type >= MESH_3D_TEXTURED){
+		if(texture == nullptr){
 			error = "Model not bind to a texture !\n";
 			success = false;
-		}else{
+		}else if(texture->texture != NULL){
 			texture->use();
 		}
 

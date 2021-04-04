@@ -37,6 +37,7 @@ namespace Lynx {
 			Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type); // Element buffer mode
 			Mesh(); // does nothing
 			~Mesh();
+			MeshType GetType();
 			void Render();
 			char* getError();
 			bool checkErrors();
@@ -68,7 +69,7 @@ namespace Lynx {
 			vec3 scale = vec3(1.0f);
 			vec3 pos = vec3(0.0f);
 			vec3 color = vec3(1.0f);
-			Texture* texture;
+			Texture* texture = nullptr;
 		protected:
 			void loadModel();
 			void generateMesh();

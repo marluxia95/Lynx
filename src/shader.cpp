@@ -52,100 +52,49 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 Shader::Shader(const char* shaderPath){
 	FILE *shaderFile;
 
+	char* buffer = 0;
+
 	shaderFile = fopen(shaderPath, "r");
-	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile"); return;}
+	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile\n"); return;}
 	fseek(shaderFile, 0, SEEK_END);
 	int fileSize = ftell(shaderFile);
 	rewind(shaderFile);
 
-	char *shaderSource = NULL;
-	shaderSource = (char*)malloc(fileSize*sizeof(char));
-	fread(shaderSource, sizeof(char), fileSize, shaderFile);
+	buffer = (char*)malloc(fileSize+1);
 
-	rewind(shaderFile);
+	fread(buffer, sizeof(char), fileSize, shaderFile);
+
+	char* vertexShaderSource, *fragmentShaderSource;
 	
+	printf("%s\n",buffer);
 
-	// Remove EOF 
-	shaderSource[strcspn(shaderSource, "\n")] = 0;
+	char* line;
+	char* vertexShaderChunk, *fragmentShaderChunk;
 
-	char *line = NULL;
-	char *vertexHeader;
-	char *fragmentHeader;
-	char *endHeader;
-	char *parsingBuffer = NULL;
+	// Get the vertex shader chunk
+	while ( (line = strsep(&buffer, "\n") ) != NULL  ) {
+		char* header;
+		if( (header = strstr(line, "#shader vertex")) != NULL ) { 
+			vertexShaderChunk = header;
+			printf("Found vertex header\n");
+		}
+	}
 
-	parsingBuffer = (char*)malloc(fileSize*sizeof(char));
-	parsingBuffer[0] = '\0';
-
-	char *vertexShader = NULL;
-	char *fragmentShader = NULL;
-
-	int currentShader;
-	int shaderSize;
-	size_t len;
-	ssize_t read;
-	printf("Shader type   | size | content\n");
-	while ((read = getline(&line, &len, shaderFile)) != -1) {
-		vertexHeader = strstr(line, "#shader vertex");
-		fragmentHeader = strstr(line, "#shader fragment");
-		switch(currentShader){
-			
-			case 0:
-				if(vertexHeader != NULL){
-		        	currentShader = 1;
-		        }else if(fragmentHeader != NULL){
-		        	currentShader = 2;
-		        }
-		        break;
-		    case 1:
-		    	if(fragmentHeader != NULL){
-		    		printf("Starting to allocate %d from vertex shader ...\n", shaderSize);
-		    		vertexShader = (char*)malloc(shaderSize);
-		    		printf("Starting to copy data from buffer ...\n");
-		    		memcpy(&vertexShader,&parsingBuffer, shaderSize);
-		    		currentShader = 2;
-		    		break;
-		    	}else{
-		    		shaderSize += sizeof(line);
-		    		printf("Vertex Shader |  %d  | %s",sizeof(line),line);
-		    		strcat(parsingBuffer, line);
-		    	}
-		    	break;
-		    case 2:
-		    	printf("Beggining of fragment shader \n");
-		    	if(vertexHeader != NULL){
-		    		printf("Starting to allocate %d from fragment shader ...\n", shaderSize);
-		    		fragmentShader = (char*)malloc(shaderSize);
-		    		printf("Starting to copy data from buffer ...\n");
-		    		memcpy(&fragmentShader,&parsingBuffer, shaderSize);
-		    		printf("Cleaning up buffer ...\n");
-		    		parsingBuffer = "\0";
-		    		shaderSize = 0;
-		    		currentShader = 0;
-		    		break;
-		    	}else{
-		    		printf("Fragment Shader |  %d  | %s",sizeof(line),line);
-		    		shaderSize += sizeof(line);
-		    		strcat(parsingBuffer, line);
-		    	}
-		    	break;
-
+	// Get the start pointer of the fragment chunk
+	while ( (line = strsep(&buffer, "\n") ) != NULL  ) {
+		char* header;
+		if( (header = strstr(line, "#shader fragment") ) != NULL ) {
+			fragmentShaderChunk = header;
+			printf("Found fragment header\n");
 		}
 
-        
-    }
-	
+	}
 
-    fclose(shaderFile);
-    free(shaderSource);	
+	printf("Vertex Position \n %td \n", vertexShaderChunk - buffer);
+	printf("Fragment Position \n %td \n", fragmentShaderChunk - buffer);
 
-    printf(fragmentShader);
-    success = compile(vertexShader, fragmentShader);
-
-    free(line);
-    free(vertexShader);
-    free(fragmentShader);
-
+	fclose(shaderFile);
+	free(buffer);
 
 }
 
@@ -244,5 +193,6 @@ void Shader::setVec4(const char* name, float value1, float value2, float value3,
 void Shader::setMat4(const char* name, const glm::mat4 &value){
 	glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, GL_FALSE, glm::value_ptr(value));
 }
+
 
 }

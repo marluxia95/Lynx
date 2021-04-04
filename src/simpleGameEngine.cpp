@@ -17,7 +17,6 @@
 #include "camera.h"
 #include "scene.h"
 
-
 namespace Lynx {
 
 bool Game::mouseLock;
@@ -61,7 +60,7 @@ void Game::SetDebugMode(bool mode){
 void Game::initWindow(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -77,10 +76,12 @@ void Game::initWindow(){
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Limit FPS
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);  
 	glfwSetCursorPosCallback(window, MouseCallback);  
 	glfwSetKeyCallback(window, KeyCallback);
+
+    mouseLock = false;
 
 	bool err = glewInit() != GLEW_OK;   
 
@@ -309,6 +310,7 @@ void Game::DebugWindow(){
 
 }
 
+
 void Game::InspectorWindow(){
     ImGui::Begin("Objects");
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
@@ -339,10 +341,10 @@ void Game::InspectorWindow(){
         }
     }
 
-    if(Scenes[activeScene]->Objects3D.size()>0){
+    if(Scenes[activeScene]->Objects.size()>0){
         ImGui::Separator();
         ImGui::Text("3D Meshes");
-        for(const auto &obj : Scenes[activeScene]->Objects3D){
+        for(const auto &obj : Scenes[activeScene]->Objects){
             if (ImGui::Button(obj.first))
             {
                 selectedType = 3;
@@ -412,6 +414,27 @@ void Game::InspectorWindow(){
                 GLenum type;
                 char name[512];
                 glGetActiveAttrib(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
+                if (ImGui::TreeNode("%s##%d", name, i))
+                {
+                    ImGui::Text("Name %s ", name);
+                    ImGui::Text("Type %u ", type);
+                    ImGui::TreePop();
+                }
+            }
+        }
+
+        if (ImGui::CollapsingHeader("Uniforms"))
+        {
+            
+            for (int i = 0; i < uniform_count; i++)
+            {
+
+                int count;
+                int length;
+                GLsizei size;
+                GLenum type;
+                char name[512];
+                glGetActiveUniform(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
                 if (ImGui::TreeNode("%s##%d", name, i))
                 {
                     ImGui::Text("Name %s ", name);
