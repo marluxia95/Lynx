@@ -6,11 +6,7 @@
 #include "sprite.h"
 #include "texture.h"
 #include "camera.h"
-#include "light.h"
 #include "scene.h"
-#include "object.h"
-#include "model.h"
-#include "utils.h"
 
 using namespace Lynx;
 
@@ -111,55 +107,21 @@ int main(){
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	printf("Model Loaded\n");
+	game.resourceManager.CreateShader("SpriteShader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	game.resourceManager.CreateTexture("SpriteTexture", "res/images/prototype.png");
 
-	game.resourceManager.CreateShader("Lightning Shader", "res/shaders/standard/lightning.vs", "res/shaders/standard/lightning.fs");
-	
-	Material mat = {
-		glm::vec3(0.3f),
-		glm::vec3(0.5f),
-		glm::vec3(0.5f),
-		1.0f
-	};
 
-	Object3D* object = new Object3D(&cube_vertices, &cube_indices, game.resourceManager.GetShader("Lightning Shader"), mat);
+	Sprite* sprite = new Sprite(game.resourceManager.GetShader("SpriteShader"));
+	sprite->texture = game.resourceManager.GetTexture("SpriteTexture");
 
-	PointLight* light = new PointLight{
-		glm::vec3(0.0f, 2.0f, 0.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		1.0f,
-		0.09f,
-		0.032f
-	};
-
-	PointLight* light2 = new PointLight{
-		glm::vec3(2.0f, 2.0f, 0.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		glm::vec3(1.0f),
-		1.0f,
-		0.09f,
-		0.032f
-	};
-
-	
-
-	printf("Generated meshes\n");
-
-	// Creates a scene and then sets it as the default scene
 	unsigned int scene = game.CreateScene("test");
 	game.SetActiveScene(scene);
-	printf("Scenes created\n");
 
-	// Bind all objects to the active scene in order to be rendered
 	Scene* scn = game.GetActiveScene();
+
 	scn->AddCamera("Camera 1", &camera);
-	scn->Add3DObject("Cube",object);
-	scn->AddPointLight(light);
-	scn->AddPointLight(light2);
-	//scn->Add3DObject("cool cube",cube2);
+	scn->AddSprite("Sprite1", sprite);
+	
 	printf("All objects are bind to scene\n");
 
 	// Runs the game

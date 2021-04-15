@@ -13,9 +13,9 @@ public:
 	glm::vec3 front;
 	glm::vec3 up;
 	float FOV = 60;
-private:	
 	int resX;
-	int resY;
+	int resY;	
+	
 
 };
 

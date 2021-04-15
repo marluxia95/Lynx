@@ -8,45 +8,8 @@
 namespace Lynx {
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
-	FILE *vertexFile;
-	FILE *fragmentFile;
-
-	vertexFilePath = vertexPath;
-	fragmentFilePath = fragmentPath;
-
-	vertexFile = fopen(vertexPath,"r");
-	fragmentFile = fopen(fragmentPath, "r");
-	if(!vertexFile|!fragmentFile){printf("Error! Couldn't open shaderfiles!\n"); return;}
-	fseek(vertexFile, 0, SEEK_END);
-	fseek(fragmentFile, 0, SEEK_END);
-	int vertexShaderSize = ftell(vertexFile);
-	int fragmentShaderSize = ftell(fragmentFile);
-
-	rewind( vertexFile );
-	rewind( fragmentFile );
-
-	// Allocate shader string variable and read from shader file
-
-	char *vertexShaderSource = NULL;
-	char *fragmentShaderSource = NULL;
-
-	vertexShaderSource = (char*)malloc(1+vertexShaderSize);
-	fragmentShaderSource = (char*)malloc(1+fragmentShaderSize);
-
-	fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
-	fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
-
-	fclose(vertexFile);
-	fclose(fragmentFile);
-
-	vertexShaderSource[vertexShaderSize] = '\0';
-	fragmentShaderSource[fragmentShaderSize] = '\0';
-
-	compile(vertexShaderSource, fragmentShaderSource);
-
-	free(vertexShaderSource);
-	free(fragmentShaderSource);
 	
+	loadShaderFromFile(vertexPath, fragmentPath);
 }
 
 Shader::Shader(const char* shaderPath){
@@ -98,9 +61,54 @@ Shader::Shader(const char* shaderPath){
 
 }
 
+void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath){
+	FILE *vertexFile;
+	FILE *fragmentFile;
+
+	vertexFilePath = vertexShaderPath;
+	fragmentFilePath = fragmentShaderPath;
+
+	vertexFile = fopen(vertexFilePath,"r");
+	fragmentFile = fopen(fragmentFilePath, "r");
+	if(!vertexFile|!fragmentFile){printf("Error! Couldn't open shaderfiles!\n"); return;}
+	fseek(vertexFile, 0, SEEK_END);
+	fseek(fragmentFile, 0, SEEK_END);
+	int vertexShaderSize = ftell(vertexFile);
+	int fragmentShaderSize = ftell(fragmentFile);
+
+	rewind( vertexFile );
+	rewind( fragmentFile );
+
+	// Allocate shader string variable and read from shader file
+
+	char *vertexShaderSource = NULL;
+	char *fragmentShaderSource = NULL;
+
+	vertexShaderSource = (char*)malloc(1+vertexShaderSize);
+	fragmentShaderSource = (char*)malloc(1+fragmentShaderSize);
+
+	fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
+	fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
+
+	fclose(vertexFile);
+	fclose(fragmentFile);
+
+	vertexShaderSource[vertexShaderSize] = '\0';
+	fragmentShaderSource[fragmentShaderSize] = '\0';
+
+	success = compile(vertexShaderSource, fragmentShaderSource);
+
+	free(vertexShaderSource);
+	free(fragmentShaderSource);
+}
+
 bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderSource){
 	unsigned int vertex, fragment;
 	int success;
+
+	if(ID){
+		destroy();
+	}
 	
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
@@ -145,6 +153,14 @@ bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	glDeleteShader(fragment);
 
 	return true;
+
+	
+}
+
+bool Shader::Reload(){
+	assert(vertexFilePath && fragmentFilePath && ID);
+
+	loadShaderFromFile(vertexFilePath, fragmentFilePath);
 }
 
 char* Shader::getError(){

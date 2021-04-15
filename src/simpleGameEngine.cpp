@@ -281,6 +281,11 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    
+    for ( const auto &cam : Scenes[activeScene]->Cameras){
+        cam.second->resX = width;
+        cam.second->resY = height;
+    }
 }  
 
 
@@ -399,47 +404,58 @@ void Game::InspectorWindow(){
         int attrib_count, uniform_count;
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_ATTRIBUTES, &attrib_count);
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_UNIFORMS, &uniform_count);
-        ImGui::Text("Active attributes ( %d ) : ", attrib_count);
-        ImGui::Text("Active uniforms ( %d ) : ", uniform_count);
-        
-        if (ImGui::CollapsingHeader("Attributes"))
-        {
-            
-            for (int i = 0; i < attrib_count; i++)
-            {
+        if(!selectedShader->success){attrib_count = 0; uniform_count = 0;}
+        ImGui::Text("Active attributes ( %d )", attrib_count);
+        ImGui::Text("Active uniforms ( %d )", uniform_count);
 
-                int count;
-                int length;
-                GLsizei size;
-                GLenum type;
-                char name[512];
-                glGetActiveAttrib(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
-                if (ImGui::TreeNode("%s##%d", name, i))
-                {
-                    ImGui::Text("Name %s ", name);
-                    ImGui::Text("Type %u ", type);
-                    ImGui::TreePop();
-                }
-            }
+        if(!selectedShader->success){
+            ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f), "Shader compilation failed : ");
+            ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f), selectedShader->getError());
         }
 
-        if (ImGui::CollapsingHeader("Uniforms"))
-        {
-            
-            for (int i = 0; i < uniform_count; i++)
-            {
+        if(ImGui::Button("Reload Shader")){selectedShader->Reload();}
 
-                int count;
-                int length;
-                GLsizei size;
-                GLenum type;
-                char name[512];
-                glGetActiveUniform(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
-                if (ImGui::TreeNode("%s##%d", name, i))
+
+        if(selectedShader->success){
+            if (ImGui::CollapsingHeader("Attributes"))
+            {
+                
+                for (int i = 0; i < attrib_count; i++)
                 {
-                    ImGui::Text("Name %s ", name);
-                    ImGui::Text("Type %u ", type);
-                    ImGui::TreePop();
+
+                    int count;
+                    int length;
+                    GLsizei size;
+                    GLenum type;
+                    char name[512];
+                    glGetActiveAttrib(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
+                    if (ImGui::TreeNode("%s##%d", name, i))
+                    {
+                        ImGui::Text("Name %s ", name);
+                        ImGui::Text("Type %u ", type);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Uniforms"))
+            {
+                
+                for (int i = 0; i < uniform_count; i++)
+                {
+
+                    int count;
+                    int length;
+                    GLsizei size;
+                    GLenum type;
+                    char name[512];
+                    glGetActiveUniform(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
+                    if (ImGui::TreeNode("%s##%d", name, i))
+                    {
+                        ImGui::Text("Name %s ", name);
+                        ImGui::Text("Type %u ", type);
+                        ImGui::TreePop();
+                    }
                 }
             }
         }

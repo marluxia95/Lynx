@@ -34,8 +34,10 @@ class Shader
         void setVec3(const char* name, const glm::vec3 &value);
         void setVec4(const char* name, float value1, float value2, float value3, float value4);
         void setMat4(const char* name, const glm::mat4 &value);
+        bool Reload();
     private:
         bool compile(const char* vertexShaderSource, const char* fragmentShaderSource);
+        void loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
         const char* vertexFilePath;
         const char* fragmentFilePath;
         char errorlog[512];

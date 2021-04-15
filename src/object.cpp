@@ -4,6 +4,9 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "object.h"
 #include "shader.h"
 #include "light.h"
@@ -36,6 +39,8 @@ void Object3D::Render(glm::mat4 view, glm::mat4 projection,glm::vec3 viewPos , s
 	shader->setVec3("material.diffuse", material.diffuse);
 	shader->setVec3("material.specular", material.specular);
 	shader->setFloat("material.shininess", material.shininess);
+
+	
 
     for (int l = 0; l<pointLights->size(); l++) { 
 

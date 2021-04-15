@@ -59,16 +59,13 @@ void Scene::SetActiveCamera(const char* name){
 }
 
 void Scene::Render(){
-	if(Cameras[activeCamera] == nullptr){printf("No active camera\n"); return;}
+	if(Cameras[activeCamera] == nullptr){logger->log(LOG_WARN, "No active camera"); return;}
 	if(!activeCamera){ // Do not render if there is no camera
 		return;
 	}
 	if(!Sprites.empty()){
 		for(const auto &spr : Sprites){
-			
-
-			Sprite* curSprite = spr.second;
-			//curSprite->Draw(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
+			spr.second->Render(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
 		}
 	}
 	if(!Meshes.empty()){
@@ -83,7 +80,7 @@ void Scene::Render(){
 	}
 	if(!Objects.empty()){
 		for(const auto &obj : Objects){
-			obj.second->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView(),Cameras[activeCamera]->pos,&pointLights);
+			obj.second->Render(Cameras[activeCamera]->GetView(), Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->pos,&pointLights);
 		}
 	}
 	
