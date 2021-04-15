@@ -12,7 +12,7 @@ using namespace Lynx;
 
 // Initialize global variables
 Game game(1280,720);
-Camera camera(1280, 720);
+Camera camera(CAMERA_ORTHOGRAPHIC,1280, 720);
 
 
 double lastX;
@@ -106,10 +106,10 @@ int main(){
 	// Sets the up and front camera coordinates
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+	
 
 	game.resourceManager.CreateShader("SpriteShader", "res/shaders/standard/sprite.vs", "res/shaders/standard/sprite.fs");
 	game.resourceManager.CreateTexture("SpriteTexture", "res/images/box.jpg");
-
 
 	Sprite* sprite = new Sprite(game.resourceManager.GetShader("SpriteShader"));
 	sprite->texture = game.resourceManager.GetTexture("SpriteTexture");

@@ -4,9 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Camera::Camera(int sizex, int sizey){
-	resX = sizex;
-	resY = sizey;
+namespace Lynx {
+
+Camera::Camera(CameraType type, int resX, int resY):
+	type(type), resX(resX), resY(resY){
 	pos = glm::vec3(0.0f);
 }
 
@@ -18,6 +19,19 @@ glm::mat4 Camera::GetView(){
 
 glm::mat4 Camera::GetProjection(){
 	glm::mat4 projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(FOV), (float)resX / (float)resY, 0.1f, 100.0f); 
+	switch(type){
+		case CAMERA_ORTHOGRAPHIC:
+			projection = glm::ortho(0.0f, (float)resX / (float)resY, 0.0f, 1.0f, -1.0f, 1.0f);  
+			break;
+		
+		case CAMERA_PERSPECTIVE:
+			projection = glm::perspective(glm::radians(FOV), (float)resX / (float)resY, 0.1f, 100.0f); 
+			break;
+		
+		
+	}
+	
 	return projection;
+}
+
 }
