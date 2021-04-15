@@ -142,9 +142,6 @@ void Game::Run(){
         ImGui::NewFrame();
 		
 		OnUpdate();
-
-		//ProcessInput();
-
         glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -165,68 +162,8 @@ void Game::Run(){
 
 
 void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
-    /*
-	if(!mouseLock){return;}
-	if (firstMouse) // initially set to true
-	{
-	    lastX = xpos;
-	    lastY = ypos;
-	    firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	const float sensitivity = 0.25f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	
-
-	yaw   += xoffset;
-	pitch += yoffset;  
-
-	if(pitch > 89.0f)
-	  pitch =  89.0f;
-	if(pitch < -89.0f)
-	  pitch = -89.0f;
-
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	Scenes[activeScene]->Cameras["penis"]->front = glm::normalize(direction);
-    */
     mouseXPos = xpos;
     mouseYPos = ypos;
-}
-
-void Game::ProcessInput(GLFWwindow *window)
-{	
-	
-	/*
-	float cameraSpeed = 2.5f * delta_time * camera_Speed_Multiplier;
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.pos += cameraSpeed * camera.front;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.pos -= cameraSpeed * camera.front;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.pos -= glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.pos += glm::normalize(glm::cross(camera.front, camera.up)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
-    	camera_Speed_Multiplier = 3.0f;
-    }else{
-    	camera_Speed_Multiplier = 1.0f;
-    }*/
-    
-
-    	
-    	
 }
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -237,15 +174,6 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         if(polygonMode<1){polygonMode++;}else{polygonMode = 0;}
     	//glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
 
-    }
-    if(key == GLFW_KEY_L && action == GLFW_PRESS){
-    	if(mouseLock){
-    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    		mouseLock = false;
-    	}else{
-    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    		mouseLock = true;
-    	}
     }
 
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)

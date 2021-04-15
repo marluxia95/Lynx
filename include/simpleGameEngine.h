@@ -85,7 +85,6 @@ namespace Lynx{
 		void initWindow();
 
 		static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
-		static void ProcessInput(GLFWwindow *window);
 		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 
