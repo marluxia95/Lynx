@@ -107,8 +107,8 @@ int main(){
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	game.resourceManager.CreateShader("SpriteShader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-	game.resourceManager.CreateTexture("SpriteTexture", "res/images/prototype.png");
+	game.resourceManager.CreateShader("SpriteShader", "res/shaders/standard/sprite.vs", "res/shaders/standard/sprite.fs");
+	game.resourceManager.CreateTexture("SpriteTexture", "res/images/box.jpg");
 
 
 	Sprite* sprite = new Sprite(game.resourceManager.GetShader("SpriteShader"));
