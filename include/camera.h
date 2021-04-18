@@ -22,6 +22,7 @@ public:
 	float FOV = 60;
 	int resX;
 	int resY;	
+	const char* name;
 	CameraType type;
 	
 

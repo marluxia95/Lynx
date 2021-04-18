@@ -23,6 +23,7 @@ class Sprite : Mesh {
 
 		void Render(mat4 projection, mat4 view);
 
+		const char* name;
 		Texture* texture;
 		vec2 pos =vec2(0.0f);
 		vec2 size = vec2(1.0f);

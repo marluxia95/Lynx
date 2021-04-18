@@ -12,7 +12,7 @@ using namespace Lynx;
 
 // Initialize global variables
 Game game(1280,720);
-Camera camera(CAMERA_ORTHOGRAPHIC,1280, 720);
+Camera camera(CAMERA_PERSPECTIVE,1280, 720);
 
 
 double lastX;

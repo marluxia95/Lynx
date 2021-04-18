@@ -11,7 +11,6 @@
 #include "elementBuffer.h"
 #include "shader.h"
 #include "texture.h"
-#include "model.h"
 
 using namespace std;
 using namespace glm;
@@ -43,6 +42,7 @@ namespace Lynx {
 			bool checkErrors();
 			vector<Vertex>* vertices;
 			vector<GLuint>* indices;
+			const char* name;
 			
 
 		protected:

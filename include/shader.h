@@ -26,7 +26,9 @@ class Shader
         void destroy();
         void use();
         bool success = true;
-
+        const char* name;
+        const char* vertexFilePath;
+        const char* fragmentFilePath;
         void setBool(const char* name, bool value);  
         void setInt(const char* name, int value);   
         void setFloat(const char* name, float value);
@@ -38,8 +40,6 @@ class Shader
     private:
         bool compile(const char* vertexShaderSource, const char* fragmentShaderSource);
         void loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
-        const char* vertexFilePath;
-        const char* fragmentFilePath;
         char errorlog[512];
 };
 

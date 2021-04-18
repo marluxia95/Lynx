@@ -211,8 +211,8 @@ void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
     
     for ( const auto &cam : Scenes[activeScene]->Cameras){
-        cam.second->resX = width;
-        cam.second->resY = height;
+        cam->resX = width;
+        cam->resY = height;
     }
 }  
 
@@ -252,11 +252,11 @@ void Game::InspectorWindow(){
     if(Scenes[activeScene]->Sprites.size()>0){
         ImGui::Text("Sprites");
         for(const auto &spr : Scenes[activeScene]->Sprites){
-            if (ImGui::Button(spr.first))
+            if (ImGui::Button(spr->name))
             {
                 selectedType = 1;
-                selectedSprite = spr.second;
-                selectedName = spr.first;
+                selectedSprite = spr;
+                selectedName = spr->name;
             }
         }
     }
@@ -265,11 +265,11 @@ void Game::InspectorWindow(){
         ImGui::Separator();
         ImGui::Text("Cameras");
         for(const auto &cam : Scenes[activeScene]->Cameras){
-            if (ImGui::Button(cam.first))
+            if (ImGui::Button(cam->name))
             {
                 selectedType = 2;
-                selectedCamera = cam.second;
-                selectedName = cam.first;
+                selectedCamera = cam;
+                selectedName = cam->name;
             }
         }
     }
@@ -278,11 +278,11 @@ void Game::InspectorWindow(){
         ImGui::Separator();
         ImGui::Text("3D Meshes");
         for(const auto &obj : Scenes[activeScene]->Objects){
-            if (ImGui::Button(obj.first))
+            if (ImGui::Button(obj->name))
             {
                 selectedType = 3;
-                selectedMesh3D = obj.second;
-                selectedName = obj.first;
+                selectedMesh3D = obj;
+                selectedName = obj->name;
             }
         }
     }
@@ -333,6 +333,7 @@ void Game::InspectorWindow(){
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_ATTRIBUTES, &attrib_count);
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_UNIFORMS, &uniform_count);
         if(!selectedShader->success){attrib_count = 0; uniform_count = 0;}
+        ImGui::Text("Shader program ID : &d", selectedShader->ID);
         ImGui::Text("Active attributes ( %d )", attrib_count);
         ImGui::Text("Active uniforms ( %d )", uniform_count);
 

@@ -27,23 +27,33 @@ Scene::Scene(const char* name, ResourceManager* resourceManager, Logger* logger)
 
 }
 
-void Scene::AddSprite(const char* name, Sprite* sprite){
-	Sprites.insert(std::make_pair(name, sprite));
+unsigned int Scene::AddSprite(const char* name, Sprite* sprite){
+	unsigned int id = Sprites.size();
+	Sprites.push_back(sprite);
+	Sprites[id]->name = name;
+	return id;
 }
 
-void Scene::Add3DObject(const char* name, Object3D* obj) {
-	Objects.insert(std::make_pair(name, obj));
+unsigned int Scene::Add3DObject(const char* name, Object3D* obj) {
+	unsigned int id = Objects.size();
+	Objects.push_back(obj);
+	Objects[id]->name = name;
+	return id;
 }
 
-void Scene::AddMesh(const char* name, Mesh3D* mesh) {
-	Meshes.insert(std::make_pair(name, mesh));
+unsigned int Scene::AddMesh(const char* name, Mesh3D* mesh) {
+	unsigned int id = Meshes.size();
+	Meshes.push_back(mesh);
+	Meshes[id]->name = name;
+	return id;
 }
 
-void Scene::AddCamera(const char* name, Camera* camera){
-
-	Cameras.insert(std::make_pair(name, camera));
-	activeCamera = name;
-
+unsigned int Scene::AddCamera(const char* name, Camera* camera){
+	unsigned int id = Cameras.size();
+	Cameras.push_back(camera);
+	activeCamera = id;
+	Cameras[id]->name = name;
+	return id;
 }
 
 void Scene::AddPointLight(PointLight* light){
@@ -54,8 +64,8 @@ void Scene::SetDirectionalLight(DirectionalLight* dirLight){
 	directionalLight = dirLight;
 }
 
-void Scene::SetActiveCamera(const char* name){
-	activeCamera = name;
+void Scene::SetActiveCamera(unsigned int id){
+	activeCamera = id;
 }
 
 void Scene::Render(){
@@ -65,22 +75,22 @@ void Scene::Render(){
 	}
 	if(!Sprites.empty()){
 		for(const auto &spr : Sprites){
-			spr.second->Render(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
+			spr->Render(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
 		}
 	}
 	if(!Meshes.empty()){
 		for(const auto &mesh : Meshes){
 			
-			mesh.second->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView());
+			mesh->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView());
 
-			if(logger && mesh.second->checkErrors() != true){
+			if(logger && mesh->checkErrors() != true){
 				logger->log(LOG_ERROR, "Error while rendering mesh");
 			}
 		}
 	}
 	if(!Objects.empty()){
 		for(const auto &obj : Objects){
-			obj.second->Render(Cameras[activeCamera]->GetView(), Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->pos,&pointLights);
+			obj->Render(Cameras[activeCamera]->GetView(), Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->pos,&pointLights);
 		}
 	}
 	

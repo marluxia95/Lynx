@@ -22,7 +22,7 @@ CC = g++
 
 COMPILER_FLAGS = -w 
 
-LINKER_FLAGS = -lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -lXi -ldl # For some reason it doesn't like -lglfw3 
+LINKER_FLAGS = -lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -lXi -ldl -lassimp # For some reason it doesn't like -lglfw3 
 
 OBJ_NAME = main
 
