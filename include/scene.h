@@ -37,6 +37,7 @@ public:
 
 	std::vector<Mesh3D*> Meshes;
 	std::vector<Object3D*> Objects;
+	std::vector<Model*> Models;
 	std::vector<Sprite*> Sprites;
 	std::vector<Camera*> Cameras;
 	std::vector<PointLight*> pointLights;

@@ -13,6 +13,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include "camera.h"
 #include "logger.h"
+#include "model.h"
 #include "scene.h"
 #include "mesh.h"
 #include "resourceManager.h"
@@ -66,6 +67,7 @@ namespace Lynx{
 		int selectedType; // 1 for sprite 2 for camera
 	    Camera* selectedCamera;
 		Mesh3D* selectedMesh3D;
+		Model* selectedModel;
 	    Sprite* selectedSprite;
 		Shader* selectedShader;
 	    const char* selectedName;

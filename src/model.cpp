@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -20,9 +22,14 @@ Model::Model(const char* path, Shader* shader): path(path), shader(shader){
     loadModel();
 }
 
-void Model::Render(){
-    for (int i = 0; i<meshes.size(); i++)
-        meshes[i].Render();
+void Model::Render(glm::mat4 projection, glm::mat4 view){
+    glm::mat4 model;
+    model = glm::mat4(1.0f);
+	model = glm::translate(model, this->pos);
+
+    for (int i = 0; i<meshes.size(); i++){
+        meshes[i].Render(projection, view);
+    }
 
     
 }
@@ -38,6 +45,7 @@ void Model::loadModel(){
     }
 
     processNode(scene->mRootNode, scene);
+    printf("Loaded %d meshes in total.\n", meshes.size());
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene){
@@ -51,12 +59,13 @@ void Model::processNode(aiNode* node, const aiScene* scene){
     {
         processNode(node->mChildren[i], scene);
     }
+    
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
-    vector<Vertex>* vertices;
-    vector<GLuint>* indices;
-    vector<Texture>* textures;
+Mesh3D Model::processMesh(aiMesh *mesh, const aiScene *scene){
+    vector<Vertex>* vertices = new vector<Vertex>();
+    vector<GLuint>* indices = new vector<GLuint>();
+    vector<Texture>* textures = new vector<Texture>();
 
     // Process vertices
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) 
@@ -89,8 +98,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene){
             indices->push_back(face.mIndices[j]);
     }  
 
-
-    return Mesh(vertices, indices, MESH_3D_TEXTURED_NORMAL);
+    printf("Loaded in total %d vertices and %d indices\n", vertices->size(), indices->size());
+    return Mesh3D(vertices, indices, shader,MESH_3D_TEXTURED_NORMAL);
 }
 
 }

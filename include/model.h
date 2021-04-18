@@ -16,17 +16,18 @@ namespace Lynx {
 class Model {
     public:
         Model(const char* path, Shader* shader);
-        void Render();
+        void Render(glm::mat4 projection, glm::mat4 view);
         const char* name;
+        glm::vec3 pos;
     private:
-        vector<Mesh> meshes;
+        vector<Mesh3D> meshes;
         const char * path;
         const char* directory;
         Shader* shader;
 
         void loadModel();
         void processNode(aiNode* node, const aiScene* scene);
-        Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+        Mesh3D processMesh(aiMesh* mesh, const aiScene* scene);
 };
 
 }

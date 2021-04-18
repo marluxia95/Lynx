@@ -3,9 +3,9 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "simpleGameEngine.h"
-#include "sprite.h"
 #include "texture.h"
 #include "camera.h"
+#include "model.h"
 #include "scene.h"
 
 using namespace Lynx;
@@ -98,8 +98,6 @@ void shaderAttribs(){
 }
 
 int main(){
-
-
 	// Enables the game's debug mode
 	game.SetDebugMode(true);
 
@@ -108,20 +106,18 @@ int main(){
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	
 
-	game.resourceManager.CreateShader("SpriteShader", "res/shaders/standard/sprite.vs", "res/shaders/standard/sprite.fs");
-	game.resourceManager.CreateTexture("SpriteTexture", "res/images/box.jpg");
+	game.resourceManager.CreateShader("CubeShader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-	Sprite* sprite = new Sprite(game.resourceManager.GetShader("SpriteShader"));
-	sprite->texture = game.resourceManager.GetTexture("SpriteTexture");
+	Model* model = new Model("res/models/cube.obj", game.resourceManager.GetShader("CubeShader"));
+	//Sprite* spr = new Sprite(game.resourceManager.GetShader("CubeShader"));
 
 	unsigned int scene = game.CreateScene("test");
 	game.SetActiveScene(scene);
-
 	Scene* scn = game.GetActiveScene();
 
 	scn->AddCamera("Camera 1", &camera);
-	scn->AddSprite("Sprite1", sprite);
-	
+	scn->Add3DModel("Model", model);
+	//scn->AddSprite("Sprite 1", spr);
 	printf("All objects are bind to scene\n");
 
 	// Runs the game

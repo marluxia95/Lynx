@@ -41,6 +41,13 @@ unsigned int Scene::Add3DObject(const char* name, Object3D* obj) {
 	return id;
 }
 
+unsigned int Scene::Add3DModel(const char* name, Model* model) {
+	unsigned int id = Models.size();
+	Models.push_back(model);
+	Models[id]->name = name;
+	return id;
+}
+
 unsigned int Scene::AddMesh(const char* name, Mesh3D* mesh) {
 	unsigned int id = Meshes.size();
 	Meshes.push_back(mesh);
@@ -70,9 +77,6 @@ void Scene::SetActiveCamera(unsigned int id){
 
 void Scene::Render(){
 	if(Cameras[activeCamera] == nullptr){logger->log(LOG_WARN, "No active camera"); return;}
-	if(!activeCamera){ // Do not render if there is no camera
-		return;
-	}
 	if(!Sprites.empty()){
 		for(const auto &spr : Sprites){
 			spr->Render(Cameras[activeCamera]->GetProjection(),Cameras[activeCamera]->GetView());
@@ -86,6 +90,11 @@ void Scene::Render(){
 			if(logger && mesh->checkErrors() != true){
 				logger->log(LOG_ERROR, "Error while rendering mesh");
 			}
+		}
+	}
+	if(!Models.empty()){
+		for(const auto &mdl : Models){
+			mdl->Render(Cameras[activeCamera]->GetProjection(), Cameras[activeCamera]->GetView());
 		}
 	}
 	if(!Objects.empty()){

@@ -286,6 +286,19 @@ void Game::InspectorWindow(){
             }
         }
     }
+
+    if(Scenes[activeScene]->Models.size()>0){
+        ImGui::Separator();
+        ImGui::Text("3D Models");
+        for(const auto &mdl : Scenes[activeScene]->Models){
+            if (ImGui::Button(mdl->name))
+            {
+                selectedType = 5;
+                selectedModel = mdl;
+                selectedName = mdl->name;
+            }
+        }
+    }
     ImGui::Separator();
     ImGui::Text("Resources");
 
@@ -326,6 +339,12 @@ void Game::InspectorWindow(){
         ImGui::Text("XYZ : ");
         ImGui::SameLine();
         ImGui::InputFloat3("##1",glm::value_ptr(selectedMesh3D->pos));
+    }else if(selectedType == 5){
+        ImGui::Text("Selected : %s", selectedName);
+        ImGui::Text("Type : 3D Model");
+        ImGui::Text("XYZ : ");
+        ImGui::SameLine();
+        ImGui::InputFloat3("##1",glm::value_ptr(selectedModel->pos));
     }else if(selectedType == 4){
         ImGui::Text("Selected : %s", selectedName);
         ImGui::Text("Type : Shader");
@@ -333,7 +352,9 @@ void Game::InspectorWindow(){
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_ATTRIBUTES, &attrib_count);
         glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_UNIFORMS, &uniform_count);
         if(!selectedShader->success){attrib_count = 0; uniform_count = 0;}
-        ImGui::Text("Shader program ID : &d", selectedShader->ID);
+        ImGui::Text("Shader program ID : %d", selectedShader->ID);
+        ImGui::Text("Vertex Shader File : %s", selectedShader->vertexFilePath);
+        ImGui::Text("Fragment Shader File : %s", selectedShader->fragmentFilePath);
         ImGui::Text("Active attributes ( %d )", attrib_count);
         ImGui::Text("Active uniforms ( %d )", uniform_count);
 
