@@ -23,15 +23,9 @@ Model::Model(const char* path, Shader* shader): path(path), shader(shader){
 }
 
 void Model::Render(glm::mat4 projection, glm::mat4 view){
-    glm::mat4 model;
-    model = glm::mat4(1.0f);
-	model = glm::translate(model, this->pos);
-
     for (int i = 0; i<meshes.size(); i++){
-        meshes[i].Render(projection, view);
+        meshes[i]->Render(projection, view);
     }
-
-    
 }
 
 void Model::loadModel(){
@@ -45,14 +39,14 @@ void Model::loadModel(){
     }
 
     processNode(scene->mRootNode, scene);
-    printf("Loaded %d meshes in total.\n", meshes.size());
+    printf("Loaded %d meshes in total. %d vertices in total\n", meshes.size(), totalVerts);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene){
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
-        meshes.push_back(processMesh(mesh, scene));			
+        meshes.push_back(processMesh(mesh, scene));		
     }
 
     for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -62,11 +56,11 @@ void Model::processNode(aiNode* node, const aiScene* scene){
     
 }
 
-Mesh3D Model::processMesh(aiMesh *mesh, const aiScene *scene){
+Mesh3D* Model::processMesh(aiMesh *mesh, const aiScene *scene){
     vector<Vertex>* vertices = new vector<Vertex>();
     vector<GLuint>* indices = new vector<GLuint>();
     vector<Texture>* textures = new vector<Texture>();
-
+    
     // Process vertices
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) 
     {
@@ -86,7 +80,7 @@ Mesh3D Model::processMesh(aiMesh *mesh, const aiScene *scene){
             texCoord.y = mesh->mTextureCoords[0][i].y;
             vertex.TextureCoords = texCoord;
         }
-
+        totalVerts++;
         vertices->push_back(vertex);
     }
 
@@ -94,12 +88,13 @@ Mesh3D Model::processMesh(aiMesh *mesh, const aiScene *scene){
     for(unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
-        for(unsigned int j = 0; j < face.mNumIndices; j++)
+        for(unsigned int j = 0; j < face.mNumIndices; j++){
             indices->push_back(face.mIndices[j]);
+        }
     }  
-
-    printf("Loaded in total %d vertices and %d indices\n", vertices->size(), indices->size());
-    return Mesh3D(vertices, indices, shader,MESH_3D_TEXTURED_NORMAL);
+    debugVBO(vertices, indices);
+    printf("Loading %d vertices and %d indices\n", vertices->size(), indices->size());
+    return new Mesh3D(vertices, indices, shader, MESH_3D_NORMAL);
 }
 
 }

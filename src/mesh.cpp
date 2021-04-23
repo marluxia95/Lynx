@@ -30,7 +30,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
-	
+	printf("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d\n", vertices->size(), vertices->size() * sizeof(Vertex));
 
 	VAO = new VertexArray();
 	VAO->Bind();
@@ -44,10 +44,12 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 			// Vertex attribute
 			glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     		glEnableVertexAttribArray(0);
+			printf("Mesh type : MESH_2D_SPRITE\n");
 			break;
 		case MESH_3D:
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 			glEnableVertexAttribArray(0);
+			printf("Mesh type : MESH_3D\n");
 			break;
 		case MESH_3D_NORMAL:
 			// Vertex attribute
@@ -56,6 +58,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 			// Normal attribute
 			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
 			glEnableVertexAttribArray(1);
+			printf("Mesh type : MESH_3D_NORMAL\n");
 			break;
 		case MESH_3D_TEXTURED:
 			// Vertex attribute
@@ -64,6 +67,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
     		// Texture attribute
     		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
     		glEnableVertexAttribArray(1);
+			printf("Mesh type : MESH_3D_TEXTURED\n");
 			break;
 		case MESH_3D_TEXTURED_NORMAL:
 			// Vertex attribute
@@ -75,6 +79,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 			// Normal attribute
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
 			glEnableVertexAttribArray(2);
+			printf("Mesh type : MESH_3D_TEXTURED_NORMAL\n");
 			break;
 	}
 
@@ -82,7 +87,9 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
 	VAO->Unbind();
+	printf("Generated EBO with %d indices. Total EBO size : %d\n", indices->size(), indices->size() * sizeof(GLuint));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+
 	
     
 
@@ -147,7 +154,7 @@ void Mesh3D::Render(mat4 projection, mat4 view){
 		}
 
 	}
-
+	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 

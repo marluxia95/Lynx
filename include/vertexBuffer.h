@@ -15,6 +15,8 @@ struct Vertex {
 	vec3 Normal;
 };
 
+void debugVBO(vector<Vertex>* vertices, vector<GLuint>* indices);
+
 class VertexBuffer{
 public:
 	// "Classic" method

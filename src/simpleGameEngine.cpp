@@ -274,15 +274,23 @@ void Game::InspectorWindow(){
         }
     }
 
-    if(Scenes[activeScene]->Objects.size()>0){
+    if(Scenes[activeScene]->Objects.size()>0|Scenes[activeScene]->Meshes.size()>0){
         ImGui::Separator();
         ImGui::Text("3D Meshes");
         for(const auto &obj : Scenes[activeScene]->Objects){
             if (ImGui::Button(obj->name))
             {
                 selectedType = 3;
-                selectedMesh3D = obj;
+                selectedObject = obj;
                 selectedName = obj->name;
+            }
+        }
+        for(const auto &mesh : Scenes[activeScene]->Meshes){
+            if (ImGui::Button(mesh->name))
+            {
+                selectedType = 3;
+                selectedMesh3D = mesh;
+                selectedName = mesh->name;
             }
         }
     }
@@ -338,13 +346,20 @@ void Game::InspectorWindow(){
         ImGui::Text("Type : Mesh 3D");
         ImGui::Text("XYZ : ");
         ImGui::SameLine();
-        ImGui::InputFloat3("##1",glm::value_ptr(selectedMesh3D->pos));
+        ImGui::InputFloat3("##1",glm::value_ptr(selectedObject->pos));
     }else if(selectedType == 5){
         ImGui::Text("Selected : %s", selectedName);
         ImGui::Text("Type : 3D Model");
         ImGui::Text("XYZ : ");
         ImGui::SameLine();
         ImGui::InputFloat3("##1",glm::value_ptr(selectedModel->pos));
+        for(int count = 0; count < selectedModel->meshes.size(); count++){
+            if (ImGui::CollapsingHeader("Child mesh")){
+                ImGui::Text("XYZ : ");
+                ImGui::SameLine();
+                ImGui::InputFloat3("##1",glm::value_ptr(selectedModel->meshes[count]->pos));
+            }
+        }
     }else if(selectedType == 4){
         ImGui::Text("Selected : %s", selectedName);
         ImGui::Text("Type : Shader");
@@ -435,7 +450,7 @@ void Game::DebugOverlay(){
     
     ImGui::Begin("Debug", NULL, window_flags);
     ImGui::Text("FPS: %f", floor(1/delta_time));
-    ImGui::Text("Delta time : %f", floor(delta_time));
+    ImGui::Text("Frametime : %f", delta_time*1000);
 
     ImGui::End();
     

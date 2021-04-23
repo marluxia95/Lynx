@@ -19,15 +19,16 @@ class Model {
         void Render(glm::mat4 projection, glm::mat4 view);
         const char* name;
         glm::vec3 pos;
-    private:
-        vector<Mesh3D> meshes;
-        const char * path;
+        vector<Mesh3D*> meshes;
+    protected:
+        
+        const char* path;
         const char* directory;
         Shader* shader;
-
+        int totalVerts;
         void loadModel();
         void processNode(aiNode* node, const aiScene* scene);
-        Mesh3D processMesh(aiMesh* mesh, const aiScene* scene);
+        Mesh3D* processMesh(aiMesh* mesh, const aiScene* scene);
 };
 
 }

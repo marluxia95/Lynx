@@ -16,14 +16,19 @@
 using namespace std;
 
 namespace Lynx {
-
+/*
 Object3D::Object3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, Material material)
 : Mesh3D(vertices, indices, shader, MESH_3D_NORMAL), shader(shader), material(material){
 
 }
+*/
+
+Object3D::Object3D(const char* path, Shader* shader): Model(path, shader){
+	
+}
+
 
 void Object3D::Render(glm::mat4 view, glm::mat4 projection,glm::vec3 viewPos , std::vector<PointLight*>* pointLights){
-    VAO->Bind();
 	model = mat4(1.0f);
 	model = translate(model, this->pos);
 	
@@ -51,21 +56,11 @@ void Object3D::Render(glm::mat4 view, glm::mat4 projection,glm::vec3 viewPos , s
         glUniform3fv(glGetUniformLocation(shader->ID, ("pointLights[" + index +"].specular").c_str()),1, glm::value_ptr(pointLights->at(l)->specular));
 		
     }
-	
-	
-	if(type >= MESH_3D_TEXTURED&&texture!=nullptr){
-		if(texture->texture == NULL){
-			error = "Model not bind to a texture !\n";
-			success = false;
-		}else{
-			texture->use();
-		}
 
-	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+	for (int i = 0; i<meshes.size(); i++){
+        meshes[i]->Render(projection, view);
+    }
 }
 
 }

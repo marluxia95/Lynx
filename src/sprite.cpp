@@ -3,11 +3,23 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include "sprite.h"
-#include "utils.h"
 #include "vertexArray.h"
 #include "vertexBuffer.h"
 
 namespace Lynx {
+
+vector<Vertex> sprite_vertices = { 
+	//Position				 //Normal    // texture
+	{vec3(0.0f, 0.0f, 0.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f)},
+	{vec3(0.0f, 1.0f, 0.0f), vec3(0.0f), vec3(1.0f, 0.0f, 0.0f)},
+	{vec3(1.0f, 0.0f, 0.0f), vec3(0.0f), vec3(0.0f)},
+	{vec3(1.0f, 1.0f, 0.0f), vec3(0.0f), vec3(1.0f, 1.0f, 0.0f)}
+};
+
+vector<GLuint> sprite_indices = {
+	0, 1, 2,
+	1, 3, 2
+};
 
 Sprite::Sprite(Shader* shader):
     Mesh(&sprite_vertices, &sprite_indices, MESH_3D), shader(shader)
@@ -23,7 +35,7 @@ Sprite::~Sprite(){
 void Sprite::Render(mat4 projection, mat4 view){
     VAO->Bind();
 
-    if(texture != nullptr){
+    if(!texture){
         texture->use();
     }
 

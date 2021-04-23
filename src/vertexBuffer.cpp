@@ -28,3 +28,16 @@ void VertexBuffer::Bind(){
 void VertexBuffer::Unbind(){
 	glBindBuffer(GL_ARRAY_BUFFER, 0); 
 }
+
+void debugVBO(vector<Vertex>* vertices, vector<GLuint>* indices){
+	for ( int i = 0; i < indices->size(); i++ ){
+		printf("Index Number %d Vertex pos: %f %f %f Texture Coord pos %f %f Normal pos %f %f %f\n", i, vertices->at(indices->at(i)).Position.x, 
+		vertices->at(indices->at(i)).Position.y, 
+		vertices->at(indices->at(i)).Position.z,
+		vertices->at(indices->at(i)).TextureCoords.x,
+		vertices->at(indices->at(i)).TextureCoords.y,
+		vertices->at(indices->at(i)).Normal.x,
+		vertices->at(indices->at(i)).Normal.y,
+		vertices->at(indices->at(i)).Normal.z);
+	}
+}

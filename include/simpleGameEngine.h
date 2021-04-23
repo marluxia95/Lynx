@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "logger.h"
 #include "model.h"
+#include "object.h"
 #include "scene.h"
 #include "mesh.h"
 #include "resourceManager.h"
@@ -67,6 +68,7 @@ namespace Lynx{
 		int selectedType; // 1 for sprite 2 for camera
 	    Camera* selectedCamera;
 		Mesh3D* selectedMesh3D;
+		Object3D* selectedObject;
 		Model* selectedModel;
 	    Sprite* selectedSprite;
 		Shader* selectedShader;
