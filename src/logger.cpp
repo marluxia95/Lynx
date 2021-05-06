@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <time.h>
+#ifdef __linux__
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <stdlib.h>
 #include <cstring>

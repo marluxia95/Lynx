@@ -12,23 +12,22 @@ namespace Lynx {
 class Shader
 {
     public:
-        // the program ID
-        unsigned int ID;
-      
-
         Shader(const char* vertexPath, const char* fragmentPath);
         Shader(const char* shaderFile);
 
-        GLuint getProgram();
+        // Shader variables with initialized values
+        unsigned int ID = 0;
+        bool success = true;
+        const char* name = "";
+        const char* vertexFilePath = "";
+        const char* fragmentFilePath = "";
 
+
+        GLuint getProgram();
         char* getError();
 
         void destroy();
         void use();
-        bool success = true;
-        const char* name;
-        const char* vertexFilePath;
-        const char* fragmentFilePath;
         void setBool(const char* name, bool value);  
         void setInt(const char* name, int value);   
         void setFloat(const char* name, float value);
@@ -40,7 +39,7 @@ class Shader
     private:
         bool compile(const char* vertexShaderSource, const char* fragmentShaderSource);
         void loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
-        char errorlog[512];
+        char errorlog[512] = "";
 };
 
 }

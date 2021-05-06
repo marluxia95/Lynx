@@ -163,7 +163,7 @@ int main(){
 
 	game.resourceManager.CreateShader("CubeShader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	//Sprite* spr = new Sprite(game.resourceManager.GetShader("CubeShader"));
-	Model* mdl = new Model("res/models/multiple_cubes.stl",game.resourceManager.GetShader("CubeShader"));
+	Model* mdl = new Model("res/models/cube.obj",game.resourceManager.GetShader("CubeShader"));
 	PointLight* light = new PointLight {glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 0.09f, 0.032f};
 
 	unsigned int scene = game.CreateScene("test");

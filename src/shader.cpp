@@ -23,7 +23,7 @@ Shader::Shader(const char* shaderPath){
 	int fileSize = ftell(shaderFile);
 	rewind(shaderFile);
 
-	buffer = (char*)malloc(fileSize+1);
+	buffer = (char*)malloc(fileSize + 1);
 
 	fread(buffer, sizeof(char), fileSize, shaderFile);
 
@@ -32,8 +32,8 @@ Shader::Shader(const char* shaderPath){
 	printf("%s\n",buffer);
 
 	char* line;
-	char* vertexShaderChunk, *fragmentShaderChunk;
-
+	char* vertexShaderChunk = "", *fragmentShaderChunk = "";
+	/*
 	// Get the vertex shader chunk
 	while ( (line = strsep(&buffer, "\n") ) != NULL  ) {
 		char* header;
@@ -52,7 +52,7 @@ Shader::Shader(const char* shaderPath){
 		}
 
 	}
-
+	*/
 	printf("Vertex Position \n %td \n", vertexShaderChunk - buffer);
 	printf("Fragment Position \n %td \n", fragmentShaderChunk - buffer);
 
@@ -61,7 +61,7 @@ Shader::Shader(const char* shaderPath){
 
 }
 
-void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath){
+void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath) {
 	FILE *vertexFile;
 	FILE *fragmentFile;
 
@@ -84,17 +84,24 @@ void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragme
 	char *vertexShaderSource = NULL;
 	char *fragmentShaderSource = NULL;
 
-	vertexShaderSource = (char*)malloc(1+vertexShaderSize);
-	fragmentShaderSource = (char*)malloc(1+fragmentShaderSize);
+	vertexShaderSource = (char*)malloc(vertexShaderSize);
+	fragmentShaderSource = (char*)malloc(fragmentShaderSize);
 
-	fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
-	fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
+	int vspos = fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
+	int fspos = fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
 
 	fclose(vertexFile);
 	fclose(fragmentFile);
+		
+	if(vspos != 0|vertexShaderSource!=NULL){
+		vertexShaderSource[vspos] = '\0';
+	}
+	if(fspos != 0|fragmentShaderSource!=NULL){
+		fragmentShaderSource[fspos] = '\0';
+	}
+	
 
-	vertexShaderSource[vertexShaderSize] = '\0';
-	fragmentShaderSource[fragmentShaderSize] = '\0';
+	printf("%s\n", fragmentShaderSource);
 
 	success = compile(vertexShaderSource, fragmentShaderSource);
 
@@ -161,6 +168,8 @@ bool Shader::Reload(){
 	assert(vertexFilePath && fragmentFilePath && ID);
 
 	loadShaderFromFile(vertexFilePath, fragmentFilePath);
+
+	return success;
 }
 
 char* Shader::getError(){

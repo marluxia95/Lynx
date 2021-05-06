@@ -1,0 +1,179 @@
+﻿  camera.cpp
+  elementBuffer.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\src\elementBuffer.cpp(18,12): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type '_Ty *'
+          with
+          [
+              _Ty=GLuint
+          ]
+  light.cpp
+  logger.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(47,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(50,13): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(53,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(59,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(62,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(65,4): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(67,3): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\logger.cpp(87,36): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  main.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\src\main.cpp(113,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Javier\source\repos\SimpleGameEngine\src\main.cpp(114,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  mesh.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+  model.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\src\model.cpp(26,22): warning C4018: '<': signed/unsigned mismatch
+  object.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\src\object.cpp(50,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Javier\source\repos\SimpleGameEngine\src\object.cpp(61,19): warning C4018: '<': signed/unsigned mismatch
+  resourceManager.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+  scene.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+  shader.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(20,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(34,8): warning C4101: 'line': unreferenced local variable
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(30,8): warning C4101: 'vertexShaderSource': unreferenced local variable
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(30,29): warning C4101: 'fragmentShaderSource': unreferenced local variable
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(71,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(72,17): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  simpleGameEngine.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(123,11): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(135,33): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(277,82): warning C4554: '|': check operator precedence for possible error; use parentheses to clarify precedence
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(356,34): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(391,25): warning C4101: 'count': unreferenced local variable
+C:\Users\Javier\source\repos\SimpleGameEngine\src\simpleGameEngine.cpp(412,25): warning C4101: 'count': unreferenced local variable
+  sprite.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(11,2): warning C4091: 'typedef ': ignored on left of 'Material' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(21,2): warning C4091: 'typedef ': ignored on left of 'PointLight' when no variable is declared
+C:\Users\Javier\source\repos\SimpleGameEngine\include\light.h(29,2): warning C4091: 'typedef ': ignored on left of 'DirectionalLight' when no variable is declared
+  texture.cpp
+  vertexArray.cpp
+  vertexBuffer.cpp
+C:\Users\Javier\source\repos\SimpleGameEngine\src\vertexBuffer.cpp(33,21): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(56): warning C4700: uninitialized local variable 'vertexShaderChunk' used
+C:\Users\Javier\source\repos\SimpleGameEngine\src\shader.cpp(57): warning C4700: uninitialized local variable 'fragmentShaderChunk' used
+elementBuffer.obj : error LNK2019: unresolved external symbol __imp____glewBindBuffer referenced in function "public: void __thiscall Lynx::ElementBuffer::Bind(void)" (?Bind@ElementBuffer@Lynx@@QAEXXZ)
+mesh.obj : error LNK2001: unresolved external symbol __imp____glewBindBuffer
+sprite.obj : error LNK2001: unresolved external symbol __imp____glewBindBuffer
+vertexBuffer.obj : error LNK2001: unresolved external symbol __imp____glewBindBuffer
+elementBuffer.obj : error LNK2019: unresolved external symbol __imp____glewBufferData referenced in function "public: __thiscall Lynx::ElementBuffer::ElementBuffer(void const *,unsigned int)" (??0ElementBuffer@Lynx@@QAE@PBXI@Z)
+mesh.obj : error LNK2001: unresolved external symbol __imp____glewBufferData
+vertexBuffer.obj : error LNK2001: unresolved external symbol __imp____glewBufferData
+elementBuffer.obj : error LNK2019: unresolved external symbol __imp____glewDeleteBuffers referenced in function "public: __thiscall Lynx::ElementBuffer::~ElementBuffer(void)" (??1ElementBuffer@Lynx@@QAE@XZ)
+vertexBuffer.obj : error LNK2001: unresolved external symbol __imp____glewDeleteBuffers
+elementBuffer.obj : error LNK2019: unresolved external symbol __imp____glewGenBuffers referenced in function "public: __thiscall Lynx::ElementBuffer::ElementBuffer(void const *,unsigned int)" (??0ElementBuffer@Lynx@@QAE@PBXI@Z)
+mesh.obj : error LNK2001: unresolved external symbol __imp____glewGenBuffers
+vertexBuffer.obj : error LNK2001: unresolved external symbol __imp____glewGenBuffers
+mesh.obj : error LNK2019: unresolved external symbol __imp____glewEnableVertexAttribArray referenced in function "public: __thiscall Lynx::Mesh::Mesh(class std::vector<struct Vertex,class std::allocator<struct Vertex> > *,class std::vector<unsigned int,class std::allocator<unsigned int> > *,enum Lynx::MeshType)" (??0Mesh@Lynx@@QAE@PAV?$vector@UVertex@@V?$allocator@UVertex@@@std@@@std@@PAV?$vector@IV?$allocator@I@std@@@3@W4MeshType@1@@Z)
+mesh.obj : error LNK2019: unresolved external symbol __imp____glewVertexAttribPointer referenced in function "public: __thiscall Lynx::Mesh::Mesh(class std::vector<struct Vertex,class std::allocator<struct Vertex> > *,class std::vector<unsigned int,class std::allocator<unsigned int> > *,enum Lynx::MeshType)" (??0Mesh@Lynx@@QAE@PAV?$vector@UVertex@@V?$allocator@UVertex@@@std@@@std@@PAV?$vector@IV?$allocator@I@std@@@3@W4MeshType@1@@Z)
+model.obj : error LNK2019: unresolved external symbol "public: __thiscall Assimp::Importer::Importer(void)" (??0Importer@Assimp@@QAE@XZ) referenced in function "protected: void __thiscall Lynx::Model::loadModel(void)" (?loadModel@Model@Lynx@@IAEXXZ)
+model.obj : error LNK2019: unresolved external symbol "public: __thiscall Assimp::Importer::~Importer(void)" (??1Importer@Assimp@@QAE@XZ) referenced in function "protected: void __thiscall Lynx::Model::loadModel(void)" (?loadModel@Model@Lynx@@IAEXXZ)
+model.obj : error LNK2019: unresolved external symbol "public: struct aiScene const * __thiscall Assimp::Importer::ReadFile(char const *,unsigned int)" (?ReadFile@Importer@Assimp@@QAEPBUaiScene@@PBDI@Z) referenced in function "protected: void __thiscall Lynx::Model::loadModel(void)" (?loadModel@Model@Lynx@@IAEXXZ)
+model.obj : error LNK2019: unresolved external symbol "public: char const * __thiscall Assimp::Importer::GetErrorString(void)const " (?GetErrorString@Importer@Assimp@@QBEPBDXZ) referenced in function "protected: void __thiscall Lynx::Model::loadModel(void)" (?loadModel@Model@Lynx@@IAEXXZ)
+object.obj : error LNK2019: unresolved external symbol __imp____glewGetUniformLocation referenced in function "public: void __thiscall Lynx::Object3D::Render(struct glm::mat<4,4,float,0>,struct glm::mat<4,4,float,0>,struct glm::vec<3,float,0>,class std::vector<struct PointLight *,class std::allocator<struct PointLight *> > *)" (?Render@Object3D@Lynx@@QAEXU?$mat@$03$03M$0A@@glm@@0U?$vec@$02M$0A@@4@PAV?$vector@PAUPointLight@@V?$allocator@PAUPointLight@@@std@@@std@@@Z)
+shader.obj : error LNK2001: unresolved external symbol __imp____glewGetUniformLocation
+object.obj : error LNK2019: unresolved external symbol __imp____glewUniform3fv referenced in function "public: void __thiscall Lynx::Object3D::Render(struct glm::mat<4,4,float,0>,struct glm::mat<4,4,float,0>,struct glm::vec<3,float,0>,class std::vector<struct PointLight *,class std::allocator<struct PointLight *> > *)" (?Render@Object3D@Lynx@@QAEXU?$mat@$03$03M$0A@@glm@@0U?$vec@$02M$0A@@4@PAV?$vector@PAUPointLight@@V?$allocator@PAUPointLight@@@std@@@std@@@Z)
+shader.obj : error LNK2001: unresolved external symbol __imp____glewUniform3fv
+shader.obj : error LNK2019: unresolved external symbol __imp____glewAttachShader referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewCompileShader referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewCreateProgram referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewCreateShader referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewDeleteProgram referenced in function "public: void __thiscall Lynx::Shader::destroy(void)" (?destroy@Shader@Lynx@@QAEXXZ)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewDeleteShader referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewGetProgramInfoLog referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewGetProgramiv referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+simpleGameEngine.obj : error LNK2001: unresolved external symbol __imp____glewGetProgramiv
+shader.obj : error LNK2019: unresolved external symbol __imp____glewGetShaderInfoLog referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewGetShaderiv referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewLinkProgram referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewShaderSource referenced in function "private: bool __thiscall Lynx::Shader::compile(char const *,char const *)" (?compile@Shader@Lynx@@AAE_NPBD0@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUniform1f referenced in function "public: void __thiscall Lynx::Shader::setFloat(char const *,float)" (?setFloat@Shader@Lynx@@QAEXPBDM@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUniform1i referenced in function "public: void __thiscall Lynx::Shader::setBool(char const *,bool)" (?setBool@Shader@Lynx@@QAEXPBD_N@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUniform3f referenced in function "public: void __thiscall Lynx::Shader::setVec3(char const *,float,float,float)" (?setVec3@Shader@Lynx@@QAEXPBDMMM@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUniform4f referenced in function "public: void __thiscall Lynx::Shader::setVec4(char const *,float,float,float,float)" (?setVec4@Shader@Lynx@@QAEXPBDMMMM@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUniformMatrix4fv referenced in function "public: void __thiscall Lynx::Shader::setMat4(char const *,struct glm::mat<4,4,float,0> const &)" (?setMat4@Shader@Lynx@@QAEXPBDABU?$mat@$03$03M$0A@@glm@@@Z)
+shader.obj : error LNK2019: unresolved external symbol __imp____glewUseProgram referenced in function "public: void __thiscall Lynx::Shader::use(void)" (?use@Shader@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol __imp__glewInit@0 referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwInit referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwTerminate referenced in function "public: __thiscall Lynx::Game::~Game(void)" (??1Game@Lynx@@QAE@XZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwWindowHint referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwCreateWindow referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwWindowShouldClose referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSetWindowShouldClose referenced in function "private: static void __cdecl Lynx::Game::KeyCallback(struct GLFWwindow *,int,int,int,int)" (?KeyCallback@Game@Lynx@@CAXPAUGLFWwindow@@HHHH@Z)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSetFramebufferSizeCallback referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwPollEvents referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSetInputMode referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSetKeyCallback referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSetCursorPosCallback referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwGetTime referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwMakeContextCurrent referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSwapBuffers referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol _glfwSwapInterval referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "struct ImGuiContext * __cdecl ImGui::CreateContext(struct ImFontAtlas *)" (?CreateContext@ImGui@@YAPAUImGuiContext@@PAUImFontAtlas@@@Z) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::DestroyContext(struct ImGuiContext *)" (?DestroyContext@ImGui@@YAXPAUImGuiContext@@@Z) referenced in function "public: __thiscall Lynx::Game::~Game(void)" (??1Game@Lynx@@QAE@XZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "struct ImGuiIO & __cdecl ImGui::GetIO(void)" (?GetIO@ImGui@@YAAAUImGuiIO@@XZ) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::NewFrame(void)" (?NewFrame@ImGui@@YAXXZ) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::Render(void)" (?Render@ImGui@@YAXXZ) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "struct ImDrawData * __cdecl ImGui::GetDrawData(void)" (?GetDrawData@ImGui@@YAPAUImDrawData@@XZ) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::StyleColorsDark(struct ImGuiStyle *)" (?StyleColorsDark@ImGui@@YAXPAUImGuiStyle@@@Z) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::Begin(char const *,bool *,int)" (?Begin@ImGui@@YA_NPBDPA_NH@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::End(void)" (?End@ImGui@@YAXXZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::SetNextWindowPos(struct ImVec2 const &,int,struct ImVec2 const &)" (?SetNextWindowPos@ImGui@@YAXABUImVec2@@H0@Z) referenced in function "private: void __thiscall Lynx::Game::DebugOverlay(void)" (?DebugOverlay@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::SetNextWindowBgAlpha(float)" (?SetNextWindowBgAlpha@ImGui@@YAXM@Z) referenced in function "private: void __thiscall Lynx::Game::DebugOverlay(void)" (?DebugOverlay@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::Separator(void)" (?Separator@ImGui@@YAXXZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::SameLine(float,float)" (?SameLine@ImGui@@YAXMM@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::Text(char const *,...)" (?Text@ImGui@@YAXPBDZZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::TextColored(struct ImVec4 const &,char const *,...)" (?TextColored@ImGui@@YAXABUImVec4@@PBDZZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::Button(char const *,struct ImVec2 const &)" (?Button@ImGui@@YA_NPBDABUImVec2@@@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::SliderFloat3(char const *,float * const,float,float,char const *,int)" (?SliderFloat3@ImGui@@YA_NPBDQAMMM0H@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::InputFloat3(char const *,float * const,char const *,int)" (?InputFloat3@ImGui@@YA_NPBDQAM0H@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::TreeNode(char const *,char const *,...)" (?TreeNode@ImGui@@YA_NPBD0ZZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::TreePop(void)" (?TreePop@ImGui@@YAXXZ) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::CollapsingHeader(char const *,int)" (?CollapsingHeader@ImGui@@YA_NPBDH@Z) referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::BeginMainMenuBar(void)" (?BeginMainMenuBar@ImGui@@YA_NXZ) referenced in function "private: void __thiscall Lynx::Game::DebugWindow(void)" (?DebugWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::EndMainMenuBar(void)" (?EndMainMenuBar@ImGui@@YAXXZ) referenced in function "private: void __thiscall Lynx::Game::DebugWindow(void)" (?DebugWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::BeginMenu(char const *,bool)" (?BeginMenu@ImGui@@YA_NPBD_N@Z) referenced in function "private: void __thiscall Lynx::Game::DebugWindow(void)" (?DebugWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::EndMenu(void)" (?EndMenu@ImGui@@YAXXZ) referenced in function "private: void __thiscall Lynx::Game::DebugWindow(void)" (?DebugWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::MenuItem(char const *,char const *,bool,bool)" (?MenuItem@ImGui@@YA_NPBD0_N1@Z) referenced in function "private: void __thiscall Lynx::Game::DebugWindow(void)" (?DebugWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "struct ImGuiViewport * __cdecl ImGui::GetMainViewport(void)" (?GetMainViewport@ImGui@@YAPAUImGuiViewport@@XZ) referenced in function "private: void __thiscall Lynx::Game::DebugOverlay(void)" (?DebugOverlay@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui::DebugCheckVersionAndDataLayout(char const *,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int,unsigned int)" (?DebugCheckVersionAndDataLayout@ImGui@@YA_NPBDIIIIII@Z) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui_ImplGlfw_InitForOpenGL(struct GLFWwindow *,bool)" (?ImGui_ImplGlfw_InitForOpenGL@@YA_NPAUGLFWwindow@@_N@Z) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui_ImplGlfw_Shutdown(void)" (?ImGui_ImplGlfw_Shutdown@@YAXXZ) referenced in function "public: __thiscall Lynx::Game::~Game(void)" (??1Game@Lynx@@QAE@XZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui_ImplGlfw_NewFrame(void)" (?ImGui_ImplGlfw_NewFrame@@YAXXZ) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "bool __cdecl ImGui_ImplOpenGL3_Init(char const *)" (?ImGui_ImplOpenGL3_Init@@YA_NPBD@Z) referenced in function "private: void __thiscall Lynx::Game::initWindow(void)" (?initWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui_ImplOpenGL3_Shutdown(void)" (?ImGui_ImplOpenGL3_Shutdown@@YAXXZ) referenced in function "public: __thiscall Lynx::Game::~Game(void)" (??1Game@Lynx@@QAE@XZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui_ImplOpenGL3_NewFrame(void)" (?ImGui_ImplOpenGL3_NewFrame@@YAXXZ) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui_ImplOpenGL3_RenderDrawData(struct ImDrawData *)" (?ImGui_ImplOpenGL3_RenderDrawData@@YAXPAUImDrawData@@@Z) referenced in function "public: void __thiscall Lynx::Game::Run(void)" (?Run@Game@Lynx@@QAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol __imp____glewGetActiveAttrib referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+simpleGameEngine.obj : error LNK2019: unresolved external symbol __imp____glewGetActiveUniform referenced in function "private: void __thiscall Lynx::Game::InspectorWindow(void)" (?InspectorWindow@Game@Lynx@@AAEXXZ)
+texture.obj : error LNK2019: unresolved external symbol __imp____glewActiveTexture referenced in function "public: void __thiscall Texture::use(void)" (?use@Texture@@QAEXXZ)
+texture.obj : error LNK2019: unresolved external symbol __imp____glewGenerateMipmap referenced in function "public: __thiscall Texture::Texture(char const *,int,unsigned int,unsigned int,unsigned int,unsigned int)" (??0Texture@@QAE@PBDHIIII@Z)
+vertexArray.obj : error LNK2019: unresolved external symbol __imp____glewBindVertexArray referenced in function "public: __thiscall VertexArray::VertexArray(void)" (??0VertexArray@@QAE@XZ)
+vertexArray.obj : error LNK2019: unresolved external symbol __imp____glewDeleteVertexArrays referenced in function "public: __thiscall VertexArray::~VertexArray(void)" (??1VertexArray@@QAE@XZ)
+vertexArray.obj : error LNK2019: unresolved external symbol __imp____glewGenVertexArrays referenced in function "public: __thiscall VertexArray::VertexArray(void)" (??0VertexArray@@QAE@XZ)
+C:\Users\Javier\source\repos\SimpleGameEngine\lib\glfw3.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+C:\Users\Javier\source\repos\SimpleGameEngine\lib\glew32.lib : warning LNK4272: library machine type 'x64' conflicts with target machine type 'x86'
+C:\Users\Javier\source\repos\SimpleGameEngine\Debug\SimpleGameEngine.exe : fatal error LNK1120: 88 unresolved externals

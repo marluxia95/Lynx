@@ -92,8 +92,7 @@ Mesh3D* Model::processMesh(aiMesh *mesh, const aiScene *scene){
             indices->push_back(face.mIndices[j]);
         }
     }  
-    debugVBO(vertices, indices);
-    printf("Loading %d vertices and %d indices\n", vertices->size(), indices->size());
+    //debugVBO(vertices, indices);
     return new Mesh3D(vertices, indices, shader, MESH_3D_NORMAL);
 }
 
