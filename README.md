@@ -36,6 +36,8 @@ I will replace make with CMAKE soon.
 #### Installing Dependencies 
 Make sure you have installed Visual Studio ( 2019 recommended but might also work with 2017 ).
 
+Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder leaving a `glm` folder inside it.
+
 Download the GLEW binaries [here](https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0-win32.zip/download) and copy the library files from `lib/Release/x64` and paste them in the `lib` folder.
 Copy the GLEW binary `.dll` and paste it into the main project folder.
 
