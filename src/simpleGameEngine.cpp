@@ -168,13 +168,15 @@ void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	
+	/*
 
     if (key ==  GLFW_KEY_I && action == GLFW_PRESS){
         if(polygonMode<1){polygonMode++;}else{polygonMode = 0;}
     	//glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
 
     }
+
+    */
 
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, true);
@@ -189,9 +191,9 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
     }
 
-    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F1]){
+    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F1])
     	if(debugMode){debugMode = false;}else{debugMode = true;}
-    }
+    
 
     if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F2]){
     	if(mouseLock){
