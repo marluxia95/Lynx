@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <assert.h>
+#include <stdint.h>
 #include "componentArray.h"
 #include "entity.h"
 
@@ -22,11 +24,11 @@ void ComponentArray<T>::RemoveData(Entity entity) {
 	size_t indexOfLastElement = size - 1;
 	components[indexOfRemovedEntity] = components[indexOfLastElement];
 
-	Entity entityOfLastElement = indexToEntityMap[indexOfLastElement];
+	uint64_t entityOfLastElement = indexToEntityMap[indexOfLastElement];
 	entityToIndexMap[entityOfLastElement] = indexOfRemovedEntity;
 	indexToEntityMap[indexOfRemovedEntity] = entityOfLastElement;
 
-	entityToIndexMap.erase(entity);
+	entityToIndexMap.erase(entity.id);
 	indexToEntityMap.erase(indexOfLastElement);
 
 	size--;
@@ -34,13 +36,13 @@ void ComponentArray<T>::RemoveData(Entity entity) {
 
 template<typename T>
 T& ComponentArray<T>::GetData(Entity entity) {
-	assert(entityToIndexMap.find(entity.id) != mEntityToIndexMap.end() && "Retrieving non-existent component.");
+	assert(entityToIndexMap.find(entity.id) != entityToIndexMap.end() && "Retrieving non-existent component.");
 	return components[entityToIndexMap[entity.id]];
 }
 
 template<typename T>
 void ComponentArray<T>::EntityDestroyed(Entity entity) {
-	if (entityToIndexMap.find(entity.id) != entityToIndexMap.end) {
+	if (entityToIndexMap.find(entity.id) != entityToIndexMap.end()) {
 		RemoveData(entity.id);
 	}
 }

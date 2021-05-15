@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <assert.h>
 #include "entity.h"
 #include "componentManager.h"
+
 
 namespace Lynx {
 	template<typename T>
@@ -17,7 +19,7 @@ namespace Lynx {
 
 	template<typename T>
 	ComponentType ComponentManager::GetComponentType() {
-		const char* typenName = typeid(T).name();
+		const char* typeName = typeid(T).name();
 
 		assert(componentTypes.find(typeName) != componentTypes.end() && "Component does not exist.");
 

@@ -1,0 +1,77 @@
+cmake_minimum_required(VERSION 3.16)
+project(SimpleGameEngine VERSION 0.0.1)
+
+set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
+
+file(GLOB_RECURSE SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/componentArray.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/componentManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/elementBuffer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/entityManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/light.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/object.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/resourceManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/shader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/simpleGameEngine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/systemManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexArray.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexBuffer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_demo.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_draw.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_tables.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_widgets.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+add_executable( 
+    SimpleGameEngine ${SOURCES}
+)
+
+target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui)
+target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+find_package(OpenGL REQUIRED)
+find_package(glfw3 3.3 REQUIRED)
+
+include(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/findGLEW.cmake
+)
+
+find_package(ASSIMP REQUIRED)
+if(ASSIMP_FOUND)
+    include_directories(${ASSIMP_INCLUDE_DIR})
+endif() 
+
+include_directories( 
+    SimpleGameEngine
+
+    ${OPENGL_INCLUDE_DIRS}  
+    ${GLEW_INCLUDE}
+    ${GLFW_INCLUDE}    
+    ${ASSIMP_INCLUDE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/ 
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/glm 
+)
+
+target_link_libraries(
+    SimpleGameEngine
+
+    glfw
+    assimp
+    ${OPENGL_LIBRARIES}
+    ${GLEW_LIBRARY}
+    ${ASSIMP_LIBRARY}
+)
