@@ -92,7 +92,8 @@ void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragme
 
 	fclose(vertexFile);
 	fclose(fragmentFile);
-		
+	
+
 	if(vspos != 0|vertexShaderSource!=NULL){
 		vertexShaderSource[vspos] = '\0';
 	}

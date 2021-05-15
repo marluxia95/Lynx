@@ -51,7 +51,11 @@ void Logger::log(LogLevel loglvl, const char* str) {
 		}
 
 		sprintf( msg + strlen( msg ), "%s\n", str); // Write args msg
+#ifdef __linux__
 		printf("%s%s%s", outColor ,msg, COL_NORM);
+#else
+		printf("%s", msg);
+#endif
 		//write( logFile , msg, strlen( msg ) );
 	}else{
 		if(loglvl == LOG_INFO){
@@ -65,7 +69,11 @@ void Logger::log(LogLevel loglvl, const char* str) {
 			sprintf( msg, "%s\tDEBUG   : ", date ); 
 		}
 		sprintf( msg + strlen( msg ), "%s\n", str ); // Write args msg
+#ifdef __linux__
 		printf("%s%s%s", outColor ,msg, COL_NORM);
+#else
+		printf("%s", msg);
+#endif
 		//write( logFile , msg, strlen( msg ) );
 	}
 

@@ -1,4 +1,9 @@
-lib/
+lib/glad
+lib/glm
+lib/imgui
+lib/KHR
+lib/stb_image.h
+Build/
 Debug/
 .vscode/
 .vs/

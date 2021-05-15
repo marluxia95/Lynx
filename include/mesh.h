@@ -65,14 +65,17 @@ namespace Lynx {
 			Mesh3D(const char* path, Shader* shader, MeshType type); // model mode						 
 			~Mesh3D();
 			void Render(glm::mat4 projection, glm::mat4 view);
-			void Render(void(*renderfunction)());
+			//void Render(void(*renderfunction)());
 			vec3 scale = vec3(1.0f);
 			vec3 pos = vec3(0.0f);
 			vec3 color = vec3(1.0f);
 			Texture* texture = nullptr;
 		protected:
+			/* WORK IN PROGRESS
+			* 
 			void loadModel();
 			void generateMesh();
+			*/
 			Shader* shader;
 			mat4 model;
 			MeshType type;

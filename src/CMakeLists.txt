@@ -1,0 +1,23 @@
+set(main_src_files
+    camera.cpp
+    componentArray.cpp
+    componentManager.cpp
+    elementBuffer.cpp
+    entityManager.cpp
+    light.cpp
+    logger.cpp
+    main.cpp
+    mesh.cpp
+    model.cpp
+    object.cpp
+    resourceManager.cpp
+    scene.cpp
+    shader.cpp
+    simpleGameEngine.cpp
+    sprite.cpp
+    systemManager.cpp
+    texture.cpp
+    vertexArray.cpp
+    vertexBuffer.cpp
+)
+add_executable(${PROJECT_NAME} ${main_src_files})
