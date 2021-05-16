@@ -27,9 +27,7 @@ sudo apt install libglfw3-dev libglew-dev libassimp-dev
 Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder leaving a `glm` folder inside it.
 
 #### Building
-
-In order to build the project, you just type `make` in a console and it should generate a binary file named `main`.
-I will replace make with CMAKE soon.
+In order to build the project, run `chmod +x build_LINUX.sh` and `./build_LINUX.sh`, it will automatically download and check libraries. You can also build it by running `cmake ..` and `make` in the `Build` folder.
 
 ### Windows
 
