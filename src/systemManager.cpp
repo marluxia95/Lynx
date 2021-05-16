@@ -27,7 +27,7 @@ namespace Lynx {
 	void SystemManager::EntityDestroyed(Entity entity) {
 		for (auto const& pair : systems) {
 			auto const& system = pair.second;
-			system->entities.erase(entity);
+			system->entities_id.erase(entity.id);
 		}
 	}
 
@@ -42,12 +42,12 @@ namespace Lynx {
 			// Entity signature matches system signature - insert into set
 			if ((signature & systemSignature) == systemSignature)
 			{
-				system->entities.insert(entity);
+				system->entities_id.insert(entity.id);
 			}
 			// Entity signature does not match system signature - erase from set
 			else
 			{
-				system->entities.erase(entity);
+				system->entities_id.erase(entity.id);
 			}
 		}
 	}

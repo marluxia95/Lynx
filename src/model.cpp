@@ -39,7 +39,7 @@ void Model::loadModel(){
     }
 
     processNode(scene->mRootNode, scene);
-    printf("Loaded %zd meshes in total. %zd vertices in total\n", meshes.size(), totalVerts);
+    printf("Loaded %d meshes in total. %zd vertices in total\n", meshes.size(), totalVerts);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene){

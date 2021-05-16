@@ -8,7 +8,7 @@
 namespace Lynx {
 	class System {
 	public:
-		std::set<Entity> entities;
+		std::set<uint64_t> entities_id;
 	};
 }
 
