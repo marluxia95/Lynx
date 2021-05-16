@@ -28,8 +28,9 @@ Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) t
 
 #### Building
 
-In order to build the project, you just type `make` in a console and it should generate a binary file named `main`.
-I will replace make with CMAKE soon.
+In order to build the project, create a folder called `Build` then, inside, execute "cmake ..". This will generate a makefile. Then, execute the makefile by typing "make", this will compile all the .cpp files and it'll generate an executable in the same `Build` directory. 
+
+I will make an automated script for linux, that will automaticly download all libraries and build the project.
 
 ### Windows
 
