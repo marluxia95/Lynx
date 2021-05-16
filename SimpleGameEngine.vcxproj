@@ -133,6 +133,7 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\componentArray.cpp" />
     <ClCompile Include="src\componentManager.cpp" />
+    <ClCompile Include="src\coordinator.cpp" />
     <ClCompile Include="src\elementBuffer.cpp" />
     <ClCompile Include="src\entityManager.cpp" />
     <ClCompile Include="src\light.cpp" />

@@ -17,7 +17,7 @@ namespace Lynx {
 		private:
 
 			std::vector<Signature> Signatures;
-			uint64_t livingEntityCount;
+			uint64_t livingEntityCount = 0;
 	};
 }
 
