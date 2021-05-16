@@ -4,24 +4,48 @@ Just a simple game engine made in C++ and OpenGL
 
 DISCLAIMER : THIS IS A WIP PROJECT, which means that its NOT finished yet!
 
+## Dependencies
+This project requires the following libraries :
+```
+GLFW3
+GLEW
+GLM
+Assimp
+```
+
 ## Building
 
 ### Linux
 
-#### Installing GLFW3
+#### Installing Dependencies
+
 You can either build it or install it via APT as it is shown here:
 ```bash 
-sudo apt install libglfw3 libglfw3-dev
+sudo apt install libglfw3-dev libglew-dev libassimp-dev
 ```
 
-#### Intalling GLM
+Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder leaving a `glm` folder inside it.
 
-Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder so there's a `glm` folder inside it.
+#### Building
 
-### Compiling
+In order to build the project, you just type `make` in a console and it should generate a binary file named `main`.
+I will replace make with CMAKE soon.
 
-In order to compile, you just type `make` and it should generate a binary file named `main`.
+### Windows
 
+#### Installing Dependencies 
+Make sure you have installed Visual Studio ( 2019 recommended but might also work with 2017 ).
 
+Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder leaving a `glm` folder inside it.
 
+Download the GLEW binaries [here](https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0-win32.zip/download) and copy the library files from `lib/Release/x64` and paste them in the `lib` folder.
+Copy the GLEW binary `.dll` and paste it into the main project folder.
+
+Download the GLFW binary files from [here](https://github.com/glfw/glfw/releases/tag/3.3.4) and copy the `.lib` files from `lib-vc20XX` into the `lib` folder and the `.dll` files into the main project folder.
+
+Clone the ASSIMP library from [here](https://github.com/assimp/assimp/releases/tag/v4.1.0) and copy the `include/assimp` folder into the `lib` folder. You have to also compile it in order to get the `config.h` file. Once compiled ASSIMP, paste the `config.h` file into the `lib/assimp` folder.
+
+#### Building
+
+In order to build the project, open the `.sln` file in Visual Studio and make sure you have set any of the `x64` platforms. Then press the build button and it should generate the binaries either in the `Debug` folder or the `Release` folder, depending on what platform you've chosen.
 
