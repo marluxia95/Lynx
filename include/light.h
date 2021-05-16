@@ -3,14 +3,14 @@
 
 #include <glm/glm.hpp>
 
-typedef struct Material {
+struct Material {
     glm::vec3 ambient;
     glm::vec3 diffuse;
     glm::vec3 specular;
     float shininess;
 }; 
 
-typedef struct PointLight {
+struct PointLight {
 	glm::vec3 pos;
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
@@ -20,7 +20,7 @@ typedef struct PointLight {
     float quadratic;
 };
 
-typedef struct DirectionalLight {
+struct DirectionalLight {
 	glm::vec3 direction;
 	glm::vec3 ambient;
 	glm::vec3 diffuse;
