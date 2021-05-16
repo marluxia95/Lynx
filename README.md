@@ -27,10 +27,7 @@ sudo apt install libglfw3-dev libglew-dev libassimp-dev
 Download the last version from GLM  [here](https://github.com/g-truc/glm/tags) then extract it into the `lib` folder leaving a `glm` folder inside it.
 
 #### Building
-
-In order to build the project, create a folder called `Build` then, inside, execute "cmake ..". This will generate a makefile. Then, execute the makefile by typing "make", this will compile all the .cpp files and it'll generate an executable in the same `Build` directory. 
-
-I will make an automated script for linux, that will automaticly download all libraries and build the project.
+In order to build the project, run `chmod +x build_LINUX.sh` and `./build_LINUX.sh`, it will automatically download and check libraries. You can also build it by running `cmake ..` and `make` in the `Build` folder.
 
 ### Windows
 
