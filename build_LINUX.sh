@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ -d "./lib" ]; then
-    echo "Library folder detected"
-else
-    mkdir lib
-fi
 
 echo "Checking if GLM is installed..."
 if [ -d "./lib/glm" ]; then

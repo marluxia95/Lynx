@@ -1,16 +1,16 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <stdio.h>
+#include <stdint.h>
 #include <bitset>
 
-namespace Lynx {
+/*
+*
+*  Gonna add more entity-related stuff here
+*
+*/
 
-	using Signature = std::bitset<256>;
+using Signature = std::bitset<256>;
+using Entity = uint64_t;
 
-	struct Entity {
-		unsigned int id;
-	};
-}
-
-#endif
+#endif 

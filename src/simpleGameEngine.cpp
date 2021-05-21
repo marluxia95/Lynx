@@ -16,6 +16,8 @@
 #include "simpleGameEngine.h"
 #include "camera.h"
 #include "scene.h"
+#include "systemManager.h"
+#include "components.h"
 
 namespace Lynx {
 
@@ -23,14 +25,12 @@ bool Game::mouseLock;
 int Game::polygonMode;
 bool Game::keys[1024];
 bool Game::debugMode;
-int Game::activeScene;
 float Game::pitch;
 float Game::yaw;
 float Game::lastX;
 float Game::lastY;
 double Game::mouseXPos, Game::mouseYPos;
 bool Game::firstMouse;
-std::vector<Scene*> Game::Scenes;
 
 Game::Game(unsigned int width, unsigned int height):
 	logger("main.log", LOG_DEBUG, false),
@@ -99,35 +99,50 @@ void Game::initWindow(){
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    componentManager = std::make_unique<ComponentManager>();
+    entityManager = std::make_unique<EntityManager>();
+    systemManager = std::make_unique<SystemManager>();
+
+    RegisterComponent<const char*>();
+    RegisterComponent<Transform>();
+    RegisterComponent<RigidBody>();
+
     OnInit();
 
 
 }
 
-int Game::CreateScene(const char* name){
-    Scenes.push_back(new Scene(name, &resourceManager));
-    printf("Scene %s created\n", Scenes[Scenes.size()-1]->name);
-    return Scenes.size()-1;
+
+/*
+*
+*   Entity Component System
+* 
+*/
+
+
+
+Entity Game::CreateEntity() {
+    return entityManager->CreateEntity();
 }
 
-int Game::BindScene(Scene* scene){
-    Scenes.push_back(scene);
-    return Scenes.size()-1;
+
+Entity Game::CreateEntity(const char* name) {
+    Entity newEnt = entityManager->CreateEntity();
+    AddComponent(newEnt, name);
+    return newEnt;
 }
 
-Scene* Game::GetActiveScene(){
-    return Scenes[activeScene];
+
+void Game::DestroyEntity(Entity entity) {
+    entityManager->DestroyEntity(entity);
 }
 
-bool Game::SetActiveScene(int id){
-    if(id <= (Scenes.size()-1)){
-        activeScene = id;
-        return true;
-    }else{
-        logger.log(LOG_ERROR, "Scene does not exist");
-        return false;
-    }
-}
+
+/*
+*   End of ECS
+*/
+
+// Main Loop
 
 void Game::Run(){
 	while((!glfwWindowShouldClose(window))|running)
@@ -150,7 +165,6 @@ void Game::Run(){
 		}
 
 		OnRender();
-        Scenes[activeScene]->Render();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -160,6 +174,7 @@ void Game::Run(){
     }
 }
 
+// Game Input
 
 void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
     mouseXPos = xpos;
@@ -211,13 +226,15 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-    
+    /*
     for ( const auto &cam : Scenes[activeScene]->Cameras){
         cam->resX = width;
         cam->resY = height;
     }
+    */
 }  
 
+// Game Debug / Editor stuff
 
 void Game::DebugWindow(){
     if (ImGui::BeginMainMenuBar())
@@ -247,68 +264,21 @@ void Game::DebugWindow(){
 
 
 void Game::InspectorWindow(){
-    ImGui::Begin("Objects");
+    ImGui::Begin("Hierarchy");
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
     
-    if(Scenes[activeScene]->Sprites.size()>0){
-        ImGui::Text("Sprites");
-        for(const auto &spr : Scenes[activeScene]->Sprites){
-            if (ImGui::Button(spr->name))
-            {
-                selectedType = 1;
-                selectedSprite = spr;
-                selectedName = spr->name;
-            }
-        }
-    }
-    
-    if(Scenes[activeScene]->Cameras.size()>0){
-        ImGui::Separator();
-        ImGui::Text("Cameras");
-        for(const auto &cam : Scenes[activeScene]->Cameras){
-            if (ImGui::Button(cam->name))
-            {
-                selectedType = 2;
-                selectedCamera = cam;
-                selectedName = cam->name;
-            }
-        }
-    }
 
-    if(Scenes[activeScene]->Objects.size()>0|Scenes[activeScene]->Meshes.size()>0){
-        ImGui::Separator();
-        ImGui::Text("3D Meshes");
-        for(const auto &obj : Scenes[activeScene]->Objects){
-            if (ImGui::Button(obj->name))
-            {
-                selectedType = 3;
-                selectedObject = obj;
-                selectedName = obj->name;
-            }
-        }
-        for(const auto &mesh : Scenes[activeScene]->Meshes){
-            if (ImGui::Button(mesh->name))
-            {
-                selectedType = 3;
-                selectedMesh3D = mesh;
-                selectedName = mesh->name;
-            }
-        }
-    }
+    for (int id = 0; entityManager->livingEntityCount; id++) {
 
-    if(Scenes[activeScene]->Models.size()>0){
-        ImGui::Separator();
-        ImGui::Text("3D Models");
-        for(const auto &mdl : Scenes[activeScene]->Models){
-            if (ImGui::Button(mdl->name))
-            {
-                selectedType = 5;
-                selectedModel = mdl;
-                selectedName = mdl->name;
-            }
+        if (ImGui::Button(GetComponent<const char*>(id)))
+        {
+            selectedId = id;
         }
+        
     }
+  
+    /*
     ImGui::Separator();
     ImGui::Text("Resources");
 
@@ -320,10 +290,30 @@ void Game::InspectorWindow(){
             selectedName = shdr.first;
         }
     }
+    */
     ImGui::End();
 
     ImGui::Begin("Inspector");
+    
+    if (selectedId > 0) {
+        auto signature = entityManager->GetSignature(selectedId);
 
+        if (signature.test(componentManager->GetComponentType<Transform>())) {
+            ImGui::Text("Position : ");
+            ImGui::SameLine();
+            ImGui::InputFloat3("##1", glm::value_ptr(GetComponent <Transform>(selectedId).position));
+
+            ImGui::Text("Rotation : ");
+            ImGui::SameLine();
+            ImGui::InputFloat3("##2", glm::value_ptr(GetComponent <Transform>(selectedId).rotation));
+
+            ImGui::Text("Scale : ");
+            ImGui::SameLine();
+            ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId).scale));
+        }
+    }
+
+    /* OLD INSPECTOR
     if(selectedType == 1){
         ImGui::Text("Selected : %s",  selectedName);
         ImGui::Text("Type : 2D Sprite");
@@ -427,7 +417,7 @@ void Game::InspectorWindow(){
             }
         }
     }
-
+    */
     ImGui::End();
 }
 

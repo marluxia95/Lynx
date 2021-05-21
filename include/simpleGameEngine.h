@@ -11,6 +11,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <memory>
+#include "entityManager.h"
+#include "componentManager.h"
+#include "systemManager.h"
+#include "entity.h"
 #include "camera.h"
 #include "logger.h"
 #include "model.h"
@@ -30,28 +35,80 @@ namespace Lynx{
 	public:
 		Game(unsigned int width, unsigned int height);
 		~Game();
+
 		void Run();
-		int CreateScene(const char* name);
-		int BindScene(Scene* scene);
-		bool SetActiveScene(int id);
+		//int CreateScene(const char* name);
+		//int BindScene(Scene* scene);
+		//bool SetActiveScene(int id);
 		void SetDebugMode(bool mode);
-		Scene* GetActiveScene();
+
+
+		Entity CreateEntity();
+		Entity CreateEntity(const char* name);
+		void DestroyEntity(Entity entity);
+
+		template<typename T>
+		void RegisterComponent(){
+			componentManager->RegisterComponent<T>();
+		}
+
+		template<typename T>
+		void AddComponent(Entity entity, T component){
+			componentManager->AddComponent(entity, component);
+
+			auto signature = entityManager->GetSignature(entity);
+			signature.set(componentManager->GetComponentType<T>(), true);
+			entityManager->SetSignature(entity, signature);
+
+			systemManager->EntitySignatureChanged(entity, signature);
+		}
+
+		template<typename T>
+		void RemoveComponent(Entity entity){
+			componentManager->RemoveComponent<T>(entity);
+
+			auto signature = entityManager->GetSignature(entity);
+			signature.set(componentManager->GetComponentType<T>(), false);
+			entityManager->SetSignature(entity, signature);
+
+			systemManager->EntitySignatureChanged(entity, signature);
+		}
+
+		template<typename T>
+		T& GetComponent(Entity entity){
+			return componentManager->GetComponent<T>(entity);
+		}
+
+		template<typename T>
+		ComponentType GetComponentType(){
+			return componentManager->GetComponentType<T>();
+		}
+
+		template<typename T>
+		std::shared_ptr<T> RegisterSystem(){
+			return systemManager->RegisterSystem<T>();
+		}
+
+		template<typename T>
+		void SetSystemSignature(Signature signature){
+			systemManager->SetSignature<T>(signature);
+		}
+
+		//Scene* GetActiveScene();
 		GameState State;
 		
 		unsigned int WINDOW_WIDTH = 1280;
 		unsigned int WINDOW_HEIGHT = 720;
+
 		ResourceManager resourceManager;
 		Logger logger;
 		GLFWwindow* window;
-		static int activeScene;
+
 		static bool keys[1024];
 		static bool mouseLock;
 		static double mouseXPos, mouseYPos;
 		float delta_time = 0.0f;
 		float last_FrameTime = 0.0f;
-		
-
-
 	private:
 		bool running;
 		static bool debugMode;
@@ -61,16 +118,8 @@ namespace Lynx{
 		
 		char* windowName = "Simple Game Engine";
 
-		
-		static std::vector<Scene*> Scenes;
-
 		// debug variables
-		int selectedType; // 1 for sprite 2 for camera
-	    Camera* selectedCamera;
-		Mesh3D* selectedMesh3D;
-		Object3D* selectedObject;
-		Model* selectedModel;
-	    Sprite* selectedSprite;
+		int selectedId; 
 		Shader* selectedShader;
 	    const char* selectedName;
 	    const char* buttonName;
@@ -91,6 +140,12 @@ namespace Lynx{
 		static void MouseCallback(GLFWwindow* window, double xpos, double ypos);
 		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+		
+
+		std::unique_ptr<ComponentManager> componentManager;
+		std::unique_ptr<EntityManager> entityManager;
+		std::unique_ptr<SystemManager> systemManager;
 
 		void DebugWindow();
 		void InspectorWindow();

@@ -93,9 +93,6 @@
     <ClCompile Include="src\systemManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\coordinator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.h">
@@ -149,9 +146,6 @@
     <ClInclude Include="include\componentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\entityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -164,7 +158,10 @@
     <ClInclude Include="include\systemManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\coordinator.h">
+    <ClInclude Include="include\components.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

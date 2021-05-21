@@ -133,7 +133,6 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\componentArray.cpp" />
     <ClCompile Include="src\componentManager.cpp" />
-    <ClCompile Include="src\coordinator.cpp" />
     <ClCompile Include="src\elementBuffer.cpp" />
     <ClCompile Include="src\entityManager.cpp" />
     <ClCompile Include="src\light.cpp" />
@@ -156,7 +155,7 @@
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\componentArray.h" />
     <ClInclude Include="include\componentManager.h" />
-    <ClInclude Include="include\coordinator.h" />
+    <ClInclude Include="include\components.h" />
     <ClInclude Include="include\elementBuffer.h" />
     <ClInclude Include="include\entity.h" />
     <ClInclude Include="include\entityManager.h" />

@@ -4,26 +4,7 @@ project(SimpleGameEngine VERSION 0.0.1)
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
 
 file(GLOB_RECURSE SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/componentArray.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/componentManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/elementBuffer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/entityManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/light.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/mesh.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/model.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/object.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/resourceManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/scene.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/shader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/simpleGameEngine.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sprite.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/systemManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexArray.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/vertexBuffer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_demo.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_draw.cpp 

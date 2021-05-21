@@ -14,10 +14,11 @@ namespace Lynx {
 			void DestroyEntity(Entity ent);
 			void SetSignature(Entity ent, Signature signature);
 			Signature GetSignature(Entity ent);
+			uint64_t livingEntityCount = 0;
 		private:
 
 			std::vector<Signature> Signatures;
-			uint64_t livingEntityCount = 0;
+			
 	};
 }
 

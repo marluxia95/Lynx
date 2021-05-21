@@ -39,7 +39,7 @@ void Model::loadModel(){
     }
 
     processNode(scene->mRootNode, scene);
-    printf("Loaded %d meshes in total. %zd vertices in total\n", meshes.size(), totalVerts);
+    printf("Loaded %zd meshes in total. %zd vertices in total\n", meshes.size(), totalVerts);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene){
@@ -56,7 +56,7 @@ void Model::processNode(aiNode* node, const aiScene* scene){
     
 }
 
-Mesh3D* Model::processMesh(aiMesh *mesh, const aiScene *scene){
+MeshRenderer* Model::processMesh(aiMesh *mesh, const aiScene *scene){
     vector<Vertex>* vertices = new vector<Vertex>();
     vector<GLuint>* indices = new vector<GLuint>();
     vector<Texture>* textures = new vector<Texture>();
@@ -93,7 +93,7 @@ Mesh3D* Model::processMesh(aiMesh *mesh, const aiScene *scene){
         }
     }  
     //debugVBO(vertices, indices);
-    return new Mesh3D(vertices, indices, shader, MESH_3D_NORMAL);
+    return new MeshRenderer(vertices, indices, shader, MESH_3D_NORMAL);
 }
 
 }

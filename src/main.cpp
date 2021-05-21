@@ -8,6 +8,7 @@
 #include "model.h"
 #include "scene.h"
 #include "light.h"
+#include "components.h"
 
 using namespace Lynx;
 
@@ -160,20 +161,12 @@ int main(){
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	
+    printf("Creating entity\n");
+    auto newEnt = game.CreateEntity("Hello Entity");
+    printf("Adding component\n");
+    Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
+    game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
 
-	game.resourceManager.CreateShader("CubeShader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
-	//Sprite* spr = new Sprite(game.resourceManager.GetShader("CubeShader"));
-	Model* mdl = new Model("res/models/cube.obj",game.resourceManager.GetShader("CubeShader"));
-	PointLight* light = new PointLight {glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 0.09f, 0.032f};
-
-	unsigned int scene = game.CreateScene("test");
-	game.SetActiveScene(scene);
-	Scene* scn = game.GetActiveScene();
-
-	scn->AddCamera("Camera 1", &camera);
-	scn->Add3DModel("Model", mdl);
-	scn->AddPointLight(light);
-	printf("All objects are bind to scene\n");
 
 	// Runs the game
 	game.Run();

@@ -117,25 +117,25 @@ void Mesh::Render(){
 }
 
 
-Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
+MeshRenderer::MeshRenderer(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
 	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
 
 }
 
-Mesh3D::Mesh3D(const char* path, Shader* shader, MeshType type)
+MeshRenderer::MeshRenderer(const char* path, Shader* shader, MeshType type)
 	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
 }
 
-Mesh3D::~Mesh3D(){
+MeshRenderer::~MeshRenderer(){
 	shader->destroy();
 }
 
-void Mesh3D::Render(mat4 projection, mat4 view){
+void MeshRenderer::Render(mat4 projection, mat4 view){/*
 	VAO->Bind();
 	model = mat4(1.0f);
-	model = translate(model, this->pos);
+	//model = translate(model, this->pos);
 	
 	if(shader == nullptr) {error = "Shader is NULL!\n"; success = false; return;}
 	// Set shader values
@@ -156,7 +156,7 @@ void Mesh3D::Render(mat4 projection, mat4 view){
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); */
 }
 
 }

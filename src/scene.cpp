@@ -48,7 +48,7 @@ unsigned int Scene::Add3DModel(const char* name, Model* model) {
 	return id;
 }
 
-unsigned int Scene::AddMesh(const char* name, Mesh3D* mesh) {
+unsigned int Scene::AddMesh(const char* name, MeshRenderer* mesh) {
 	unsigned int id = Meshes.size();
 	Meshes.push_back(mesh);
 	Meshes[id]->name = name;

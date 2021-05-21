@@ -18,7 +18,7 @@ using namespace std;
 namespace Lynx {
 /*
 Object3D::Object3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, Material material)
-: Mesh3D(vertices, indices, shader, MESH_3D_NORMAL), shader(shader), material(material){
+: MeshRenderer(vertices, indices, shader, MESH_3D_NORMAL), shader(shader), material(material){
 
 }
 */

@@ -22,7 +22,7 @@ public:
 	Scene(const char* name, ResourceManager* resourceManager);
 	Scene(const char* name, ResourceManager* resourceManager, Logger* logger);
 	unsigned int AddSprite(const char* name, Sprite* sprite);
-	unsigned int AddMesh(const char* name, Mesh3D* obj);
+	unsigned int AddMesh(const char* name, MeshRenderer* obj);
 	unsigned int Add3DObject(const char* name, Object3D* obj);
 	unsigned int Add3DModel(const char* name, Model* model);
 	unsigned int AddCamera(const char* name, Camera* camera);
@@ -35,7 +35,7 @@ public:
 	// TODO :
 	// static void AddLight(const char* name, Light &light);
 
-	std::vector<Mesh3D*> Meshes;
+	std::vector<MeshRenderer*> Meshes;
 	std::vector<Object3D*> Objects;
 	std::vector<Model*> Models;
 	std::vector<Sprite*> Sprites;
