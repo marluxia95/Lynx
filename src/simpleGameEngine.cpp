@@ -147,7 +147,7 @@ void Game::DestroyEntity(Entity entity) {
 // Main Loop
 
 void Game::Run(){
-	while((!glfwWindowShouldClose(window))|running)
+	do
 	{
         float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
@@ -173,7 +173,7 @@ void Game::Run(){
 	    glfwSwapBuffers(window);  
 	    glfwPollEvents();
 
-    }
+    } while((!glfwWindowShouldClose(window))|running);
 }
 
 // Game Input
@@ -270,9 +270,10 @@ void Game::InspectorWindow(){
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
     if(entityManager->livingEntityCount>0){
-        for (int id = 0; id<=entityManager->livingEntityCount; id++) {
+        for (int id = 0; id<entityManager->livingEntityCount; id++) {
             if (ImGui::Button(componentManager->GetComponent<GameObject>(id).name))
             {
+                puts("Selected");
                 selectedId = id;
             }
         }
@@ -293,11 +294,11 @@ void Game::InspectorWindow(){
     ImGui::End();
 
     ImGui::Begin("Inspector");
-    
-    if (selectedId > 0) {
-        auto signature = entityManager->GetSignature(selectedId);
 
-        if (signature.test(componentManager->GetComponentType<Transform>())) {
+    auto signature = entityManager->GetSignature(selectedId);
+
+    if (signature.test(componentManager->GetComponentType<Transform>())) {
+        if (ImGui::CollapsingHeader("Transform")) {
             ImGui::Text("Position : ");
             ImGui::SameLine();
             ImGui::InputFloat3("##1", glm::value_ptr(GetComponent <Transform>(selectedId).position));
@@ -311,6 +312,7 @@ void Game::InspectorWindow(){
             ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId).scale));
         }
     }
+    
     
     /* OLD INSPECTOR
     if(selectedType == 1){
