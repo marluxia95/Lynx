@@ -13,8 +13,8 @@ namespace Lynx {
 class ResourceManager{
 public:
 	ResourceManager(Logger* logger);
-	Texture* CreateTexture(const char* name, const char* path);
-	Shader*  CreateShader(const char* name, const char* vertexPath, const char* fragmentPath);
+	Texture* LoadTexture(const char* name, const char* path);
+	Shader*  LoadShader(const char* name, const char* vertexPath, const char* fragmentPath);
 	Texture* GetTexture(const char* name);
 	Shader*  GetShader(const char* name);
 

@@ -18,7 +18,7 @@ namespace Lynx {
 		private:
 
 			std::vector<Signature> Signatures;
-			
+
 	};
 }
 

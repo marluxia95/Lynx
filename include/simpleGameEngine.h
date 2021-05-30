@@ -134,7 +134,7 @@ namespace Lynx{
 		static float lastY;
 
 		static bool firstMouse;
-
+		int debug_id;
 		void initWindow();
 
 		static void MouseCallback(GLFWwindow* window, double xpos, double ypos);

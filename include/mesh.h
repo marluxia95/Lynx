@@ -59,11 +59,11 @@ namespace Lynx {
 
 	};
 
-	class MeshRenderer : public Mesh {
+	class Mesh3D : public Mesh {
 		public:
-			MeshRenderer(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type); // 3D mesh using indices
-			MeshRenderer(const char* path, Shader* shader, MeshType type); // model mode						 
-			~MeshRenderer();
+			Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type); // 3D mesh using indices
+			Mesh3D(const char* path, Shader* shader, MeshType type); // model mode						 
+			~Mesh3D();
 			void Render(glm::mat4 projection, glm::mat4 view);
 			//void Render(void(*renderfunction)());
 			Texture* texture = nullptr;

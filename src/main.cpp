@@ -149,10 +149,6 @@ void Game::OnLast(){
 
 }
 
-void shaderAttribs(){
-	
-}
-
 int main(){
 	// Enables the game's debug mode
 	game.SetDebugMode(true);
@@ -166,7 +162,6 @@ int main(){
     printf("Adding component\n");
     Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
     game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
-
 
 	// Runs the game
 	game.Run();

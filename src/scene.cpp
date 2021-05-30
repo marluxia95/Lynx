@@ -16,7 +16,7 @@
 #include "model.h"
 #include "logger.h"
 
-
+/* NOT IMPLEMENTED YET
 namespace Lynx {
 
 Scene::Scene(const char* name, ResourceManager* resourceManager) : name(name), resourceManager(resourceManager){
@@ -107,4 +107,4 @@ void Scene::Render(){
 }
 
 }
-
+*/

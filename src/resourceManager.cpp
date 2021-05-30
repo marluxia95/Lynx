@@ -14,13 +14,13 @@ ResourceManager::ResourceManager(Logger* logger) : logger(logger) {
 
 }
 
-Texture* ResourceManager::CreateTexture(const char* name, const char* path){
+Texture* ResourceManager::LoadTexture(const char* name, const char* path){
 	TextureMap[name] = new Texture(path, textureCount);
 	textureCount++;
 	return TextureMap[name];
 }
 
-Shader* ResourceManager::CreateShader(const char* name, const char* vertexPath, const char* fragmentPath){
+Shader* ResourceManager::LoadShader(const char* name, const char* vertexPath, const char* fragmentPath){
 	ShaderMap[name] = new Shader(vertexPath, fragmentPath);
 	if(ShaderMap[name]->success!=true){
 		logger->log(LOG_ERROR, "There was an error while compiling shader");

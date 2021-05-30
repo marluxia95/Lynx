@@ -117,22 +117,22 @@ void Mesh::Render(){
 }
 
 
-MeshRenderer::MeshRenderer(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
+Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
 	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
 
 }
 
-MeshRenderer::MeshRenderer(const char* path, Shader* shader, MeshType type)
+Mesh3D::Mesh3D(const char* path, Shader* shader, MeshType type)
 	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
 }
 
-MeshRenderer::~MeshRenderer(){
+Mesh3D::~Mesh3D(){
 	shader->destroy();
 }
 
-void MeshRenderer::Render(mat4 projection, mat4 view){/*
+void Mesh3D::Render(mat4 projection, mat4 view){/*
 	VAO->Bind();
 	model = mat4(1.0f);
 	//model = translate(model, this->pos);

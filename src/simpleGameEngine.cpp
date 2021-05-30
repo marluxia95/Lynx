@@ -106,6 +106,8 @@ void Game::initWindow(){
     RegisterComponent<const char*>();
     RegisterComponent<Transform>();
     RegisterComponent<RigidBody>();
+    RegisterComponent<GameObject>();
+    RegisterComponent<MeshRenderer>();
 
     OnInit();
 
@@ -128,7 +130,7 @@ Entity Game::CreateEntity() {
 
 Entity Game::CreateEntity(const char* name) {
     Entity newEnt = entityManager->CreateEntity();
-    AddComponent(newEnt, name);
+    AddComponent(newEnt, GameObject{name=name});
     return newEnt;
 }
 
@@ -267,17 +269,14 @@ void Game::InspectorWindow(){
     ImGui::Begin("Hierarchy");
     //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
-    
-
-    for (int id = 0; entityManager->livingEntityCount; id++) {
-
-        if (ImGui::Button(GetComponent<const char*>(id)))
-        {
-            selectedId = id;
+    if(entityManager->livingEntityCount>0){
+        for (int id = 0; id<=entityManager->livingEntityCount; id++) {
+            if (ImGui::Button(componentManager->GetComponent<GameObject>(id).name))
+            {
+                selectedId = id;
+            }
         }
-        
     }
-  
     /*
     ImGui::Separator();
     ImGui::Text("Resources");
@@ -312,7 +311,7 @@ void Game::InspectorWindow(){
             ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId).scale));
         }
     }
-
+    
     /* OLD INSPECTOR
     if(selectedType == 1){
         ImGui::Text("Selected : %s",  selectedName);

@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 #include <glm/glm.hpp>
+#include "mesh.h"
 
 using namespace glm;
+
+namespace Lynx {
 
 struct Transform {
 	vec3 position;
@@ -15,5 +18,16 @@ struct Transform {
 struct RigidBody {
 	vec3 mass;
 };
+
+struct GameObject {
+	const char* name;
+};
+
+struct MeshRenderer {
+	vec3 color;
+	Mesh3D* mesh;
+};
+
+}
 
 #endif

@@ -15,8 +15,11 @@
 #include "logger.h"
 #include "light.h"
 
-namespace Lynx {
 
+
+/* NOT IMPLEMENTED YET
+
+namespace Lynx {
 class Scene{
 public:
 	Scene(const char* name, ResourceManager* resourceManager);
@@ -52,5 +55,6 @@ private:
 
 }
 
+*/
 
 #endif

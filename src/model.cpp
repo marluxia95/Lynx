@@ -56,7 +56,7 @@ void Model::processNode(aiNode* node, const aiScene* scene){
     
 }
 
-MeshRenderer* Model::processMesh(aiMesh *mesh, const aiScene *scene){
+Mesh3D* Model::processMesh(aiMesh *mesh, const aiScene *scene){
     vector<Vertex>* vertices = new vector<Vertex>();
     vector<GLuint>* indices = new vector<GLuint>();
     vector<Texture>* textures = new vector<Texture>();
@@ -93,7 +93,7 @@ MeshRenderer* Model::processMesh(aiMesh *mesh, const aiScene *scene){
         }
     }  
     //debugVBO(vertices, indices);
-    return new MeshRenderer(vertices, indices, shader, MESH_3D_NORMAL);
+    return new Mesh3D(vertices, indices, shader, MESH_3D_NORMAL);
 }
 
 }

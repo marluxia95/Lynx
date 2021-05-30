@@ -18,16 +18,17 @@ namespace Lynx {
 	template<typename T>
 	class ComponentArray : public IComponentArray {
 	public:
-		void InsertData(Entity entity, T Component){
-			assert(entityToIndexMap.find(entity) != entityToIndexMap.end() && "Component added to same entity more than once.");
+		void InsertData(Entity entity, T component){
+			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
 
 			size_t index = size;
 			entityToIndexMap[entity] = index;
 			indexToEntityMap[index] = entity;
+			components.push_back(component);
 			size++;
 		}
 		void RemoveData(Entity entity){
-			assert(entityToIndexMap.find(entity) != entityToIndexMap.end() && "Component out of range");
+			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component out of range");
 
 			size_t indexOfRemovedEntity = entityToIndexMap[entity];
 			size_t indexOfLastElement = size - 1;
@@ -46,7 +47,7 @@ namespace Lynx {
 			return components[entityToIndexMap[entity]];
 		}
 		void EntityDestroyed(Entity entity) override{
-			if (entityToIndexMap.find(entity) != entityToIndexMap.end()) {
+			if (entityToIndexMap.find(entity) == entityToIndexMap.end()) {
 				RemoveData(entity);
 			}
 		}
