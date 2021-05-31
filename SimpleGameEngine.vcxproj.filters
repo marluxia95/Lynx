@@ -24,9 +24,6 @@
     <ClCompile Include="src\light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,16 +78,10 @@
     <ClCompile Include="lib\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\componentManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\entityManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\componentArray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\systemManager.cpp">
+    <ClCompile Include="src\logger.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

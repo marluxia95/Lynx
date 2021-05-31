@@ -12,7 +12,7 @@ namespace Lynx {
 
 class ResourceManager{
 public:
-	ResourceManager(Logger* logger);
+	ResourceManager();
 	Texture* LoadTexture(const char* name, const char* path);
 	Shader*  LoadShader(const char* name, const char* vertexPath, const char* fragmentPath);
 	Texture* GetTexture(const char* name);
@@ -22,7 +22,6 @@ public:
 	std::map<const char*, Texture*> TextureMap;
 private:
 	int textureCount;
-	Logger* logger;
 };
 
 }

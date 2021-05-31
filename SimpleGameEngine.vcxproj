@@ -131,12 +131,10 @@
     <ClCompile Include="lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\componentArray.cpp" />
-    <ClCompile Include="src\componentManager.cpp" />
     <ClCompile Include="src\elementBuffer.cpp" />
     <ClCompile Include="src\entityManager.cpp" />
     <ClCompile Include="src\light.cpp" />
-    <ClCompile Include="src\logger.cpp" />
+    <ClCompile Include="src\logger.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mesh.cpp" />
     <ClCompile Include="src\model.cpp" />
@@ -146,7 +144,6 @@
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\simpleGameEngine.cpp" />
     <ClCompile Include="src\sprite.cpp" />
-    <ClCompile Include="src\systemManager.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\vertexArray.cpp" />
     <ClCompile Include="src\vertexBuffer.cpp" />

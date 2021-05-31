@@ -4,13 +4,14 @@
 #include "resourceManager.h"
 #include "texture.h"
 #include "shader.h"
+#include "logger.h"
 
 namespace Lynx {
 
 
-ResourceManager::ResourceManager(Logger* logger) : logger(logger) {
+ResourceManager::ResourceManager() {
 
-	logger->log(LOG_INFO, "Resource manager started");
+	log_log(LOG_INFO, "Resource manager started");
 
 }
 
@@ -23,7 +24,7 @@ Texture* ResourceManager::LoadTexture(const char* name, const char* path){
 Shader* ResourceManager::LoadShader(const char* name, const char* vertexPath, const char* fragmentPath){
 	ShaderMap[name] = new Shader(vertexPath, fragmentPath);
 	if(ShaderMap[name]->success!=true){
-		logger->log(LOG_ERROR, "There was an error while compiling shader");
+		log_error("There was an error while compiling shader");
 	}
 	return ShaderMap[name];
 }

@@ -33,13 +33,13 @@ double Game::mouseXPos, Game::mouseYPos;
 bool Game::firstMouse;
 
 Game::Game(unsigned int width, unsigned int height):
-	logger("main.log", LOG_DEBUG, false),
-    resourceManager(&logger)
+    resourceManager()
 {
     
 	WINDOW_WIDTH = width;
 	WINDOW_HEIGHT = height;
 
+    log_info("Logging started");
 	initWindow();
 
 }
@@ -70,7 +70,7 @@ void Game::initWindow(){
   	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, windowName, NULL, NULL);
 	if (window == NULL)
 	{
-	    printf("Failed to create window\n");
+        log_fatal("Failed to create window");
 	    glfwTerminate();
 	}
 
@@ -86,7 +86,7 @@ void Game::initWindow(){
 	bool err = glewInit() != GLEW_OK;   
 
     if(err){
-        printf("Failed to initialize GLEW ! \n");
+        log_fatal("Failed to initalize GLEW");
     }
 
 	glEnable(GL_DEPTH_TEST);
@@ -130,6 +130,7 @@ Entity Game::CreateEntity() {
 
 Entity Game::CreateEntity(const char* name) {
     Entity newEnt = entityManager->CreateEntity();
+    log_debug("Created new entity %d", newEnt);
     AddComponent(newEnt, GameObject{name=name});
     return newEnt;
 }

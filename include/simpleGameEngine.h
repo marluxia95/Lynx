@@ -101,7 +101,6 @@ namespace Lynx{
 		unsigned int WINDOW_HEIGHT = 720;
 
 		ResourceManager resourceManager;
-		Logger logger;
 		GLFWwindow* window;
 
 		static bool keys[1024];
