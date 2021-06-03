@@ -161,7 +161,7 @@ int main(){
     Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
     game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
 
-	// Runs the game
+    // Runs the game
 	game.Run();
 	return 0;
 }

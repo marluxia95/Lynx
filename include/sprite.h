@@ -16,9 +16,9 @@ using namespace glm;
 
 namespace Lynx {
 
-class Sprite : Mesh {
+class Sprite {
 	public:
-		Sprite(Shader* shader);
+		Sprite(Shader* shader, Mesh* mesh);
 		~Sprite();
 
 		void Render(mat4 projection, mat4 view);
@@ -28,13 +28,12 @@ class Sprite : Mesh {
 		vec2 pos =vec2(0.0f);
 		vec2 size = vec2(1.0f);
 		vec3 color = vec3(1.0f);
+		
 		float ang;
 
 	private:
 		Shader* shader;
-
-
-	
+		Mesh* mesh;
 
 };
 }

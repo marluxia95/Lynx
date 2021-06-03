@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <unordered_map>
+#include <map>
 #include "shader.h"
 #include "texture.h"
 #include "logger.h"
@@ -11,16 +11,28 @@
 
 namespace Lynx::Core {
 
-template<typename T>
 class ResourceManager{
 	public:
 		ResourceManager();
-		T* Get(const char* name);
+		~ResourceManager();
+		void clear();
+
+		Shader* LoadShader(const char* vertexFile, const char* fragmentFile, const char* Name);
+		Shader* GetShader(const char* name);
+
+		Texture* LoadTexture(const char* file, const char* name);
+		Texture* GetTexture(const char* name);
+
+		Mesh* LoadMesh(const char* name, vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type);
+		Mesh* GetMesh(const char* name);
+
+		std::map<const char*, Shader*> Shaders;
+		std::map<const char*, Texture*> Textures;
+		std::map<const char*, Mesh*> Meshes;
 
 	private:
-		std::map<const char*, Texture*> m_textures;
-		std::map<const char*, Mesh*>    m_meshes;
-		std::map<const char*, Shader*>  m_shaders;
+		uint64_t textureCount;
+ 
 };
 
 }

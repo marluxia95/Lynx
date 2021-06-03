@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h> 
 #include "shader.h"
+#include "logger.h"
 
 namespace Lynx {
 
@@ -18,7 +19,7 @@ Shader::Shader(const char* shaderPath){
 	char* buffer = 0;
 
 	shaderFile = fopen(shaderPath, "r");
-	if(shaderFile == NULL){printf("Error ! Couldn't open shaderfile\n"); return;}
+	if(shaderFile == NULL){log_error("Unable to open shaderfile %s", shaderPath); return;}
 	fseek(shaderFile, 0, SEEK_END);
 	int fileSize = ftell(shaderFile);
 	rewind(shaderFile);
@@ -70,7 +71,7 @@ void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragme
 
 	vertexFile = fopen(vertexFilePath,"r");
 	fragmentFile = fopen(fragmentFilePath, "r");
-	if(!vertexFile|!fragmentFile){printf("Error! Couldn't open shaderfiles!\n"); return;}
+	if(!vertexFile|!fragmentFile){log_error("Unable to open shaderfiles %s %s", vertexFilePath, fragmentFilePath); return;}
 	fseek(vertexFile, 0, SEEK_END);
 	fseek(fragmentFile, 0, SEEK_END);
 	int vertexShaderSize = ftell(vertexFile);
@@ -121,30 +122,30 @@ bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
-	printf("Getting shader sources ...\n");
+	log_debug("Getting shader sources ...");
 	glShaderSource(vertex, 1, &vertexShaderSource, NULL);
 	glShaderSource(fragment, 1, &fragmentShaderSource, NULL);
 
-	printf("Starting to compile shaders ...\n");
-	printf("Compiling vertex shader ...\n");
+	log_debug("Starting to compile shaders ...");
+	log_debug("Compiling vertex shader ...");
 	glCompileShader(vertex);
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 	if(!success){
 		glGetShaderInfoLog(vertex,512, NULL, errorlog); 
-		printf("Error while compiling vertex shader %s! :\n %s\n", vertexFilePath, errorlog);
+		printf("Error while compiling vertex shader %s! :\n %s", vertexFilePath, errorlog);
 		return false;
 	}
 
-	printf("Compiling fragment shader ...\n");
+	log_debug("Compiling fragment shader ...");
 	glCompileShader(fragment);
 	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
 	if(!success){
 		glGetShaderInfoLog(fragment, 512, NULL, errorlog);
-		printf("Error while compiling fragment shader %s! :\n %s\n", fragmentFilePath, errorlog);
+		log_error("Error while compiling fragment shader %s! :\n %s", fragmentFilePath, errorlog);
 		return false;
 	}
 
-	printf("Linking and creating program...\n");
+	log_debug("Linking and creating program...");
 	this->ID = glCreateProgram();
 	glAttachShader(this->ID,vertex);
 	glAttachShader(this->ID,fragment);
@@ -152,10 +153,10 @@ bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
 	if(!success){
 		glGetProgramInfoLog(ID, 512, NULL, errorlog);
-		printf("Error while linking shaders! : %s\n", errorlog);
+		log_error("Error while linking shaders! : %s", errorlog);
 		return false;
 	}
-	printf("Successfully compiled shader ID : %d , cleaning up...\n", this->ID);
+	log_debug("Successfully compiled shader ID : %d , cleaning up...", this->ID);
 	
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);

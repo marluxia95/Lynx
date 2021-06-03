@@ -41,7 +41,6 @@ Game::Game(unsigned int width, unsigned int height):
 	WINDOW_WIDTH = width;
 	WINDOW_HEIGHT = height;
 
-    log_info("Logging started");
 	initWindow();
 
 }

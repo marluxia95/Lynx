@@ -21,8 +21,8 @@ vector<GLuint> sprite_indices = {
 	1, 3, 2
 };
 
-Sprite::Sprite(Shader* shader):
-    Mesh(&sprite_vertices, &sprite_indices, MESH_3D), shader(shader)
+Sprite::Sprite(Shader* shader, Mesh* mesh):
+    mesh(mesh), shader(shader)
     {
 
 
@@ -33,8 +33,6 @@ Sprite::~Sprite(){
 }
 
 void Sprite::Render(mat4 projection, mat4 view){
-    VAO->Bind();
-
     if(!texture){
         texture->use();
     }
@@ -45,11 +43,7 @@ void Sprite::Render(mat4 projection, mat4 view){
     shader->setMat4("model", model);
     shader->setMat4("projection", projection);
     shader->setMat4("view", view);
-
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+    mesh->Render();
 }
 
 }
