@@ -7,11 +7,13 @@
 
 namespace Lynx {
 
-class RenderSystem : ECS::System {
-    public:
-        void Init();
-        void Update();
-};
+    extern Core::Game game;
+
+    class RenderSystem : ECS::System {
+        public:
+            void Init();
+            void Update();
+    };
 
 }
 

@@ -44,16 +44,16 @@ namespace Lynx {
 			vector<GLuint>* indices;
 			const char* name;
 			
-
-		protected:
 			VertexArray* VAO;
 			GLuint VBO;
 			GLuint EBO;
+			RenderType renderType;
+			MeshType type;
+		protected:
 			bool success = true;
 			char* error;
 			
-			RenderType renderType;
-			MeshType type;
+			
 
 
 

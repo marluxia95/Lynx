@@ -25,7 +25,7 @@ struct GameObject {
 
 struct MeshRenderer {
 	vec3 color;
-	Mesh3D* mesh;
+	Mesh* mesh;
 };
 
 }
