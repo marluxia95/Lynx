@@ -17,16 +17,16 @@ static const char* levelStrings[] = {
 };
 
 #ifdef __linux__
-static const char* level_colors[] = {
-  "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
+static const char* level_colours[] = {
+  "\x1b[31m", "\x1b[31;1m", "\x1b[33;1m", "\x1b[37m", "\x1b[34;1m"
 };
 
-const char* color_clear = "\x1b[0m";
+const char* colour_clear = "\x1b[0m";
 #elif _WIN64
-static const char* level_colors[] = {
+static const char* level_colours[] = {
   "[94m", "[36m", "[32m", "[33m", "[31m", "[35m"
 };
-const char* color_clear = "[0m";
+const char* colour_clear = "[0m";
 #endif
 
 static void event_init(log_Event* ev) {
@@ -39,9 +39,9 @@ static void event_init(log_Event* ev) {
 void log_print(log_Event* ev) {
 	char buf[16];
 	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-	printf("%s %s%s\x1b[0m \x1b[90m", buf, level_colors[ev->level], levelStrings[ev->level]);
+	printf("%s %s%s\x1b[0m \x1b[90m", buf, level_colours[ev->level], levelStrings[ev->level]);
 	vprintf(ev->format, ev->ap);
-	printf("%s\n", color_clear);
+	printf("%s\n", colour_clear);
 }
 
 const char* log_level_to_string(int level) {

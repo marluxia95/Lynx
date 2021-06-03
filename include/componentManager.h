@@ -8,7 +8,7 @@
 #include "entity.h"
 #include "componentArray.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 
 using ComponentType = uint64_t;
 

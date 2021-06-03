@@ -3,7 +3,7 @@
 #include <cassert>
 #include "entityManager.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 
 Entity EntityManager::CreateEntity() {
 	Entity newEnt = Entity();

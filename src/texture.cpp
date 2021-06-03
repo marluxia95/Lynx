@@ -41,7 +41,7 @@ Texture::Texture(const char* path,
 }
 
 Texture::Texture(const char* path, 
-	int t_id) {
+	int t_id) { 
 	stbi_set_flip_vertically_on_load(true);
 	//t_id++;
 	id = t_id;

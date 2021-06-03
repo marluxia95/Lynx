@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include "entity.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 
 	class IComponentArray {
 	public:

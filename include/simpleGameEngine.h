@@ -17,14 +17,13 @@
 #include "systemManager.h"
 #include "entity.h"
 #include "camera.h"
-#include "logger.h"
 #include "model.h"
 #include "object.h"
 #include "scene.h"
 #include "mesh.h"
 #include "resourceManager.h"
 
-namespace Lynx{
+namespace Lynx::Core {
 
 	enum GameState{
 		GAME_PAUSE,
@@ -80,7 +79,7 @@ namespace Lynx{
 		}
 
 		template<typename T>
-		ComponentType GetComponentType(){
+		ECS::ComponentType GetComponentType(){
 			return componentManager->GetComponentType<T>();
 		}
 
@@ -142,9 +141,9 @@ namespace Lynx{
 
 		
 
-		std::unique_ptr<ComponentManager> componentManager;
-		std::unique_ptr<EntityManager> entityManager;
-		std::unique_ptr<SystemManager> systemManager;
+		std::unique_ptr<ECS::ComponentManager> componentManager;
+		std::unique_ptr<ECS::EntityManager> entityManager;
+		std::unique_ptr<ECS::SystemManager> systemManager;
 
 		void DebugWindow();
 		void InspectorWindow();

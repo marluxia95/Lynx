@@ -6,7 +6,7 @@
 #include "entity.h"
 #include "system.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 	class SystemManager {
 	public:
 		template<typename T>

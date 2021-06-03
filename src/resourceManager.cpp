@@ -8,7 +8,7 @@
 
 namespace Lynx {
 
-
+/*
 ResourceManager::ResourceManager() {
 
 	log_log(LOG_INFO, "Resource manager started");
@@ -36,5 +36,5 @@ Texture* ResourceManager::GetTexture(const char* name){
 Shader* ResourceManager::GetShader(const char* name){
 	return ShaderMap[name];
 }
-
+*/
 }

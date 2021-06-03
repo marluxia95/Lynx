@@ -5,6 +5,7 @@ set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
 
 file(GLOB_RECURSE SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_demo.cpp 
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_draw.cpp 

@@ -12,14 +12,16 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "mesh.h"
-#include "logger.h"
 #include "simpleGameEngine.h"
 #include "camera.h"
 #include "scene.h"
 #include "systemManager.h"
 #include "components.h"
+extern "C" {
+    #include "logger.h"
+}
 
-namespace Lynx {
+namespace Lynx::Core {
 
 bool Game::mouseLock;
 int Game::polygonMode;
@@ -99,9 +101,9 @@ void Game::initWindow(){
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    componentManager = std::make_unique<ComponentManager>();
-    entityManager = std::make_unique<EntityManager>();
-    systemManager = std::make_unique<SystemManager>();
+    componentManager = std::make_unique<ECS::ComponentManager>();
+    entityManager = std::make_unique<ECS::EntityManager>();
+    systemManager = std::make_unique<ECS::SystemManager>();
 
     RegisterComponent<const char*>();
     RegisterComponent<Transform>();

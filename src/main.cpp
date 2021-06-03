@@ -13,7 +13,7 @@
 using namespace Lynx;
 
 // Initialize global variables
-Game game(1280,720);
+Core::Game game(1280,720);
 Camera camera(CAMERA_PERSPECTIVE,1280, 720);
 
 vector<Vertex> cube_vertices = {
@@ -79,7 +79,7 @@ float  camera_Speed_Multiplier;
 float yaw_, pitch_;
 
 
-void Game::OnInit(){
+void Core::Game::OnInit(){
 
 }
 
@@ -136,16 +136,16 @@ void inputMouse(){
 	camera.front = glm::normalize(direction);
 }
 
-void Game::OnUpdate(){
+void Core::Game::OnUpdate(){
 	input();
 	inputMouse();
 }
 
-void Game::OnRender(){
+void Core::Game::OnRender(){
 
 }
 
-void Game::OnLast(){
+void Core::Game::OnLast(){
 
 }
 
@@ -156,10 +156,8 @@ int main(){
 	// Sets the up and front camera coordinates
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
-	
-    printf("Creating entity\n");
+
     auto newEnt = game.CreateEntity("Hello Entity");
-    printf("Adding component\n");
     Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
     game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
 

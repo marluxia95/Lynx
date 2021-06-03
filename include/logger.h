@@ -5,9 +5,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
-#ifdef _WIN64
 #include <stdbool.h>
-#endif
+
 
 typedef enum {
 	LOG_FATAL,

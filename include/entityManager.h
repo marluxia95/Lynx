@@ -7,7 +7,7 @@
 #include <queue>
 #include "entity.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 	class EntityManager {
 		public:
 			Entity CreateEntity();

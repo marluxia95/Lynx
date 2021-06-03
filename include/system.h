@@ -5,7 +5,7 @@
 #include <set>
 #include "entity.h"
 
-namespace Lynx {
+namespace Lynx::ECS {
 	class System {
 	public:
 		std::set<Entity> entities;
