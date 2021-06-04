@@ -1,3 +1,4 @@
+#pragma once
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
 
@@ -7,9 +8,8 @@
 
 namespace Lynx {
 
-    extern Core::Game game;
-
-    class RenderSystem : ECS::System {
+    
+    class RenderSystem : public ECS::System {
         public:
             void Init();
             void Update();

@@ -17,10 +17,12 @@
 #include "systemManager.h"
 #include "entity.h"
 #include "camera.h"
+#include "system.h"
 #include "model.h"
 #include "object.h"
 #include "scene.h"
 #include "mesh.h"
+#include "renderSystem.h"
 #include "resourceManager.h"
 
 namespace Lynx::Core {
@@ -144,6 +146,8 @@ namespace Lynx::Core {
 		std::unique_ptr<ECS::ComponentManager> componentManager;
 		std::unique_ptr<ECS::EntityManager> entityManager;
 		std::unique_ptr<ECS::SystemManager> systemManager;
+
+		std::shared_ptr<RenderSystem> renderSystem;
 
 		void DebugWindow();
 		void InspectorWindow();

@@ -1,6 +1,7 @@
 #ifndef SYSTEMMANAGER_H
 #define SYSTEMMANAGER_H
 
+#include <iostream>
 #include <memory>
 #include <unordered_map>
 #include "entity.h"
@@ -9,16 +10,17 @@
 namespace Lynx::ECS {
 	class SystemManager {
 	public:
-		template<typename T>
+		template<class T>
 		std::shared_ptr<T> RegisterSystem(){
 			const char* typeName = typeid(T).name();
 
 			assert(systems.find(typeName) == systems.end() && "System already exists");
 
-			auto system = std::make_shared<T>();
-			system.insert({ typeName, system });
-			return system;
-		}
+			std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(std::make_shared<T>());
+
+			systems.insert({ typeName, system });
+			return std::make_shared<T>();
+		}	
 
 		template<typename T>
 		void SetSignature(Signature signature){

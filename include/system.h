@@ -8,6 +8,7 @@
 namespace Lynx::ECS {
 	class System {
 	public:
+		typedef std::shared_ptr<System> ptr;
 		std::set<Entity> entities;
 	};
 }

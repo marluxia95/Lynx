@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include "mesh.h"
+#include "shader.h"
 
 using namespace glm;
 
@@ -26,6 +27,7 @@ struct GameObject {
 struct MeshRenderer {
 	vec3 color;
 	Mesh* mesh;
+	Shader* shader;
 };
 
 }

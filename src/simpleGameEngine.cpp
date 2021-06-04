@@ -17,6 +17,9 @@
 #include "scene.h"
 #include "systemManager.h"
 #include "components.h"
+
+#include "renderSystem.h"
+
 extern "C" {
     #include "logger.h"
 }
@@ -110,6 +113,15 @@ void Game::initWindow(){
     RegisterComponent<GameObject>();
     RegisterComponent<MeshRenderer>();
 
+    renderSystem = RegisterSystem<RenderSystem>();
+    {
+        Signature signature;
+        signature.set(GetComponentType<Transform>());
+        signature.set(GetComponentType<MeshRenderer>());
+        SetSystemSignature<RenderSystem>(signature);
+    }
+
+
     OnInit();
 
 
@@ -168,6 +180,8 @@ void Game::Run(){
 			DebugWindow();
 		}
 
+        renderSystem->Update();
+        
 		OnRender();
 
 		ImGui::Render();

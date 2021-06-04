@@ -7,12 +7,14 @@
 #include "simpleGameEngine.h"
 #include "components.h"
 #include "renderSystem.h"
+#include "logger.h"
+
+extern Lynx::Core::Game game;
 
 
 namespace Lynx {
     
-    extern Core::Game game;
-
+    
     void RenderSystem::Init(){
 
     }
@@ -20,14 +22,19 @@ namespace Lynx {
     void RenderSystem::Update(){
     
         for (auto const& entity : entities) {
-            const auto mTransform = game.GetComponent<Transform>(entity);
-            const auto mRenderComponent = game.GetComponent<MeshRenderer>(entity);
-
+            const auto& mTransform = game.GetComponent<Transform>(entity);
+            const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
+            
             mRenderComponent.mesh->VAO->Bind();
+
+            mRenderComponent.shader->use();
+
+            log_info("A");
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRenderComponent.mesh->EBO);
             glDrawElements(GL_TRIANGLES, mRenderComponent.mesh->indices->size(), GL_UNSIGNED_INT, (void*)0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            
         }
 
     }

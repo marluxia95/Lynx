@@ -159,8 +159,11 @@ int main(){
 
     auto newEnt = game.CreateEntity("Hello Entity");
     Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
+
+    Shader* cube_shader = game.resourceManager.LoadShader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs", "a");
+
     game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
-    game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL)});
+    game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL), cube_shader});
 
     // Runs the game
 	game.Run();
