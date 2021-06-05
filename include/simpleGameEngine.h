@@ -80,7 +80,7 @@ namespace Lynx::Core {
 		}
 
 		template<typename T>
-		T& GetComponent(Entity entity){
+		T* GetComponent(Entity entity){
 			return componentManager->GetComponent<T>(entity);
 		}
 
@@ -107,6 +107,8 @@ namespace Lynx::Core {
 
 		ResourceManager resourceManager;
 		GLFWwindow* window;
+
+		std::shared_ptr<RenderSystem> renderSystem;
 
 		static bool keys[1024];
 		static bool mouseLock;
@@ -147,7 +149,6 @@ namespace Lynx::Core {
 		std::unique_ptr<ECS::EntityManager> entityManager;
 		std::unique_ptr<ECS::SystemManager> systemManager;
 
-		std::shared_ptr<RenderSystem> renderSystem;
 		std::shared_ptr<CameraSystem> cameraSystem;
 
 		void DebugWindow();

@@ -41,25 +41,29 @@ namespace Lynx {
     void RenderSystem::Update()
     {
         const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
-        mat4 model = mat4(1.0f);
+        
         for (auto const& entity : entities) {
             const auto& mTransform = game.GetComponent<Transform>(entity);
             const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
             
-            model = translate(model, mTransform.position);
-
-            mRenderComponent.mesh->VAO->Bind();
-
-            mRenderComponent.shader->use();
-
-            mRenderComponent.shader->setMat4("projection", mCameraComponent.projection);
-            mRenderComponent.shader->setMat4("view", mCameraComponent.view);
-            mRenderComponent.shader->setMat4("model", model);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRenderComponent.mesh->EBO);
-            glDrawElements(GL_TRIANGLES, mRenderComponent.mesh->indices->size(), GL_UNSIGNED_INT, (void*)0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             
+
+            mRenderComponent->shader->use();
+
+            mat4 model = mat4(1.0f);
+            model = translate(model, mTransform->position);
+
+            if(mRenderComponent->shader==NULL){log_error("Invalid shader for entity %d!", entity); return;}
+
+            mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
+            mRenderComponent->shader->setMat4("view", mCameraComponent->view);
+            mRenderComponent->shader->setMat4("model", model);
+
+            mRenderComponent->mesh->VAO->Bind();
+            //log_info("Model : %s \n Projection : %s \n View : %s ", glm::to_string(model).c_str(), glm::to_string(mCameraComponent->projection).c_str(), glm::to_string(mCameraComponent->view).c_str());
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRenderComponent->mesh->EBO);
+            glDrawElements(GL_TRIANGLES, mRenderComponent->mesh->indices->size(), GL_UNSIGNED_INT, (void*)0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
     }

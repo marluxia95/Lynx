@@ -43,8 +43,8 @@ namespace Lynx::ECS {
 
 			size--;
 		}
-		T& GetData(Entity entity){
-			return components[entityToIndexMap[entity]];
+		T* GetData(Entity entity){
+			return &components[entityToIndexMap[entity]];
 		}
 		void EntityDestroyed(Entity entity) override{
 			if (entityToIndexMap.find(entity) == entityToIndexMap.end()) {

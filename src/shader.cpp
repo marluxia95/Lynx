@@ -102,9 +102,6 @@ void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragme
 		fragmentShaderSource[fspos] = '\0';
 	}
 	
-
-	printf("%s\n", fragmentShaderSource);
-
 	success = compile(vertexShaderSource, fragmentShaderSource);
 
 	free(vertexShaderSource);

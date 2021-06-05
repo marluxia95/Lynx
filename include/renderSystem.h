@@ -16,8 +16,8 @@ namespace Lynx
         public:
             void Init();
             void Update();
-        private:
             Entity cameraEntity;
+            
     };
 
 }

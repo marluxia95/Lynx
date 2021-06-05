@@ -130,7 +130,7 @@ void Game::initWindow(){
         Signature signature;
         signature.set(GetComponentType<Transform>());
         signature.set(GetComponentType<Camera>());
-        SetSystemSignature<RenderSystem>(signature);
+        SetSystemSignature<CameraSystem>(signature);
     }
 
     renderSystem->Init();
@@ -302,9 +302,8 @@ void Game::InspectorWindow(){
 	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
     if(entityManager->livingEntityCount>0){
         for (int id = 0; id<entityManager->livingEntityCount; id++) {
-            if (ImGui::Button(componentManager->GetComponent<GameObject>(id).name))
+            if (ImGui::Button(componentManager->GetComponent<GameObject>(id)->name))
             {
-                puts("Selected");
                 selectedId = id;
             }
         }
@@ -332,15 +331,15 @@ void Game::InspectorWindow(){
         if (ImGui::CollapsingHeader("Transform")) {
             ImGui::Text("Position : ");
             ImGui::SameLine();
-            ImGui::InputFloat3("##1", glm::value_ptr(GetComponent <Transform>(selectedId).position));
+            ImGui::InputFloat3("##1", glm::value_ptr(GetComponent <Transform>(selectedId)->position));
 
             ImGui::Text("Rotation : ");
             ImGui::SameLine();
-            ImGui::InputFloat3("##2", glm::value_ptr(GetComponent <Transform>(selectedId).rotation));
+            ImGui::InputFloat3("##2", glm::value_ptr(GetComponent <Transform>(selectedId)->rotation));
 
             ImGui::Text("Scale : ");
             ImGui::SameLine();
-            ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId).scale));
+            ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId)->scale));
         }
     }
 
@@ -349,24 +348,24 @@ void Game::InspectorWindow(){
             auto comp = GetComponent <MeshRenderer>(selectedId);
             ImGui::Text("Color : ");
             ImGui::SameLine();
-            ImGui::InputFloat3("##1", glm::value_ptr(comp.color));
+            ImGui::InputFloat3("##1", glm::value_ptr(comp->color));
         }
     }
 
     if (signature.test(componentManager->GetComponentType<Camera>())) {
         if (ImGui::CollapsingHeader("Camera")) {
-            auto& comp = GetComponent <Camera>(selectedId);
+            auto comp = GetComponent <Camera>(selectedId);
             ImGui::Text("FOV : ");
             ImGui::SameLine();
-            ImGui::InputFloat("##1", &comp.FOV);
+            ImGui::InputFloat("##1", &comp->FOV);
 
             ImGui::Text("Resolution : ");
             ImGui::SameLine();
-            ImGui::InputFloat2("##2", glm::value_ptr(comp.res));
+            ImGui::InputFloat2("##2", glm::value_ptr(comp->res));
 
             ImGui::Text("Camera type : ");
             ImGui::SameLine();
-            switch(comp.type){
+            switch(comp->type){
                 case CAMERA_PERSPECTIVE:
                     ImGui::Text("Perspective");
                     break;
@@ -375,7 +374,7 @@ void Game::InspectorWindow(){
                     break;
             };
 
-            ImGui::Checkbox("Is main? ", &comp.isMain);
+            ImGui::Checkbox("Is main? ", &comp->isMain);
 
         }
     }

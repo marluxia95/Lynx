@@ -34,8 +34,8 @@ namespace Lynx {
 			void Update();
 
 		private:
-			mat4 GetProjection(Camera camera);
-			mat4 GetView(Entity entity, Camera camera);
+			mat4 GetProjection(Camera* camera);
+			mat4 GetView(Entity entity, Camera* camera);
 			Camera cameraComponent;
 	};
 
