@@ -12,18 +12,22 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
+
+#include "model.h"
+#include "object.h"
+#include "mesh.h"
+
+#include "entity.h"
+
 #include "entityManager.h"
 #include "componentManager.h"
 #include "systemManager.h"
-#include "entity.h"
-#include "camera.h"
-#include "system.h"
-#include "model.h"
-#include "object.h"
-#include "scene.h"
-#include "mesh.h"
-#include "renderSystem.h"
 #include "resourceManager.h"
+
+#include "system.h"
+
+#include "renderSystem.h"
+#include "cameraSystem.h"
 
 namespace Lynx::Core {
 
@@ -108,15 +112,11 @@ namespace Lynx::Core {
 		static bool mouseLock;
 		static double mouseXPos, mouseYPos;
 		float delta_time = 0.0f;
-		float last_FrameTime = 0.0f;
+		float last_FrameTime = 0.0f;		
+		char* windowName = "Simple Game Engine";
 	private:
 		bool running;
 		static bool debugMode;
-
-	
-
-		
-		char* windowName = "Simple Game Engine";
 
 		// debug variables
 		int selectedId; 
@@ -148,6 +148,7 @@ namespace Lynx::Core {
 		std::unique_ptr<ECS::SystemManager> systemManager;
 
 		std::shared_ptr<RenderSystem> renderSystem;
+		std::shared_ptr<CameraSystem> cameraSystem;
 
 		void DebugWindow();
 		void InspectorWindow();

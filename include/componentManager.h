@@ -78,4 +78,4 @@ private:
 }
 
 
-#endif COMPONENT_H
+#endif 

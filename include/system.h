@@ -7,9 +7,10 @@
 
 namespace Lynx::ECS {
 	class System {
-	public:
-		typedef std::shared_ptr<System> ptr;
-		std::set<Entity> entities;
+		public:
+			void Init() {};
+			void Update() {};
+			std::set<Entity> entities;
 	};
 }
 

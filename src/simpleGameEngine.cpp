@@ -8,13 +8,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+
+#include "simpleGameEngine.h"
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
 #include "mesh.h"
-#include "simpleGameEngine.h"
-#include "camera.h"
-#include "scene.h"
+
+#include "cameraSystem.h"
 #include "systemManager.h"
 #include "components.h"
 
@@ -112,6 +115,7 @@ void Game::initWindow(){
     RegisterComponent<RigidBody>();
     RegisterComponent<GameObject>();
     RegisterComponent<MeshRenderer>();
+    RegisterComponent<Camera>();
 
     renderSystem = RegisterSystem<RenderSystem>();
     {
@@ -121,7 +125,16 @@ void Game::initWindow(){
         SetSystemSignature<RenderSystem>(signature);
     }
 
+    cameraSystem = RegisterSystem<CameraSystem>();
+    {
+        Signature signature;
+        signature.set(GetComponentType<Transform>());
+        signature.set(GetComponentType<Camera>());
+        SetSystemSignature<RenderSystem>(signature);
+    }
 
+    renderSystem->Init();
+    cameraSystem->Init();
     OnInit();
 
 
@@ -180,7 +193,9 @@ void Game::Run(){
 			DebugWindow();
 		}
 
+
         renderSystem->Update();
+        cameraSystem->Update();
         
 		OnRender();
 
@@ -326,6 +341,42 @@ void Game::InspectorWindow(){
             ImGui::Text("Scale : ");
             ImGui::SameLine();
             ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId).scale));
+        }
+    }
+
+    if (signature.test(componentManager->GetComponentType<MeshRenderer>())) {
+        if (ImGui::CollapsingHeader("Mesh Renderer")) {
+            auto comp = GetComponent <MeshRenderer>(selectedId);
+            ImGui::Text("Color : ");
+            ImGui::SameLine();
+            ImGui::InputFloat3("##1", glm::value_ptr(comp.color));
+        }
+    }
+
+    if (signature.test(componentManager->GetComponentType<Camera>())) {
+        if (ImGui::CollapsingHeader("Camera")) {
+            auto& comp = GetComponent <Camera>(selectedId);
+            ImGui::Text("FOV : ");
+            ImGui::SameLine();
+            ImGui::InputFloat("##1", &comp.FOV);
+
+            ImGui::Text("Resolution : ");
+            ImGui::SameLine();
+            ImGui::InputFloat2("##2", glm::value_ptr(comp.res));
+
+            ImGui::Text("Camera type : ");
+            ImGui::SameLine();
+            switch(comp.type){
+                case CAMERA_PERSPECTIVE:
+                    ImGui::Text("Perspective");
+                    break;
+                case CAMERA_ORTHOGRAPHIC:
+                    ImGui::Text("Orthographic");
+                    break;
+            };
+
+            ImGui::Checkbox("Is main? ", &comp.isMain);
+
         }
     }
     

@@ -5,14 +5,19 @@
 
 #include <stdio.h>
 #include "system.h"
+#include "entity.h"
 
-namespace Lynx {
+namespace Lynx 
+{
 
     
-    class RenderSystem : public ECS::System {
+    class RenderSystem : public ECS::System 
+    {
         public:
             void Init();
             void Update();
+        private:
+            Entity cameraEntity;
     };
 
 }

@@ -29,7 +29,6 @@ struct MeshRenderer {
 	Mesh* mesh;
 	Shader* shader;
 };
-
 }
 
 #endif

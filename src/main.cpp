@@ -4,9 +4,7 @@
 #include <glm/glm.hpp>
 #include "simpleGameEngine.h"
 #include "texture.h"
-#include "camera.h"
 #include "model.h"
-#include "scene.h"
 #include "light.h"
 #include "components.h"
 
@@ -14,7 +12,8 @@ using namespace Lynx;
 
 // Initialize global variables
 Core::Game game(1280,720);
-Camera camera(CAMERA_PERSPECTIVE,1280, 720);
+
+//Camera camera(CAMERA_PERSPECTIVE,1280, 720);
 
 vector<Vertex> cube_vertices = {
     {
@@ -85,6 +84,7 @@ void Core::Game::OnInit(){
 
 void input(){
 	// Simple camera movement function
+    /*
 	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
     if (game.keys[GLFW_KEY_W])
         camera.pos += cameraSpeed * camera.front;
@@ -99,10 +99,12 @@ void input(){
     }else{
     	camera_Speed_Multiplier = 1.0f;
     }
+    */
 }
 
 void inputMouse(){
 	// Simple mouse look function
+    /*
 	if(!game.mouseLock){return;}
 	if (firstMouse) // initially set to true
 	{
@@ -134,6 +136,7 @@ void inputMouse(){
 	direction.y = sin(glm::radians(pitch_));
 	direction.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
 	camera.front = glm::normalize(direction);
+    */
 }
 
 void Core::Game::OnUpdate(){
@@ -154,16 +157,17 @@ int main(){
 	game.SetDebugMode(true);
 
 	// Sets the up and front camera coordinates
+    /*
 	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
 	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+    */
 
     auto newEnt = game.CreateEntity("Hello Entity");
-    Transform entPos = { glm::vec3(0,0,0), glm::quat(0,0,0,0), glm::vec3(0,0,0) };
 
-    Shader* cube_shader = game.resourceManager.LoadShader("res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs", "a");
+    Shader* cube_shader = game.resourceManager.LoadShader("a", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-    game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
-    game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL), cube_shader});
+    game.AddComponent(newEnt, Transform{glm::vec3(10,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
+    game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader});
 
     // Runs the game
 	game.Run();

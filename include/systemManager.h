@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "entity.h"
 #include "system.h"
+#include "logger.h"
 
 namespace Lynx::ECS {
 	class SystemManager {
@@ -13,13 +14,12 @@ namespace Lynx::ECS {
 		template<class T>
 		std::shared_ptr<T> RegisterSystem(){
 			const char* typeName = typeid(T).name();
-
+			log_debug("Registering system %s ", typeName);
 			assert(systems.find(typeName) == systems.end() && "System already exists");
 
-			std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(std::make_shared<T>());
-
+			auto system = std::make_shared<T>();
 			systems.insert({ typeName, system });
-			return std::make_shared<T>();
+			return system;
 		}	
 
 		template<typename T>
@@ -38,6 +38,7 @@ namespace Lynx::ECS {
 			}
 		}
 		void EntitySignatureChanged(Entity entity, Signature signature){
+			log_debug("Entity %d changed signature ! Updating systems ...", entity);
 			// Notify each system that an entity's signature changed
 			for (auto const& pair : systems)
 			{
@@ -56,6 +57,20 @@ namespace Lynx::ECS {
 					system->entities.erase(entity);
 				}
 			}
+		}
+
+		void InitSystems() {
+			/*log_info("Initializing systems...");
+			for (auto const& system : systems) {
+				system.second->Init();
+				log_debug("System %s initialized", system.first);
+			}*/
+		}
+
+		void UpdateSystems() {/*
+			for (auto const& system : systems) {
+				system.second->Update();
+			}*/
 		}
 	private:
 		std::unordered_map<const char*, Signature> signatures{};
