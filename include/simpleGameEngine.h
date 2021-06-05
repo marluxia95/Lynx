@@ -28,6 +28,7 @@
 
 #include "renderSystem.h"
 #include "cameraSystem.h"
+#include "physicsSystem.h"
 
 namespace Lynx::Core {
 
@@ -109,6 +110,7 @@ namespace Lynx::Core {
 		GLFWwindow* window;
 
 		std::shared_ptr<RenderSystem> renderSystem;
+		std::shared_ptr<PhysicsSystem> physicsSystem;
 
 		static bool keys[1024];
 		static bool mouseLock;
@@ -150,6 +152,7 @@ namespace Lynx::Core {
 		std::unique_ptr<ECS::SystemManager> systemManager;
 
 		std::shared_ptr<CameraSystem> cameraSystem;
+		
 
 		void DebugWindow();
 		void InspectorWindow();

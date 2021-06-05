@@ -16,10 +16,6 @@ struct Transform {
 	vec3 scale;
 };
 
-struct RigidBody {
-	vec3 mass;
-};
-
 struct GameObject {
 	const char* name;
 };
@@ -29,6 +25,13 @@ struct MeshRenderer {
 	Mesh* mesh;
 	Shader* shader;
 };
+
+struct RigidBody {
+	vec3 velocity;
+	vec3 acceleration;
+	float mass;
+};
+
 }
 
 #endif

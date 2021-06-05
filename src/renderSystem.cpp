@@ -58,6 +58,8 @@ namespace Lynx {
             mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
             mRenderComponent->shader->setMat4("view", mCameraComponent->view);
             mRenderComponent->shader->setMat4("model", model);
+            mRenderComponent->shader->setVec3("color", mRenderComponent->color);
+
 
             mRenderComponent->mesh->VAO->Bind();
             //log_info("Model : %s \n Projection : %s \n View : %s ", glm::to_string(model).c_str(), glm::to_string(mCameraComponent->projection).c_str(), glm::to_string(mCameraComponent->view).c_str());

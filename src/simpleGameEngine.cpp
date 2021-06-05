@@ -133,8 +133,17 @@ void Game::initWindow(){
         SetSystemSignature<CameraSystem>(signature);
     }
 
+    physicsSystem = RegisterSystem<PhysicsSystem>();
+    {
+        Signature signature;
+        signature.set(GetComponentType<Transform>());
+        signature.set(GetComponentType<RigidBody>());
+        SetSystemSignature<PhysicsSystem>(signature);
+    }
+
     renderSystem->Init();
     cameraSystem->Init();
+    physicsSystem->Init();
     OnInit();
 
 
@@ -196,6 +205,7 @@ void Game::Run(){
 
         renderSystem->Update();
         cameraSystem->Update();
+        physicsSystem->Update();
         
 		OnRender();
 
