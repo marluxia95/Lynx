@@ -1,5 +1,6 @@
 lib/
 Build/
+build/
 Debug/
 .vscode/
 .vs/
