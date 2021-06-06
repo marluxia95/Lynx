@@ -50,11 +50,9 @@ mat4 CameraSystem::GetProjection(Camera* camera)
 			break;
 		
 		case CAMERA_PERSPECTIVE:
-			projection = perspective(radians(camera->FOV), (float)camera->res.x / (float)camera->res.y, 0.1f, 100.0f); 
+			projection = perspective(radians(camera->FOV), (float)camera->res.x / (float)camera->res.y, 0.1f, 1000.0f); 
 			break;
 	}
-	
-	
 
 	return projection;
 }

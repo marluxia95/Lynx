@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include "simpleGameEngine.h"
 #include "components.h"
 #include "renderSystem.h"
@@ -23,7 +24,7 @@ namespace Lynx {
 
         game.AddComponent(cameraEntity, Transform{
             glm::vec3(0), 
-            glm::quat(0,0,0,0), 
+            glm::vec3(0), 
             glm::vec3(0)
         });
 
@@ -50,9 +51,8 @@ namespace Lynx {
 
             mRenderComponent->shader->use();
 
-            mat4 model = mat4(1.0f);
-            model = translate(model, mTransform->position);
-
+            mat4 model = mTransform->GetModel();
+            
             if(mRenderComponent->shader==NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
             mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);

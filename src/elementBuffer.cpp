@@ -15,7 +15,6 @@ ElementBuffer::ElementBuffer(const void* indices, unsigned int indexNumber){
 ElementBuffer::ElementBuffer(vector<GLuint>* indices){
     glGenBuffers(1, &ID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
-    printf("bb -> %d\n", &(indices->at(0)));
 }
 
 ElementBuffer::~ElementBuffer(){

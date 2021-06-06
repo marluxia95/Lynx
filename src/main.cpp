@@ -169,11 +169,11 @@ int main(){
 
     Shader* cube_shader = game.resourceManager.LoadShader("a", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-    game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0)});
+    game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1)});
     game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader});
 
     auto physEnt = game.CreateEntity("Cube");
-    game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::quat(0,0,0,0),glm::vec3(0) });
+    game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1) });
     game.AddComponent(physEnt, MeshRenderer{ glm::vec3(120, 120, 0), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader });
     game.AddComponent(physEnt, RigidBody{ glm::vec3(0), glm::vec3(0) } );
 
