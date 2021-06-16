@@ -7,10 +7,9 @@
 #include <assimp/scene.h>
 #include "mesh.h"
 #include "model.h"
-#include "light.h"
 
 namespace Lynx {
-
+/*
 class Object3D : public Model{
     public:
         Object3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, Material material); 
@@ -29,6 +28,6 @@ class Object3D : public Model{
         Material material;
         const aiScene *scene;
 };
-
+*/
 }
 #endif

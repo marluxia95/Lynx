@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "mesh.h"
+#include "texture.h"
 #include "shader.h"
-
+#include "entity.h"
+#include "mesh.h"
 using namespace glm;
 
 namespace Lynx {
@@ -36,16 +37,45 @@ struct GameObject {
 	const char* name;
 };
 
+struct Parent {
+	Entity parentEntity;
+};
+
 struct MeshRenderer {
 	vec3 color;
 	Mesh* mesh;
 	Shader* shader;
+	Texture* texture;
 };
 
 struct RigidBody {
 	vec3 velocity;
 	vec3 acceleration;
 	float mass;
+};
+
+struct Material {
+    	glm::vec3 ambient;
+    	glm::vec3 diffuse;
+    	glm::vec3 specular;
+    	float shininess;
+}; 
+
+struct PointLight {
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	float constant;
+   	float linear;
+    	float quadratic;
+};
+
+struct DirectionalLight {
+	glm::vec3 direction;
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	float intensity;
 };
 
 }

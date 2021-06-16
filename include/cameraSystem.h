@@ -22,10 +22,10 @@ namespace Lynx {
 		vec2 res;
 		CameraType type;
 		bool isMain;
-		vec3 front;
-		vec3 up;
-		mat4 view;
-		mat4 projection;
+		vec3 front = vec3(0);
+		vec3 up    = vec3(0, 1, 0);
+		mat4 view  = mat4(1.0f);
+		mat4 projection = mat4(1.0f);
 	};
 
 	class CameraSystem : public ECS::System {

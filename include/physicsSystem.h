@@ -15,7 +15,7 @@ class PhysicsSystem : public ECS::System {
 	public:
 		void Init();
 		void Update();
-		vec3 gravityForce = vec3(0, -1.0f,0);
+		vec3 gravityForce = vec3(0, -3.0f,0);
 };
 
 }

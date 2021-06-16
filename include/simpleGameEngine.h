@@ -19,16 +19,19 @@
 
 #include "entity.h"
 
-#include "entityManager.h"
 #include "componentManager.h"
-#include "systemManager.h"
 #include "resourceManager.h"
+#include "parentingSystem.h"
+#include "entityManager.h"
+#include "systemManager.h"
+
 
 #include "system.h"
 
+#include "physicsSystem.h"
 #include "renderSystem.h"
 #include "cameraSystem.h"
-#include "physicsSystem.h"
+
 
 namespace Lynx::Core {
 
@@ -151,6 +154,8 @@ namespace Lynx::Core {
 		std::unique_ptr<ECS::EntityManager> entityManager;
 		std::unique_ptr<ECS::SystemManager> systemManager;
 
+
+		std::shared_ptr<ECS::ParentingSystem> parentingSystem;
 		std::shared_ptr<CameraSystem> cameraSystem;
 		
 

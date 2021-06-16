@@ -9,7 +9,6 @@
 #include <assimp/postprocess.h>
 #include "object.h"
 #include "shader.h"
-#include "light.h"
 #include "mesh.h"
 #include "vertexBuffer.h"
 
@@ -21,7 +20,7 @@ Object3D::Object3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* sh
 : MeshRenderer(vertices, indices, shader, MESH_3D_NORMAL), shader(shader), material(material){
 
 }
-*/
+
 
 Object3D::Object3D(const char* path, Shader* shader): Model(path, shader){
 	
@@ -62,5 +61,5 @@ void Object3D::Render(glm::mat4 view, glm::mat4 projection,glm::vec3 viewPos , s
         meshes[i]->Render(projection, view);
     }
 }
-
+*/
 }

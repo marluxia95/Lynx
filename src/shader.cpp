@@ -54,9 +54,6 @@ Shader::Shader(const char* shaderPath){
 
 	}
 	*/
-	printf("Vertex Position \n %td \n", vertexShaderChunk - buffer);
-	printf("Fragment Position \n %td \n", fragmentShaderChunk - buffer);
-
 	fclose(shaderFile);
 	free(buffer);
 
@@ -85,15 +82,14 @@ void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragme
 	char *vertexShaderSource = NULL;
 	char *fragmentShaderSource = NULL;
 
-	vertexShaderSource = (char*)malloc(vertexShaderSize);
-	fragmentShaderSource = (char*)malloc(fragmentShaderSize);
+	vertexShaderSource = (char*)malloc(vertexShaderSize+10);
+	fragmentShaderSource = (char*)malloc(fragmentShaderSize+10);
 
 	int vspos = fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
 	int fspos = fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
 
 	fclose(vertexFile);
 	fclose(fragmentFile);
-	
 
 	if(vspos != 0|vertexShaderSource!=NULL){
 		vertexShaderSource[vspos] = '\0';
@@ -129,7 +125,7 @@ bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderS
 	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
 	if(!success){
 		glGetShaderInfoLog(vertex,512, NULL, errorlog); 
-		printf("Error while compiling vertex shader %s! :\n %s", vertexFilePath, errorlog);
+		log_error("Error while compiling vertex shader %s! :\n %s", vertexFilePath, errorlog);
 		return false;
 	}
 

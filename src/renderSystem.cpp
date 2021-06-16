@@ -53,19 +53,25 @@ namespace Lynx {
 
             mat4 model = mTransform->GetModel();
             
-            if(mRenderComponent->shader==NULL){log_error("Invalid shader for entity %d!", entity); return;}
+            if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
             mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
             mRenderComponent->shader->setMat4("view", mCameraComponent->view);
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->color);
 
+            if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
+
+            // Check if mesh has a texture, if so, render it
+            if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
+            {
+            	if(mRenderComponent->texture != NULL){
+                	mRenderComponent->texture->use();
+            	}   
+            }
 
             mRenderComponent->mesh->VAO->Bind();
-            //log_info("Model : %s \n Projection : %s \n View : %s ", glm::to_string(model).c_str(), glm::to_string(mCameraComponent->projection).c_str(), glm::to_string(mCameraComponent->view).c_str());
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mRenderComponent->mesh->EBO);
-            glDrawElements(GL_TRIANGLES, mRenderComponent->mesh->indices->size(), GL_UNSIGNED_INT, (void*)0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            mRenderComponent->mesh->Render();
         }
 
     }

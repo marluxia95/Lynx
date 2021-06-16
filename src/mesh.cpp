@@ -15,6 +15,7 @@
 #include "texture.h"
 #include "model.h"
 #include "mesh.h"
+#include "logger.h"
 
 
 using namespace glm;
@@ -29,7 +30,9 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
 	glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
-	//printf("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d\n", vertices->size(), vertices->size() * sizeof(Vertex));
+	
+	log_debug("Mesh type : %d", type);
+	log_debug("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d", vertices->size(), vertices->size() * sizeof(Vertex));
 
 	VAO = new VertexArray();
 	VAO->Bind();
@@ -86,7 +89,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
 	VAO->Unbind();
-	//printf("Generated EBO with %d indices. Total EBO size : %d\n", indices->size(), indices->size() * sizeof(GLuint));
+	log_debug("Generated EBO with %d indices. Total EBO size : %d", indices->size(), indices->size() * sizeof(GLuint));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 
 	
@@ -95,15 +98,7 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 
 }
 
-MeshType Mesh::GetType(){
-	return type;
-}
-
 Mesh::Mesh(){}
-
-bool Mesh::checkErrors(){
-	return success;
-}
 
 Mesh::~Mesh(){
 
@@ -116,7 +111,7 @@ void Mesh::Render(){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 	
 }
 
-
+/*
 Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
 	: Mesh(vertices, indices, type), shader(shader){
 	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
@@ -156,9 +151,9 @@ void Mesh3D::Render(mat4 projection, mat4 view){/*
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); */
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 }
-
+*/
 }
 
 

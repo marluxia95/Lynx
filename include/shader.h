@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h> 
 #include <stdio.h>
-#include "light.h"
-
 
 namespace Lynx {  
 

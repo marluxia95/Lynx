@@ -1,35 +1,35 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <stdio.h>
+#include <string.h>
 #include <vector>
+
+
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
+
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
+#include "simpleGameEngine.h"
+#include "vertexBuffer.h"
+#include "vertexArray.h"
+#include "components.h"
+#include "texture.h"
+#include "logger.h"
 #include "shader.h"
-#include "mesh.h"
+#include "entity.h"
+#include "model.h"
+
 
 using namespace std;
 
-namespace Lynx {
+namespace Lynx::ModelLoader {
 
-class Model {
-    public:
-        Model(const char* path, Shader* shader);
-        void Render(glm::mat4 projection, glm::mat4 view);
-        const char* name;
-        glm::vec3 pos;
-        vector<Mesh3D*> meshes;
-    protected:
-        
-        const char* path;
-        const char* directory;
-        Shader* shader;
-        int totalVerts;
-        void loadModel();
-        void processNode(aiNode* node, const aiScene* scene);
-        Mesh3D* processMesh(aiMesh* mesh, const aiScene* scene);
-};
+	Entity loadModel(const char* path, Shader* shader);
+	void processNode(Entity parentEntity, Shader* shader, aiNode* node, const aiScene* scene);
+	void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiScene* scene);
 
 }
 

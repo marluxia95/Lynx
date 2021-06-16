@@ -6,6 +6,8 @@
 
 #include "texture.h"
 
+#include "logger.h"
+
 
 Texture::Texture(const char* path, 
 	int t_id,
@@ -33,7 +35,7 @@ Texture::Texture(const char* path,
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}else{
-		printf("Unable to load texture\n");
+		log_error("Unable to load texture %s", path);
 	}
 
 	stbi_image_free(data);
@@ -63,7 +65,7 @@ Texture::Texture(const char* path,
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}else{
-		printf("Unable to load texture\n");
+		log_error("Unable to load texture %s", path);
 	}
 
 	stbi_image_free(data);

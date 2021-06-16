@@ -17,11 +17,11 @@
 
 #include "mesh.h"
 
-#include "cameraSystem.h"
+#include "parentingSystem.h"
 #include "systemManager.h"
-#include "components.h"
-
+#include "cameraSystem.h"
 #include "renderSystem.h"
+#include "components.h"
 
 extern "C" {
     #include "logger.h"
@@ -88,65 +88,78 @@ void Game::initWindow(){
 	glfwSetCursorPosCallback(window, MouseCallback);  
 	glfwSetKeyCallback(window, KeyCallback);
 
-    mouseLock = false;
+    	mouseLock = false;
 
 	bool err = glewInit() != GLEW_OK;   
 
-    if(err){
-        log_fatal("Failed to initalize GLEW");
-    }
+    	if(err){
+        	log_fatal("Failed to initalize GLEW");
+    	}
 
 	glEnable(GL_DEPTH_TEST);
 
+    	// Enable face culling
+    	glEnable(GL_CULL_FACE);
+    	glCullFace(GL_FRONT);  
+    	glFrontFace(GL_CW);  
+
+
 	IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
+    	ImGui::CreateContext();
+    	ImGuiIO& io = ImGui::GetIO(); (void)io;
+    	ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
+    	ImGui_ImplGlfw_InitForOpenGL(window, true);
+    	ImGui_ImplOpenGL3_Init("#version 330");
 
-    componentManager = std::make_unique<ECS::ComponentManager>();
-    entityManager = std::make_unique<ECS::EntityManager>();
-    systemManager = std::make_unique<ECS::SystemManager>();
+    	componentManager = std::make_unique<ECS::ComponentManager>();
+    	entityManager = std::make_unique<ECS::EntityManager>();
+    	systemManager = std::make_unique<ECS::SystemManager>();
 
-    RegisterComponent<const char*>();
-    RegisterComponent<Transform>();
-    RegisterComponent<RigidBody>();
-    RegisterComponent<GameObject>();
-    RegisterComponent<MeshRenderer>();
-    RegisterComponent<Camera>();
+    	RegisterComponent<const char*>();
+    	RegisterComponent<Transform>();
+    	RegisterComponent<RigidBody>();
+    	RegisterComponent<GameObject>();
+    	RegisterComponent<MeshRenderer>();
+    	RegisterComponent<Camera>();
+	RegisterComponent<Parent>();
 
-    renderSystem = RegisterSystem<RenderSystem>();
-    {
-        Signature signature;
-        signature.set(GetComponentType<Transform>());
-        signature.set(GetComponentType<MeshRenderer>());
-        SetSystemSignature<RenderSystem>(signature);
-    }
+    	renderSystem = RegisterSystem<RenderSystem>();
+    	{
+        	Signature signature;
+        	signature.set(GetComponentType<Transform>());
+        	signature.set(GetComponentType<MeshRenderer>());
+        	SetSystemSignature<RenderSystem>(signature);
+    	}
 
-    cameraSystem = RegisterSystem<CameraSystem>();
-    {
-        Signature signature;
-        signature.set(GetComponentType<Transform>());
-        signature.set(GetComponentType<Camera>());
-        SetSystemSignature<CameraSystem>(signature);
-    }
+    	cameraSystem = RegisterSystem<CameraSystem>();
+    	{
+        	Signature signature;
+        	signature.set(GetComponentType<Transform>());
+        	signature.set(GetComponentType<Camera>());
+        	SetSystemSignature<CameraSystem>(signature);
+    	}
 
-    physicsSystem = RegisterSystem<PhysicsSystem>();
-    {
-        Signature signature;
-        signature.set(GetComponentType<Transform>());
-        signature.set(GetComponentType<RigidBody>());
-        SetSystemSignature<PhysicsSystem>(signature);
-    }
+    	physicsSystem = RegisterSystem<PhysicsSystem>();
+    	{
+        	Signature signature;
+        	signature.set(GetComponentType<Transform>());
+        	signature.set(GetComponentType<RigidBody>());
+        	SetSystemSignature<PhysicsSystem>(signature);
+    	}
 
-    renderSystem->Init();
-    cameraSystem->Init();
-    physicsSystem->Init();
-    OnInit();
+    	parentingSystem = RegisterSystem<ECS::ParentingSystem>();
+    	{
+        	Signature signature;
+        	signature.set(GetComponentType<Transform>());
+        	signature.set(GetComponentType<Parent>());
+        	SetSystemSignature<ECS::ParentingSystem>(signature);
+    	}
 
-
+    	renderSystem->Init();
+    	cameraSystem->Init();
+    	physicsSystem->Init();
+    	OnInit();
 }
 
 
@@ -159,20 +172,20 @@ void Game::initWindow(){
 
 
 Entity Game::CreateEntity() {
-    return entityManager->CreateEntity();
+    	return entityManager->CreateEntity();
 }
 
 
 Entity Game::CreateEntity(const char* name) {
-    Entity newEnt = entityManager->CreateEntity();
-    log_debug("Created new entity %d", newEnt);
-    AddComponent(newEnt, GameObject{name=name});
-    return newEnt;
+    	Entity newEnt = entityManager->CreateEntity();
+    	log_debug("Created new entity %d", newEnt);
+    	AddComponent(newEnt, GameObject{name=name});
+    	return newEnt;
 }
 
 
 void Game::DestroyEntity(Entity entity) {
-    entityManager->DestroyEntity(entity);
+    	entityManager->DestroyEntity(entity);
 }
 
 
@@ -185,57 +198,49 @@ void Game::DestroyEntity(Entity entity) {
 void Game::Run(){
 	do
 	{
-        float current_FrameTime = glfwGetTime();
+        	float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
-        glfwPollEvents();
+        	glfwPollEvents();
 
 		ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        	ImGui_ImplGlfw_NewFrame();
+        	ImGui::NewFrame();
 		
 		OnUpdate();
-        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+        	
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(debugMode){
 			DebugWindow();
 		}
 
-
-        renderSystem->Update();
-        cameraSystem->Update();
-        physicsSystem->Update();
+		// This needs to be improved
+        	parentingSystem->Update();
+        	renderSystem->Update();
+        	cameraSystem->Update();
+        	physicsSystem->Update();
         
 		OnRender();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	    glfwSwapBuffers(window);  
-	    glfwPollEvents();
+	    	glfwSwapBuffers(window);  
+	    	glfwPollEvents();
 
-    } while((!glfwWindowShouldClose(window))|running);
+    	} while((!glfwWindowShouldClose(window))|running);
 }
 
 // Game Input
 
 void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
-    mouseXPos = xpos;
-    mouseYPos = ypos;
+    	mouseXPos = xpos;
+    	mouseYPos = ypos;
 }
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	/*
-
-    if (key ==  GLFW_KEY_I && action == GLFW_PRESS){
-        if(polygonMode<1){polygonMode++;}else{polygonMode = 0;}
-    	//glPolygonMode(GL_FRONT_AND_BACK, polygonModes[polygonMode]);
-
-    }
-
-    */
-
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, true);
 
@@ -269,12 +274,6 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-    /*
-    for ( const auto &cam : Scenes[activeScene]->Cameras){
-        cam->resX = width;
-        cam->resY = height;
-    }
-    */
 }  
 
 // Game Debug / Editor stuff

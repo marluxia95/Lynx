@@ -36,28 +36,21 @@ namespace Lynx {
 			Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type); // Element buffer mode
 			Mesh(); // does nothing
 			~Mesh();
-			MeshType GetType();
 			void Render();
-			char* getError();
-			bool checkErrors();
 			vector<Vertex>* vertices;
 			vector<GLuint>* indices;
-			const char* name;
-			
+
 			VertexArray* VAO;
 			GLuint VBO;
 			GLuint EBO;
 			RenderType renderType;
 			MeshType type;
-		protected:
 			bool success = true;
+		protected:
 			char* error;
-			
-			
-
-
-
 	};
+
+	/*
 
 	class Mesh3D : public Mesh {
 		public:
@@ -72,7 +65,7 @@ namespace Lynx {
 			* 
 			void loadModel();
 			void generateMesh();
-			*/
+			
 			Shader* shader;
 			mat4 model;
 			MeshType type;
@@ -80,6 +73,7 @@ namespace Lynx {
 			
 				
 	};
+	*/
 }
 
 #endif

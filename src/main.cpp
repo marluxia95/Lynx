@@ -1,19 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h> 
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
 #include "simpleGameEngine.h"
 #include "texture.h"
 #include "model.h"
-#include "light.h"
 #include "components.h"
 
 using namespace Lynx;
 
 // Initialize global variables
 Core::Game game(1280,720);
-
-//Camera camera(CAMERA_PERSPECTIVE,1280, 720);
 
 vector<Vertex> cube_vertices = {
     {
@@ -84,31 +83,30 @@ void Core::Game::OnInit(){
 
 void input(){
 	// Simple camera movement function
-    Entity camera = game.renderSystem->cameraEntity;
-    auto cameraTransform = game.GetComponent<Transform>(camera);
-    auto cameraComponent = game.GetComponent<Camera>(camera);
+	Entity camera = game.renderSystem->cameraEntity;
+	auto cameraTransform = game.GetComponent<Transform>(camera);
+	auto cameraComponent = game.GetComponent<Camera>(camera);
 
 	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
-    if (game.keys[GLFW_KEY_W])
-        cameraTransform->position += cameraSpeed * cameraComponent->front;
-    if (game.keys[GLFW_KEY_S])
-       cameraTransform->position  -= cameraSpeed * cameraComponent->front;
-    if (game.keys[GLFW_KEY_A])
-        cameraTransform->position  -= glm::normalize(glm::cross(cameraComponent->front, cameraComponent->up)) * cameraSpeed;
-    if (game.keys[GLFW_KEY_D])
-        cameraTransform->position  += glm::normalize(glm::cross(cameraComponent->front, cameraComponent->up)) * cameraSpeed;
-    if (game.keys[GLFW_KEY_LEFT_SHIFT]){
-    	camera_Speed_Multiplier = 3.0f;
-    }else{
-    	camera_Speed_Multiplier = 1.0f;
-    }
-    
+	if (game.keys[GLFW_KEY_W])
+		cameraTransform->position += cameraSpeed * cameraComponent->front;
+	if (game.keys[GLFW_KEY_S])
+		cameraTransform->position  -= cameraSpeed * cameraComponent->front;
+	if (game.keys[GLFW_KEY_A])
+		cameraTransform->position  -= glm::normalize(glm::cross(cameraComponent->front, cameraComponent->up)) * cameraSpeed;
+	if (game.keys[GLFW_KEY_D])
+		cameraTransform->position  += glm::normalize(glm::cross(cameraComponent->front, cameraComponent->up)) * cameraSpeed;
+	if (game.keys[GLFW_KEY_LEFT_SHIFT]){
+		camera_Speed_Multiplier = 3.0f;
+	}else{
+		camera_Speed_Multiplier = 1.0f;
+	}
 }
 
 void inputMouse(){
 	// Simple mouse look function
-    Entity camera = game.renderSystem->cameraEntity;
-    auto cameraComponent = game.GetComponent<Camera>(camera);
+	Entity camera = game.renderSystem->cameraEntity;
+	auto cameraComponent = game.GetComponent<Camera>(camera);
     
 	if(!game.mouseLock){return;}
 	if (firstMouse) // initially set to true
@@ -158,26 +156,26 @@ void Core::Game::OnLast(){
 int main(){
 	// Enables the game's debug mode
 	game.SetDebugMode(true);
+	log_set_level(LOG_INFO);
 
-	// Sets the up and front camera coordinates
-    /*
-	camera.front = glm::vec3(0.0f,0.0f,-1.0f);
-	camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
-    */
+	Shader* cube_shader = game.resourceManager.LoadShader("Blank", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	Shader* texture_shader = game.resourceManager.LoadShader("Textured", "res/shaders/standard/textured.vs", "res/shaders/standard/textured.fs");
+	Texture* texture = game.resourceManager.LoadTexture("prototype", "res/images/container.jpg");
+	//Mesh* cube_mesh = game.resourceManager.LoadMesh("Cube", &cube_vertices, &cube_indices, MESH_3D);
 
-    auto newEnt = game.CreateEntity("Hello Entity");
+	log_info("Loading model");
+	auto ModelEntity = ModelLoader::loadModel("res/models/monkey.obj", cube_shader);
+	
 
-    Shader* cube_shader = game.resourceManager.LoadShader("a", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	auto physEnt = game.CreateEntity("Cube");
+    	game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1) });
+    	game.AddComponent(physEnt, MeshRenderer{ glm::vec3(120, 120, 0), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader });
+    	game.AddComponent(physEnt, RigidBody{ glm::vec3(0), glm::vec3(0) } );
 
-    game.AddComponent(newEnt, Transform{glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1)});
-    game.AddComponent(newEnt, MeshRenderer{glm::vec3(255), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader});
 
-    auto physEnt = game.CreateEntity("Cube");
-    game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1) });
-    game.AddComponent(physEnt, MeshRenderer{ glm::vec3(120, 120, 0), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader });
-    game.AddComponent(physEnt, RigidBody{ glm::vec3(0), glm::vec3(0) } );
 
-    // Runs the game
+
+	// Runs the game
 	game.Run();
 	return 0;
 }

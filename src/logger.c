@@ -13,7 +13,7 @@ static struct {
 } Logger;
 
 static const char* levelStrings[] = {
-	"FATAL", "ERROR", "WARN", "INFO", "DEBUG"
+	"FATAL", "ERROR", "WARNING", "INFO", "DEBUG"
 };
 
 #ifdef __linux__
