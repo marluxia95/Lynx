@@ -23,6 +23,7 @@ namespace Lynx {
 			ImGuiTreeNodeFlags node_flags;
 			unsigned int selectedId;					
 			bool debugOverlayActive = false;
+			bool consoleActive = false;
 
 	};
 }
