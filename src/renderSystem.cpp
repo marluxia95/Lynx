@@ -59,6 +59,39 @@ namespace Lynx {
             mRenderComponent->shader->setMat4("view", mCameraComponent->view);
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->color);
+			
+			if(mRenderComponent->lighting){
+				// Set lighting shader values
+				int i = 0;
+				for (auto lightEnt : game.lightingSystem->entities){
+					++i;
+					auto lightComponent = game.GetComponent<PointLight>(lightEnt);
+					char buffer[64];
+					
+					sprintf(buffer, "pointLights[%d].position", i);
+					mRenderComponent->shader->setVec3(buffer , game.GetComponent<Transform>(lightEnt)->position);
+					
+					sprintf(buffer, "pointLights[%d].constant", i);
+					mRenderComponent->shader->setFloat(buffer, lightComponent->constant);
+					
+					sprintf(buffer, "pointLights[%d].linear", i);
+					mRenderComponent->shader->setFloat(buffer, lightComponent->linear);
+					
+					sprintf(buffer, "pointLights[%d].quadratic", i);
+					mRenderComponent->shader->setFloat(buffer, lightComponent->quadratic);
+					
+					sprintf(buffer, "pointLights[%d].ambient", i);
+					mRenderComponent->shader->setVec3(buffer, lightComponent->ambient);
+					
+					sprintf(buffer, "pointLights[%d].diffuse", i);
+					mRenderComponent->shader->setVec3(buffer, lightComponent->diffuse);
+					
+					sprintf(buffer, "pointLights[%d].specular", i);
+					mRenderComponent->shader->setVec3(buffer, lightComponent->specular);
+					
+					}
+			}
+
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
 

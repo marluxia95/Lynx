@@ -33,8 +33,9 @@ struct Transform {
 	}
 };
 
-struct GameObject {
+struct Generic {
 	const char* name;
+	bool isChild = false;
 };
 
 struct Parent {
@@ -46,6 +47,7 @@ struct MeshRenderer {
 	Mesh* mesh;
 	Shader* shader;
 	Texture* texture;
+	bool lighting = true;
 };
 
 struct RigidBody {

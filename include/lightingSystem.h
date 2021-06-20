@@ -11,7 +11,7 @@ class LightingSystem : public ECS::System {
         void Init();
         void Update();
 
-}
+};
 
 }
 

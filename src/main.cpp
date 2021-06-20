@@ -158,7 +158,7 @@ int main(){
 	game.SetDebugMode(true);
 	log_set_level(LOG_INFO);
 
-	Shader* cube_shader = game.resourceManager.LoadShader("Blank", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
+	Shader* cube_shader = game.resourceManager.LoadShader("Lighting Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	Shader* texture_shader = game.resourceManager.LoadShader("Textured", "res/shaders/standard/textured.vs", "res/shaders/standard/textured.fs");
 	Texture* texture = game.resourceManager.LoadTexture("prototype", "res/images/container.jpg");
 	//Mesh* cube_mesh = game.resourceManager.LoadMesh("Cube", &cube_vertices, &cube_indices, MESH_3D);
@@ -166,12 +166,12 @@ int main(){
 	log_info("Loading model");
 	auto ModelEntity = ModelLoader::loadModel("res/models/monkey.obj", cube_shader);
 	
-
+	/*
 	auto physEnt = game.CreateEntity("Cube");
-    	game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1) });
-    	game.AddComponent(physEnt, MeshRenderer{ glm::vec3(120, 120, 0), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader });
-    	game.AddComponent(physEnt, RigidBody{ glm::vec3(0), glm::vec3(0) } );
-
+    game.AddComponent(physEnt, Transform{ glm::vec3(0,0,0),glm::vec3(0),glm::vec3(1) });
+    game.AddComponent(physEnt, MeshRenderer{ glm::vec3(120, 120, 0), new Mesh(&cube_vertices, &cube_indices, MESH_3D_TEXTURED_NORMAL) , cube_shader });
+   	game.AddComponent(physEnt, RigidBody{ glm::vec3(0), glm::vec3(0) } );
+	*/
 
 
 

@@ -24,14 +24,14 @@
 #include "parentingSystem.h"
 #include "entityManager.h"
 #include "systemManager.h"
-
+#include "editor.h"
 
 #include "system.h"
 
+#include "lightingSystem.h"
 #include "physicsSystem.h"
 #include "renderSystem.h"
 #include "cameraSystem.h"
-
 
 namespace Lynx::Core {
 
@@ -39,7 +39,7 @@ namespace Lynx::Core {
 		GAME_PAUSE,
 		GAME_ACTIVE
 	};
-
+	
 	class Game {
 	public:
 		Game(unsigned int width, unsigned int height);
@@ -114,6 +114,7 @@ namespace Lynx::Core {
 
 		std::shared_ptr<RenderSystem> renderSystem;
 		std::shared_ptr<PhysicsSystem> physicsSystem;
+		std::shared_ptr<LightingSystem> lightingSystem;
 
 		static bool keys[1024];
 		static bool mouseLock;
@@ -121,6 +122,8 @@ namespace Lynx::Core {
 		float delta_time = 0.0f;
 		float last_FrameTime = 0.0f;		
 		char* windowName = "Simple Game Engine";
+
+		friend class Lynx::Editor;
 	private:
 		bool running;
 		static bool debugMode;
@@ -159,11 +162,7 @@ namespace Lynx::Core {
 		std::shared_ptr<CameraSystem> cameraSystem;
 		
 
-		void DebugWindow();
-		void InspectorWindow();
-		void DebugOverlay();
-		bool inspectorToggle;
-		bool overlayToggle;
+		Lynx::Editor editor;
 
 		virtual void OnInit();
 		virtual void OnUpdate();

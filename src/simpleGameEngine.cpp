@@ -17,6 +17,7 @@
 
 #include "mesh.h"
 
+#include "lightingSystem.h"
 #include "parentingSystem.h"
 #include "systemManager.h"
 #include "cameraSystem.h"
@@ -41,7 +42,7 @@ double Game::mouseXPos, Game::mouseYPos;
 bool Game::firstMouse;
 
 Game::Game(unsigned int width, unsigned int height):
-    resourceManager()
+    resourceManager(), editor()
 {
     
 	WINDOW_WIDTH = width;
@@ -67,7 +68,7 @@ void Game::SetDebugMode(bool mode){
 void Game::initWindow(){
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
@@ -79,6 +80,7 @@ void Game::initWindow(){
 	{
         log_fatal("Failed to create window");
 	    glfwTerminate();
+		exit(1);
 	}
 
 	glfwMakeContextCurrent(window);
@@ -88,78 +90,90 @@ void Game::initWindow(){
 	glfwSetCursorPosCallback(window, MouseCallback);  
 	glfwSetKeyCallback(window, KeyCallback);
 
-    	mouseLock = false;
+    mouseLock = false;
 
 	bool err = glewInit() != GLEW_OK;   
 
-    	if(err){
-        	log_fatal("Failed to initalize GLEW");
-    	}
+    if(err){
+    	log_fatal("Failed to initalize GLEW");
+		exit(1);
+    }
 
 	glEnable(GL_DEPTH_TEST);
 
-    	// Enable face culling
-    	glEnable(GL_CULL_FACE);
-    	glCullFace(GL_FRONT);  
-    	glFrontFace(GL_CW);  
+    // Enable face culling
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);  
+    glFrontFace(GL_CW);  
 
 
 	IMGUI_CHECKVERSION();
-    	ImGui::CreateContext();
-    	ImGuiIO& io = ImGui::GetIO(); (void)io;
-    	ImGui::StyleColorsDark();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
 
-    	ImGui_ImplGlfw_InitForOpenGL(window, true);
-    	ImGui_ImplOpenGL3_Init("#version 330");
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
-    	componentManager = std::make_unique<ECS::ComponentManager>();
-    	entityManager = std::make_unique<ECS::EntityManager>();
-    	systemManager = std::make_unique<ECS::SystemManager>();
+    componentManager = std::make_unique<ECS::ComponentManager>();
+    entityManager = std::make_unique<ECS::EntityManager>();
+    systemManager = std::make_unique<ECS::SystemManager>();
 
-    	RegisterComponent<const char*>();
-    	RegisterComponent<Transform>();
-    	RegisterComponent<RigidBody>();
-    	RegisterComponent<GameObject>();
-    	RegisterComponent<MeshRenderer>();
-    	RegisterComponent<Camera>();
+    RegisterComponent<const char*>();
+    RegisterComponent<Transform>();
+    RegisterComponent<RigidBody>();
+    RegisterComponent<Generic>();
+    RegisterComponent<MeshRenderer>();
+    RegisterComponent<Camera>();
 	RegisterComponent<Parent>();
+	RegisterComponent<PointLight>();
 
-    	renderSystem = RegisterSystem<RenderSystem>();
-    	{
-        	Signature signature;
-        	signature.set(GetComponentType<Transform>());
-        	signature.set(GetComponentType<MeshRenderer>());
-        	SetSystemSignature<RenderSystem>(signature);
-    	}
+    renderSystem = RegisterSystem<RenderSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<MeshRenderer>());
+    	SetSystemSignature<RenderSystem>(signature);
+    }
 
-    	cameraSystem = RegisterSystem<CameraSystem>();
-    	{
-        	Signature signature;
-        	signature.set(GetComponentType<Transform>());
-        	signature.set(GetComponentType<Camera>());
-        	SetSystemSignature<CameraSystem>(signature);
-    	}
+    cameraSystem = RegisterSystem<CameraSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<Camera>());
+    	SetSystemSignature<CameraSystem>(signature);
+    }
 
-    	physicsSystem = RegisterSystem<PhysicsSystem>();
-    	{
-        	Signature signature;
-        	signature.set(GetComponentType<Transform>());
-        	signature.set(GetComponentType<RigidBody>());
-        	SetSystemSignature<PhysicsSystem>(signature);
-    	}
+    physicsSystem = RegisterSystem<PhysicsSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<RigidBody>());
+    	SetSystemSignature<PhysicsSystem>(signature);
+    }
 
-    	parentingSystem = RegisterSystem<ECS::ParentingSystem>();
-    	{
-        	Signature signature;
-        	signature.set(GetComponentType<Transform>());
-        	signature.set(GetComponentType<Parent>());
-        	SetSystemSignature<ECS::ParentingSystem>(signature);
-    	}
+    parentingSystem = RegisterSystem<ECS::ParentingSystem>();
+	{        	
+		Signature signature;
+       	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<Parent>());
+    	SetSystemSignature<ECS::ParentingSystem>(signature);
+    }
 
-    	renderSystem->Init();
-    	cameraSystem->Init();
-    	physicsSystem->Init();
-    	OnInit();
+	lightingSystem = RegisterSystem<LightingSystem>();
+	{
+		Signature signature;
+		signature.set(GetComponentType<Transform>());
+		signature.set(GetComponentType<PointLight>());
+		SetSystemSignature<LightingSystem>(signature);
+	}
+
+
+    renderSystem->Init();
+    cameraSystem->Init();
+    physicsSystem->Init();
+	editor.Init();
+    OnInit();
 }
 
 
@@ -172,20 +186,20 @@ void Game::initWindow(){
 
 
 Entity Game::CreateEntity() {
-    	return entityManager->CreateEntity();
+    return entityManager->CreateEntity();
 }
 
 
 Entity Game::CreateEntity(const char* name) {
-    	Entity newEnt = entityManager->CreateEntity();
-    	log_debug("Created new entity %d", newEnt);
-    	AddComponent(newEnt, GameObject{name=name});
-    	return newEnt;
+    Entity newEnt = entityManager->CreateEntity();
+    log_debug("Created new entity %d", newEnt);
+    AddComponent(newEnt, Generic{name=name});
+    return newEnt;
 }
 
 
 void Game::DestroyEntity(Entity entity) {
-    	entityManager->DestroyEntity(entity);
+    entityManager->DestroyEntity(entity);
 }
 
 
@@ -198,14 +212,14 @@ void Game::DestroyEntity(Entity entity) {
 void Game::Run(){
 	do
 	{
-        	float current_FrameTime = glfwGetTime();
+        float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
-        	glfwPollEvents();
+        glfwPollEvents();
 
 		ImGui_ImplOpenGL3_NewFrame();
-        	ImGui_ImplGlfw_NewFrame();
-        	ImGui::NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 		
 		OnUpdate();
         	
@@ -213,23 +227,24 @@ void Game::Run(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(debugMode){
-			DebugWindow();
+			editor.Draw();
 		}
 
 		// This needs to be improved
-        	parentingSystem->Update();
-        	renderSystem->Update();
-        	cameraSystem->Update();
-        	physicsSystem->Update();
+        parentingSystem->Update();
+        renderSystem->Update();
+        cameraSystem->Update();
+        physicsSystem->Update();
         
 		OnRender();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	    	glfwSwapBuffers(window);  
-	    	glfwPollEvents();
 
-    	} while((!glfwWindowShouldClose(window))|running);
+	    glfwSwapBuffers(window);  
+	    glfwPollEvents();
+
+    } while((!glfwWindowShouldClose(window))|running);
 }
 
 // Game Input
@@ -275,253 +290,5 @@ void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }  
-
-// Game Debug / Editor stuff
-
-void Game::DebugWindow(){
-    if (ImGui::BeginMainMenuBar())
-    {
-        if(ImGui::BeginMenu("File")){
-            if (ImGui::MenuItem("New")) {}
-            if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-            if (ImGui::MenuItem("Export scene", "Ctrl+LShift+E")) {}
-            ImGui::EndMenu();
-        }
-        if(ImGui::BeginMenu("Edit")){
-            if (ImGui::MenuItem("Preferences")) {}
-            ImGui::EndMenu();
-        }
-        if(ImGui::BeginMenu("Window")){
-            if (ImGui::MenuItem("Open inspector")) { if(!inspectorToggle){inspectorToggle=true;}else{inspectorToggle=false;} }
-            if (ImGui::MenuItem("Debug overlay")) { if(!overlayToggle){overlayToggle=true;}else{overlayToggle=false;} }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-
-    if(inspectorToggle){InspectorWindow();}
-    if(overlayToggle){DebugOverlay();}
-
-}
-
-
-void Game::InspectorWindow(){
-    ImGui::Begin("Hierarchy");
-    //ImGui::Text("Current Scene : Scene #%d ( %s ) ", activeScene, Scenes[activeScene]->name);  
-	//ImGui::Text("FPS : %d", (int)round(1/delta_time));
-    if(entityManager->livingEntityCount>0){
-        for (int id = 0; id<entityManager->livingEntityCount; id++) {
-            if (ImGui::Button(componentManager->GetComponent<GameObject>(id)->name))
-            {
-                selectedId = id;
-            }
-        }
-    }
-    /*
-    ImGui::Separator();
-    ImGui::Text("Resources");
-
-    for(const auto &shdr : resourceManager.ShaderMap){
-        if (ImGui::Button(shdr.first))
-        {
-            selectedType = 4;
-            selectedShader = shdr.second;
-            selectedName = shdr.first;
-        }
-    }
-    */
-    ImGui::End();
-
-    ImGui::Begin("Inspector");
-
-    auto signature = entityManager->GetSignature(selectedId);
-
-    if (signature.test(componentManager->GetComponentType<Transform>())) {
-        if (ImGui::CollapsingHeader("Transform")) {
-            ImGui::Text("Position : ");
-            ImGui::SameLine();
-            ImGui::InputFloat3("##1", glm::value_ptr(GetComponent <Transform>(selectedId)->position));
-
-            ImGui::Text("Rotation : ");
-            ImGui::SameLine();
-            ImGui::InputFloat3("##2", glm::value_ptr(GetComponent <Transform>(selectedId)->rotation));
-
-            ImGui::Text("Scale : ");
-            ImGui::SameLine();
-            ImGui::InputFloat3("##3", glm::value_ptr(GetComponent <Transform>(selectedId)->scale));
-        }
-    }
-
-    if (signature.test(componentManager->GetComponentType<MeshRenderer>())) {
-        if (ImGui::CollapsingHeader("Mesh Renderer")) {
-            auto comp = GetComponent <MeshRenderer>(selectedId);
-            ImGui::Text("Color : ");
-            ImGui::SameLine();
-            ImGui::InputFloat3("##1", glm::value_ptr(comp->color));
-        }
-    }
-
-    if (signature.test(componentManager->GetComponentType<Camera>())) {
-        if (ImGui::CollapsingHeader("Camera")) {
-            auto comp = GetComponent <Camera>(selectedId);
-            ImGui::Text("FOV : ");
-            ImGui::SameLine();
-            ImGui::InputFloat("##1", &comp->FOV);
-
-            ImGui::Text("Resolution : ");
-            ImGui::SameLine();
-            ImGui::InputFloat2("##2", glm::value_ptr(comp->res));
-
-            ImGui::Text("Camera type : ");
-            ImGui::SameLine();
-            switch(comp->type){
-                case CAMERA_PERSPECTIVE:
-                    ImGui::Text("Perspective");
-                    break;
-                case CAMERA_ORTHOGRAPHIC:
-                    ImGui::Text("Orthographic");
-                    break;
-            };
-
-            ImGui::Checkbox("Is main? ", &comp->isMain);
-
-        }
-    }
-    
-    
-    /* OLD INSPECTOR
-    if(selectedType == 1){
-        ImGui::Text("Selected : %s",  selectedName);
-        ImGui::Text("Type : 2D Sprite");
-
-        ImGui::Text("XYZ : ");
-        ImGui::SameLine();
-        ImGui::InputFloat3("##1",glm::value_ptr(selectedSprite->pos));
-        ImGui::Text("Colour : ");
-        ImGui::SameLine();
-        ImGui::SliderFloat3("##2", glm::value_ptr(selectedSprite->color), 0.0f, 1.0f);
-    }else if(selectedType == 2){
-        ImGui::Text("Selected : %s", selectedName);
-        ImGui::Text("Type : Camera");
-        ImGui::Text("XYZ : ");
-        ImGui::SameLine();
-        ImGui::InputFloat3("##1",glm::value_ptr(selectedCamera->pos));
-        ImGui::Text("Front (ang) : ");
-        ImGui::SameLine();
-        ImGui::InputFloat3("##2",glm::value_ptr(selectedCamera->front));
-    }else if(selectedType == 3){
-        ImGui::Text("Selected : %s", selectedName);
-        ImGui::Text("Type : Mesh 3D");
-        ImGui::Text("XYZ : ");
-        ImGui::SameLine();
-        ImGui::InputFloat3("##1",glm::value_ptr(selectedObject->pos));
-    }else if(selectedType == 5){
-        ImGui::Text("Selected : %s", selectedName);
-        ImGui::Text("Type : 3D Model");
-        ImGui::Text("XYZ : ");
-        ImGui::SameLine();
-        ImGui::InputFloat3("##1",glm::value_ptr(selectedModel->pos));
-        for(int count = 0; count < selectedModel->meshes.size(); count++){
-            if (ImGui::CollapsingHeader("Child mesh")){
-                ImGui::Text("XYZ : ");
-                ImGui::SameLine();
-                ImGui::InputFloat3("##1",glm::value_ptr(selectedModel->meshes[count]->pos));
-            }
-        }
-    }else if(selectedType == 4){
-        ImGui::Text("Selected : %s", selectedName);
-        ImGui::Text("Type : Shader");
-        int attrib_count, uniform_count;
-        glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_ATTRIBUTES, &attrib_count);
-        glGetProgramiv(selectedShader->getProgram(), GL_ACTIVE_UNIFORMS, &uniform_count);
-        if(!selectedShader->success){attrib_count = 0; uniform_count = 0;}
-        ImGui::Text("Shader program ID : %d", selectedShader->ID);
-        ImGui::Text("Vertex Shader File : %s", selectedShader->vertexFilePath);
-        ImGui::Text("Fragment Shader File : %s", selectedShader->fragmentFilePath);
-        ImGui::Text("Active attributes ( %d )", attrib_count);
-        ImGui::Text("Active uniforms ( %d )", uniform_count);
-
-        if(!selectedShader->success){
-            ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f), "Shader compilation failed : ");
-            ImGui::TextColored(ImVec4(1.0f,0.0f,0.0f,1.0f), selectedShader->getError());
-        }
-
-        if(ImGui::Button("Reload Shader")){selectedShader->Reload();}
-
-
-        if(selectedShader->success){
-            if (ImGui::CollapsingHeader("Attributes"))
-            {
-                
-                for (int i = 0; i < attrib_count; i++)
-                {
-
-                    int count;
-                    int length;
-                    GLsizei size;
-                    GLenum type;
-                    char name[512];
-                    glGetActiveAttrib(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
-                    if (ImGui::TreeNode("%s##%d", name, i))
-                    {
-                        ImGui::Text("Name %s ", name);
-                        ImGui::Text("Type %u ", type);
-                        ImGui::TreePop();
-                    }
-                }
-            }
-
-            if (ImGui::CollapsingHeader("Uniforms"))
-            {
-                
-                for (int i = 0; i < uniform_count; i++)
-                {
-
-                    int count;
-                    int length;
-                    GLsizei size;
-                    GLenum type;
-                    char name[512];
-                    glGetActiveUniform(selectedShader->getProgram(), (GLuint)i, 512, &length, &size, &type, name);
-                    if (ImGui::TreeNode("%s##%d", name, i))
-                    {
-                        ImGui::Text("Name %s ", name);
-                        ImGui::Text("Type %u ", type);
-                        ImGui::TreePop();
-                    }
-                }
-            }
-        }
-    }
-    */
-    ImGui::End();
-}
-
-void Game::DebugOverlay(){
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
-    
-    const float PAD = 10.0f;
-    static int corner = 0;
-
-    ImGui::SetNextWindowBgAlpha(0.35f);
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImVec2 work_pos = viewport->WorkPos;
-    ImVec2 work_size = viewport->WorkSize;
-    ImVec2 window_pos, window_pos_pivot;
-
-    window_pos.x = (corner & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
-    window_pos.y = (corner & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
-    window_pos_pivot.x = (corner & 1) ? 1.0f : 0.0f;
-    window_pos_pivot.y = (corner & 2) ? 1.0f : 0.0f;
-    ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-    window_flags |= ImGuiWindowFlags_NoMove;
-    
-    ImGui::Begin("Debug", NULL, window_flags);
-    ImGui::Text("FPS: %f", floor(1/delta_time));
-    ImGui::Text("Frametime : %f", delta_time*1000);
-
-    ImGui::End();
-    
-}
 
 }

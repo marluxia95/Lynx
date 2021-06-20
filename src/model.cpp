@@ -79,6 +79,7 @@ void processNode(Entity parentEntity, Shader* shader, aiNode* node, const aiScen
 		Entity meshEntity = game.CreateEntity(mesh->mName.C_Str());
 		game.AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
 		game.AddComponent<Parent>(meshEntity, Parent{parentEntity});
+		game.GetComponent<Generic>(meshEntity)->isChild = true;
 		processMesh(meshEntity, shader, mesh, scene);
 	}
 
