@@ -12,4 +12,5 @@ src/main_old.cpp
 assimp-vc140-mt.dll
 glew32.dll
 SimpleGameEngine.exe
+SimpleGameEngine
 main
