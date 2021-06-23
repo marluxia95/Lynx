@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include "parentingSystem.h"
-#include "simpleGameEngine.h"
-#include "entity.h"
-#include "components.h"
+
+#include "Core/simpleGameEngine.h"
+
+#include "ECS/entity.h"
+#include "ECS/components.h"
 
 extern Lynx::Core::Game game;
 

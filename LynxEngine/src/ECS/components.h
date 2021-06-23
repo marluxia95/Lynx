@@ -4,10 +4,11 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "texture.h"
-#include "shader.h"
-#include "entity.h"
-#include "mesh.h"
+#include "Graphics/texture.h"
+#include "Graphics/shader.h"
+#include "Graphics/mesh.h"
+#include "ECS/entity.h"
+
 using namespace glm;
 
 namespace Lynx {
@@ -69,7 +70,7 @@ struct PointLight {
 	glm::vec3 specular;
 	float constant;
    	float linear;
-    	float quadratic;
+    float quadratic;
 };
 
 struct DirectionalLight {

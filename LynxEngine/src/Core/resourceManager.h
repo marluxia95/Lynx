@@ -4,10 +4,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <map>
-#include "shader.h"
-#include "texture.h"
+#include "Graphics/shader.h"
+#include "Graphics/texture.h"
+#include "Graphics/mesh.h"
 #include "logger.h"
-#include "mesh.h"
+
 
 namespace Lynx::Core {
 

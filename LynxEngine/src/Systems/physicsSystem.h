@@ -1,10 +1,9 @@
-#pragma once
 #ifndef PHYSICSSYSTEM_H
 #define PHYSICSSYSTEM_H
 
 #include <stdio.h>
 #include <glm/glm.hpp>
-#include "system.h"
+#include "ECS/system.h"
 
 using namespace glm;
 

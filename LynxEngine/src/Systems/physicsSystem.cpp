@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include "physicsSystem.h"
-#include "system.h"
-#include "simpleGameEngine.h"
-#include "components.h"
+
+#include "Core/simpleGameEngine.h"
+
+#include "ECS/system.h"
+#include "ECS/components.h"
+
+
 
 extern Lynx::Core::Game game;
 

@@ -4,9 +4,9 @@
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include "entity.h"
-#include "system.h"
-#include "logger.h"
+#include "ECS/entity.h"
+#include "ECS/system.h"
+#include "Core/logger.h"
 
 namespace Lynx::ECS {
 	class SystemManager {

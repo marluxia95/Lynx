@@ -1,14 +1,11 @@
 lib/
-Build/
 build/
+LynxEngine/build
 Debug/
 .vscode/
 .vs/
 x64/
 imgui.ini
-src/main_test.cpp
-src/example.cpp
-src/main_old.cpp
 assimp-vc140-mt.dll
 glew32.dll
 SimpleGameEngine.exe

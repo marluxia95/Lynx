@@ -12,15 +12,18 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-#include "simpleGameEngine.h"
-#include "vertexBuffer.h"
-#include "vertexArray.h"
-#include "components.h"
-#include "texture.h"
-#include "logger.h"
-#include "shader.h"
-#include "entity.h"
-#include "model.h"
+#include "Core/simpleGameEngine.h"
+#include "Core/logger.h"
+
+#include "Graphics/vertexBuffer.h"
+#include "Graphics/vertexArray.h"
+#include "Graphics/texture.h"
+#include "Graphics/shader.h"
+#include "Graphics/model.h"
+
+#include "ECS/components.h"
+#include "ECS/entity.h"
+
 
 
 using namespace std;

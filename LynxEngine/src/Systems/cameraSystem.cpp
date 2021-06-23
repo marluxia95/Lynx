@@ -2,10 +2,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "simpleGameEngine.h"
+
 #include "cameraSystem.h"
-#include "entity.h"
-#include "components.h"
+
+#include "Core/simpleGameEngine.h"
+
+#include "ECS/entity.h"
+#include "ECS/components.h"
 
 using namespace glm;
 

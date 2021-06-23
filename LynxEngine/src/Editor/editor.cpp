@@ -1,7 +1,7 @@
 #include "editor.h"
-#include "components.h"
-#include "simpleGameEngine.h"
-#include "logger.h"
+#include "ECS/components.h"
+#include "Core/simpleGameEngine.h"
+#include "Core/logger.h"
 
 extern Lynx::Core::Game game;
 
@@ -98,9 +98,9 @@ namespace Lynx {
 
 			for(int id = 0; id < game.entityManager->livingEntityCount; id++) {
 				// Check if node is a child node
-				if(game.GetComponent<Generic>(id)->isChild){
+				if(game.GetComponent<Generic>(id)->isChild)
 					continue;
-				}
+				
 
 				drawHierarchyItem(id);
 				
@@ -121,10 +121,11 @@ namespace Lynx {
 
 			if(open){
 				for ( int c = 0; c < game.entityManager->livingEntityCount; c++){
-					if(game.GetComponent<Parent>(id)->parentEntity == c){
-						log_info("%d", game.GetComponent<Parent>(id)->parentEntity);
+					if(!game.GetComponent<Generic>(c)->isChild)
+						continue;
+					if(game.GetComponent<Parent>(c)->parentEntity == id)
 						drawHierarchyItem(id);
-					}
+					
 				}
 				ImGui::TreePop();
 			}
@@ -138,6 +139,8 @@ namespace Lynx {
 			ImGui::Begin("Inspector");
 
 			auto signature = game.entityManager->GetSignature(selectedId);
+			int id = 0;
+
 
 			
 			if (signature.test(game.componentManager->GetComponentType<Transform>())) {
@@ -157,12 +160,14 @@ namespace Lynx {
 			}
 
 			if (signature.test(game.componentManager->GetComponentType<MeshRenderer>())) {
+
 				if (ImGui::CollapsingHeader("Mesh Renderer")) {
 					auto comp = game.GetComponent <MeshRenderer>(selectedId);
 					ImGui::Text("Color : ");
 					ImGui::SameLine();
-					ImGui::InputFloat3("##1", glm::value_ptr(comp->color));
+					ImGui::InputFloat3("##4", glm::value_ptr(comp->color));
 				}
+
 			}
 
 			if (signature.test(game.componentManager->GetComponentType<Camera>())) {
@@ -170,11 +175,11 @@ namespace Lynx {
 					auto comp = game.GetComponent <Camera>(selectedId);
 					ImGui::Text("FOV : ");
 					ImGui::SameLine();
-					ImGui::InputFloat("##1", &comp->FOV);
+					ImGui::InputFloat("##5", &comp->FOV);
 
 					ImGui::Text("Resolution : ");
 					ImGui::SameLine();
-					ImGui::InputFloat2("##2", glm::value_ptr(comp->res));
+					ImGui::InputFloat2("##6", glm::value_ptr(comp->res));
 
 					ImGui::Text("Camera type : ");
 					ImGui::SameLine();

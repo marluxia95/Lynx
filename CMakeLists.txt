@@ -1,36 +1,27 @@
 cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 14)
-project(SimpleGameEngine VERSION 0.0.3)
+project(Game VERSION 0.1)
 
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp -Wwrite-strings")
 
-
-
 file(GLOB_RECURSE SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_demo.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_draw.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_tables.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/imgui_widgets.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_glfw.cpp 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends/imgui_impl_opengl3.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/game.cpp
 )
 
 add_executable( 
-    SimpleGameEngine ${SOURCES}
+    Game ${SOURCES}
 )
 
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui)
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/src)
+target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui)
+target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 
 include(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/findGLEW.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/cmake/findGLEW.cmake
 )
 
 find_package(ASSIMP REQUIRED)
@@ -39,7 +30,7 @@ if(ASSIMP_FOUND)
 endif() 
 
 include_directories( 
-    SimpleGameEngine
+    Game
 
     ${OPENGL_INCLUDE_DIRS}  
     ${GLEW_INCLUDE}
@@ -52,8 +43,9 @@ include_directories(
 )
 
 target_link_libraries(
-    SimpleGameEngine
+    Game
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/build/libSimpleGameEngine.a
     glfw
     assimp
     ${OPENGL_LIBRARIES}

@@ -5,10 +5,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "simpleGameEngine.h"
-#include "components.h"
-#include "renderSystem.h"
-#include "logger.h"
+
+#include "Core/simpleGameEngine.h"
+#include "Core/logger.h"
+
+#include "ECS/components.h"
+#include "Systems/renderSystem.h"
 
 extern Lynx::Core::Game game;
 
@@ -60,7 +62,7 @@ namespace Lynx {
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->color);
 			
-			if(mRenderComponent->lighting){
+			if(mRenderComponent->lighting | game.lightingSystem->entities.size()){
 				// Set lighting shader values
 				int i = 0;
 				for (auto lightEnt : game.lightingSystem->entities){
@@ -88,8 +90,14 @@ namespace Lynx {
 					
 					sprintf(buffer, "pointLights[%d].specular", i);
 					mRenderComponent->shader->setVec3(buffer, lightComponent->specular);
+
+                    mRenderComponent->shader->setVec3("material.ambient", glm::vec3(1));
+					mRenderComponent->shader->setVec3("material.diffuse", glm::vec3(1));
+                    mRenderComponent->shader->setVec3("material.specular", glm::vec3(1));
+                    mRenderComponent->shader->setFloat("material.shininess", 32.0f);
+
 					
-					}
+				}
 			}
 
 

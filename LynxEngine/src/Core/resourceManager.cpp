@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <map>
 #include "resourceManager.h"
-#include "texture.h"
-#include "shader.h"
+#include "Graphics/shader.h"
+#include "Graphics/texture.h"
 #include "logger.h"
+
 
 namespace Lynx::Core {
 

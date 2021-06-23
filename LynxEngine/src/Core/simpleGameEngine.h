@@ -13,25 +13,25 @@
 #include <glm/gtx/string_cast.hpp>
 #include <memory>
 
-#include "model.h"
-#include "object.h"
-#include "mesh.h"
-
-#include "entity.h"
-
-#include "componentManager.h"
 #include "resourceManager.h"
-#include "parentingSystem.h"
-#include "entityManager.h"
-#include "systemManager.h"
-#include "editor.h"
+#include "Graphics/model.h"
+#include "Graphics/mesh.h"
 
-#include "system.h"
+#include "ECS/entity.h"
 
-#include "lightingSystem.h"
-#include "physicsSystem.h"
-#include "renderSystem.h"
-#include "cameraSystem.h"
+#include "ECS/componentManager.h"
+#include "ECS/entityManager.h"
+#include "ECS/systemManager.h"
+
+#include "Editor/editor.h"
+
+#include "ECS/system.h"
+
+#include "Systems/parentingSystem.h"
+#include "Systems/lightingSystem.h"
+#include "Systems/physicsSystem.h"
+#include "Systems/renderSystem.h"
+#include "Systems/cameraSystem.h"
 
 namespace Lynx::Core {
 

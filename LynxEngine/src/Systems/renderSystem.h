@@ -1,11 +1,10 @@
-#pragma once
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
-
-
 #include <stdio.h>
-#include "system.h"
-#include "entity.h"
+
+
+#include "ECS/system.h"
+#include "ECS/entity.h"
 
 namespace Lynx 
 {

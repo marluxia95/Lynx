@@ -6,7 +6,7 @@
 
 #include "texture.h"
 
-#include "logger.h"
+#include "Core/logger.h"
 
 
 Texture::Texture(const char* path, 

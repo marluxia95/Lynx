@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h> 
 #include "shader.h"
-#include "logger.h"
+#include "Core/logger.h"
 
 namespace Lynx {
 

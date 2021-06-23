@@ -15,14 +15,15 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "mesh.h"
+#include "Graphics/mesh.h"
 
-#include "lightingSystem.h"
-#include "parentingSystem.h"
-#include "systemManager.h"
-#include "cameraSystem.h"
-#include "renderSystem.h"
-#include "components.h"
+#include "Systems/lightingSystem.h"
+#include "Systems/parentingSystem.h"
+#include "Systems/cameraSystem.h"
+#include "Systems/renderSystem.h"
+
+#include "ECS/systemManager.h"
+#include "ECS/components.h"
 
 extern "C" {
     #include "logger.h"

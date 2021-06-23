@@ -9,13 +9,15 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "vertexArray.h"
-#include "vertexBuffer.h"
-#include "elementBuffer.h"
-#include "texture.h"
-#include "model.h"
-#include "mesh.h"
-#include "logger.h"
+
+#include "Graphics/vertexArray.h"
+#include "Graphics/vertexBuffer.h"
+#include "Graphics/elementBuffer.h"
+#include "Graphics/texture.h"
+#include "Graphics/model.h"
+#include "Graphics/mesh.h"
+
+#include "Core/logger.h"
 
 
 using namespace glm;

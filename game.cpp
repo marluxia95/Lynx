@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-#include "simpleGameEngine.h"
-#include "texture.h"
-#include "model.h"
-#include "components.h"
+#include "Core/simpleGameEngine.h"
+#include "Graphics/texture.h"
+#include "Graphics/model.h"
+#include "ECS/components.h"
 
 using namespace Lynx;
 
@@ -159,12 +159,18 @@ int main(){
 	log_set_level(LOG_INFO);
 
 	Shader* cube_shader = game.resourceManager.LoadShader("Lighting Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
+	Shader* light_shader = game.resourceManager.LoadShader("Cube Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 	Shader* texture_shader = game.resourceManager.LoadShader("Textured", "res/shaders/standard/textured.vs", "res/shaders/standard/textured.fs");
 	Texture* texture = game.resourceManager.LoadTexture("prototype", "res/images/container.jpg");
-	//Mesh* cube_mesh = game.resourceManager.LoadMesh("Cube", &cube_vertices, &cube_indices, MESH_3D);
+	Mesh* cube_mesh = game.resourceManager.LoadMesh("Cube", &cube_vertices, &cube_indices, MESH_3D);
 
 	log_info("Loading model");
-	auto ModelEntity = ModelLoader::loadModel("res/models/monkey.obj", cube_shader);
+	auto ModelEntity = ModelLoader::loadModel("res/models/cube.fbx", cube_shader);
+
+	auto lightEnt = game.CreateEntity("Point Light");
+	game.AddComponent(lightEnt, Transform{ glm::vec3(0, 5, 0), glm::vec3(0), glm::vec3(0.25) });
+	game.AddComponent(lightEnt, MeshRenderer{ glm::vec3(255), cube_mesh, light_shader});
+	game.AddComponent(lightEnt, PointLight{ glm::vec3(255), glm::vec3(255), glm::vec3(255), 1.0f, 0.09f, 0.032f });
 	
 	/*
 	auto physEnt = game.CreateEntity("Cube");

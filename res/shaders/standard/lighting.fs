@@ -32,7 +32,7 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform DirectionalLight dirLight;
 
-const int numPointLights = 1;
+const int numPointLights = 255;
 uniform PointLight pointLights[numPointLights];
 
 out vec4 FragColor;
@@ -50,9 +50,9 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
 
     float spec = pow(max(dot(viewDirection, reflectDir), 0.0f), material.shininess);
 
-    vec3 ambient = light.ambient * material.diffuse;
-    vec3 diffuse = light.diffuse * diff * material.diffuse;
-    vec3 specular = light.specular * spec * material.specular;
+    vec3 ambient = light.ambient;
+    vec3 diffuse = light.diffuse * diff ;
+    vec3 specular = light.specular * spec;
     return (ambient + diffuse + specular);
 
 }
@@ -67,7 +67,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     float distance = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-    vec3 ambient = light.ambient * material.diffuse;
+    vec3 ambient = light.ambient;
     vec3 diffuse  = light.diffuse * diff;
     vec3 specular =  light.specular * spec;
     return (ambient + diffuse + specular);
@@ -80,7 +80,7 @@ void main() {
     vec3 viewDir = normalize(viewPos - FragPos);
 
     vec3 result = vec3(0.0f);//CalculateDirectionalLight(dirLight, norm, viewDir);
-    result += CalculatePointLight(pointLights[0], norm, FragPos, viewDir);      
+    result += CalculatePointLight(pointLights[1], norm, FragPos, viewDir);      
      
     FragColor = vec4(result, 1.0);
 }
