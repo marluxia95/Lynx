@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h> 
 #include <stdio.h>
+#define MAX_ERR_BUFSIZE 2048
 
 namespace Lynx {  
 
@@ -37,7 +38,7 @@ class Shader
     private:
         bool compile(const char* vertexShaderSource, const char* fragmentShaderSource);
         void loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
-        char errorlog[512] = "";
+        char errorlog[MAX_ERR_BUFSIZE];
 };
 
 }

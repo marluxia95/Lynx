@@ -50,30 +50,7 @@ namespace Lynx {
 			char* error;
 	};
 
-	/*
-
-	class Mesh3D : public Mesh {
-		public:
-			Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type); // 3D mesh using indices
-			Mesh3D(const char* path, Shader* shader, MeshType type); // model mode						 
-			~Mesh3D();
-			void Render(glm::mat4 projection, glm::mat4 view);
-			//void Render(void(*renderfunction)());
-			Texture* texture = nullptr;
-		protected:
-			/* WORK IN PROGRESS
-			* 
-			void loadModel();
-			void generateMesh();
-			
-			Shader* shader;
-			mat4 model;
-			MeshType type;
-			
-			
-				
-	};
-	*/
+	void meshToText(Mesh* mesh);
 }
 
 #endif

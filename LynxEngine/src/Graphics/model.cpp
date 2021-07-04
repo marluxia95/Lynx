@@ -41,17 +41,23 @@ void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiSc
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z; 
+		log_debug("Vertex Pos %f %f %f", mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		vertex.Position = vector;
 		vector.x = mesh->mNormals[i].x;
 		vector.y = mesh->mNormals[i].y;
 		vector.z = mesh->mNormals[i].z;
+		log_debug("Vertex Normal %f %f %f", mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 		vertex.Normal = vector; 
 		if(mesh->mTextureCoords[0]){
 			glm::vec2 texCoord;
 			texCoord.x = mesh->mTextureCoords[0][i].x;
 			texCoord.y = mesh->mTextureCoords[0][i].y;
+			log_debug("Texture pos %f %f %f", mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, mesh->mTextureCoords[0][i].z);
 			vertex.TextureCoords = texCoord;
+		}else{
+			vertex.TextureCoords = glm::vec2(0.0f);
 		}
+		
 		vertices->push_back(vertex);
 	}
 	log_debug("Vertices processed");
@@ -64,7 +70,6 @@ void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiSc
 		}
 	}  
 	log_debug("Indices processed");
-	
 	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(255.0f), new Mesh(vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 

@@ -29,26 +29,11 @@ extern "C" {
     #include "logger.h"
 }
 
-namespace Lynx::Core {
-
-bool Game::mouseLock;
-int Game::polygonMode;
-bool Game::keys[1024];
-bool Game::debugMode;
-float Game::pitch;
-float Game::yaw;
-float Game::lastX;
-float Game::lastY;
-double Game::mouseXPos, Game::mouseYPos;
-bool Game::firstMouse;
+namespace Lynx {
 
 Game::Game(unsigned int width, unsigned int height):
     resourceManager(), editor()
 {
-    
-	WINDOW_WIDTH = width;
-	WINDOW_HEIGHT = height;
-
 	initWindow();
 
 }
@@ -67,32 +52,7 @@ void Game::SetDebugMode(bool mode){
 }
 
 void Game::initWindow(){
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-  
-  	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, windowName, NULL, NULL);
-	if (window == NULL)
-	{
-        log_fatal("Failed to create window");
-	    glfwTerminate();
-		exit(1);
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1); // Limit FPS
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);  
-	glfwSetCursorPosCallback(window, MouseCallback);  
-	glfwSetKeyCallback(window, KeyCallback);
-
-    mouseLock = false;
-
+	
 	bool err = glewInit() != GLEW_OK;   
 
     if(err){
@@ -260,8 +220,6 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     	glfwSetWindowShouldClose(window, true);
 
-
-
     if(key >= 0 && key < 1024){
     	if(action == GLFW_PRESS)
     		keys[key] = true;
@@ -274,22 +232,17 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     	if(debugMode){debugMode = false;}else{debugMode = true;}
     
 
-    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F2]){
-    	if(mouseLock){
-    		mouseLock = false; 
-    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    	}else{
-    		mouseLock = true; 
-    		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    	}
-    }
-
 
 }
 
 void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-}  
+} 
+
+int Game::GetEntityCount()
+{
+	return entityManager->livingEntityCount;
+}
 
 }

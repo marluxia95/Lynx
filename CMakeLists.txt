@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 17)
 project(Game VERSION 0.1)
 
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp -Wwrite-strings")

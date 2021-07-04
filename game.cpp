@@ -101,6 +101,9 @@ void input(){
 	}else{
 		camera_Speed_Multiplier = 1.0f;
 	}
+
+	if(game.keys[GLFW_MOUSE_BUTTON_LEFT])
+		game.mouseLock = !game.mouseLock;
 }
 
 void inputMouse(){
@@ -156,11 +159,10 @@ void Core::Game::OnLast(){
 int main(){
 	// Enables the game's debug mode
 	game.SetDebugMode(true);
-	log_set_level(LOG_INFO);
+	log_set_level(LOG_DEBUG);
 
 	Shader* cube_shader = game.resourceManager.LoadShader("Lighting Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	Shader* light_shader = game.resourceManager.LoadShader("Cube Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-	Shader* texture_shader = game.resourceManager.LoadShader("Textured", "res/shaders/standard/textured.vs", "res/shaders/standard/textured.fs");
 	Texture* texture = game.resourceManager.LoadTexture("prototype", "res/images/container.jpg");
 	Mesh* cube_mesh = game.resourceManager.LoadMesh("Cube", &cube_vertices, &cube_indices, MESH_3D);
 
@@ -185,4 +187,3 @@ int main(){
 	game.Run();
 	return 0;
 }
-

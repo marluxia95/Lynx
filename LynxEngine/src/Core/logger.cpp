@@ -87,7 +87,7 @@ void log_log(LogLevel level, const char* format, ...)
 		.level = level
 	};
 
-	if (!Logger.quiet && level >= Logger.level) {
+	if (!Logger.quiet && level <= Logger.level) {
 		event_init(&ev);
 		va_start(ev.ap, format);
 		log_print(&ev);

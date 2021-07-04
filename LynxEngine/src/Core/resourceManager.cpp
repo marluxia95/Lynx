@@ -7,7 +7,7 @@
 #include "logger.h"
 
 
-namespace Lynx::Core {
+namespace Lynx {
 
 
 ResourceManager::ResourceManager() {

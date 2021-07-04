@@ -12,17 +12,89 @@ namespace Lynx {
 			node_flags = ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		}
 
+		template<typename T>
+		void Editor::RegisterInspectorFunc(inspectorFunc func)
+		{
+			const char* name = typeid(T).name();
+			inspectorFunctions[name] = func;
+		}
+
+		template<typename T>
+		void Editor::runInspectorFunc(Entity ent)
+		{
+			const char* name = typeid(T).name();
+			inspectorFunctions[name](ent);
+		}
+
 		void Editor::Init()
 		{
-			auto io = ImGui::GetIO();
+			/*auto io = ImGui::GetIO();
 			ImFontConfig config;
 			io.Fonts->AddFontFromFileTTF("res/fonts/roboto.ttf",16.0f, &config);
 			io.Fonts->Build();
-			setupStyle();
+			setupStyle();*/
+			
+			RegisterInspectorFunc<Transform>([](Entity ent){
+				auto transform = game.GetComponent <Transform>(ent);
+				if (ImGui::CollapsingHeader("Transform")) {
+					ImGui::Text("Position : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##1", glm::value_ptr(transform->position));
+
+					ImGui::Text("Rotation : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##2", glm::value_ptr(transform->rotation));
+
+					ImGui::Text("Scale : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##3", glm::value_ptr(transform->scale));
+				}
+			});
+
+			RegisterInspectorFunc<MeshRenderer>([](Entity ent){
+				if (ImGui::CollapsingHeader("Mesh Renderer")) {
+					auto mrenderer = game.GetComponent <MeshRenderer>(ent);
+					ImGui::Text("Color : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##4", glm::value_ptr(mrenderer->color));
+				}
+			});
+
+			RegisterInspectorFunc<Camera>([](Entity ent){
+				if (ImGui::CollapsingHeader("Camera")) {
+					auto comp = game.GetComponent <Camera>(ent);
+					ImGui::Text("FOV : ");
+					ImGui::SameLine();
+					ImGui::InputFloat("##5", &comp->FOV);
+
+					ImGui::Text("Resolution : ");
+					ImGui::SameLine();
+					ImGui::InputFloat2("##6", glm::value_ptr(comp->res));
+
+					ImGui::Text("Camera type : ");
+					ImGui::SameLine();
+					switch(comp->type){
+						case CAMERA_PERSPECTIVE:
+							ImGui::Text("Perspective");
+							break;
+						case CAMERA_ORTHOGRAPHIC:
+							ImGui::Text("Orthographic");
+							break;
+					};
+
+					ImGui::Checkbox("Is main? ", &comp->isMain);
+
+				}
+			});
+
+			RegisterInspectorFunc<Shader>([](uint64_t id){
+				
+			});
 		}
 
 		void Editor::setupStyle()
 		{
+			/*
 			ImGuiStyle& style = ImGui::GetStyle();
 			style.Alpha = 1.0f;
 			style.FrameRounding = 3.0f;
@@ -60,6 +132,7 @@ namespace Lynx {
 			style.Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
 			style.Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
 			style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+			*/
 		}
 	
 		void Editor::Draw() 
@@ -76,7 +149,7 @@ namespace Lynx {
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu("Window")){ 
-					if (ImGui::MenuItem("Open Console")) { consoleActive = !consoleActive; }
+					if (ImGui::MenuItem("Console")) { consoleActive = !consoleActive; }
 					if (ImGui::MenuItem("Debug overlay")) { debugOverlayActive = !debugOverlayActive; }
 					ImGui::EndMenu();
 				}
@@ -141,60 +214,15 @@ namespace Lynx {
 			auto signature = game.entityManager->GetSignature(selectedId);
 			int id = 0;
 
+			if(selectedId){
+				if(signature.test(game.componentManager->GetComponentType<Transform>()))
+					runInspectorFunc<Transform>(selectedId);
 
-			
-			if (signature.test(game.componentManager->GetComponentType<Transform>())) {
-				if (ImGui::CollapsingHeader("Transform")) {
-					ImGui::Text("Position : ");
-					ImGui::SameLine();
-					ImGui::InputFloat3("##1", glm::value_ptr(game.GetComponent <Transform>(selectedId)->position));
+				if(signature.test(game.componentManager->GetComponentType<MeshRenderer>()))
+					runInspectorFunc<MeshRenderer>(selectedId);
 
-					ImGui::Text("Rotation : ");
-					ImGui::SameLine();
-					ImGui::InputFloat3("##2", glm::value_ptr(game.GetComponent <Transform>(selectedId)->rotation));
-
-					ImGui::Text("Scale : ");
-					ImGui::SameLine();
-					ImGui::InputFloat3("##3", glm::value_ptr(game.GetComponent <Transform>(selectedId)->scale));
-				}
-			}
-
-			if (signature.test(game.componentManager->GetComponentType<MeshRenderer>())) {
-
-				if (ImGui::CollapsingHeader("Mesh Renderer")) {
-					auto comp = game.GetComponent <MeshRenderer>(selectedId);
-					ImGui::Text("Color : ");
-					ImGui::SameLine();
-					ImGui::InputFloat3("##4", glm::value_ptr(comp->color));
-				}
-
-			}
-
-			if (signature.test(game.componentManager->GetComponentType<Camera>())) {
-				if (ImGui::CollapsingHeader("Camera")) {
-					auto comp = game.GetComponent <Camera>(selectedId);
-					ImGui::Text("FOV : ");
-					ImGui::SameLine();
-					ImGui::InputFloat("##5", &comp->FOV);
-
-					ImGui::Text("Resolution : ");
-					ImGui::SameLine();
-					ImGui::InputFloat2("##6", glm::value_ptr(comp->res));
-
-					ImGui::Text("Camera type : ");
-					ImGui::SameLine();
-					switch(comp->type){
-						case CAMERA_PERSPECTIVE:
-							ImGui::Text("Perspective");
-							break;
-						case CAMERA_ORTHOGRAPHIC:
-							ImGui::Text("Orthographic");
-							break;
-					};
-
-					ImGui::Checkbox("Is main? ", &comp->isMain);
-
-				}
+				if(signature.test(game.componentManager->GetComponentType<Camera>()))
+					runInspectorFunc<Camera>(selectedId);
 			}
 
 			ImGui::End();

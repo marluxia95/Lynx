@@ -48,11 +48,8 @@ namespace Lynx {
         for (auto const& entity : entities) {
             const auto& mTransform = game.GetComponent<Transform>(entity);
             const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
-            
-            
 
             mRenderComponent->shader->use();
-
             mat4 model = mTransform->GetModel();
             
             if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
@@ -66,12 +63,13 @@ namespace Lynx {
 				// Set lighting shader values
 				int i = 0;
 				for (auto lightEnt : game.lightingSystem->entities){
-					++i;
 					auto lightComponent = game.GetComponent<PointLight>(lightEnt);
+                    auto transform = game.GetComponent<Transform>(lightEnt);
 					char buffer[64];
-					
+                    log_debug("Light %d", i);
+
 					sprintf(buffer, "pointLights[%d].position", i);
-					mRenderComponent->shader->setVec3(buffer , game.GetComponent<Transform>(lightEnt)->position);
+					mRenderComponent->shader->setVec3(buffer , transform->position);
 					
 					sprintf(buffer, "pointLights[%d].constant", i);
 					mRenderComponent->shader->setFloat(buffer, lightComponent->constant);
@@ -96,17 +94,19 @@ namespace Lynx {
                     mRenderComponent->shader->setVec3("material.specular", glm::vec3(1));
                     mRenderComponent->shader->setFloat("material.shininess", 32.0f);
 
-					
+					i++;
 				}
 			}
 
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
-
+            
             // Check if mesh has a texture, if so, render it
             if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
             {
-            	if(mRenderComponent->texture != NULL){
+                
+            	if(mRenderComponent->texture != nullptr){
+                    
                 	mRenderComponent->texture->use();
             	}   
             }

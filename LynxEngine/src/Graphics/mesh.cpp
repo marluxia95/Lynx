@@ -113,49 +113,22 @@ void Mesh::Render(){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 	
 }
 
-/*
-Mesh3D::Mesh3D(vector<Vertex>* vertices, vector<GLuint>* indices, Shader* shader, MeshType type)
-	: Mesh(vertices, indices, type), shader(shader){
-	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
-
-}
-
-Mesh3D::Mesh3D(const char* path, Shader* shader, MeshType type)
-	: Mesh(vertices, indices, type), shader(shader){
-	if(type<MESH_3D){error = "Invalid mesh type\n"; success = false; return;}
-}
-
-Mesh3D::~Mesh3D(){
-	shader->destroy();
-}
-
-void Mesh3D::Render(mat4 projection, mat4 view){/*
-	VAO->Bind();
-	model = mat4(1.0f);
-	//model = translate(model, this->pos);
-	
-	if(shader == nullptr) {error = "Shader is NULL!\n"; success = false; return;}
-	// Set shader values
-	shader->use();
-	shader->setMat4("projection", projection);
-	shader->setMat4("view", view);
-	shader->setMat4("model", model);
-	
-	if(type >= MESH_3D_TEXTURED){
-		if(texture == nullptr){
-			error = "Model not bind to a texture !\n";
-			success = false;
-		}else if(texture->texture != NULL){
-			texture->use();
-		}
-
+void meshToText(Mesh* mesh)
+{
+	printf("vector<Vertex> vertices = {\n");
+	for(int v = 0; v < mesh->vertices->size(); v++){
+		printf("{\n");
+		printf("	glm::vec3(%f, %f, %f),\n");
+		printf("	glm::vec3(%f, %f, %f),\n");
+		printf("	glm::vec3(%f, %f, %f)\n");
+		if(v != mesh->vertices->size()-1)
+			printf("},\n");
+		else
+			printf("}\n");
 	}
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+	printf("};\n");
 }
-*/
+
 }
 
 
