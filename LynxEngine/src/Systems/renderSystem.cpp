@@ -16,10 +16,10 @@
 
 using namespace glm;
 
+extern Lynx::Game game;
+extern Lynx::WindowManager gWindowManager;
+
 namespace Lynx {
-    
-    extern Game game;
-    extern WindowManager gWindowManager;
     
     void RenderSystem::Init()
     {
@@ -68,8 +68,7 @@ namespace Lynx {
 					auto lightComponent = game.GetComponent<PointLight>(lightEnt);
                     auto transform = game.GetComponent<Transform>(lightEnt);
 					char buffer[64];
-                    log_debug("Light %d", i);
-
+                    
 					sprintf(buffer, "pointLights[%d].position", i);
 					mRenderComponent->shader->setVec3(buffer , transform->position);
 					

@@ -7,8 +7,6 @@
 #include "ECS/system.h"
 #include "ECS/components.h"
 
-
-
 extern Lynx::Game game;
 
 namespace Lynx {

@@ -9,7 +9,8 @@ namespace Lynx {
 
     enum EventType {
         None = 0,
-        WindowClose, WindowResize, Update, KeyPressed, MousePosCallback, MouseKeyPressed
+        WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed,
+        LastTick, UpdateTick, EngineInit, Render
     };
 
     class Event {
@@ -26,6 +27,27 @@ namespace Lynx {
 
         protected:
             EventType type;
+    };
+
+    class LastTickEvent : public Event {
+        public:
+            LastTickEvent() : Event(LastTick) {}
+
+    };
+
+    class UpdateTickEvent : public Event {
+        public:
+            UpdateTickEvent() : Event(UpdateTick) {}
+    };
+
+    class InitEvent : public Event {
+        public: 
+            InitEvent() : Event(EngineInit) {}
+    };
+
+    class RenderEvent : public Event {
+        public: 
+            RenderEvent() : Event(Render) {}
     };
 
 }

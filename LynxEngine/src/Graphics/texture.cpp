@@ -14,7 +14,8 @@ Texture::Texture(const char* path,
 	unsigned int texture_wrap_mode_s, 
 	unsigned int texture_wrap_mode_t,
 	unsigned int texture_minifying_filter,
-	unsigned int texture_magnifying_filter) {
+	unsigned int texture_magnifying_filter) 
+{
 	stbi_set_flip_vertically_on_load(true);
 	id = t_id;
 
@@ -42,8 +43,8 @@ Texture::Texture(const char* path,
 
 }
 
-Texture::Texture(const char* path, 
-	int t_id) { 
+Texture::Texture(const char* path, int t_id) 
+{ 
 	stbi_set_flip_vertically_on_load(true);
 	//t_id++;
 	id = t_id;
@@ -72,7 +73,13 @@ Texture::Texture(const char* path,
 
 }
 
-void Texture::use(){
+void Texture::Destroy()
+{
+
+}
+
+void Texture::use()
+{
 	glActiveTexture(GL_TEXTURE0 + id);
 	glBindTexture(GL_TEXTURE_2D, texture);
 }

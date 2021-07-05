@@ -12,16 +12,19 @@ add_executable(
     Game ${SOURCES}
 )
 
+set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/src)
+set(LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
 
-target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/src)
-target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui)
-target_include_directories(Game PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/lib)
+
+target_include_directories(Game PRIVATE $(ENGINE))
+target_include_directories(Game PRIVATE ${LIBS}/imgui)
+target_include_directories(Game PRIVATE ${LIBS})
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 
 include(
-    ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/cmake/findGLEW.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/cmake/findGLEW.cmake
 )
 
 find_package(ASSIMP REQUIRED)
@@ -36,16 +39,17 @@ include_directories(
     ${GLEW_INCLUDE}
     ${GLFW_INCLUDE}    
     ${ASSIMP_INCLUDE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/ 
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/imgui/backends
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/glm 
+    ${ENGINE}
+    ${LIBS}
+    ${LIBS}/imgui
+    ${LIBS}/backends
+    ${LIBS}/glm 
 )
 
 target_link_libraries(
     Game
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/LynxEngine/build/libSimpleGameEngine.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/build/libSimpleGameEngine.so
     glfw
     assimp
     ${OPENGL_LIBRARIES}

@@ -113,18 +113,12 @@ namespace Lynx {
 		friend class Lynx::Editor;
 	private:
 		bool running;
-		static bool debugMode;
 
 		std::unique_ptr<ECS::ComponentManager> componentManager;
 		std::unique_ptr<ECS::EntityManager> entityManager;
 		std::unique_ptr<ECS::SystemManager> systemManager;
 		std::shared_ptr<ECS::ParentingSystem> parentingSystem;
 		std::shared_ptr<CameraSystem> cameraSystem;
-
-		virtual void OnInit();
-		virtual void OnUpdate();
-		virtual void OnRender();
-		virtual void OnLast();
 	};
 
 }

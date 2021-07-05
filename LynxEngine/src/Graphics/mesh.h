@@ -36,6 +36,7 @@ namespace Lynx {
 			Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type); // Element buffer mode
 			Mesh(); // does nothing
 			~Mesh();
+			void Destroy();
 			void Render();
 			vector<Vertex>* vertices;
 			vector<GLuint>* indices;

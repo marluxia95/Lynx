@@ -12,6 +12,9 @@
 #include "simpleGameEngine.h"
 #include "windowManager.h"
 
+#include "eventManager.h"
+#include "event.h"
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -30,13 +33,13 @@ extern "C" {
     #include "logger.h"
 }
 
+extern Lynx::WindowManager gWindowManager;
+extern Lynx::EventManager gEventManager;
+
 namespace Lynx {
 
-extern WindowManager gWindowManager;
-
-
 Game::~Game(){
-	OnLast();
+    gEventManager.SendEvent(new LastTickEvent());
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -44,7 +47,7 @@ Game::~Game(){
 }
 
 void Game::SetDebugMode(bool mode){
-	debugMode = mode;
+	//debugMode = mode;
 }
 
 void Game::Init(){
@@ -125,7 +128,7 @@ void Game::Init(){
 		SetSystemSignature<LightingSystem>(signature);
 	}
 
-
+    gEventManager.SendEvent(new InitEvent());
     renderSystem->Init();
     cameraSystem->Init();
     physicsSystem->Init();
@@ -176,12 +179,12 @@ void Game::Run(){
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 		
-		OnUpdate();
+		gEventManager.SendEvent(new UpdateTickEvent());
         	
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		OnRender();
+		gEventManager.SendEvent(new RenderEvent());
 
 		// This needs to be improved
         parentingSystem->Update();
@@ -193,7 +196,7 @@ void Game::Run(){
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	    glfwPollEvents();
-
+        gWindowManager.Update();
     } while((!glfwWindowShouldClose(gWindowManager.window))|running);
 }
 

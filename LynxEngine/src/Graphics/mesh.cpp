@@ -26,7 +26,9 @@ using namespace std;
 
 namespace Lynx {
 
-Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : vertices(vertices), indices(indices), type(type){
+Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) 
+	: vertices(vertices), indices(indices), type(type)
+{
 	renderType = RENDER_INDEXED;
 
 	glGenBuffers(1, &VBO);
@@ -102,15 +104,23 @@ Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) : 
 
 Mesh::Mesh(){}
 
-Mesh::~Mesh(){
+Mesh::~Mesh()
+{
 
 }
 
-void Mesh::Render(){
+void Mesh::Render()
+{
 	// Indices mode
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 	
+}
+
+void Mesh::Destroy()
+{
+	vertices->clear();
+	indices->clear();
 }
 
 void meshToText(Mesh* mesh)

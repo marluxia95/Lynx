@@ -8,10 +8,10 @@
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 
-namespace Lynx {
+extern Lynx::EventManager gEventManager;
+extern Lynx::Game game;
 
-    extern EventManager gEventManager;
-    extern Game game;
+namespace Lynx {
 
     // Creates a window instance
     void WindowManager::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
