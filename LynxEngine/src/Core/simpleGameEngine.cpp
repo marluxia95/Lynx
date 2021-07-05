@@ -74,7 +74,7 @@ void Game::Init(){
 
     ImGui_ImplGlfw_InitForOpenGL(gWindowManager.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
+    
     componentManager = std::make_unique<ECS::ComponentManager>();
     entityManager = std::make_unique<ECS::EntityManager>();
     systemManager = std::make_unique<ECS::SystemManager>();
@@ -173,36 +173,37 @@ void Game::Run(){
         float current_FrameTime = glfwGetTime();
 		delta_time = current_FrameTime - last_FrameTime;
 		last_FrameTime = current_FrameTime;
-        glfwPollEvents();
 
-		ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-		
+
 		gEventManager.SendEvent(new UpdateTickEvent());
-        	
+        
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		gEventManager.SendEvent(new RenderEvent());
 
 		// This needs to be improved
+        
         parentingSystem->Update();
         renderSystem->Update();
         cameraSystem->Update();
         physicsSystem->Update();
-        
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	    glfwPollEvents();
+        ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        
         gWindowManager.Update();
+        glfwPollEvents();
     } while((!glfwWindowShouldClose(gWindowManager.window))|running);
 }
 
+/*
 int Game::GetEntityCount()
 {
 	return entityManager->livingEntityCount;
-}
+}*/
 
 }

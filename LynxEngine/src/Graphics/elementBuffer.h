@@ -17,8 +17,6 @@ class ElementBuffer {
         ~ElementBuffer();
         void Bind();
         void Unbind();
-
-    private:
         unsigned int ID;
 
 };

@@ -121,6 +121,9 @@ void Mesh::Destroy()
 {
 	vertices->clear();
 	indices->clear();
+	glDeleteVertexArrays(1, (GLuint*)VAO->VAO_ID);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 void meshToText(Mesh* mesh)

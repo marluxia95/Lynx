@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include "entity.h"
+#include "Core/logger.h"
 
 namespace Lynx::ECS {
 
@@ -18,7 +19,15 @@ namespace Lynx::ECS {
 	template<typename T>
 	class ComponentArray : public IComponentArray {
 	public:
-		void InsertData(Entity entity, T component){
+		~ComponentArray()
+		{
+			components.clear();
+			entityToIndexMap.clear();
+			indexToEntityMap.clear();
+		}
+
+		void InsertData(Entity entity, T component)
+		{
 			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
 
 			size_t index = size;
@@ -27,7 +36,8 @@ namespace Lynx::ECS {
 			components.push_back(component);
 			size++;
 		}
-		void RemoveData(Entity entity){
+		void RemoveData(Entity entity)
+		{
 			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component out of range");
 
 			size_t indexOfRemovedEntity = entityToIndexMap[entity];
@@ -43,10 +53,12 @@ namespace Lynx::ECS {
 
 			size--;
 		}
-		T* GetData(Entity entity){
+		T* GetData(Entity entity)
+		{
 			return &components[entityToIndexMap[entity]];
 		}
-		void EntityDestroyed(Entity entity) override{
+		void EntityDestroyed(Entity entity) override
+		{
 			if (entityToIndexMap.find(entity) == entityToIndexMap.end()) {
 				RemoveData(entity);
 			}

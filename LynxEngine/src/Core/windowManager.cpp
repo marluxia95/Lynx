@@ -16,32 +16,19 @@ namespace Lynx {
     // Creates a window instance
     void WindowManager::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
     {
-        int success = glfwInit();
-        if(success == GLFW_FALSE){
-            log_fatal("Unable to initialize GLFW!");
-            exit(0);
-        }
+        glfwInit();
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-        auto const monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-        glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-        glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-        glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-
-        
-        if(!width|!height) {
-            // Get monitor's resolution
-
-        }
+#ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
         
         if(fullScreen){
-            window = glfwCreateWindow(width, height, title, monitor, NULL);
+            window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
         }
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -53,8 +40,8 @@ namespace Lynx {
             exit(1);
         }
 
-        glfwSwapInterval(1); 
         glfwMakeContextCurrent(window);
+        glfwSwapInterval(1); 
 
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
             gEventManager.SendEvent(new WindowResizeEvent(width, height));

@@ -30,7 +30,6 @@ void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiSc
 {
 	vector<Vertex>* vertices = new vector<Vertex>();
 	vector<GLuint>* indices = new vector<GLuint>();
-	vector<Texture>* textures = new vector<Texture>();
 	log_debug("Starting to process mesh");
 	// Process vertices
 	for(unsigned int i = 0; i < mesh->mNumVertices; i++) 

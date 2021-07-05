@@ -25,7 +25,6 @@ public:
 	~VertexBuffer();
 	void Bind();
 	void Unbind();
-private:
 	unsigned int VBO_ID;
 };
 

@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <cstdlib>
 #include "eventManager.h"
 #include "event.h"
 
@@ -16,6 +18,8 @@ namespace Lynx {
         for(auto const& listener : listeners[type]){
             listener(event);
         }
+
+        free(event);
     }
 
 

@@ -15,8 +15,15 @@ using ComponentType = uint64_t;
 class ComponentManager {
 
 public:
+	~ComponentManager()
+	{
+		componentArrays.clear();
+		componentTypes.clear();
+	}
+
 	template<typename T>
-	void RegisterComponent(){
+	void RegisterComponent()
+	{
 		const char* typeName = typeid(T).name();
 
 		assert(componentTypes.find(typeName) == componentTypes.end() && "Component Type already exists.");
@@ -28,7 +35,8 @@ public:
 	}
 
 	template<typename T>
-	ComponentType GetComponentType(){
+	ComponentType GetComponentType()
+	{
 		const char* typeName = typeid(T).name();
 
 		assert(componentTypes.find(typeName) != componentTypes.end() && "Component does not exist.");
@@ -37,21 +45,25 @@ public:
 	}
 
 	template<typename T>
-	void AddComponent(Entity entity, T component){
+	void AddComponent(Entity entity, T component)
+	{
 		GetComponentArray<T>()->InsertData(entity, component);
 	}
 
 	template<typename T>
-	void RemoveComponent(Entity entity){
+	void RemoveComponent(Entity entity)
+	{
 		GetComponentArray<T>()->RemoveData(entity);
 	}
 
 	template<typename T>
-	T* GetComponent(Entity entity){
+	T* GetComponent(Entity entity)
+	{
 		return GetComponentArray<T>()->GetData(entity);
 	}
 
-	void EntityDestroyed(Entity entity){
+	void EntityDestroyed(Entity entity)
+	{
 		for (auto const& pair : componentArrays) {
 			auto const& component = pair.second;
 			component->EntityDestroyed(entity);

@@ -10,6 +10,10 @@
 namespace Lynx::ECS {
 	class EntityManager {
 		public:
+			~EntityManager()
+			{
+				Signatures.clear();
+			}
 			Entity CreateEntity();
 			void DestroyEntity(Entity ent);
 			void SetSignature(Entity ent, Signature signature);

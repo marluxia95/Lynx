@@ -51,7 +51,7 @@ namespace Lynx {
 
 		void Run();
 		void SetDebugMode(bool mode);
-
+		
 		Entity CreateEntity();
 		Entity CreateEntity(const char* name);
 		void DestroyEntity(Entity entity);
@@ -107,13 +107,14 @@ namespace Lynx {
 		std::shared_ptr<RenderSystem> renderSystem;
 		std::shared_ptr<PhysicsSystem> physicsSystem;
 		std::shared_ptr<LightingSystem> lightingSystem;
-
+		
 		float delta_time, last_FrameTime;
 
 		friend class Lynx::Editor;
 	private:
 		bool running;
 
+		
 		std::unique_ptr<ECS::ComponentManager> componentManager;
 		std::unique_ptr<ECS::EntityManager> entityManager;
 		std::unique_ptr<ECS::SystemManager> systemManager;
