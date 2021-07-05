@@ -10,6 +10,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "simpleGameEngine.h"
+#include "windowManager.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -31,12 +32,7 @@ extern "C" {
 
 namespace Lynx {
 
-Game::Game(unsigned int width, unsigned int height):
-    resourceManager(), editor()
-{
-	initWindow();
-
-}
+extern WindowManager gWindowManager;
 
 
 Game::~Game(){
@@ -51,7 +47,7 @@ void Game::SetDebugMode(bool mode){
 	debugMode = mode;
 }
 
-void Game::initWindow(){
+void Game::Init(){
 	
 	bool err = glewInit() != GLEW_OK;   
 
@@ -73,7 +69,7 @@ void Game::initWindow(){
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(gWindowManager.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     componentManager = std::make_unique<ECS::ComponentManager>();
@@ -133,8 +129,6 @@ void Game::initWindow(){
     renderSystem->Init();
     cameraSystem->Init();
     physicsSystem->Init();
-	editor.Init();
-    OnInit();
 }
 
 
@@ -187,9 +181,7 @@ void Game::Run(){
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if(debugMode){
-			editor.Draw();
-		}
+		OnRender();
 
 		// This needs to be improved
         parentingSystem->Update();
@@ -197,48 +189,13 @@ void Game::Run(){
         cameraSystem->Update();
         physicsSystem->Update();
         
-		OnRender();
-
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	    glfwSwapBuffers(window);  
 	    glfwPollEvents();
 
-    } while((!glfwWindowShouldClose(window))|running);
+    } while((!glfwWindowShouldClose(gWindowManager.window))|running);
 }
-
-// Game Input
-
-void Game::MouseCallback(GLFWwindow* window, double xpos, double ypos){
-    	mouseXPos = xpos;
-    	mouseYPos = ypos;
-}
-
-void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    	glfwSetWindowShouldClose(window, true);
-
-    if(key >= 0 && key < 1024){
-    	if(action == GLFW_PRESS)
-    		keys[key] = true;
-    	else if(action == GLFW_RELEASE)
-    		keys[key] = false;
-
-    }
-
-    if(keys[GLFW_KEY_LEFT_SHIFT]&&keys[GLFW_KEY_LEFT_CONTROL]&&keys[GLFW_KEY_F1])
-    	if(debugMode){debugMode = false;}else{debugMode = true;}
-    
-
-
-}
-
-void Game::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-} 
 
 int Game::GetEntityCount()
 {

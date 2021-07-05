@@ -1,16 +1,17 @@
+#include "eventManager.h"
 #include "event.h"
 
 namespace Lynx {
 
 
-    void Event::Subscribe(EventType id, void (*func)(EventType*))
+    void EventManager::Subscribe(EventType id, void (*func)(Event*))
     {
         listeners[id].push_back(func);
     }
 
-    void Event::SendEvent(Event* event)
+    void EventManager::SendEvent(Event* event)
     {
-        int type = event->GetType();
+        EventType type = event->GetType();
 
         for(auto const& listener : listeners[type]){
             listener(event);

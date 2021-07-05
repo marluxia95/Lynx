@@ -2,13 +2,19 @@
 #include "windowManager.h"
 #include "logger.h"
 #include "simpleGameEngine.h"
+#include "eventManager.h"
+#include "Events/event.h"
+#include "Events/windowEvent.h"
+#include "Events/keyEvent.h"
+#include "Events/mouseEvent.h"
 
 namespace Lynx {
 
+    extern EventManager gEventManager;
     extern Game game;
 
     // Creates a window instance
-    void WindowManager::Init(const char* title = "SimpleGameEngine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false)
+    void WindowManager::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
     {
         int success = glfwInit();
         if(success == GLFW_FALSE){
@@ -20,13 +26,19 @@ namespace Lynx {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-        const GLFWmonitor monitor = glfwGetPrimaryMonitor();
+        auto const monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
         glfwWindowHint(GLFW_RED_BITS, mode->redBits);
         glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
+        
+        if(!width|!height) {
+            // Get monitor's resolution
+
+        }
         
         if(fullScreen){
             window = glfwCreateWindow(width, height, title, monitor, NULL);
@@ -44,6 +56,24 @@ namespace Lynx {
         glfwSwapInterval(1); 
         glfwMakeContextCurrent(window);
 
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
+            gEventManager.SendEvent(new WindowResizeEvent(width, height));
+        });  
+
+        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
+            if(action == GLFW_PRESS)
+                gEventManager.SendEvent(new KeyPressedEvent(key));
+        });
+
+        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
+            gEventManager.SendEvent(new MouseCallbackEvent(xpos, ypos));
+        });
+
+        glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
+            if(action == GLFW_PRESS)
+                gEventManager.SendEvent(new MouseButtonEvent(button));
+        });
+
     }
 
     void WindowManager::Update()
@@ -54,11 +84,6 @@ namespace Lynx {
     void WindowManager::Destroy()
     {
         glfwTerminate();
-    }
-
-    GLFWwindow* WindowManager::Getwindow()
-    {
-        return window;
     }
 
 }

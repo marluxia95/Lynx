@@ -12,7 +12,7 @@
 
 using namespace glm;
 
-extern Lynx::Core::Game game;
+extern Lynx::Game game;
 
 namespace Lynx {
 

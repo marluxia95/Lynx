@@ -6,7 +6,7 @@
 #include "ECS/entity.h"
 #include "ECS/components.h"
 
-extern Lynx::Core::Game game;
+extern Lynx::Game game;
 
 namespace Lynx::ECS{
 

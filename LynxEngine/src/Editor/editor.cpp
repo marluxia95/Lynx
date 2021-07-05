@@ -3,9 +3,10 @@
 #include "Core/simpleGameEngine.h"
 #include "Core/logger.h"
 
-extern Lynx::Core::Game game;
 
 namespace Lynx {
+
+		extern Game game;
 
 		Editor::Editor()
 		{

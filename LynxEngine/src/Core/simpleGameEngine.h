@@ -45,8 +45,9 @@ namespace Lynx {
 	
 	class Game {
 	public:
-		Game();
 		~Game();
+
+		void Init();
 
 		void Run();
 		void SetDebugMode(bool mode);
@@ -103,12 +104,11 @@ namespace Lynx {
 		}
 
 		int GetEntityCount();
-
-		ResourceManager resourceManager;
-		
 		std::shared_ptr<RenderSystem> renderSystem;
 		std::shared_ptr<PhysicsSystem> physicsSystem;
 		std::shared_ptr<LightingSystem> lightingSystem;
+
+		float delta_time, last_FrameTime;
 
 		friend class Lynx::Editor;
 	private:
@@ -120,11 +120,6 @@ namespace Lynx {
 		std::unique_ptr<ECS::SystemManager> systemManager;
 		std::shared_ptr<ECS::ParentingSystem> parentingSystem;
 		std::shared_ptr<CameraSystem> cameraSystem;
-
-		EventManager eventManager;
-		WindowManager windowManager;
-
-		Lynx::Editor editor;
 
 		virtual void OnInit();
 		virtual void OnUpdate();

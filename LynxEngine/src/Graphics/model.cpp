@@ -2,7 +2,7 @@
 
 using namespace std;
 
-extern Lynx::Core::Game game;
+extern Lynx::Game game;
 
 namespace Lynx::ModelLoader {
 

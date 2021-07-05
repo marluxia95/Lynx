@@ -7,17 +7,19 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "Core/simpleGameEngine.h"
+#include "Core/windowManager.h"
 #include "Core/logger.h"
 
 #include "ECS/components.h"
 #include "Systems/renderSystem.h"
 
-extern Lynx::Core::Game game;
 
 using namespace glm;
 
 namespace Lynx {
     
+    extern Game game;
+    extern WindowManager gWindowManager;
     
     void RenderSystem::Init()
     {
@@ -32,7 +34,7 @@ namespace Lynx {
 
         game.AddComponent(cameraEntity, Camera{
             60, // Field of view
-            vec2(game.WINDOW_WIDTH, game.WINDOW_HEIGHT), // Resolution
+            vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
             CAMERA_PERSPECTIVE, // Camera type
             true, // Is it a main camera ?
             vec3(0.0f,0.0f,-1.0f), // Front vector

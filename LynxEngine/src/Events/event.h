@@ -2,13 +2,14 @@
 #define EVENT_H
 
 #include <unordered_map>
+#include <any>
 #include <vector>
 
 namespace Lynx {
 
     enum EventType {
         None = 0,
-        WindowClose, WindowResize, Update, KeyPressed
+        WindowClose, WindowResize, Update, KeyPressed, MousePosCallback, MouseKeyPressed
     };
 
     class Event {
@@ -17,26 +18,15 @@ namespace Lynx {
             {
 
             };
-            
+
             EventType GetType()
             {
                 return type;
             }
 
-        private:
+        protected:
             EventType type;
     };
-
-    class EventManager {
-
-        public:
-            void Subscribe(EventType id, void (*func)(EventType*));
-            void SendEvent(Event* event);
-
-        private:
-            std::unordered_map<EventType, std::vector<void(*)(EventType*)>> listeners;
-    };
-
 
 }
 
