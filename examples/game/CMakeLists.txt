@@ -49,7 +49,7 @@ include_directories(
 target_link_libraries(
     Game
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/build/libSimpleGameEngine.so
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/build/libSimpleGameEngine.a
     glfw
     assimp
     ${OPENGL_LIBRARIES}

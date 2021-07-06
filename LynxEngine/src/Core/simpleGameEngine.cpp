@@ -29,9 +29,8 @@
 #include "ECS/systemManager.h"
 #include "ECS/components.h"
 
-extern "C" {
-    #include "logger.h"
-}
+#include "logger.h"
+
 
 extern Lynx::WindowManager gWindowManager;
 extern Lynx::EventManager gEventManager;
@@ -74,12 +73,13 @@ void Game::Init(){
 
     ImGui_ImplGlfw_InitForOpenGL(gWindowManager.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
+    
     
     componentManager = std::make_unique<ECS::ComponentManager>();
     entityManager = std::make_unique<ECS::EntityManager>();
     systemManager = std::make_unique<ECS::SystemManager>();
 
-    RegisterComponent<const char*>();
     RegisterComponent<Transform>();
     RegisterComponent<RigidBody>();
     RegisterComponent<Generic>();

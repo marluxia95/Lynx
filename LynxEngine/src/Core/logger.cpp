@@ -43,9 +43,9 @@ static void event_init(log_Event* ev)
 
 void log_print(log_Event* ev) 
 {
-	char buf[16];
-	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-	printf("%s %s%s\x1b[0m \x1b[90m", buf, level_colours[ev->level], levelStrings[ev->level]);
+	//char buf[16];
+	//buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+	printf("%s%s\x1b[0m \x1b[0m", level_colours[ev->level], levelStrings[ev->level]);
 	vprintf(ev->format, ev->ap);
 	printf("%s\n", colour_clear);
 }
@@ -90,7 +90,7 @@ void log_log(LogLevel level, const char* format, ...)
 		event_init(&ev);
 		va_start(ev.ap, format);
 		log_print(&ev);
-		console_log(&ev);
+		//console_log(&ev);
 		va_end(ev.ap);
 	}
 }

@@ -19,7 +19,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_library( 
-    SimpleGameEngine SHARED ${SOURCES}
+    SimpleGameEngine ${SOURCES}
 )
 
 target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
