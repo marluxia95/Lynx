@@ -26,7 +26,7 @@ static const char* level_colours[] = {
 };
 
 const char* colour_clear = "\x1b[0m";
-#elif _WIN64
+#elif _WIN32
 static const char* level_colours[] = {
   "[94m", "[36m", "[32m", "[33m", "[31m", "[35m"
 };
@@ -82,10 +82,9 @@ static void console_log(log_Event* ev)
 
 void log_log(LogLevel level, const char* format, ...) 
 {
-	log_Event ev = {
-		.format = format,
-		.level = level
-	};
+	log_Event ev;
+	ev.format = format;
+	ev.level = level;
 
 	if (!Logger.quiet && level <= Logger.level) {
 		event_init(&ev);

@@ -1,6 +1,8 @@
 lib/
 build/
 LynxEngine/build
+LynxEngine/Build
+LynxEngine/LynxEngine.vcxproj.user
 Debug/
 .vscode/
 .vs/

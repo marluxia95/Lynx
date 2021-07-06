@@ -23,7 +23,7 @@
 #include "ECS/entityManager.h"
 #include "ECS/systemManager.h"
 
-#include "event.h"
+#include "Events/event.h"
 #include "windowManager.h"
 
 #include "Editor/editor.h"

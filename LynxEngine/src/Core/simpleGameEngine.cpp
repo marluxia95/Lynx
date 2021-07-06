@@ -13,7 +13,7 @@
 #include "windowManager.h"
 
 #include "eventManager.h"
-#include "event.h"
+#include "Events/event.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"

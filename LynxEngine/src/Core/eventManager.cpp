@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cstdlib>
 #include "eventManager.h"
-#include "event.h"
+#include "Events/event.h"
 
 namespace Lynx {
 
