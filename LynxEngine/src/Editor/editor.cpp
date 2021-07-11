@@ -4,7 +4,7 @@
 #include "Core/logger.h"
 
 extern Lynx::Game game;
-/*
+
 namespace Lynx {
 
 		Editor::Editor()
@@ -94,7 +94,8 @@ namespace Lynx {
 		}
 	
 		void Editor::Draw() 
-		{
+		{	
+			
 			if (ImGui::BeginMainMenuBar())  {
 				if(ImGui::BeginMenu("File")){   
 					if (ImGui::MenuItem("New")) {}  
@@ -113,8 +114,8 @@ namespace Lynx {
 				}
 				ImGui::EndMainMenuBar();        
     		}
-			drawHierarchy();
-			drawInspector();
+			//drawHierarchy();
+			//drawInspector();
 
 			if(debugOverlayActive)
 				drawDebugOverlay();
@@ -212,4 +213,3 @@ namespace Lynx {
 			ImGui::End();
 		}
 }
-*/

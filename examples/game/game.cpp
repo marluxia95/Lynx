@@ -26,6 +26,7 @@ using namespace Lynx;
 WindowManager gWindowManager;
 EventManager gEventManager;
 ResourceManager gResourceManager;
+Editor gEditor;
 Game game;
 
 float camera_Speed_Multiplier = 0.0f;
@@ -33,60 +34,67 @@ bool firstMouse = true;
 float lastX, lastY;
 float sensitivity = 0.3f;
 float mPitch, mYaw;
+bool mouseActive = false;
 
 
-void keyboard_input(Event* ev)//KeyPressedEvent* ev)
+void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
 {
-	KeyPressedEvent* key_event = static_cast<KeyPressedEvent*>(ev);
+	const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
 	Entity camera = game.renderSystem->cameraEntity;
 	auto transformComponent = game.GetComponent<Transform>(camera);
 	auto cameraComponent = game.GetComponent<Camera>(camera);
-	float cameraSpeed = 2.5f * game.delta_time;
+	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
 
-	if (key_event->GetKeyCode() == GLFW_KEY_W)
+	if (key_event.m_keyCode == GLFW_KEY_W)
         transformComponent->position += cameraSpeed * transformComponent->rotation;
-    if (key_event->GetKeyCode() == GLFW_KEY_S)
+    if (key_event.m_keyCode == GLFW_KEY_S)
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
-    if (key_event->GetKeyCode() == GLFW_KEY_A)
+    if (key_event.m_keyCode == GLFW_KEY_A)
         transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
-    if (key_event->GetKeyCode() == GLFW_KEY_D)
+    if (key_event.m_keyCode == GLFW_KEY_D)
         transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
-    if (key_event->GetKeyCode() == GLFW_KEY_LEFT_SHIFT){
+    if (key_event.m_keyCode == GLFW_KEY_LEFT_SHIFT){
     	camera_Speed_Multiplier = 3.0f;
     }else{
     	camera_Speed_Multiplier = 1.0f;
     }
+	
 }
 
-void mouse_input(Event* ev)
+void mouse_input(const Event& ev)
 {
-	MouseCallbackEvent* mouse_event = static_cast<MouseCallbackEvent*>(ev);
+	const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
 	Entity camera = game.renderSystem->cameraEntity;
 	auto transformComponent = game.GetComponent<Transform>(camera);
 	auto cameraComponent = game.GetComponent<Camera>(camera);
+	double xpos = mouse_event.m_pos.x;
+	double ypos = mouse_event.m_pos.y;
+
+	if(!mouseActive)
+		return;
+
 	if (firstMouse) {
-		lastX = mouse_event->GetPos().x;
-		lastY = mouse_event->GetPos().y;
+		lastX = xpos;
+		lastY = ypos;
 		firstMouse = false;
 	}
 
-	float xoffset = mouse_event->GetPos().x - lastY;
-	float yoffset = lastX - mouse_event->GetPos().y;
-
-	lastX = mouse_event->GetPos().x;
-	lastY = mouse_event->GetPos().y;
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos;
+	lastX = xpos;
+	lastY = ypos;
 
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
-	mPitch += xoffset;
-	mYaw += yoffset;
+	mPitch += yoffset;
+	mYaw += xoffset;
 
-	if(mPitch > 90.0f) 
-		mPitch = 90.0f;
+	if(mPitch > 89.9f) 
+		mPitch = 89.9f;
 
-	if(mPitch < -90.0f)
-		mPitch = -90.0f;
+	if(mPitch < -89.9f)
+		mPitch = -89.9f;
 
 	glm::vec3 direction;
 	direction.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
@@ -96,25 +104,28 @@ void mouse_input(Event* ev)
 
 }
 
-void mouse_button_input(Event* ev)
+void mouse_button_input(const Event& ev)
 {
-	MouseButtonEvent* button_event = static_cast<MouseButtonEvent*>(ev);
-	if(button_event->GetKeyCode() == GLFW_MOUSE_BUTTON_2)
+	const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
+	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2){
+		mouseActive = true;
 		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	else
+	}else{
+		mouseActive = false;
 		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
-void Update(Event* ev)
+void Update(const Event& ev)
 {
-
+	gEditor.Draw();
 }
 
 int main()
 {
 
 	// Initialize window in windowed mode
-	gWindowManager.Init("Example Game", 1270, 720, false);
+	gWindowManager.Init("Example", 1270, 720, false);
 
 	// Enables the game's debug mode
 	game.SetDebugMode(true);
@@ -127,6 +138,8 @@ int main()
 	gEventManager.Subscribe(KeyPressed, keyboard_input);
 	gEventManager.Subscribe(MousePosCallback, mouse_input);
 	gEventManager.Subscribe(MouseKeyPressed, mouse_button_input);
+
+	ModelLoader::loadModel("res/models/cube.obj", shader);
 
 	// Runs the game
 	game.Run();

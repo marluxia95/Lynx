@@ -20,10 +20,10 @@ namespace Lynx {
 
             };
 
-            EventType GetType()
+            EventType GetType() const
             {
                 return type;
-            }
+            } 
 
         protected:
             EventType type;

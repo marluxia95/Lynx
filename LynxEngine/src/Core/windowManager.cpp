@@ -43,22 +43,21 @@ namespace Lynx {
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1); 
 
+        
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
-            gEventManager.SendEvent(new WindowResizeEvent(width, height));
+            gEventManager.SendEvent(WindowResizeEvent(width, height));
         });  
 
-        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
-            if(action == GLFW_PRESS)
-                gEventManager.SendEvent(new KeyPressedEvent(key));
+        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
+            gEventManager.SendEvent(MouseCallbackEvent(xpos, ypos));
         });
 
-        glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
-            gEventManager.SendEvent(new MouseCallbackEvent(xpos, ypos));
+        glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
+            gEventManager.SendEvent(KeyPressedEvent(key));
         });
 
         glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
-            if(action == GLFW_PRESS)
-                gEventManager.SendEvent(new MouseButtonEvent(button));
+            gEventManager.SendEvent(MouseButtonEvent(button));
         });
 
     }

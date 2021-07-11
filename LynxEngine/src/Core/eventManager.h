@@ -3,30 +3,35 @@
 
 #include <vector>
 #include <unordered_map>
+#include <GLFW/glfw3.h>
 #include "Events/event.h"
 
 namespace Lynx {
     
     class EventManager {
+        
+        using EventFunc = void (*)(const Event&);
 
         public:
-            void Subscribe(EventType id, void (*func)(Event*))
+            void Subscribe(const EventType& type, EventFunc&& func)
             {
-                listeners[id].push_back(func);
+                listeners[type].push_back(func);
             }
-            void SendEvent(Event* event)
+            void SendEvent(const Event& event)
             {
-                EventType type = event->GetType();
+                EventType type = event.GetType();
+                
+                if(listeners.find(type) == listeners.end())
+                    return;
 
-                for(auto const& listener : listeners[type]){
+                for(auto const& listener : listeners[type])
                     listener(event);
-                }
 
-                free(event);
+
             }
 
         private:
-            std::unordered_map<EventType, std::vector<void(*)(Event*)>> listeners;
+            std::map<EventType, std::vector<EventFunc>> listeners;
     };
 
 }

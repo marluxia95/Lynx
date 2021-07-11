@@ -37,7 +37,6 @@ namespace Lynx {
             vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
             CAMERA_PERSPECTIVE, // Camera type
             true, // Is it a main camera ?
-            vec3(0.0f,0.0f,-1.0f), // Front vector
             vec3(0.0f,1.0f,0.0f)   // Up vector
         });
 

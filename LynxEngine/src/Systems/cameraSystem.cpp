@@ -40,7 +40,7 @@ mat4 CameraSystem::GetView(Entity entity, Camera* camera)
 {
 	auto transform = game.GetComponent<Transform>(entity);
 	mat4 view = mat4(1.0f);
-	view = lookAt(transform->position, transform->position + camera->front, camera->up);
+	view = lookAt(transform->position, transform->position + transform->rotation, camera->up);
 	return view;
 }
 

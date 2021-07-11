@@ -121,6 +121,8 @@ void Mesh::Destroy()
 {
 	vertices->clear();
 	indices->clear();
+	delete vertices;
+	delete indices;
 	glDeleteVertexArrays(1, (GLuint*)VAO->VAO_ID);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);

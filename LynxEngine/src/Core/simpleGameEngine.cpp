@@ -38,7 +38,7 @@ extern Lynx::EventManager gEventManager;
 namespace Lynx {
 
 Game::~Game(){
-    gEventManager.SendEvent(new LastTickEvent());
+    gEventManager.SendEvent(LastTickEvent());
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -128,7 +128,7 @@ void Game::Init(){
 		SetSystemSignature<LightingSystem>(signature);
 	}
 
-    gEventManager.SendEvent(new InitEvent());
+    gEventManager.SendEvent(InitEvent());
     renderSystem->Init();
     cameraSystem->Init();
     physicsSystem->Init();
@@ -178,12 +178,12 @@ void Game::Run(){
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-		gEventManager.SendEvent(new UpdateTickEvent());
+		gEventManager.SendEvent(UpdateTickEvent());
         
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		gEventManager.SendEvent(new RenderEvent());
+		gEventManager.SendEvent(RenderEvent());
 
 		// This needs to be improved
         

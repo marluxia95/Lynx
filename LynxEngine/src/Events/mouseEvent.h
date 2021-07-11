@@ -16,9 +16,6 @@ namespace Lynx {
 
         public:
             MouseButtonEvent(KeyCode keycode) : Event(MouseKeyPressed), m_keyCode(keycode) {}
-            KeyCode GetKeyCode() { return m_keyCode; }
-            
-        protected:
             KeyCode m_keyCode;
     };
 
@@ -29,11 +26,7 @@ namespace Lynx {
                 m_pos.x = posX; 
                 m_pos.y = posY; 
             }
-
-            MousePosition GetPos() { return m_pos; }
-
-
-        private:
+            
             MousePosition m_pos;
     };
 
