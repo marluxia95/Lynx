@@ -26,8 +26,6 @@ namespace Lynx {
 
                 for(auto const& listener : listeners[type])
                     listener(event);
-
-
             }
 
         private:

@@ -3,6 +3,7 @@
 using namespace std;
 
 extern Lynx::Game game;
+extern Lynx::ResourceManager gResourceManager;
 
 namespace Lynx::ModelLoader {
 
@@ -69,7 +70,7 @@ void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiSc
 		}
 	}  
 	log_debug("Indices processed");
-	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(255.0f), new Mesh(vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
+	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(255.0f), gResourceManager.LoadMesh("meshobj", vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 

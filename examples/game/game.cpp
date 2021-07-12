@@ -43,6 +43,7 @@ void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
 	Entity camera = game.renderSystem->cameraEntity;
 	auto transformComponent = game.GetComponent<Transform>(camera);
 	auto cameraComponent = game.GetComponent<Camera>(camera);
+	
 	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
 
 	if (key_event.m_keyCode == GLFW_KEY_W)

@@ -28,14 +28,17 @@ void ResourceManager::clear()
 
 	for(auto const& rs : Shaders){
 		rs.second->destroy();
+		delete rs.second;
 	}
 
 	for(auto const& rm : Meshes){
 		rm.second->Destroy();
+		delete rm.second;
 	}
 
 	for(auto const& rt : Textures){
 		rt.second->Destroy();
+		delete rt.second;
 	}
 }
 
