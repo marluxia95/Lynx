@@ -53,11 +53,11 @@ namespace Lynx {
         });
 
         glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
-            gEventManager.SendEvent(KeyPressedEvent(key));
+            gEventManager.SendEvent(KeyPressedEvent(key, action));
         });
 
         glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
-            gEventManager.SendEvent(MouseButtonEvent(button));
+            gEventManager.SendEvent(MouseButtonEvent(button, action));
         });
 
     }

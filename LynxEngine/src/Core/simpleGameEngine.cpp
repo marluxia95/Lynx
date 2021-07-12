@@ -37,7 +37,8 @@ extern Lynx::EventManager gEventManager;
 
 namespace Lynx {
 
-Game::~Game(){
+Game::~Game()
+{
     gEventManager.SendEvent(LastTickEvent());
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -45,11 +46,13 @@ Game::~Game(){
 	glfwTerminate();
 }
 
-void Game::SetDebugMode(bool mode){
+void Game::SetDebugMode(bool mode)
+{
 	//debugMode = mode;
 }
 
-void Game::Init(){
+void Game::Init()
+{
 	
 	bool err = glewInit() != GLEW_OK;   
 
@@ -143,12 +146,14 @@ void Game::Init(){
 
 
 
-Entity Game::CreateEntity() {
+Entity Game::CreateEntity() 
+{
     return entityManager->CreateEntity();
 }
 
 
-Entity Game::CreateEntity(const char* name) {
+Entity Game::CreateEntity(const char* name) 
+{
     Entity newEnt = entityManager->CreateEntity();
     log_debug("Created new entity %d", newEnt);
     AddComponent(newEnt, Generic{name=name});
@@ -156,10 +161,15 @@ Entity Game::CreateEntity(const char* name) {
 }
 
 
-void Game::DestroyEntity(Entity entity) {
+void Game::DestroyEntity(Entity entity) 
+{
     entityManager->DestroyEntity(entity);
 }
 
+int Game::GetEntityCount()
+{
+    return entityManager->livingEntityCount;
+}
 
 /*
 *   End of ECS
@@ -167,7 +177,8 @@ void Game::DestroyEntity(Entity entity) {
 
 // Main Loop
 
-void Game::Run(){
+void Game::Run()
+{
 	do
 	{
         float current_FrameTime = glfwGetTime();

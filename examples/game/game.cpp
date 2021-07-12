@@ -35,31 +35,42 @@ float lastX, lastY;
 float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
+bool keys[1024];
 
-
-void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
+void movement()
 {
-	const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
 	Entity camera = game.renderSystem->cameraEntity;
 	auto transformComponent = game.GetComponent<Transform>(camera);
 	auto cameraComponent = game.GetComponent<Camera>(camera);
-	
+
 	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
 
-	if (key_event.m_keyCode == GLFW_KEY_W)
+
+	if (keys[GLFW_KEY_W])
         transformComponent->position += cameraSpeed * transformComponent->rotation;
-    if (key_event.m_keyCode == GLFW_KEY_S)
+    if (keys[GLFW_KEY_S])
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
-    if (key_event.m_keyCode == GLFW_KEY_A)
+    if (keys[GLFW_KEY_A])
         transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
-    if (key_event.m_keyCode == GLFW_KEY_D)
+    if (keys[GLFW_KEY_D])
         transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
-    if (key_event.m_keyCode == GLFW_KEY_LEFT_SHIFT){
+    if (keys[GLFW_KEY_LEFT_SHIFT]){
     	camera_Speed_Multiplier = 3.0f;
     }else{
     	camera_Speed_Multiplier = 1.0f;
     }
-	
+}
+
+void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
+{
+	const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
+	if(key_event.m_keyCode > 1024)
+		return;
+
+	if(key_event.m_action == GLFW_PRESS)
+		keys[key_event.m_keyCode] = true;
+	else if(key_event.m_action == GLFW_RELEASE)
+		keys[key_event.m_keyCode] = false;
 }
 
 void mouse_input(const Event& ev)
@@ -71,8 +82,10 @@ void mouse_input(const Event& ev)
 	double xpos = mouse_event.m_pos.x;
 	double ypos = mouse_event.m_pos.y;
 
-	if(!mouseActive)
+	if(!mouseActive){
+		firstMouse = true;
 		return;
+	}
 
 	if (firstMouse) {
 		lastX = xpos;
@@ -108,10 +121,10 @@ void mouse_input(const Event& ev)
 void mouse_button_input(const Event& ev)
 {
 	const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
-	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2){
+	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2 && button_event.m_action == GLFW_PRESS){
 		mouseActive = true;
 		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}else{
+	}else if(button_event.m_action == GLFW_RELEASE){
 		mouseActive = false;
 		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
@@ -120,6 +133,19 @@ void mouse_button_input(const Event& ev)
 void Update(const Event& ev)
 {
 	gEditor.Draw();
+	movement();
+}
+
+vector<Entity>* getChildren(Entity parent)
+{
+	vector<Entity>* ents = new vector<Entity>();
+	for(int e = 0; e < game.GetEntityCount(); e++){
+		if(game.GetComponent<Parent>(e)->parentEntity == parent){
+			ents->push_back(e);
+		}
+	}
+
+	return ents;
 }
 
 int main()
@@ -134,6 +160,7 @@ int main()
 	log_set_level(LOG_DEBUG);
 
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
+	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
 	gEventManager.Subscribe(UpdateTick, Update);
 	gEventManager.Subscribe(KeyPressed, keyboard_input);
@@ -141,6 +168,15 @@ int main()
 	gEventManager.Subscribe(MouseKeyPressed, mouse_button_input);
 
 	ModelLoader::loadModel("res/models/cube.obj", shader);
+	Entity lightParentEnt = ModelLoader::loadModel("res/models/cube.obj", shader);
+
+	Entity lightEnt = getChildren(lightParentEnt)->at(0);
+	if(lightEnt){
+		game.AddComponent(lightEnt, PointLight{ glm::vec3(255), glm::vec3(255), glm::vec3(255), 1.0f, 0.09f, 0.032f });
+		game.GetComponent<Transform>(lightEnt)->position.y = 3;
+	}
+
+	
 
 	// Runs the game
 	game.Run();

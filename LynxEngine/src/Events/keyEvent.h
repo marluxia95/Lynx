@@ -11,17 +11,18 @@ namespace Lynx {
 class KeyEvent : public Event {
     public:
         KeyCode m_keyCode;
+        int m_action;
         
     protected:
-        KeyEvent(const KeyCode keycode, EventType type) : Event(type), m_keyCode(keycode) {}
+        KeyEvent(const KeyCode keycode, const int action, EventType type) : Event(type), m_keyCode(keycode), m_action(action) {}
         
 
 };
 
 class KeyPressedEvent : public KeyEvent {
     public:
-        KeyPressedEvent(const KeyCode keycode) 
-            : KeyEvent(keycode, KeyPressed) {}
+        KeyPressedEvent(const KeyCode keycode, const int action) 
+            : KeyEvent(keycode, action, KeyPressed) {}
 
 };
 

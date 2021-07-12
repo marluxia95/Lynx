@@ -15,8 +15,9 @@ namespace Lynx {
     class MouseButtonEvent : public Event {
 
         public:
-            MouseButtonEvent(KeyCode keycode) : Event(MouseKeyPressed), m_keyCode(keycode) {}
+            MouseButtonEvent(KeyCode keycode, const int action) : Event(MouseKeyPressed), m_keyCode(keycode), m_action(action) {}
             KeyCode m_keyCode;
+            int m_action;
     };
 
     class MouseCallbackEvent : public Event  {
