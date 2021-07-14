@@ -22,12 +22,12 @@ Entity loadModel(const char* path, Shader* shader)
 	
 	game.AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
 
-	processNode(parentEnt, shader, scene->mRootNode, scene);
+	processNode(parentEnt, path, shader, scene->mRootNode, scene);
 
 	return parentEnt;
 }
 
-void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiScene* scene)
+void processMesh(Entity meshEntity, const char* path, Shader* meshShader, aiMesh* mesh, const aiScene* scene)
 {
 	vector<Vertex>* vertices = new vector<Vertex>();
 	vector<GLuint>* indices = new vector<GLuint>();
@@ -70,11 +70,11 @@ void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiSc
 		}
 	}  
 	log_debug("Indices processed");
-	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(255.0f), gResourceManager.LoadMesh("meshobj", vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
+	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 
-void processNode(Entity parentEntity, Shader* shader, aiNode* node, const aiScene* scene)
+void processNode(Entity parentEntity, const char* path, Shader* shader, aiNode* node, const aiScene* scene)
 {
 	if(scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -85,12 +85,12 @@ void processNode(Entity parentEntity, Shader* shader, aiNode* node, const aiScen
 		game.AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
 		game.AddComponent<Parent>(meshEntity, Parent{parentEntity});
 		game.GetComponent<Generic>(meshEntity)->isChild = true;
-		processMesh(meshEntity, shader, mesh, scene);
+		processMesh(meshEntity, path, shader, mesh, scene);
 	}
 
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(parentEntity, shader, node->mChildren[i], scene);
+		processNode(parentEntity, path, shader, node->mChildren[i], scene);
 	}
 }
 

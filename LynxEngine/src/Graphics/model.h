@@ -31,8 +31,8 @@ using namespace std;
 namespace Lynx::ModelLoader {
 
 	Entity loadModel(const char* path, Shader* shader);
-	void processNode(Entity parentEntity, Shader* shader, aiNode* node, const aiScene* scene);
-	void processMesh(Entity meshEntity, Shader* meshShader, aiMesh* mesh, const aiScene* scene);
+	void processNode(Entity parentEntity, const char* path, Shader* shader, aiNode* node, const aiScene* scene);
+	void processMesh(Entity meshEntity, const char* path, Shader* meshShader, aiMesh* mesh, const aiScene* scene);
 
 }
 

@@ -45,7 +45,6 @@ void movement()
 
 	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
 
-
 	if (keys[GLFW_KEY_W])
         transformComponent->position += cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_S])
@@ -162,21 +161,26 @@ int main()
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-	gEventManager.Subscribe(UpdateTick, Update);
-	gEventManager.Subscribe(KeyPressed, keyboard_input);
-	gEventManager.Subscribe(MousePosCallback, mouse_input);
-	gEventManager.Subscribe(MouseKeyPressed, mouse_button_input);
+	gEventManager.AddListener(UpdateTick, Update);
+	gEventManager.AddListener(KeyPressed, keyboard_input);
+	gEventManager.AddListener(MousePosCallback, mouse_input);
+	gEventManager.AddListener(MouseKeyPressed, mouse_button_input);
 
-	ModelLoader::loadModel("res/models/cube.obj", shader);
-	Entity lightParentEnt = ModelLoader::loadModel("res/models/cube.obj", shader);
+	Entity cube = ModelLoader::loadModel("res/models/monkey.obj", shader);
 
-	Entity lightEnt = getChildren(lightParentEnt)->at(0);
-	if(lightEnt){
-		game.AddComponent(lightEnt, PointLight{ glm::vec3(255), glm::vec3(255), glm::vec3(255), 1.0f, 0.09f, 0.032f });
-		game.GetComponent<Transform>(lightEnt)->position.y = 3;
-	}
+	vector<Entity>* chl = getChildren(cube);
+	MeshRenderer* meshRenderer = game.GetComponent<MeshRenderer>(chl->at(0));
+	meshRenderer->ambient = glm::vec3(1.0f);
+	meshRenderer->diffuse = glm::vec3(1.0f);
+	meshRenderer->specular = glm::vec3(1.0f);
+	meshRenderer->shininess = 256.0f;
 
+	Entity lightEnt = game.CreateEntity("Light");
+	game.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
+	game.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
+	auto directionalLight = game.GetComponent<DirectionalLight>(game.renderSystem->directionalLight);
+	directionalLight->direction = glm::vec3(1.0f, 1.0f, 0.0f);
 
 	// Runs the game
 	game.Run();

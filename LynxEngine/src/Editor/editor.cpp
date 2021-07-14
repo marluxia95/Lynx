@@ -50,9 +50,15 @@ namespace Lynx {
 			RegisterInspectorFunc<MeshRenderer>([](Entity ent){
 				if (ImGui::CollapsingHeader("Mesh Renderer")) {
 					auto mrenderer = game.GetComponent <MeshRenderer>(ent);
-					ImGui::Text("Color : ");
+					ImGui::Text("Ambient color : ");
 					ImGui::SameLine();
-					ImGui::InputFloat3("##4", glm::value_ptr(mrenderer->color));
+					ImGui::InputFloat3("##4", glm::value_ptr(mrenderer->ambient));
+					ImGui::Text("Diffuse color : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##5", glm::value_ptr(mrenderer->diffuse));
+					ImGui::Text("Specular color : ");
+					ImGui::SameLine();
+					ImGui::InputFloat3("##6", glm::value_ptr(mrenderer->specular));
 				}
 			});
 
@@ -61,11 +67,11 @@ namespace Lynx {
 					auto comp = game.GetComponent <Camera>(ent);
 					ImGui::Text("FOV : ");
 					ImGui::SameLine();
-					ImGui::InputFloat("##5", &comp->FOV);
+					ImGui::InputFloat("##7", &comp->FOV);
 
 					ImGui::Text("Resolution : ");
 					ImGui::SameLine();
-					ImGui::InputFloat2("##6", glm::value_ptr(comp->res));
+					ImGui::InputFloat2("##8", glm::value_ptr(comp->res));
 
 					ImGui::Text("Camera type : ");
 					ImGui::SameLine();

@@ -90,6 +90,7 @@ void Game::Init()
     RegisterComponent<Camera>();
 	RegisterComponent<Parent>();
 	RegisterComponent<PointLight>();
+    RegisterComponent<DirectionalLight>();
 
     renderSystem = RegisterSystem<RenderSystem>();
     {

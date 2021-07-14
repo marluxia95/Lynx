@@ -25,7 +25,7 @@ namespace Lynx {
     {
         log_debug("Creating Main Camera");
         cameraEntity = game.CreateEntity("Main camera");
-
+        
         game.AddComponent(cameraEntity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
@@ -40,12 +40,30 @@ namespace Lynx {
             vec3(0.0f,1.0f,0.0f)   // Up vector
         });
 
+        directionalLight = game.CreateEntity("Directional Light");
+
+        game.AddComponent(directionalLight, Transform{
+            glm::vec3(0), 
+            glm::vec3(0), 
+            glm::vec3(0)
+        });
+
+        game.AddComponent(directionalLight, DirectionalLight{
+            glm::vec3(-1.0f, 0.0f, 0.0f),
+            glm::vec3(1.0f),
+            glm::vec3(1.0f),
+            glm::vec3(0.8f),
+            0.2f
+        });
+
     }
 
     void RenderSystem::Update()
     {
         const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
-        
+        const auto& mCameraTransform = game.GetComponent<Transform>(cameraEntity);
+        const auto& mDirLightComponent = game.GetComponent<DirectionalLight>(directionalLight);
+
         for (auto const& entity : entities) {
             const auto& mTransform = game.GetComponent<Transform>(entity);
             const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
@@ -58,7 +76,8 @@ namespace Lynx {
             mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
             mRenderComponent->shader->setMat4("view", mCameraComponent->view);
             mRenderComponent->shader->setMat4("model", model);
-            mRenderComponent->shader->setVec3("color", mRenderComponent->color);
+            mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
+            mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
 			
 			if(mRenderComponent->lighting | game.lightingSystem->entities.size()){
 				// Set lighting shader values
@@ -82,17 +101,19 @@ namespace Lynx {
 					
 					sprintf(buffer, "pointLights[%d].ambient", i);
 					mRenderComponent->shader->setVec3(buffer, lightComponent->ambient);
-					
-					sprintf(buffer, "pointLights[%d].diffuse", i);
-					mRenderComponent->shader->setVec3(buffer, lightComponent->diffuse);
-					
-					sprintf(buffer, "pointLights[%d].specular", i);
-					mRenderComponent->shader->setVec3(buffer, lightComponent->specular);
 
-                    mRenderComponent->shader->setVec3("material.ambient", glm::vec3(1));
-					mRenderComponent->shader->setVec3("material.diffuse", glm::vec3(1));
-                    mRenderComponent->shader->setVec3("material.specular", glm::vec3(1));
-                    mRenderComponent->shader->setFloat("material.shininess", 32.0f);
+                    mRenderComponent->shader->setVec3("material.ambient", mRenderComponent->ambient);
+					mRenderComponent->shader->setVec3("material.diffuse", mRenderComponent->diffuse);
+                    mRenderComponent->shader->setVec3("material.specular", mRenderComponent->specular);
+                    mRenderComponent->shader->setFloat("material.shininess", mRenderComponent->shininess);
+
+                    mRenderComponent->shader->setVec3("directionalLight.direction", mDirLightComponent->direction);
+                    mRenderComponent->shader->setVec3("directionalLight.ambient", mDirLightComponent->ambient);
+                    mRenderComponent->shader->setVec3("directionalLight.diffuse", mDirLightComponent->diffuse);
+                    mRenderComponent->shader->setVec3("directionalLight.specular", mDirLightComponent->specular);
+                    
+                    mRenderComponent->shader->setFloat("directionalLight.intensity", mDirLightComponent->intensity);
+                    
 
 					i++;
 				}

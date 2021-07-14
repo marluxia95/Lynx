@@ -44,7 +44,10 @@ struct Parent {
 };
 
 struct MeshRenderer {
-	vec3 color;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
 	Mesh* mesh;
 	Shader* shader;
 	Texture* texture;

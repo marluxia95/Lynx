@@ -13,10 +13,17 @@ namespace Lynx {
         using EventFunc = void (*)(const Event&);
 
         public:
-            void Subscribe(const EventType& type, EventFunc&& func)
+            /*
+                Adds a listener to an event
+            */
+            void AddListener(const EventType& type, EventFunc&& func)
             {
                 listeners[type].push_back(func);
             }
+
+            /*
+                Sends an event signal
+            */
             void SendEvent(const Event& event)
             {
                 EventType type = event.GetType();

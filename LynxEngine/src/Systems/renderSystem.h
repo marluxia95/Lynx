@@ -5,6 +5,7 @@
 
 #include "ECS/system.h"
 #include "ECS/entity.h"
+#include "ECS/components.h"
 
 namespace Lynx 
 {
@@ -16,6 +17,7 @@ namespace Lynx
             void Init();
             void Update();
             Entity cameraEntity;
+            Entity directionalLight;
             
     };
 
