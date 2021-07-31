@@ -20,19 +20,19 @@ extern Lynx::Game game;
 extern Lynx::WindowManager gWindowManager;
 
 namespace Lynx {
-    
-    void RenderSystem::Init()
+
+    Entity CreatePerspectiveCamera()
     {
-        log_debug("Creating Main Camera");
-        cameraEntity = game.CreateEntity("Main camera");
+        Entity entity = game.CreateEntity("Main camera");
         
-        game.AddComponent(cameraEntity, Transform{
+        game.AddComponent(entity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
-        game.AddComponent(cameraEntity, Camera{
+        // Add camera component with default values
+        game.AddComponent(entity, Camera{
             60, // Field of view
             vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
             CAMERA_PERSPECTIVE, // Camera type
@@ -40,7 +40,34 @@ namespace Lynx {
             vec3(0.0f,1.0f,0.0f)   // Up vector
         });
 
-        directionalLight = game.CreateEntity("Directional Light");
+        return entity;
+    }
+
+    Entity CreateOrthographicCamera()
+    {
+        Entity entity = game.CreateEntity("Main camera");
+        
+        game.AddComponent(entity, Transform{
+            glm::vec3(0), 
+            glm::vec3(0), 
+            glm::vec3(0)
+        });
+
+        // Add camera component with default values
+        game.AddComponent(entity, Camera{
+            0.0f, // There is no field of view, since it is an orthographic camera
+            vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
+            CAMERA_ORTHOGRAPHIC, // Camera type
+            true, // Is it a main camera ?
+            vec3(0.0f,1.0f,0.0f)   // Up vector
+        });
+
+        return entity;
+    }
+
+    Entity CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor)
+    {
+        Entity directionalLight = game.CreateEntity("Directional Light");
 
         game.AddComponent(directionalLight, Transform{
             glm::vec3(0), 
@@ -49,16 +76,53 @@ namespace Lynx {
         });
 
         game.AddComponent(directionalLight, DirectionalLight{
-            glm::vec3(-1.0f, 0.0f, 0.0f),
-            glm::vec3(1.0f),
+            direction,
+            ambientColor,
             glm::vec3(1.0f),
             glm::vec3(0.8f),
             0.2f
         });
 
+        return directionalLight;
+    }
+    
+    void RenderSystem::Init()
+    {
+
+    }
+
+    void RenderSystem::SetMainCamera(Entity cameraEnt)
+    {
+        cameraEntity = cameraEnt;
+        log_debug("Successfully set main camera to %d\n", cameraEnt);
+    }
+
+    void RenderSystem::SetDirectionalLight(Entity dirLight)
+    {
+        directionalLight = dirLight;
+        log_debug("Successfully set directional light to %d\n", dirLight);
+    }
+
+    void RenderSystem::SetRenderMode(RenderMode mode)
+    {
+        renderMode = mode;
+        log_debug("Successfully set rendering type to %d\n", ( mode == RENDER_2D ? "RENDER_2D" : "RENDER_3D"));
     }
 
     void RenderSystem::Update()
+    {   
+        switch(renderMode) {
+            case RENDER_3D:
+                render3D();
+                break;
+            case RENDER_2D:
+                render2D();
+                break;
+        }
+
+    }
+
+    void RenderSystem::render3D()
     {
         const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
         const auto& mCameraTransform = game.GetComponent<Transform>(cameraEntity);
@@ -122,7 +186,7 @@ namespace Lynx {
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
             
-            // Check if mesh has a texture, if so, render it
+            // Check if mesh has a texture, if so, use it
             if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
             {
                 
@@ -134,6 +198,33 @@ namespace Lynx {
 
             mRenderComponent->mesh->VAO->Bind();
             mRenderComponent->mesh->Render();
+        }
+
+    }
+
+    void RenderSystem::render2D()
+    {
+        const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
+        const auto& mCameraTransform = game.GetComponent<Transform>(cameraEntity);
+
+        for (auto const& entity : entities) {
+            const auto& mTransform = game.GetComponent<Transform>(entity);
+            const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
+
+            if(mRenderComponent->mesh->type > MESH_2D_SPRITE)
+                continue;
+
+            // Check if sprite has a texture, if so, use it
+            if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
+            {
+                    
+                if(mRenderComponent->texture != nullptr){    
+                    mRenderComponent->texture->use();
+                }   
+            }
+
+            mRenderComponent->mesh->Render();
+
         }
 
     }

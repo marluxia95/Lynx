@@ -1,7 +1,9 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
+#include <memory>
 #include <GLFW/glfw3.h>
+
 
 namespace Lynx {
 
@@ -16,6 +18,8 @@ namespace Lynx {
 			unsigned int window_width = 1280;
 			unsigned int window_height = 720;
 			GLFWwindow* window;
+
+			static std::unique_ptr<WindowManager> Create(); 
 	};
 
 

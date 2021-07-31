@@ -72,4 +72,9 @@ namespace Lynx {
         glfwTerminate();
     }
 
+    std::unique_ptr<WindowManager> WindowManager::Create()
+    {
+        return make_unique<WindowManager>();
+    }
+
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Graphics/texture.h"
+#include "Platform/OpenGL/GLTexture.h"
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
 #include "ECS/entity.h"

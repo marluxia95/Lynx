@@ -14,6 +14,9 @@
 #include <memory>
 
 #include "resourceManager.h"
+#include "windowManager.h"
+
+#include "Graphics/renderer.h"
 #include "Graphics/model.h"
 #include "Graphics/mesh.h"
 
@@ -22,13 +25,13 @@
 #include "ECS/componentManager.h"
 #include "ECS/entityManager.h"
 #include "ECS/systemManager.h"
+#include "ECS/system.h"
 
 #include "Events/event.h"
+
 #include "windowManager.h"
 
 #include "Editor/editor.h"
-
-#include "ECS/system.h"
 
 #include "Systems/parentingSystem.h"
 #include "Systems/lightingSystem.h"
@@ -114,12 +117,13 @@ namespace Lynx {
 	private:
 		bool running;
 
-		
-		std::unique_ptr<ECS::ComponentManager> componentManager;
-		std::unique_ptr<ECS::EntityManager> entityManager;
-		std::unique_ptr<ECS::SystemManager> systemManager;
-		std::shared_ptr<ECS::ParentingSystem> parentingSystem;
-		std::shared_ptr<CameraSystem> cameraSystem;
+		std::unique_ptr<Renderer> m_renderer;
+		std::unique_ptr<WindowManager> m_windowManager;
+		std::unique_ptr<ECS::ComponentManager> m_componentManager;
+		std::unique_ptr<ECS::EntityManager> m_entityManager;
+		std::unique_ptr<ECS::SystemManager> m_systemManager;
+		std::shared_ptr<ECS::ParentingSystem> m_parentingSystem;
+		std::shared_ptr<CameraSystem> m_cameraSystem;
 	};
 
 }

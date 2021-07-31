@@ -10,12 +10,14 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Graphics/vertexArray.h"
-#include "Graphics/vertexBuffer.h"
-#include "Graphics/elementBuffer.h"
-#include "Graphics/texture.h"
+#include "Platform/OpenGL/GLVertexArray.h"
+#include "Platform/OpenGL/GLVertexBuffer.h"
+#include "Platform/OpenGL/GLElementBuffer.h"
+#include "Platform/OpenGL/GLTexture.h"
+
 #include "Graphics/model.h"
 #include "Graphics/mesh.h"
+#include "Graphics/rendererAPI.h"
 
 #include "Core/logger.h"
 
@@ -24,80 +26,118 @@ using namespace glm;
 using namespace std;
 
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 Mesh::Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type ) 
 	: vertices(vertices), indices(indices), type(type)
-{
-	renderType = RENDER_INDEXED;
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);  
-	glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
+{	
 	
-	log_debug("Mesh type : %d", type);
-	log_debug("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d", vertices->size(), vertices->size() * sizeof(Vertex));
-
-	VAO = new VertexArray();
-	VAO->Bind();
+	// Create the vertex array object and the vertex buffer object
+	switch ( RendererAPI::GetAPI() ) {
+		case API_NONE:
+			assert(false, "API_NONE is not supported");
+			return;
+		case API_OPENGL: 
+			VAO = new OpenGL::VertexArray();
+			VAO->Bind();
+			glGenBuffers(1, &VBO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);  
+			glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
+			log_debug("Mesh type : %d", type);
+			log_debug("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d", vertices->size(), vertices->size() * sizeof(Vertex));
+			break;
+	}
+	
 	
 
-	// VAO Configuration
-
+	// Configure the vertex buffer object
 	switch( type ){
-
+		case MESH_2D:
+			switch ( RendererAPI::GetAPI() ) {
+				case API_OPENGL:
+					// Vertex attribute
+					glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+    				glEnableVertexAttribArray(0);
+					break;
+			}
+			break;
 		case MESH_2D_SPRITE:
-			// Vertex attribute
-			glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    		glEnableVertexAttribArray(0);
+			switch ( RendererAPI::GetAPI() ) {
+					case API_OPENGL:
+						// Vertex attribute
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+						glEnableVertexAttribArray(0);
+						// Texture attribute
+						glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
+						glEnableVertexAttribArray(2);
+						break;
+			}
 			break;
 		case MESH_3D:
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-			glEnableVertexAttribArray(0);
+			switch ( RendererAPI::GetAPI() ) {
+				case API_OPENGL:
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+					glEnableVertexAttribArray(0);
+					break;
+			}
 			break;
 		case MESH_3D_NORMAL:
-			// Vertex attribute
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-			glEnableVertexAttribArray(0);
-			// Normal attribute
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-			glEnableVertexAttribArray(1);
+			switch ( RendererAPI::GetAPI() ) {
+				case API_OPENGL:
+					// Vertex attribute
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+					glEnableVertexAttribArray(0);
+					// Normal attribute
+					glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+					glEnableVertexAttribArray(1);
+					break;
+			}
 			break;
 		case MESH_3D_TEXTURED:
-			// Vertex attribute
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    		glEnableVertexAttribArray(0);
-    		// Texture attribute
-    		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
-    		glEnableVertexAttribArray(2);
+			switch ( RendererAPI::GetAPI() ) {
+				case API_OPENGL:
+					// Vertex attribute
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+					glEnableVertexAttribArray(0);
+					// Texture attribute
+					glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
+					glEnableVertexAttribArray(2);
+					break;
+			}
 			break;
 		case MESH_3D_TEXTURED_NORMAL:
-			// Vertex attribute
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-			glEnableVertexAttribArray(0);
-			// Normal attribute
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-			glEnableVertexAttribArray(1);
-			// Texture attribute
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
-			glEnableVertexAttribArray(2);
+			switch ( RendererAPI::GetAPI() ) {
+				case API_OPENGL:
+					// Vertex attribute
+					glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+					glEnableVertexAttribArray(0);
+					// Normal attribute
+					glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+					glEnableVertexAttribArray(1);
+					// Texture attribute
+					glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
+					glEnableVertexAttribArray(2);
+					break;
+			}
 			break;
 	}
 
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
-	VAO->Unbind();
+	// Create the element buffer object 
+	switch ( RendererAPI::GetAPI() ) {
+		case API_OPENGL:
+			glGenBuffers(1, &EBO);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+			break;
+	}
 	log_debug("Generated EBO with %d indices. Total EBO size : %d", indices->size(), indices->size() * sizeof(GLuint));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+	VAO->Unbind();
 }
 
 void Mesh::Render()
 {
-	// Indices mode
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 	
+		
 }
 
 void Mesh::Destroy()

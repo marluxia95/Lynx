@@ -3,7 +3,9 @@
 #include <map>
 #include "resourceManager.h"
 #include "Graphics/shader.h"
-#include "Graphics/texture.h"
+#include "Graphics/mesh.h"
+#include "Graphics/rendererAPI.h"
+#include "Platform/OpenGL/GLTexture.h"
 #include "logger.h"
 
 
@@ -47,7 +49,15 @@ Texture* ResourceManager::LoadTexture(const char* name, const char* path)
 	if(Textures.find(name) != Textures.end())
 		return Textures[name];
 
-	Textures[name] = new Texture(path, textureCount);
+	switch( RendererAPI::GetAPI() ) {
+		case API_NONE:
+			assert(false, "API_NONE is not supported!");
+			return;
+		case API_OPENGL:
+			Textures[name] = new OpenGL::Texture(path, textureCount);
+			break;
+	}
+
 	textureCount++;
 	return Textures[name];
 }

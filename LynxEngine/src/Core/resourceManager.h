@@ -4,11 +4,13 @@
 #include <iostream>
 #include <stdio.h>
 #include <map>
+#include "Graphics/mesh.h"
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
-#include "Graphics/mesh.h"
+#include "Graphics/vertexBuffer.h"
 #include "logger.h"
 
+using namespace Lynx::Graphics;
 
 namespace Lynx {
 

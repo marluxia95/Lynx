@@ -5,7 +5,7 @@ using namespace std;
 extern Lynx::Game game;
 extern Lynx::ResourceManager gResourceManager;
 
-namespace Lynx::ModelLoader {
+namespace Lynx::Graphics::ModelLoader {
 
 Entity loadModel(const char* path, Shader* shader)
 {

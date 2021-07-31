@@ -15,11 +15,12 @@
 #include "Core/simpleGameEngine.h"
 #include "Core/logger.h"
 
-#include "Graphics/vertexBuffer.h"
-#include "Graphics/vertexArray.h"
-#include "Graphics/texture.h"
 #include "Graphics/shader.h"
 #include "Graphics/model.h"
+
+#include "Platform/OpenGL/GLVertexBuffer.h"
+#include "Platform/OpenGL/GLVertexArray.h"
+#include "Platform/OpenGL/GLTexture.h"
 
 #include "ECS/components.h"
 #include "ECS/entity.h"
@@ -28,7 +29,7 @@
 
 using namespace std;
 
-namespace Lynx::ModelLoader {
+namespace Lynx::Graphics::ModelLoader {
 
 	Entity loadModel(const char* path, Shader* shader);
 	void processNode(Entity parentEntity, const char* path, Shader* shader, aiNode* node, const aiScene* scene);

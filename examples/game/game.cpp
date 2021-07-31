@@ -23,7 +23,6 @@ using namespace Lynx;
 
 // Initialize global variables
 
-WindowManager gWindowManager;
 EventManager gEventManager;
 ResourceManager gResourceManager;
 Editor gEditor;

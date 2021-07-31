@@ -53,6 +53,7 @@ void Game::SetDebugMode(bool mode)
 
 void Game::Init()
 {
+    windowManager = WindowManager::Create();
 	
 	bool err = glewInit() != GLEW_OK;   
 

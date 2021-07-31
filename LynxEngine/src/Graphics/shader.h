@@ -6,7 +6,7 @@
 #include <stdio.h>
 #define MAX_ERR_BUFSIZE 2048
 
-namespace Lynx {  
+namespace Lynx::Graphics {  
 
 class Shader
 {

@@ -49,20 +49,22 @@ in vec3 FragPos;
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 
     // ambient
-    vec3 ambient = light.ambient;
-  	
+    
     // diffuse 
     vec3 lightDir = normalize(light.position - fragPos);
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = diff * light.diffuse * material.diffuse;
     
     // specular
     vec3 reflectDir = reflect(-lightDir, normal);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = spec * light.specular * material.specular;  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     
     float distance = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic*distance*distance);
+
+    vec3 ambient = light.ambient * material.ambient;
+  	vec3 diffuse = diff * light.diffuse * material.diffuse;
+    vec3 specular = spec * light.specular * material.specular;  
+    
 
     return (ambient + diffuse + specular) * attenuation;
 }
@@ -89,9 +91,9 @@ void main() {
 
     vec3 result = material.ambient * 0.3;
 
-    result += CalculateDirectionalLight(directionalLight, norm, viewDir);
+    //result += CalculateDirectionalLight(directionalLight, norm, viewDir);
 
-    //result += CalculatePointLight(pointLights[0], norm, FragPos, viewDir);      
+    result += CalculatePointLight(pointLights[0], norm, FragPos, viewDir);      
     
     FragColor = vec4(result, 1.0);
 }

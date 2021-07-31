@@ -4,28 +4,44 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-#include <GL/glew.h>
 
-using namespace std;
+#include "Core/logger.h"
+
 using namespace glm;
 
-struct Vertex {
-	vec3 Position;
-	vec2 TextureCoords;
-	vec3 Normal;
-};
+namespace Lynx::Graphics {
 
-void debugVBO(vector<Vertex>* vertices, vector<GLuint>* indices);
+    struct Vertex {
+        vec3 Position;
+        vec2 TextureCoords;
+        vec3 Normal;
+    };
 
-class VertexBuffer{
-public:
-	// "Classic" method
-	VertexBuffer(const void* data, unsigned int size);
-	VertexBuffer(vector<Vertex>* vertices);
-	~VertexBuffer();
-	void Bind();
-	void Unbind();
-	unsigned int VBO_ID;
-};
+    void debugVBO(std::vector<Vertex>* vertices, std::vector<GLuint>* indices)
+    {
+        for ( int i = 0; i < indices->size(); i++ ){
+            log_debug("Index Number %d Vertex pos: %f %f %f Texture Coord pos %f %f Normal pos %f %f %f\n", i, 
+            vertices->at(indices->at(i)).Position.x, 
+            vertices->at(indices->at(i)).Position.y, 
+            vertices->at(indices->at(i)).Position.z,
+            vertices->at(indices->at(i)).TextureCoords.x,
+            vertices->at(indices->at(i)).TextureCoords.y,
+            vertices->at(indices->at(i)).Normal.x,
+            vertices->at(indices->at(i)).Normal.y,
+            vertices->at(indices->at(i)).Normal.z);
+        }
+    }
+
+    class VertexBuffer {
+        public:
+            VertexBuffer(const void* data, unsigned int size);
+            VertexBuffer(std::vector<Vertex>* vertices);
+            ~VertexBuffer();
+            virtual void Bind() = 0;
+            virtual void Unbind() = 0;
+            unsigned int VBO_ID;
+    };
+
+}
 
 #endif
