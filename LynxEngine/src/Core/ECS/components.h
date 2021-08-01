@@ -36,7 +36,6 @@ struct Transform {
 
 struct Generic {
 	const char* name;
-	bool isChild = false;
 };
 
 struct Parent {

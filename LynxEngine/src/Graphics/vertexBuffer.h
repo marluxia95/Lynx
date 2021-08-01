@@ -37,6 +37,7 @@ namespace Lynx::Graphics {
             VertexBuffer(const void* data, unsigned int size);
             VertexBuffer(std::vector<Vertex>* vertices);
             ~VertexBuffer();
+            virtual void Configure(MeshType type) = 0;
             virtual void Bind() = 0;
             virtual void Unbind() = 0;
             unsigned int VBO_ID;

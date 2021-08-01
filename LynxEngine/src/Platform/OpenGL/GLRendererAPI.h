@@ -7,6 +7,8 @@
 
 namespace Lynx::Graphics::OpenGL {
 
+
+
     class GLRendererAPI : RendererAPI {
         ~GLRendererAPI();
 
@@ -14,6 +16,8 @@ namespace Lynx::Graphics::OpenGL {
 
         virtual void SetViewport(uint32_t width, uint32_t height);
         virtual void Clear(glm::vec4 color);
+
+        virtual void BindBuffer(BufferType buffer);
 
         virtual void RenderIndexed();
     };

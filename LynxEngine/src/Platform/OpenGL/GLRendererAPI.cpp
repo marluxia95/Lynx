@@ -27,9 +27,9 @@ namespace Lynx::Graphics::OpenGL {
         glViewport(0, 0, width, height);
     }
 
-    void GLRenderAPI::RenderIndexed() 
+    void GLRendererAPI::RenderIndexed() 
     {
-
+        glDrawElements()
     }
 
     GLRendererAPI::~RendererAPI()

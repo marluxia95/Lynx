@@ -16,7 +16,7 @@ namespace Lynx {
             /*
                 Adds a listener to an event
             */
-            void AddListener(const EventType& type, EventFunc&& func)
+            static void AddListener(const EventType& type, EventFunc&& func)
             {
                 listeners[type].push_back(func);
             }
@@ -24,7 +24,7 @@ namespace Lynx {
             /*
                 Sends an event signal
             */
-            void SendEvent(const Event& event)
+            static void SendEvent(const Event& event)
             {
                 EventType type = event.GetType();
                 
@@ -36,7 +36,7 @@ namespace Lynx {
             }
 
         private:
-            std::map<EventType, std::vector<EventFunc>> listeners;
+            static std::map<EventType, std::vector<EventFunc>> listeners;
     };
 
 }

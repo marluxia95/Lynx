@@ -8,8 +8,8 @@
 namespace Lynx::ECS {
 	class System {
 		public:
-			void Init() {};
-			void Update() {};
+			virtual void Init() {};
+			virtual void Update() {};
 			std::set<Entity> entities;
 	};
 }

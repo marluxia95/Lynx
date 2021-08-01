@@ -8,7 +8,6 @@
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 
-extern Lynx::EventManager gEventManager;
 extern Lynx::Game game;
 
 namespace Lynx {
@@ -45,19 +44,19 @@ namespace Lynx {
 
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
-            gEventManager.SendEvent(WindowResizeEvent(width, height));
+            EventManager::SendEvent(WindowResizeEvent(width, height));
         });  
 
         glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
-            gEventManager.SendEvent(MouseCallbackEvent(xpos, ypos));
+            EventManager::SendEvent(MouseCallbackEvent(xpos, ypos));
         });
 
         glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods){
-            gEventManager.SendEvent(KeyPressedEvent(key, action));
+            EventManager::SendEvent(KeyPressedEvent(key, action));
         });
 
         glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
-            gEventManager.SendEvent(MouseButtonEvent(button, action));
+            EventManager::SendEvent(MouseButtonEvent(button, action));
         });
 
     }

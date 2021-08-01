@@ -6,8 +6,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "Graphics/vertexBuffer.h"
-
-using namespace glm;
+#include "mesh.h"
 
 namespace Lynx::Graphics::OpenGL {
 
@@ -16,6 +15,7 @@ namespace Lynx::Graphics::OpenGL {
             GLVertexBuffer(const void* data, unsigned int size);
             GLVertexBuffer(std::vector<Vertex>* vertices);
             ~GLVertexBuffer();
+            void Configure(Lynx::Graphics::MeshType type);
             void Bind();
             void Unbind();
             unsigned int VBO_ID;

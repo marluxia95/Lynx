@@ -60,17 +60,17 @@ namespace Lynx::ECS {
 		}
 
 		void InitSystems() {
-			/*log_info("Initializing systems...");
+			log_info("Initializing systems...");
 			for (auto const& system : systems) {
 				system.second->Init();
 				log_debug("System %s initialized", system.first);
-			}*/
+			}
 		}
 
-		void UpdateSystems() {/*
+		void UpdateSystems() {
 			for (auto const& system : systems) {
 				system.second->Update();
-			}*/
+			}
 		}
 	private:
 		std::unordered_map<const char*, Signature> signatures{};

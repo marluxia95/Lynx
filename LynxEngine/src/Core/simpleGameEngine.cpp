@@ -31,24 +31,15 @@
 
 #include "logger.h"
 
-
-extern Lynx::WindowManager gWindowManager;
-extern Lynx::EventManager gEventManager;
-
 namespace Lynx {
 
 Game::~Game()
 {
-    gEventManager.SendEvent(LastTickEvent());
+    EventManager::SendEvent(LastTickEvent());
 	ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 	glfwTerminate();
-}
-
-void Game::SetDebugMode(bool mode)
-{
-	//debugMode = mode;
 }
 
 void Game::Init()
@@ -78,104 +69,8 @@ void Game::Init()
     ImGui_ImplGlfw_InitForOpenGL(gWindowManager.window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    
-    
-    componentManager = std::make_unique<ECS::ComponentManager>();
-    entityManager = std::make_unique<ECS::EntityManager>();
-    systemManager = std::make_unique<ECS::SystemManager>();
-
-    RegisterComponent<Transform>();
-    RegisterComponent<RigidBody>();
-    RegisterComponent<Generic>();
-    RegisterComponent<MeshRenderer>();
-    RegisterComponent<Camera>();
-	RegisterComponent<Parent>();
-	RegisterComponent<PointLight>();
-    RegisterComponent<DirectionalLight>();
-
-    renderSystem = RegisterSystem<RenderSystem>();
-    {
-    	Signature signature;
-    	signature.set(GetComponentType<Transform>());
-    	signature.set(GetComponentType<MeshRenderer>());
-    	SetSystemSignature<RenderSystem>(signature);
-    }
-
-    cameraSystem = RegisterSystem<CameraSystem>();
-    {
-    	Signature signature;
-    	signature.set(GetComponentType<Transform>());
-    	signature.set(GetComponentType<Camera>());
-    	SetSystemSignature<CameraSystem>(signature);
-    }
-
-    physicsSystem = RegisterSystem<PhysicsSystem>();
-    {
-    	Signature signature;
-    	signature.set(GetComponentType<Transform>());
-    	signature.set(GetComponentType<RigidBody>());
-    	SetSystemSignature<PhysicsSystem>(signature);
-    }
-
-    parentingSystem = RegisterSystem<ECS::ParentingSystem>();
-	{        	
-		Signature signature;
-       	signature.set(GetComponentType<Transform>());
-    	signature.set(GetComponentType<Parent>());
-    	SetSystemSignature<ECS::ParentingSystem>(signature);
-    }
-
-	lightingSystem = RegisterSystem<LightingSystem>();
-	{
-		Signature signature;
-		signature.set(GetComponentType<Transform>());
-		signature.set(GetComponentType<PointLight>());
-		SetSystemSignature<LightingSystem>(signature);
-	}
-
-    gEventManager.SendEvent(InitEvent());
-    renderSystem->Init();
-    cameraSystem->Init();
-    physicsSystem->Init();
+    EventManager::SendEvent(InitEvent());
 }
-
-
-/*
-*
-*   Entity Component System
-* 
-*/
-
-
-
-Entity Game::CreateEntity() 
-{
-    return entityManager->CreateEntity();
-}
-
-
-Entity Game::CreateEntity(const char* name) 
-{
-    Entity newEnt = entityManager->CreateEntity();
-    log_debug("Created new entity %d", newEnt);
-    AddComponent(newEnt, Generic{name=name});
-    return newEnt;
-}
-
-
-void Game::DestroyEntity(Entity entity) 
-{
-    entityManager->DestroyEntity(entity);
-}
-
-int Game::GetEntityCount()
-{
-    return entityManager->livingEntityCount;
-}
-
-/*
-*   End of ECS
-*/
 
 // Main Loop
 
@@ -191,19 +86,12 @@ void Game::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-		gEventManager.SendEvent(UpdateTickEvent());
+		EventManager::SendEvent(UpdateTickEvent());
         
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		gEventManager.SendEvent(RenderEvent());
-
-		// This needs to be improved
-        
-        parentingSystem->Update();
-        renderSystem->Update();
-        cameraSystem->Update();
-        physicsSystem->Update();
+		EventManager::SendEvent(RenderEvent());
 
         ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -212,11 +100,5 @@ void Game::Run()
         glfwPollEvents();
     } while((!glfwWindowShouldClose(gWindowManager.window))|running);
 }
-
-/*
-int Game::GetEntityCount()
-{
-	return entityManager->livingEntityCount;
-}*/
 
 }

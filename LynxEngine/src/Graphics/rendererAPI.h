@@ -12,6 +12,10 @@ namespace Lynx::Graphics {
         API_OPENGL
     };
 
+    enum BufferType {
+        VERTEXBUF, ELEMENTBUF, FRAMEBUF
+    };
+
     // Base class of the renderer API's, must never be instanced
     class RendererAPI {
         public:
@@ -21,6 +25,8 @@ namespace Lynx::Graphics {
 
             virtual void SetViewport(uint32_t width, uint32_t height) = 0;
             virtual void Clear(glm::vec4 color) = 0;
+
+            virtual void BindBuffer(BufferType buffer) = 0;
 
             virtual void RenderIndexed() = 0;
 
