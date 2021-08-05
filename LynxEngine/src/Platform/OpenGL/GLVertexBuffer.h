@@ -6,11 +6,11 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "Graphics/vertexBuffer.h"
-#include "mesh.h"
+#include "Graphics/mesh.h"
 
 namespace Lynx::Graphics::OpenGL {
 
-    class GLVertexBuffer : Lynx::Graphics::VertexBuffer {
+    class GLVertexBuffer : public Lynx::Graphics::VertexBuffer {
         public:
             GLVertexBuffer(const void* data, unsigned int size);
             GLVertexBuffer(std::vector<Vertex>* vertices);

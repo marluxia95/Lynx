@@ -21,14 +21,13 @@
 #include "Graphics/mesh.h"
 
 #include "ECS/systemManager.h"
+#include "ECS/componentManager.h"
+#include "ECS/entityManager.h"
+#include "ECS/systemManager.h"
 
 #include "Events/event.h"
 
 #include "windowManager.h"
-
-#include "scene.h"
-
-#include "Editor/editor.h"
 
 #include "Systems/parentingSystem.h"
 #include "Systems/lightingSystem.h"
@@ -50,6 +49,61 @@ namespace Lynx {
 		void Init();
 		void Run();
 
+	
+        Entity CreateEntity(const char* name) {
+            Entity ent = m_entityManager->CreateEntity();
+            m_componentManager->AddComponent(ent, Generic{name});
+			return ent;
+        }
+
+        Entity CreateEntity() {
+            Entity ent = m_entityManager->CreateEntity();
+            return ent;
+        }
+
+        void DestroyEntity(Entity entity) {
+            m_entityManager->DestroyEntity(entity);
+        }
+
+        template<typename T>
+        void RegisterComponent(){
+            m_componentManager->RegisterComponent<T>();
+        }
+
+        template<typename T>
+        void AddComponent(Entity entity, T component){
+            m_componentManager->AddComponent(entity, component);
+
+            auto signature = m_entityManager->GetSignature(entity);
+            signature.set(m_componentManager->GetComponentType<T>(), true);
+            m_entityManager->SetSignature(entity, signature);
+
+            m_systemManager->EntitySignatureChanged(entity, signature);
+        }
+
+        template<typename T>
+        void RemoveComponent(Entity entity){
+            m_componentManager->RemoveComponent<T>(entity);
+
+            auto signature = m_entityManager->GetSignature(entity);
+            signature.set(m_componentManager->GetComponentType<T>(), false);
+            m_entityManager->SetSignature(entity, signature);
+
+            m_systemManager->EntitySignatureChanged(entity, signature);
+        }
+
+        template<typename T>
+        T* GetComponent(Entity entity){
+            return m_componentManager->GetComponent<T>(entity);
+        }
+
+        template<typename T>
+        ECS::ComponentType GetComponentType(){
+            return m_componentManager->GetComponentType<T>();
+        }
+
+        int GetEntityCount() { return m_entityManager->livingEntityCount; }
+            
 
         template<typename T>
         std::shared_ptr<T> RegisterSystem(){
@@ -61,15 +115,19 @@ namespace Lynx {
             m_systemManager->SetSignature<T>(signature);
         }
 
+        glm::vec2 GetResolution();
+
+        void LoadDefaultComponents();
+        void LoadDefaultSystems();
+
 
 		float delta_time, last_FrameTime;
-
-		friend class Lynx::Editor;
 	private:
 		bool running;
-		std::unique_ptr<Scene> m_scene;
-		std::unique_ptr<ECS::SystemManager> m_systemManager;
+		std::unique_ptr<ECS::EntityManager> m_entityManager;
+        std::unique_ptr<ECS::ComponentManager> m_componentManager;
 		std::unique_ptr<WindowManager> m_windowManager;
+		std::shared_ptr<ECS::SystemManager> m_systemManager;
 
 	};
 

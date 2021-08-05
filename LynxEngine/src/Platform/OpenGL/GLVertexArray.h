@@ -1,23 +1,17 @@
 #ifndef GLVERTEXARRAY_H
 #define GLVERTEXARRAY_H
 
-#include <memory>
-
+#include "Graphics/vertexArray.h"
 
 namespace Lynx::Graphics::OpenGL {
 
-    class GLVertexArray {
+    class GLVertexArray : public Lynx::Graphics::VertexArray  {
         public:
             GLVertexArray();
             ~GLVertexArray();
             void Bind();
             void Unbind();
-            virtual void SetElementBuffer(std::shared_ptr<ElementBuffer> elementBuffer);
-            virtual std::shared_ptr<ElementBuffer> GetElementBuffer();
             unsigned int VAO_ID;
-
-        private:
-            std::shared_ptr<ElementBuffer> m_elementBuffer;
 
     };
 

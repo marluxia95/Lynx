@@ -43,6 +43,7 @@ namespace Lynx::ECS {
 			size_t indexOfRemovedEntity = entityToIndexMap[entity];
 			size_t indexOfLastElement = size - 1;
 			components[indexOfRemovedEntity] = components[indexOfLastElement];
+			components.pop_back(); // Pop last component since it has already been copied
 
 			uint64_t entityOfLastElement = indexToEntityMap[indexOfLastElement];
 			entityToIndexMap[entityOfLastElement] = indexOfRemovedEntity;

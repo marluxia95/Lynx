@@ -44,7 +44,7 @@ Game::~Game()
 
 void Game::Init()
 {
-    windowManager = WindowManager::Create();
+    m_windowManager = WindowManager::Create();
 	
 	bool err = glewInit() != GLEW_OK;   
 
@@ -53,12 +53,9 @@ void Game::Init()
 		exit(1);
     }
 
-	glEnable(GL_DEPTH_TEST);
+	
 
-    // Enable face culling
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);  
-    glFrontFace(GL_CW);  
+    RendererAPI::Init();
 
 
 	IMGUI_CHECKVERSION();
@@ -66,10 +63,12 @@ void Game::Init()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
 
-    ImGui_ImplGlfw_InitForOpenGL(gWindowManager.window, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_windowManager->window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
     EventManager::SendEvent(InitEvent());
+
+    m_systemManager->InitSystems();
 }
 
 // Main Loop
@@ -92,13 +91,61 @@ void Game::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		EventManager::SendEvent(RenderEvent());
+        m_systemManager->UpdateSystems();
 
         ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
-        gWindowManager.Update();
+        m_windowManager->Update();
         glfwPollEvents();
-    } while((!glfwWindowShouldClose(gWindowManager.window))|running);
+    } while((!glfwWindowShouldClose(m_windowManager->window))|running);
+}
+
+void Game::LoadDefaultComponents()
+{
+    RegisterComponent<Transform>();
+    RegisterComponent<RigidBody>();
+    RegisterComponent<Generic>();
+    RegisterComponent<MeshRenderer>();
+    RegisterComponent<Camera>();
+	RegisterComponent<Parent>();
+	RegisterComponent<PointLight>();
+    RegisterComponent<DirectionalLight>();
+}
+
+void Game::LoadDefaultSystems()
+{
+    RegisterSystem<RenderSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<MeshRenderer>());
+    	SetSystemSignature<RenderSystem>(signature);
+    }
+
+    RegisterSystem<CameraSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<Camera>());
+    	SetSystemSignature<CameraSystem>(signature);
+    }
+
+    RegisterSystem<PhysicsSystem>();
+    {
+    	Signature signature;
+    	signature.set(GetComponentType<Transform>());
+    	signature.set(GetComponentType<RigidBody>());
+    	SetSystemSignature<PhysicsSystem>(signature);
+    }
+
+    RegisterSystem<LightingSystem>();
+	{
+		Signature signature;
+		signature.set(GetComponentType<Transform>());
+		signature.set(GetComponentType<PointLight>());
+		SetSystemSignature<LightingSystem>(signature);
+	}
 }
 
 }

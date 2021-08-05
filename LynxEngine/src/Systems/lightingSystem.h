@@ -2,7 +2,7 @@
 #define LIGHTINGSYSTEM_H
 
 #include <stdio.h>
-#include "ECS/system.h"
+#include "Core/ECS/system.h"
 
 namespace Lynx {
 

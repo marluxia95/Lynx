@@ -17,13 +17,13 @@
 
 #include "Graphics/shader.h"
 #include "Graphics/model.h"
+#include "Graphics/texture.h"
 
 #include "Platform/OpenGL/GLVertexBuffer.h"
 #include "Platform/OpenGL/GLVertexArray.h"
-#include "Platform/OpenGL/GLTexture.h"
 
-#include "ECS/components.h"
-#include "ECS/entity.h"
+#include "Core/ECS/components.h"
+#include "Core/ECS/entity.h"
 
 
 

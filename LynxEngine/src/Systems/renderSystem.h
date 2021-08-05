@@ -2,9 +2,9 @@
 #define RENDERSYSTEM_H
 #include <stdio.h>
 
-#include "ECS/system.h"
-#include "ECS/entity.h"
-#include "ECS/components.h"
+#include "Core/ECS/system.h"
+#include "Core/ECS/entity.h"
+#include "Core/ECS/components.h"
 
 namespace Lynx 
 {

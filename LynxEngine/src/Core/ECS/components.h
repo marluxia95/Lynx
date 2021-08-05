@@ -4,10 +4,10 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Platform/OpenGL/GLTexture.h"
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
-#include "ECS/entity.h"
+#include "Graphics/texture.h"
+#include "entity.h"
 
 using namespace glm;
 
@@ -47,9 +47,9 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	Mesh* mesh;
-	Shader* shader;
-	Texture* texture;
+	Graphics::Mesh* mesh;
+	Graphics::Shader* shader;
+	Graphics::Texture* texture;
 	bool lighting = true;
 };
 

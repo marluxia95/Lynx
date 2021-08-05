@@ -8,7 +8,7 @@
 
 namespace Lynx::Graphics::OpenGL {
 
-    class GLElementBuffer : Lynx::Graphics::ElementBuffer {
+    class GLElementBuffer : public Lynx::Graphics::ElementBuffer {
 
         public:
             GLElementBuffer(const void* indices, unsigned int indexNumber);

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include "ECS/entity.h"
-#include "ECS/system.h"
+#include "entity.h"
+#include "system.h"
 #include "Core/logger.h"
 
 namespace Lynx::ECS {

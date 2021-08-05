@@ -4,8 +4,8 @@
 
 #include "Core/simpleGameEngine.h"
 
-#include "ECS/system.h"
-#include "ECS/components.h"
+#include "Core/ECS/system.h"
+#include "Core/ECS/components.h"
 
 extern Lynx::Game game;
 

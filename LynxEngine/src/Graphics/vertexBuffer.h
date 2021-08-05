@@ -6,10 +6,13 @@
 #include <glm/glm.hpp>
 
 #include "Core/logger.h"
+#include "mesh.h"
 
 using namespace glm;
 
 namespace Lynx::Graphics {
+
+    enum MeshType : unsigned int;
 
     struct Vertex {
         vec3 Position;
@@ -34,9 +37,6 @@ namespace Lynx::Graphics {
 
     class VertexBuffer {
         public:
-            VertexBuffer(const void* data, unsigned int size);
-            VertexBuffer(std::vector<Vertex>* vertices);
-            ~VertexBuffer();
             virtual void Configure(MeshType type) = 0;
             virtual void Bind() = 0;
             virtual void Unbind() = 0;

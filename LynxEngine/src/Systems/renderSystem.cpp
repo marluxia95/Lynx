@@ -10,7 +10,7 @@
 #include "Core/windowManager.h"
 #include "Core/logger.h"
 
-#include "ECS/components.h"
+#include "Core/ECS/components.h"
 #include "Systems/renderSystem.h"
 
 
@@ -32,12 +32,10 @@ namespace Lynx {
         });
 
         // Add camera component with default values
-        game.AddComponent(entity, Camera{
-            60, // Field of view
-            vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
-            CAMERA_PERSPECTIVE, // Camera type
-            true, // Is it a main camera ?
-            vec3(0.0f,1.0f,0.0f)   // Up vector
+        game.AddComponent(entity, PerspectiveCamera{
+            game.GetResolution().x,
+            game.GetResolution().y,
+            60.0f
         });
 
         return entity;
@@ -54,12 +52,9 @@ namespace Lynx {
         });
 
         // Add camera component with default values
-        game.AddComponent(entity, Camera{
-            0.0f, // There is no field of view, since it is an orthographic camera
-            vec2(gWindowManager.window_width, gWindowManager.window_height), // Resolution
-            CAMERA_ORTHOGRAPHIC, // Camera type
-            true, // Is it a main camera ?
-            vec3(0.0f,1.0f,0.0f)   // Up vector
+        game.AddComponent(entity, OrthographicCamera{
+            game.GetResolution().x,
+            game.GetResolution().y
         });
 
         return entity;
@@ -137,12 +132,13 @@ namespace Lynx {
             
             if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
-            mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
-            mRenderComponent->shader->setMat4("view", mCameraComponent->view);
+            mRenderComponent->shader->setMat4("projection", mCameraComponent->GetProjectionMatrix());
+            mRenderComponent->shader->setMat4("view", mCameraComponent->GetViewMatrix());
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
             mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
 			
+            /* WIP
 			if(mRenderComponent->lighting | game.lightingSystem->entities.size()){
 				// Set lighting shader values
 				int i = 0;
@@ -181,7 +177,7 @@ namespace Lynx {
 
 					i++;
 				}
-			}
+			}*/
 
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}

@@ -5,17 +5,17 @@
 
 namespace Lynx::Graphics::OpenGL {
 
-    GLElementBuffer::ElementBuffer(const void* indices, unsigned int indexNumber){
+    GLElementBuffer::GLElementBuffer(const void* indices, unsigned int indexNumber){
         glGenBuffers(1, &ID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber, indices, GL_STATIC_DRAW);
     }
 
-    GLElementBuffer::ElementBuffer(std::vector<GLuint>* indices){
+    GLElementBuffer::GLElementBuffer(std::vector<GLuint>* indices){
         glGenBuffers(1, &ID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(GLuint), &(indices->at(0)), GL_STATIC_DRAW );
     }
 
-    GLElementBuffer::~ElementBuffer(){
+    GLElementBuffer::~GLElementBuffer(){
         glDeleteBuffers(1, &ID);
     }
 
