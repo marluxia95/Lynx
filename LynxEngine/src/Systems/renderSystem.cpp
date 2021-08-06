@@ -146,7 +146,7 @@ namespace Lynx {
 					auto lightComponent = game.GetComponent<PointLight>(lightEnt);
                     auto transform = game.GetComponent<Transform>(lightEnt);
 					char buffer[64];
-                    
+                        
 					sprintf(buffer, "pointLights[%d].position", i);
 					mRenderComponent->shader->setVec3(buffer , transform->position);
 					

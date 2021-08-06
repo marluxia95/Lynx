@@ -1,3 +1,6 @@
+#ifndef RENDERER2D_H
+#define RENDERER2D_H
+
 #include <stdio.h>
 #include "Core/simpleGameEngine.h"
 #include "shader.h"
@@ -18,3 +21,5 @@ namespace Lynx::Graphics {
     }
 
 }
+
+#endif

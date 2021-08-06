@@ -3,7 +3,10 @@ build/
 LynxEngine/build
 LynxEngine/Build
 LynxEngine/LynxEngine.vcxproj.user
+LynxEditor/build
+LynxEditor/Build
 Debug/
+docs/doxygen/
 .vscode/
 .vs/
 x64/
