@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 17)
-project(LynxEngine VERSION 0.0.3)
+project(LynxEngine VERSION 0.0.2.3)
 
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp -Wwrite-strings -Wconversion-null")
-
 
 
 file(GLOB_RECURSE SOURCES
@@ -19,12 +18,12 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_library( 
-    SimpleGameEngine ${SOURCES}
+    LynxEngine STATIC ${SOURCES}
 )
 
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib/imgui)
-target_include_directories(SimpleGameEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib/imgui)
+target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
@@ -39,7 +38,7 @@ if(ASSIMP_FOUND)
 endif() 
 
 include_directories( 
-    SimpleGameEngine
+    LynxEngine
 
     ${OPENGL_INCLUDE_DIRS}  
     ${GLEW_INCLUDE}
@@ -52,7 +51,7 @@ include_directories(
 )
 
 target_link_libraries(
-    SimpleGameEngine
+    LynxEngine
 
     glfw
     assimp

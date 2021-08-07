@@ -2,7 +2,7 @@
 
 using namespace std;
 
-extern Lynx::Game game;
+extern Lynx::Application gApplication;
 extern Lynx::ResourceManager gResourceManager;
 
 namespace Lynx::Graphics::ModelLoader {
@@ -18,9 +18,9 @@ Entity loadModel(const char* path, Shader* shader)
 		return NULL;
 	}
 
-	Entity parentEnt = game.CreateEntity(path);
+	Entity parentEnt = gApplication.CreateEntity(path);
 	
-	game.AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
+	gApplication.AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
 
 	processNode(parentEnt, path, shader, scene->mRootNode, scene);
 
@@ -70,7 +70,7 @@ void processMesh(Entity meshEntity, const char* path, Shader* meshShader, aiMesh
 		}
 	}  
 	log_debug("Indices processed");
-	game.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
+	gApplication.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 
@@ -81,9 +81,9 @@ void processNode(Entity parentEntity, const char* path, Shader* shader, aiNode* 
 	{
 		
 		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
-		Entity meshEntity = game.CreateEntity(mesh->mName.C_Str());
-		game.AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
-		game.AddComponent<Parent>(meshEntity, Parent{parentEntity});
+		Entity meshEntity = gApplication.CreateEntity(mesh->mName.C_Str());
+		gApplication.AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
+		gApplication.AddComponent<Parent>(meshEntity, Parent{parentEntity});
 		processMesh(meshEntity, path, shader, mesh, scene);
 	}
 

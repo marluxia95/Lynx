@@ -7,7 +7,7 @@
 #include "Core/ECS/system.h"
 #include "Core/ECS/components.h"
 
-extern Lynx::Game game;
+extern Lynx::Application gApplication;
 
 namespace Lynx {
 
@@ -18,12 +18,12 @@ namespace Lynx {
 
 	void PhysicsSystem::Update() 
 	{
-		float deltaTime = game.delta_time;
+		float deltaTime = gApplication.delta_time;
 
 		for (auto entity : entities)
 		{
-			auto transform = game.GetComponent<Transform>(entity);
-			auto rigidbody = game.GetComponent<RigidBody>(entity);
+			auto transform = gApplication.GetComponent<Transform>(entity);
+			auto rigidbody = gApplication.GetComponent<RigidBody>(entity);
 
 			transform->position += rigidbody->velocity * deltaTime;
 			rigidbody->velocity += gravityForce * deltaTime;

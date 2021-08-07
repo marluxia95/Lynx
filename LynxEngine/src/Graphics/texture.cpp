@@ -1,3 +1,7 @@
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include "texture.h"
 
 namespace Lynx::Graphics {
@@ -20,6 +24,16 @@ namespace Lynx::Graphics {
         unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
         RendererAPI::LoadTexture(data, width, height, true);
         stbi_image_free(data);
+    }
+
+    void Texture::use()
+    {
+        RendererAPI::UseTexture(tex);
+    }
+
+    void Texture::Destroy()
+    {
+        
     }
 
 

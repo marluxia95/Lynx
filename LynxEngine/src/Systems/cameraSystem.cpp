@@ -12,16 +12,16 @@
 
 using namespace glm;
 
-extern Lynx::Game game;
+extern Lynx::Application gApplication;
 
 namespace Lynx {
 
 void CameraSystem::Init()
 {
+	glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
 	for ( auto const& entity : entities )
 	{
-		auto camera_component = game.GetComponent<Camera>(entity);
-		auto resolution = game.GetResolution();
+		auto camera_component = gApplication.GetComponent<Camera>(entity);
 		camera_component->CalculateProjection(resolution.x, resolution.y);
 	}
 }
@@ -30,8 +30,8 @@ void CameraSystem::Update()
 {
 	for ( auto const& entity : entities )
 	{
-		auto camera_component = game.GetComponent<Camera>(entity);
-		auto transform_component = game.GetComponent<Transform>(entity);
+		auto camera_component = gApplication.GetComponent<Camera>(entity);
+		auto transform_component = gApplication.GetComponent<Transform>(entity);
 
 		camera_component->CalculateView(transform_component);
 	}

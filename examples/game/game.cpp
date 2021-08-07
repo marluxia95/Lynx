@@ -5,6 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "Core/ECS/components.h"
 #include "Core/simpleGameEngine.h"
 #include "Core/windowManager.h"
 #include "Core/eventManager.h"
@@ -17,16 +18,13 @@
 #include "Graphics/model.h"
 #include "Graphics/shader.h"
 
-#include "ECS/components.h"
+#include "Systems/renderSystem.h"
 
 using namespace Lynx;
 
 // Initialize global variables
-
-EventManager gEventManager;
 ResourceManager gResourceManager;
-Editor gEditor;
-Game game;
+Application gApplication;
 
 float camera_Speed_Multiplier = 0.0f;
 bool firstMouse = true;
@@ -35,23 +33,23 @@ float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
 bool keys[1024];
+Entity camera;
 
 void movement()
 {
-	Entity camera = game.renderSystem->cameraEntity;
-	auto transformComponent = game.GetComponent<Transform>(camera);
-	auto cameraComponent = game.GetComponent<Camera>(camera);
+	auto transformComponent = gApplication.GetComponent<Transform>(camera);
+	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
 
-	float cameraSpeed = 2.5f * game.delta_time * camera_Speed_Multiplier;
+	float cameraSpeed = 2.5f * gApplication.delta_time * camera_Speed_Multiplier;
 
 	if (keys[GLFW_KEY_W])
         transformComponent->position += cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_S])
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_A])
-        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
+        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->GetUpVector())) * cameraSpeed;
     if (keys[GLFW_KEY_D])
-        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up)) * cameraSpeed;
+        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->GetUpVector())) * cameraSpeed;
     if (keys[GLFW_KEY_LEFT_SHIFT]){
     	camera_Speed_Multiplier = 3.0f;
     }else{
@@ -74,9 +72,8 @@ void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
 void mouse_input(const Event& ev)
 {
 	const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
-	Entity camera = game.renderSystem->cameraEntity;
-	auto transformComponent = game.GetComponent<Transform>(camera);
-	auto cameraComponent = game.GetComponent<Camera>(camera);
+	auto transformComponent = gApplication.GetComponent<Transform>(camera);
+	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
 	double xpos = mouse_event.m_pos.x;
 	double ypos = mouse_event.m_pos.y;
 
@@ -121,24 +118,23 @@ void mouse_button_input(const Event& ev)
 	const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
 	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2 && button_event.m_action == GLFW_PRESS){
 		mouseActive = true;
-		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(gApplication.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}else if(button_event.m_action == GLFW_RELEASE){
 		mouseActive = false;
-		glfwSetInputMode(gWindowManager.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(gApplication.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 }
 
 void Update(const Event& ev)
 {
-	gEditor.Draw();
 	movement();
 }
 
 vector<Entity>* getChildren(Entity parent)
 {
 	vector<Entity>* ents = new vector<Entity>();
-	for(int e = 0; e < game.GetEntityCount(); e++){
-		if(game.GetComponent<Parent>(e)->parentEntity == parent){
+	for(int e = 0; e < gApplication.GetEntityCount(); e++){
+		if(gApplication.GetComponent<Parent>(e)->parentEntity == parent){
 			ents->push_back(e);
 		}
 	}
@@ -148,41 +144,47 @@ vector<Entity>* getChildren(Entity parent)
 
 int main()
 {
+	// Enables the gApplication's debug mode
+	log_set_level(LOG_DEBUG);
+
+	EventManager::AddListener(EngineInit, [](const Event& ev) {
+		gApplication.LoadDefaultComponents();
+		gApplication.LoadDefaultSystems();
+	});
 
 	// Initialize window in windowed mode
-	gWindowManager.Init("Example", 1270, 720, false);
+	gApplication.Init("Example", 1270, 720, false);
 
-	// Enables the game's debug mode
-	game.SetDebugMode(true);
-	game.Init();
-	log_set_level(LOG_DEBUG);
+	auto renderSystem = gApplication.GetSystem<RenderSystem>();
+	camera = renderSystem->GetMainCamera();
+
 
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-	gEventManager.AddListener(UpdateTick, Update);
-	gEventManager.AddListener(KeyPressed, keyboard_input);
-	gEventManager.AddListener(MousePosCallback, mouse_input);
-	gEventManager.AddListener(MouseKeyPressed, mouse_button_input);
+	EventManager::AddListener(UpdateTick, Update);
+	EventManager::AddListener(KeyPressed, keyboard_input);
+	EventManager::AddListener(MousePosCallback, mouse_input);
+	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
 
 	Entity cube = ModelLoader::loadModel("res/models/monkey.obj", shader);
 
+	/*
 	vector<Entity>* chl = getChildren(cube);
-	MeshRenderer* meshRenderer = game.GetComponent<MeshRenderer>(chl->at(0));
+	MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
 	meshRenderer->ambient = glm::vec3(1.0f);
 	meshRenderer->diffuse = glm::vec3(1.0f);
 	meshRenderer->specular = glm::vec3(1.0f);
 	meshRenderer->shininess = 256.0f;
 
-	Entity lightEnt = game.CreateEntity("Light");
-	game.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
-	game.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
+	Entity lightEnt = gApplication.CreateEntity("Light");
+	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
+	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
-	auto directionalLight = game.GetComponent<DirectionalLight>(game.renderSystem->directionalLight);
+	auto directionalLight = gApplication.GetComponent<DirectionalLight>(renderSystem->GetDirectionalLight());
 	directionalLight->direction = glm::vec3(1.0f, 1.0f, 0.0f);
-
-	// Runs the game
-	game.Run();
-	gWindowManager.Destroy();
+	*/
+	// Runs the gApplication
+	gApplication.Run();
 	return 0;
 }

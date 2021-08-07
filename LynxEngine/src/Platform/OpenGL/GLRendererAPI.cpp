@@ -22,7 +22,7 @@ namespace Lynx::Graphics::OpenGL {
         glCullFace(GL_FRONT);  
         glFrontFace(GL_CW);  
 
-        log_info("Loaded OpenGL API");
+        log_info("Successfully loaded OpenGL API");
     }
 
     void GLRendererAPI::Clear(glm::vec4 color)

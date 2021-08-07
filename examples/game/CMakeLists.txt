@@ -15,7 +15,6 @@ add_executable(
 set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/src)
 set(LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
 
-
 target_include_directories(Game PRIVATE $(ENGINE))
 target_include_directories(Game PRIVATE ${LIBS}/imgui)
 target_include_directories(Game PRIVATE ${LIBS})
@@ -49,7 +48,7 @@ include_directories(
 target_link_libraries(
     Game
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/build/libSimpleGameEngine.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/build/libLynxEngine.a
     glfw
     assimp
     ${OPENGL_LIBRARIES}

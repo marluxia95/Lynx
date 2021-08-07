@@ -37,16 +37,17 @@
 
 namespace Lynx {
 
-	enum GameState{
-		GAME_PAUSE,
-		GAME_ACTIVE
+	enum State{
+		STATE_ACTIVE,
+        STATE_PAUSED,
+        STATE_CLOSED
 	};
 	
-	class Game {
-	public:
-		~Game();
+	class Application {
+    public:
+		~Application();
 
-		void Init();
+        void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false);
 		void Run();
 
 	
@@ -115,21 +116,30 @@ namespace Lynx {
             m_systemManager->SetSignature<T>(signature);
         }
 
-        glm::vec2 GetResolution();
+        template<typename T>
+        std::shared_ptr<T> GetSystem(){
+            return m_systemManager->GetSystem<T>();
+        }
+
+        unsigned int GetResolutionWidth();
+        unsigned int GetResolutionHeight();
 
         void LoadDefaultComponents();
         void LoadDefaultSystems();
 
+        GLFWwindow* GetWindow() { return m_windowManager->window; }
+
 
 		float delta_time, last_FrameTime;
 	private:
-		bool running;
+		State applicationState;
 		std::unique_ptr<ECS::EntityManager> m_entityManager;
         std::unique_ptr<ECS::ComponentManager> m_componentManager;
+        std::unique_ptr<ECS::SystemManager> m_systemManager;
 		std::unique_ptr<WindowManager> m_windowManager;
-		std::shared_ptr<ECS::SystemManager> m_systemManager;
 
 	};
 
 }
+
 #endif

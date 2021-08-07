@@ -12,29 +12,30 @@
 
 #include "Core/ECS/components.h"
 #include "Systems/renderSystem.h"
-
+#include "Systems/lightingSystem.h"
 
 using namespace glm;
 
-extern Lynx::Game game;
+extern Lynx::Application gApplication;
 extern Lynx::WindowManager gWindowManager;
 
 namespace Lynx {
 
     Entity CreatePerspectiveCamera()
     {
-        Entity entity = game.CreateEntity("Main camera");
+        Entity entity = gApplication.CreateEntity("Main camera");
+        glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
         
-        game.AddComponent(entity, Transform{
+        gApplication.AddComponent(entity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
         // Add camera component with default values
-        game.AddComponent(entity, PerspectiveCamera{
-            game.GetResolution().x,
-            game.GetResolution().y,
+        gApplication.AddComponent(entity, PerspectiveCamera{
+            resolution.x,
+            resolution.y,
             60.0f
         });
 
@@ -43,18 +44,19 @@ namespace Lynx {
 
     Entity CreateOrthographicCamera()
     {
-        Entity entity = game.CreateEntity("Main camera");
-        
-        game.AddComponent(entity, Transform{
+        Entity entity = gApplication.CreateEntity("Main camera");
+        glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
+
+        gApplication.AddComponent(entity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
         // Add camera component with default values
-        game.AddComponent(entity, OrthographicCamera{
-            game.GetResolution().x,
-            game.GetResolution().y
+        gApplication.AddComponent(entity, OrthographicCamera{
+            resolution.x,
+            resolution.y
         });
 
         return entity;
@@ -62,15 +64,16 @@ namespace Lynx {
 
     Entity CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor)
     {
-        Entity directionalLight = game.CreateEntity("Directional Light");
+        Entity directionalLight = gApplication.CreateEntity("Directional Light");
 
-        game.AddComponent(directionalLight, Transform{
+
+        gApplication.AddComponent(directionalLight, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
-        game.AddComponent(directionalLight, DirectionalLight{
+        gApplication.AddComponent(directionalLight, DirectionalLight{
             direction,
             ambientColor,
             glm::vec3(1.0f),
@@ -80,10 +83,20 @@ namespace Lynx {
 
         return directionalLight;
     }
+
+    Entity RenderSystem::GetMainCamera() 
+    {
+        return cameraEntity;
+    }
+
+    Entity RenderSystem::GetDirectionalLight()
+    {
+        return directionalLight;
+    }
     
     void RenderSystem::Init()
     {
-
+        lightingSystem = gApplication.GetSystem<LightingSystem>();
     }
 
     void RenderSystem::SetMainCamera(Entity cameraEnt)
@@ -106,26 +119,18 @@ namespace Lynx {
 
     void RenderSystem::Update()
     {   
-        switch(renderMode) {
-            case RENDER_3D:
-                render3D();
-                break;
-            case RENDER_2D:
-                render2D();
-                break;
-        }
-
+        render3D();
     }
 
     void RenderSystem::render3D()
     {
-        const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
-        const auto& mCameraTransform = game.GetComponent<Transform>(cameraEntity);
-        const auto& mDirLightComponent = game.GetComponent<DirectionalLight>(directionalLight);
+        const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
+        const auto& mCameraTransform = gApplication.GetComponent<Transform>(cameraEntity);
+        const auto& mDirLightComponent = gApplication.GetComponent<DirectionalLight>(directionalLight);
 
         for (auto const& entity : entities) {
-            const auto& mTransform = game.GetComponent<Transform>(entity);
-            const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
+            const auto& mTransform = gApplication.GetComponent<Transform>(entity);
+            const auto& mRenderComponent = gApplication.GetComponent<MeshRenderer>(entity);
 
             mRenderComponent->shader->use();
             mat4 model = mTransform->GetModel();
@@ -138,13 +143,12 @@ namespace Lynx {
             mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
             mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
 			
-            /* WIP
-			if(mRenderComponent->lighting | game.lightingSystem->entities.size()){
+			if(mRenderComponent->lighting | lightingSystem->entities.size()){
 				// Set lighting shader values
 				int i = 0;
-				for (auto lightEnt : game.lightingSystem->entities){
-					auto lightComponent = game.GetComponent<PointLight>(lightEnt);
-                    auto transform = game.GetComponent<Transform>(lightEnt);
+				for (auto lightEnt : lightingSystem->entities){
+					auto lightComponent = gApplication.GetComponent<PointLight>(lightEnt);
+                    auto transform = gApplication.GetComponent<Transform>(lightEnt);
 					char buffer[64];
                         
 					sprintf(buffer, "pointLights[%d].position", i);
@@ -177,7 +181,7 @@ namespace Lynx {
 
 					i++;
 				}
-			}*/
+			}
 
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
@@ -200,12 +204,12 @@ namespace Lynx {
 
     void RenderSystem::render2D()
     {
-        const auto& mCameraComponent = game.GetComponent<Camera>(cameraEntity);
-        const auto& mCameraTransform = game.GetComponent<Transform>(cameraEntity);
+        const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
+        const auto& mCameraTransform = gApplication.GetComponent<Transform>(cameraEntity);
 
         for (auto const& entity : entities) {
-            const auto& mTransform = game.GetComponent<Transform>(entity);
-            const auto& mRenderComponent = game.GetComponent<MeshRenderer>(entity);
+            const auto& mTransform = gApplication.GetComponent<Transform>(entity);
+            const auto& mRenderComponent = gApplication.GetComponent<MeshRenderer>(entity);
 
             if(mRenderComponent->mesh->type > MESH_2D_SPRITE)
                 continue;

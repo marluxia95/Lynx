@@ -8,8 +8,6 @@
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 
-extern Lynx::Game game;
-
 namespace Lynx {
 
     // Creates a window instance

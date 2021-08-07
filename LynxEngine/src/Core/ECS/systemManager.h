@@ -11,6 +11,9 @@
 namespace Lynx::ECS {
 	class SystemManager {
 	public:
+		/*
+			Registers a system
+		*/
 		template<class T>
 		std::shared_ptr<T> RegisterSystem(){
 			const char* typeName = typeid(T).name();
@@ -22,6 +25,9 @@ namespace Lynx::ECS {
 			return system;
 		}	
 
+		/*
+			Sets a system's signature
+		*/
 		template<typename T>
 		void SetSignature(Signature signature){
 			const char* typeName = typeid(T).name();
@@ -31,12 +37,24 @@ namespace Lynx::ECS {
 			signatures.insert({ typeName, signature });
 		}
 
+		/*
+			Returns a system instance, if exists
+		*/
+		template<class T>
+		std::shared_ptr<T> GetSystem(){
+			const char* typeName = typeid(T).name();
+			assert(systems.find(typeName) != systems.end() && "System does not exist!");
+			return static_pointer_cast<T>(systems.at(typeName));
+		}
+
 		void EntityDestroyed(Entity entity){
 			for (auto const& pair : systems) {
 				auto const& system = pair.second;
 				system->entities.erase(entity);
 			}
 		}
+
+
 		void EntitySignatureChanged(Entity entity, Signature signature){
 			log_debug("Entity %d changed signature ! Updating systems ...", entity);
 			// Notify each system that an entity's signature changed
@@ -59,6 +77,9 @@ namespace Lynx::ECS {
 			}
 		}
 
+		/*
+			Initializes all systems
+		*/
 		void InitSystems() {
 			log_info("Initializing systems...");
 			for (auto const& system : systems) {
@@ -67,14 +88,17 @@ namespace Lynx::ECS {
 			}
 		}
 
+		/*
+			Updates all systems
+		*/
 		void UpdateSystems() {
 			for (auto const& system : systems) {
 				system.second->Update();
 			}
 		}
 	private:
-		std::unordered_map<const char*, Signature> signatures{};
-		std::unordered_map<const char*, std::shared_ptr<System>> systems{};
+		std::unordered_map<const char*, Signature> signatures = {};
+		std::unordered_map<const char*, std::shared_ptr<System>> systems = {};
 	};
 }
 

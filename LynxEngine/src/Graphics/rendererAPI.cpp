@@ -4,7 +4,7 @@
 
 namespace Lynx::Graphics {
     API IRendererAPI::m_API = API_OPENGL;
-
+    std::unique_ptr<IRendererAPI> RendererAPI::m_rendererAPI = nullptr;
     
     std::unique_ptr<IRendererAPI> IRendererAPI::Create()
     {

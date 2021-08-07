@@ -9,7 +9,7 @@ namespace Lynx {
 
     class WindowManager {
 		public:
-			void Init(const char* title = "SimpleGameEngine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false);
+			void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false);
 			
             void Update();
 			

@@ -25,8 +25,6 @@
 #include "Core/ECS/components.h"
 #include "Core/ECS/entity.h"
 
-
-
 using namespace std;
 
 namespace Lynx::Graphics::ModelLoader {

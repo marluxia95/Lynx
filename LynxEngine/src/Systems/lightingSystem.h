@@ -8,8 +8,8 @@ namespace Lynx {
 
 class LightingSystem : public ECS::System {
     public:
-        void Init();
-        void Update();
+        void Init() {};
+        void Update() {};
 
 };
 

@@ -6,7 +6,7 @@
 #include "Core/ECS/entity.h"
 #include "Core/ECS/components.h"
 
-extern Lynx::Game game;
+extern Lynx::Application gApplication;
 
 namespace Lynx::ECS{
 
@@ -18,11 +18,11 @@ namespace Lynx::ECS{
     void ParentingSystem::Update()
     {
         for ( auto const ent : entities ) {
-            auto transform = game.GetComponent<Transform>(ent);
-            auto parentEntity = game.GetComponent<Parent>(ent)->parentEntity;
+            auto transform = gApplication.GetComponent<Transform>(ent);
+            auto parentEntity = gApplication.GetComponent<Parent>(ent)->parentEntity;
 
             // Copy the transform properties from the parent entity
-            transform = game.GetComponent<Transform>(parentEntity); 
+            transform = gApplication.GetComponent<Transform>(parentEntity); 
         }
     }
 }

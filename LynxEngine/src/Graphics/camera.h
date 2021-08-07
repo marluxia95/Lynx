@@ -21,6 +21,8 @@ namespace Lynx {
 
         inline glm::mat4 GetProjectionMatrix() { return projectionMatrix; }
         inline glm::mat4 GetViewMatrix() { return viewMatrix; }
+        
+        glm::vec3 GetUpVector() { return up; }
 
         inline void SetProjectionMatrix(glm::mat4 proj) { projectionMatrix = proj; }
 
