@@ -20,6 +20,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "Graphics/mesh.h"
+#include "Graphics/camera.h"
 
 #include "Systems/lightingSystem.h"
 #include "Systems/parentingSystem.h"

@@ -35,17 +35,15 @@ const char* colour_clear = "[0m";
 
 static void event_init(log_Event* ev) 
 {
-	if (!ev->time) {
-		time_t t = time(NULL);
-		ev->time = localtime(&t);
-	}
+	time_t t = time(NULL);
+	ev->time = localtime(&t);
 }
 
 void log_print(log_Event* ev) 
 {
-	//char buf[16];
-	//buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-	printf("%s%s\x1b[0m \x1b[0m", level_colours[ev->level], levelStrings[ev->level]);
+	char buf[16];
+	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+	printf("%s %s%s\x1b[0m \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level]);
 	vprintf(ev->format, ev->ap);
 	printf("%s\n", colour_clear);
 }

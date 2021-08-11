@@ -21,9 +21,12 @@ namespace Lynx
             void Init();
             void Update();
 
+            Entity CreatePerspectiveCamera();
+            Entity CreateOrthographicCamera();
             void SetMainCamera(Entity cameraEnt);
             Entity GetMainCamera();
 
+            Entity CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor);
             void SetDirectionalLight(Entity dirLight);
             Entity GetDirectionalLight();
 

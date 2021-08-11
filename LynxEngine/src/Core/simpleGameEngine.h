@@ -64,6 +64,8 @@ namespace Lynx {
 
         void DestroyEntity(Entity entity) {
             m_entityManager->DestroyEntity(entity);
+            m_systemManager->EntityDestroyed(entity);
+            m_componentManager->EntityDestroyed(entity);
         }
 
         template<typename T>

@@ -39,7 +39,8 @@ namespace Lynx::ECS {
 		void RemoveData(Entity entity)
 		{
 			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component out of range");
-
+			
+			log_debug("Component remove data");
 			size_t indexOfRemovedEntity = entityToIndexMap[entity];
 			size_t indexOfLastElement = size - 1;
 			components[indexOfRemovedEntity] = components[indexOfLastElement];
@@ -60,6 +61,7 @@ namespace Lynx::ECS {
 		}
 		void EntityDestroyed(Entity entity) override
 		{
+			log_debug("Destroying all components related to entity %d", entity);
 			if (entityToIndexMap.find(entity) == entityToIndexMap.end()) {
 				RemoveData(entity);
 			}

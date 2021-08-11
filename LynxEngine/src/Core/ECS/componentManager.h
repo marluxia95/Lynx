@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include "entity.h"
+#include "Core/logger.h"
 #include "componentArray.h"
 
 namespace Lynx::ECS {
@@ -28,6 +29,7 @@ public:
 
 		assert(componentTypes.find(typeName) == componentTypes.end() && "Component Type already exists.");
 		componentTypes.insert( { typeName, nextComponentType } );
+		log_debug("Registering component %s ", typeName);
 
 		componentArrays.insert( { typeName, std::make_shared<ComponentArray<T>>() } );
 

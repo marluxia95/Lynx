@@ -21,7 +21,7 @@ extern Lynx::WindowManager gWindowManager;
 
 namespace Lynx {
 
-    Entity CreatePerspectiveCamera()
+    Entity RenderSystem::CreatePerspectiveCamera()
     {
         Entity entity = gApplication.CreateEntity("Main camera");
         glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
@@ -32,17 +32,19 @@ namespace Lynx {
             glm::vec3(0)
         });
 
-        // Add camera component with default values
-        gApplication.AddComponent(entity, PerspectiveCamera{
+        gApplication.AddComponent(entity, Camera{
             resolution.x,
             resolution.y,
-            60.0f
+            CAMERA_PERSPECTIVE,
+            60.0f,
+            0.0f,
+            1000.0f
         });
 
         return entity;
     }
 
-    Entity CreateOrthographicCamera()
+    Entity RenderSystem::CreateOrthographicCamera()
     {
         Entity entity = gApplication.CreateEntity("Main camera");
         glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
@@ -54,15 +56,19 @@ namespace Lynx {
         });
 
         // Add camera component with default values
-        gApplication.AddComponent(entity, OrthographicCamera{
+        gApplication.AddComponent(entity, Camera{
             resolution.x,
-            resolution.y
+            resolution.y,
+            CAMERA_ORTHOGRAPHIC,
+            NULL,
+            0.0f,
+            1.0f,
         });
 
         return entity;
     }
 
-    Entity CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor)
+    Entity RenderSystem::CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor)
     {
         Entity directionalLight = gApplication.CreateEntity("Directional Light");
 
@@ -137,8 +143,8 @@ namespace Lynx {
             
             if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
-            mRenderComponent->shader->setMat4("projection", mCameraComponent->GetProjectionMatrix());
-            mRenderComponent->shader->setMat4("view", mCameraComponent->GetViewMatrix());
+            mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
+            mRenderComponent->shader->setMat4("view", mCameraComponent->view);
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
             mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
@@ -189,7 +195,6 @@ namespace Lynx {
             // Check if mesh has a texture, if so, use it
             if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
             {
-                
             	if(mRenderComponent->texture != nullptr){
                     
                 	mRenderComponent->texture->use();

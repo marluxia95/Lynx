@@ -47,9 +47,9 @@ void movement()
     if (keys[GLFW_KEY_S])
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_A])
-        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->GetUpVector())) * cameraSpeed;
+        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
     if (keys[GLFW_KEY_D])
-        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->GetUpVector())) * cameraSpeed;
+        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
     if (keys[GLFW_KEY_LEFT_SHIFT]){
     	camera_Speed_Multiplier = 3.0f;
     }else{
@@ -127,6 +127,9 @@ void mouse_button_input(const Event& ev)
 
 void Update(const Event& ev)
 {
+	char title[40];
+	snprintf(title,40 ,"Lynx Engine | %s | FPS : %f", IRendererAPI::GetAPIStr(), round(1/gApplication.delta_time));
+	glfwSetWindowTitle(gApplication.GetWindow(), title);
 	movement();
 }
 
@@ -147,44 +150,40 @@ int main()
 	// Enables the gApplication's debug mode
 	log_set_level(LOG_DEBUG);
 
+	log_info("Adding init listeners");
 	EventManager::AddListener(EngineInit, [](const Event& ev) {
+		log_info("Loading default components and systems");
 		gApplication.LoadDefaultComponents();
 		gApplication.LoadDefaultSystems();
 	});
 
+	log_info("Initializing application");
 	// Initialize window in windowed mode
 	gApplication.Init("Example", 1270, 720, false);
 
+	log_info("Creating perspective camera for scene");
 	auto renderSystem = gApplication.GetSystem<RenderSystem>();
-	camera = renderSystem->GetMainCamera();
 
+	camera = renderSystem->CreatePerspectiveCamera();
+	printf("Penis 1234\n", gApplication.GetComponent<Transform>(camera)->position);
+	renderSystem->SetMainCamera(camera);
+	
 
+	log_info("Loading shaders");
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
+	log_info("Adding event listeners");
 	EventManager::AddListener(UpdateTick, Update);
 	EventManager::AddListener(KeyPressed, keyboard_input);
 	EventManager::AddListener(MousePosCallback, mouse_input);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
 
-	Entity cube = ModelLoader::loadModel("res/models/monkey.obj", shader);
-
-	/*
-	vector<Entity>* chl = getChildren(cube);
-	MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
-	meshRenderer->ambient = glm::vec3(1.0f);
-	meshRenderer->diffuse = glm::vec3(1.0f);
-	meshRenderer->specular = glm::vec3(1.0f);
-	meshRenderer->shininess = 256.0f;
-
-	Entity lightEnt = gApplication.CreateEntity("Light");
-	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
-	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
+	log_info("Loading cube model");
+	Entity cube = ModelLoader::loadModel("res/models/cube.obj", shader);
 	
-	auto directionalLight = gApplication.GetComponent<DirectionalLight>(renderSystem->GetDirectionalLight());
-	directionalLight->direction = glm::vec3(1.0f, 1.0f, 0.0f);
-	*/
 	// Runs the gApplication
+	log_info("Starting application");
 	gApplication.Run();
 	return 0;
 }

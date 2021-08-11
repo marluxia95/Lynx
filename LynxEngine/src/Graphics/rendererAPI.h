@@ -17,6 +17,8 @@ namespace Lynx::Graphics {
         API_OPENGL
     };
 
+
+
     // Abstract base class of the renderer API's, should only be used as base for other platform API's
     class IRendererAPI {
         
@@ -37,6 +39,8 @@ namespace Lynx::Graphics {
 
             virtual void RenderIndexed(int n) = 0;
 
+
+            static char* GetAPIStr();
             static API GetAPI() { return m_API; };
             static std::unique_ptr<IRendererAPI> Create();
         private:

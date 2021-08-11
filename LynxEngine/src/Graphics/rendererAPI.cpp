@@ -3,6 +3,11 @@
 
 
 namespace Lynx::Graphics {
+
+    char* API_str[] = {
+        "Opengl"
+    };
+
     API IRendererAPI::m_API = API_OPENGL;
     std::unique_ptr<IRendererAPI> RendererAPI::m_rendererAPI = nullptr;
     
@@ -12,6 +17,11 @@ namespace Lynx::Graphics {
             case API_OPENGL : 
                 return std::make_unique<OpenGL::GLRendererAPI>();
         }
+    }
+
+    char* IRendererAPI::GetAPIStr()
+    {
+        return API_str[(unsigned int)m_API];
     }
 
     void RendererAPI::SetViewport(uint32_t width, uint32_t height)
