@@ -28,7 +28,7 @@ struct Transform {
 		mat4 rotationMatrix_y = glm::rotate(model, glm::radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
 		mat4 rotationMatrix_z = glm::rotate(model, glm::radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 		mat4 rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-		model = positionMatrix * rotationMatrix * scaleMatrix;
+		model = positionMatrix * scaleMatrix * rotationMatrix;
 
 		return model;	
 	}
@@ -47,9 +47,11 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	Graphics::Mesh* mesh;
-	Graphics::Shader* shader;
-	Graphics::Texture* texture;
+	Mesh* mesh;
+	Shader* shader;
+	Texture* texture;
+	Texture* texture_diffuse;
+	Texture* texture_specular;
 	bool lighting = true;
 };
 

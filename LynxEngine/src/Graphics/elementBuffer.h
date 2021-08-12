@@ -3,19 +3,23 @@
 
 #include <iostream>
 #include <vector>
+#include <GL/glew.h>
 
-namespace Lynx::Graphics {
+using namespace std;
 
-    class ElementBuffer {
+namespace Lynx {
 
-        public:
-            ElementBuffer() = default;
-            ~ElementBuffer() = default;
-            virtual void Bind() = 0;
-            virtual void Unbind() = 0;
-            unsigned int ID;
+class ElementBuffer {
 
-    };
+    public:
+        ElementBuffer(const void* indices, unsigned int indexNumber);
+        ElementBuffer(vector<GLuint>* indices);
+        ~ElementBuffer();
+        void Bind();
+        void Unbind();
+        unsigned int ID;
+
+};
 
 }
 

@@ -10,8 +10,6 @@
 #include "Graphics/vertexBuffer.h"
 #include "logger.h"
 
-using namespace Lynx::Graphics;
-
 namespace Lynx {
 
 class ResourceManager{
@@ -32,9 +30,6 @@ class ResourceManager{
 		std::map<const char*, Shader*> Shaders;
 		std::map<const char*, Texture*> Textures;
 		std::map<const char*, Mesh*> Meshes;
-
-	private:
-		uint64_t textureCount;
  
 };
 

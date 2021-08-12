@@ -33,6 +33,7 @@ float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
 bool keys[1024];
+char title[40];
 Entity camera;
 
 void movement()
@@ -40,21 +41,23 @@ void movement()
 	auto transformComponent = gApplication.GetComponent<Transform>(camera);
 	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
 
-	float cameraSpeed = 2.5f * gApplication.delta_time * camera_Speed_Multiplier;
+	float cameraSpeed = 20.5f * gApplication.delta_time * camera_Speed_Multiplier;
 
 	if (keys[GLFW_KEY_W])
         transformComponent->position += cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_S])
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
     if (keys[GLFW_KEY_A])
-        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
+        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
     if (keys[GLFW_KEY_D])
-        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
-    if (keys[GLFW_KEY_LEFT_SHIFT]){
+        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
+    if (keys[GLFW_KEY_LEFT_SHIFT])
+    	camera_Speed_Multiplier = 5.0f;
+    else
     	camera_Speed_Multiplier = 3.0f;
-    }else{
-    	camera_Speed_Multiplier = 1.0f;
-    }
+
+    //log_info("%f %f %f",transformComponent->rotation.x,transformComponent->rotation.y,transformComponent->rotation.z);
+    
 }
 
 void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
@@ -127,8 +130,7 @@ void mouse_button_input(const Event& ev)
 
 void Update(const Event& ev)
 {
-	char title[40];
-	snprintf(title,40 ,"Lynx Engine | %s | FPS : %f", IRendererAPI::GetAPIStr(), round(1/gApplication.delta_time));
+	snprintf(title,40 ,"Test thing FPS : %d Errors : %d", (int)round(1/gApplication.delta_time), log_geterrorcount());
 	glfwSetWindowTitle(gApplication.GetWindow(), title);
 	movement();
 }
@@ -159,31 +161,46 @@ int main()
 
 	log_info("Initializing application");
 	// Initialize window in windowed mode
-	gApplication.Init("Example", 1270, 720, false);
+	gApplication.Init("Example", 800, 600, false);
 
-	log_info("Creating perspective camera for scene");
-	auto renderSystem = gApplication.GetSystem<RenderSystem>();
-
-	camera = renderSystem->CreatePerspectiveCamera();
-	printf("Penis 1234\n", gApplication.GetComponent<Transform>(camera)->position);
-	renderSystem->SetMainCamera(camera);
-	
-
-	log_info("Loading shaders");
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
-	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
 
-	log_info("Adding event listeners");
 	EventManager::AddListener(UpdateTick, Update);
 	EventManager::AddListener(KeyPressed, keyboard_input);
 	EventManager::AddListener(MousePosCallback, mouse_input);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
 
-	log_info("Loading cube model");
-	Entity cube = ModelLoader::loadModel("res/models/cube.obj", shader);
+	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
+
+	vector<Entity>* chl = getChildren(link);
+	MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
+	meshRenderer->ambient = glm::vec3(0.1f);
+	meshRenderer->diffuse = glm::vec3(0.0f);
+	meshRenderer->specular = glm::vec3(1.0f);
+	meshRenderer->shininess = 64.0f;
+
+	Transform* transform = gApplication.GetComponent<Transform>(chl->at(0));
+	transform->scale = glm::vec3(0.0001f);
+
+	gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(10.0f);
+	gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
+
+	Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
+
+	meshRenderer->texture_diffuse = tex1;
+
+	Entity lightEnt = gApplication.CreateEntity("Light");
+	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
+	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
+	auto directionalLight = gApplication.GetComponent<DirectionalLight>(gApplication.GetSystem<RenderSystem>()->directionalLight);
+	directionalLight->direction = glm::vec3(1.0f, 0.0f, 0.0f);
+	directionalLight->ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->intensity = 1.0f;
+
 	// Runs the gApplication
-	log_info("Starting application");
 	gApplication.Run();
 	return 0;
 }

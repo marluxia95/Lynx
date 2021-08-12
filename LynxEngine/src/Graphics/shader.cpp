@@ -6,7 +6,7 @@
 #include "shader.h"
 #include "Core/logger.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	

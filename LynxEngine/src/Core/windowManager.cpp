@@ -1,4 +1,3 @@
-#include <GL/glew.h> 
 #include "windowManager.h"
 #include "logger.h"
 #include "simpleGameEngine.h"
@@ -42,6 +41,7 @@ namespace Lynx {
 
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
+            glViewport(0, 0, width, height);
             EventManager::SendEvent(WindowResizeEvent(width, height));
         });  
 

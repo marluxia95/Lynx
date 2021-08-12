@@ -4,7 +4,6 @@
 #include "resourceManager.h"
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
-#include "Graphics/rendererAPI.h"
 #include "logger.h"
 
 
@@ -48,9 +47,7 @@ Texture* ResourceManager::LoadTexture(const char* name, const char* path)
 	if(Textures.find(name) != Textures.end())
 		return Textures[name];
 
-	Textures[name] = new Texture(path, textureCount);
-
-	textureCount++;
+	Textures[name] = new Texture(path);
 	return Textures[name];
 }
 
@@ -60,9 +57,6 @@ Shader* ResourceManager::LoadShader(const char* name, const char* vertexPath, co
 		return Shaders[name];
 	
 	Shaders[name] = new Shader(vertexPath, fragmentPath);
-	if(Shaders[name]->success!=true){
-		log_error("There was an error while compiling shader");
-	}
 	return Shaders[name];
 }
 

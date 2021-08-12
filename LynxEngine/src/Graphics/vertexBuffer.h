@@ -4,32 +4,28 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
+#include <GL/glew.h>
 
-#include "Core/logger.h"
-#include "mesh.h"
-
+using namespace std;
 using namespace glm;
 
-namespace Lynx::Graphics {
+struct Vertex {
+	vec3 Position;
+	vec3 Normal;
+	vec2 TextureCoords;
+};
 
-    enum MeshType : unsigned int;
+void debugVBO(vector<Vertex>* vertices, vector<GLuint>* indices);
 
-    struct Vertex {
-        vec3 Position;
-        vec2 TextureCoords;
-        vec3 Normal;
-    };
-
-    void debugVBO(std::vector<Vertex>* vertices, std::vector<GLuint>* indices);
-
-    class VertexBuffer {
-        public:
-            virtual void Configure(MeshType type) = 0;
-            virtual void Bind() = 0;
-            virtual void Unbind() = 0;
-            unsigned int VBO_ID;
-    };
-
-}
+class VertexBuffer{
+public:
+	// "Classic" method
+	VertexBuffer(const void* data, unsigned int size);
+	VertexBuffer(vector<Vertex>* vertices);
+	~VertexBuffer();
+	void Bind();
+	void Unbind();
+	unsigned int VBO_ID;
+};
 
 #endif
