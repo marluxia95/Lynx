@@ -17,6 +17,7 @@
 #include "Graphics/texture.h"
 #include "Graphics/model.h"
 #include "Graphics/shader.h"
+#include "Graphics/cubemap.h"
 
 #include "Systems/renderSystem.h"
 
@@ -55,9 +56,6 @@ void movement()
     	camera_Speed_Multiplier = 5.0f;
     else
     	camera_Speed_Multiplier = 3.0f;
-
-    //log_info("%f %f %f",transformComponent->rotation.x,transformComponent->rotation.y,transformComponent->rotation.z);
-    
 }
 
 void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
@@ -172,35 +170,50 @@ int main()
 
 	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
 
-	vector<Entity>* chl = getChildren(link);
-	MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
-	meshRenderer->ambient = glm::vec3(0.1f);
-	meshRenderer->diffuse = glm::vec3(0.0f);
-	meshRenderer->specular = glm::vec3(1.0f);
-	meshRenderer->shininess = 64.0f;
+	{
+		vector<Entity>* chl = getChildren(link);
+		MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
+		meshRenderer->ambient = glm::vec3(0.1f);
+		meshRenderer->diffuse = glm::vec3(0.0f);
+		meshRenderer->specular = glm::vec3(1.0f);
+		meshRenderer->shininess = 64.0f;
+		Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
+		meshRenderer->texture_diffuse = tex1;
 
-	Transform* transform = gApplication.GetComponent<Transform>(chl->at(0));
-	transform->scale = glm::vec3(0.0001f);
+		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
+		gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
+	}
+	
 
-	gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(10.0f);
-	gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
-
-	Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
-
-	meshRenderer->texture_diffuse = tex1;
+	
 
 	Entity lightEnt = gApplication.CreateEntity("Light");
 	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
 	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
 	auto directionalLight = gApplication.GetComponent<DirectionalLight>(gApplication.GetSystem<RenderSystem>()->directionalLight);
-	directionalLight->direction = glm::vec3(1.0f, 0.0f, 0.0f);
+	directionalLight->direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 	directionalLight->ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->intensity = 1.0f;
 
+
+	// Setup skybox/cubemap
+	std::vector<const char*> map_textures {
+		"res/images/testcubemap/right.jpg",
+		"res/images/testcubemap/left.jpg",
+		"res/images/testcubemap/top.jpg",
+		"res/images/testcubemap/bottom.jpg",
+		"res/images/testcubemap/front.jpg",
+		"res/images/testcubemap/back.jpg"
+	};
+
+	Cubemap* map = new Cubemap(&map_textures);
+	gApplication.GetSystem<RenderSystem>()->SetCubemap(map);
+
 	// Runs the gApplication
 	gApplication.Run();
+	delete map;
 	return 0;
 }

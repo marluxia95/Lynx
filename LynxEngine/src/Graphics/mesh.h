@@ -34,6 +34,7 @@ namespace Lynx {
 
 		public:
 			Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type); // Element buffer mode
+			Mesh();
 			void Destroy();
 			void Render();
 			vector<Vertex>* vertices;
@@ -42,7 +43,6 @@ namespace Lynx {
 			VertexArray* VAO;
 			GLuint VBO;
 			GLuint EBO;
-			RenderType renderType;
 			MeshType type;
 			bool success = true;
 		protected:

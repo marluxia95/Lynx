@@ -2,19 +2,29 @@
 #define TEXTURE_H
 
 #include <GL/glew.h> 
-  
 #include <stdio.h>
 
-class Texture {
-public:
-	Texture(const char* path);
-	void use();
-	void Destroy();
-	unsigned int texture = 0;
-	int id;
+namespace Lynx {
 
-};
+	class Texture {
+	public:
+		Texture(const char* path);
+		void use();
+		void Destroy();
+		unsigned int texture = 0;
+		int id;
 
+	};
+
+	typedef struct {
+		int width, height, channels;
+		void* data;
+	} TextureData;
+
+	TextureData* loadTexture(const char* path);
+	void textureData_free(TextureData* data);
+
+}
 
 #endif
 

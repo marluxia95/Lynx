@@ -6,6 +6,7 @@
 #include "Core/ECS/system.h"
 #include "Core/ECS/entity.h"
 #include "Core/ECS/components.h"
+#include "Graphics/cubemap.h"
 
 namespace Lynx 
 {
@@ -16,9 +17,11 @@ namespace Lynx
         public:
             void Init();
             void Update();
+            void SetCubemap(Cubemap* cubemap);
             Entity cameraEntity;
             Entity directionalLight;
-            
+        private:
+            Cubemap* m_cubemap;
     };
 
 }

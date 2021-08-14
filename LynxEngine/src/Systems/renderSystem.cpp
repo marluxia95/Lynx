@@ -59,6 +59,11 @@ namespace Lynx {
 
     }
 
+    void RenderSystem::SetCubemap(Cubemap* cubemap)
+    {
+        m_cubemap = cubemap;
+    }
+
     void RenderSystem::Update()
     {
         const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
@@ -152,6 +157,9 @@ namespace Lynx {
 
             mRenderComponent->mesh->VAO->Bind();
             mRenderComponent->mesh->Render();
+
+            if(m_cubemap)
+                m_cubemap->Use(mCameraComponent->projection, mCameraComponent->view);
         }
 
     }

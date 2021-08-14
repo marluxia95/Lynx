@@ -47,8 +47,8 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	Mesh* mesh;
-	Shader* shader;
+	Mesh*    mesh;
+	Shader*  shader;
 	Texture* texture;
 	Texture* texture_diffuse;
 	Texture* texture_specular;
