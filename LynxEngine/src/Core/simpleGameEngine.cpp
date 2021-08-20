@@ -9,6 +9,7 @@
 
 #include "simpleGameEngine.h"
 #include "windowManager.h"
+#include "inputManager.h"
 
 #include "eventManager.h"
 #include "Events/event.h"
@@ -29,7 +30,6 @@ namespace Lynx {
 
     Application::~Application()
     {
-        EventManager::SendEvent(LastTickEvent());
         glfwTerminate();
     }
 
@@ -59,6 +59,8 @@ namespace Lynx {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);  
         glFrontFace(GL_CW);  
+
+        Input::Init();
 
         log_debug("Sending event init");
 
@@ -94,6 +96,7 @@ namespace Lynx {
             m_windowManager->Update();
             glfwPollEvents();
         } while(( !glfwWindowShouldClose(m_windowManager->window) ) | applicationState == STATE_CLOSED);
+        EventManager::SendEvent(LastTickEvent());
     }
 
     void Application::LoadDefaultComponents()

@@ -9,10 +9,12 @@
 #include "Core/simpleGameEngine.h"
 #include "Core/windowManager.h"
 #include "Core/eventManager.h"
+#include "Core/inputManager.h"
 
 #include "Events/event.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
+#include "Events/joystickEvent.h"
 
 #include "Graphics/texture.h"
 #include "Graphics/model.h"
@@ -33,7 +35,6 @@ float lastX, lastY;
 float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
-bool keys[1024];
 char title[40];
 Entity camera;
 
@@ -44,43 +45,40 @@ void movement()
 
 	float cameraSpeed = 20.5f * gApplication.delta_time * camera_Speed_Multiplier;
 
-	if (keys[GLFW_KEY_W])
+	if (Input::IsKeyDown(GLFW_KEY_W))
         transformComponent->position += cameraSpeed * transformComponent->rotation;
-    if (keys[GLFW_KEY_S])
+    if (Input::IsKeyDown(GLFW_KEY_S))
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
-    if (keys[GLFW_KEY_A])
+    if (Input::IsKeyDown(GLFW_KEY_A))
         transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
-    if (keys[GLFW_KEY_D])
+    if (Input::IsKeyDown(GLFW_KEY_D))
         transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
-    if (keys[GLFW_KEY_LEFT_SHIFT])
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
     	camera_Speed_Multiplier = 5.0f;
     else
     	camera_Speed_Multiplier = 3.0f;
 }
 
-void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
+void mouse_input()
 {
-	const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
-	if(key_event.m_keyCode > 1024)
-		return;
-
-	if(key_event.m_action == GLFW_PRESS)
-		keys[key_event.m_keyCode] = true;
-	else if(key_event.m_action == GLFW_RELEASE)
-		keys[key_event.m_keyCode] = false;
-}
-
-void mouse_input(const Event& ev)
-{
-	const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
 	auto transformComponent = gApplication.GetComponent<Transform>(camera);
 	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
-	double xpos = mouse_event.m_pos.x;
-	double ypos = mouse_event.m_pos.y;
 
-	if(!mouseActive){
-		firstMouse = true;
-		return;
+
+	double xpos;
+	double ypos;
+	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+		xpos = (double)Input::GetJoyAxis(GLFW_JOYSTICK_1, 0) * 1000;
+		ypos = (double)Input::GetJoyAxis(GLFW_JOYSTICK_1, 1) * 1000;
+		log_debug("%f %f", xpos, ypos);
+	}else{
+		if(!mouseActive){
+			firstMouse = true;
+			return;
+		}
+		glm::dvec2 mpos = Input::GetMousePos();
+		xpos = mpos.x;
+		ypos = mpos.y;
 	}
 
 	if (firstMouse) {
@@ -126,10 +124,25 @@ void mouse_button_input(const Event& ev)
 	}
 }
 
+void joystick_connected(const Event& ev)
+{
+	const JoystickConnectedEvent& joy_event = static_cast<const JoystickConnectedEvent&>(ev);
+
+	log_info("Joystick connected : %s ( ID : %d )", joy_event.joystick->name, joy_event.joystick->id);
+}
+
+void joystick_disconnected(const Event& ev)
+{
+	const JoystickDisconnectedEvent& joy_event = static_cast<const JoystickDisconnectedEvent&>(ev);
+
+	log_info("Joystick disconnected : %s", joy_event.joystick->name);
+}
+
 void Update(const Event& ev)
 {
-	snprintf(title,40 ,"Test thing FPS : %d Errors : %d", (int)round(1/gApplication.delta_time), log_geterrorcount());
+	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/gApplication.delta_time), log_geterrorcount());
 	glfwSetWindowTitle(gApplication.GetWindow(), title);
+	mouse_input();
 	movement();
 }
 
@@ -150,23 +163,20 @@ int main()
 	// Enables the gApplication's debug mode
 	log_set_level(LOG_DEBUG);
 
-	log_info("Adding init listeners");
 	EventManager::AddListener(EngineInit, [](const Event& ev) {
-		log_info("Loading default components and systems");
 		gApplication.LoadDefaultComponents();
 		gApplication.LoadDefaultSystems();
 	});
 
-	log_info("Initializing application");
 	// Initialize window in windowed mode
 	gApplication.Init("Example", 800, 600, false);
 
 	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 
 	EventManager::AddListener(UpdateTick, Update);
-	EventManager::AddListener(KeyPressed, keyboard_input);
-	EventManager::AddListener(MousePosCallback, mouse_input);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
+	EventManager::AddListener(JoystickConnected, joystick_connected);
+	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
 	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
 
@@ -183,9 +193,6 @@ int main()
 		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
 		gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
 	}
-	
-
-	
 
 	Entity lightEnt = gApplication.CreateEntity("Light");
 	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
@@ -201,12 +208,12 @@ int main()
 
 	// Setup skybox/cubemap
 	std::vector<const char*> map_textures {
-		"res/images/testcubemap/right.jpg",
-		"res/images/testcubemap/left.jpg",
-		"res/images/testcubemap/top.jpg",
-		"res/images/testcubemap/bottom.jpg",
-		"res/images/testcubemap/front.jpg",
-		"res/images/testcubemap/back.jpg"
+		"res/images/cubemap/right.jpg",
+		"res/images/cubemap/left.jpg",
+		"res/images/cubemap/top.jpg",
+		"res/images/cubemap/bottom.jpg",
+		"res/images/cubemap/front.jpg",
+		"res/images/cubemap/back.jpg"
 	};
 
 	Cubemap* map = new Cubemap(&map_textures);

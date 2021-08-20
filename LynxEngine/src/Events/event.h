@@ -9,7 +9,7 @@ namespace Lynx {
 
     enum EventType {
         None = 0,
-        WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed,
+        WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed, JoystickConnected, JoystickDisconnected,
         LastTick, UpdateTick, EngineInit, Render
     };
 

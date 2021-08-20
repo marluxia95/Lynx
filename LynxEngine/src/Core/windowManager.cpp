@@ -38,7 +38,6 @@ namespace Lynx {
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1); 
-
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
             glViewport(0, 0, width, height);
@@ -56,6 +55,8 @@ namespace Lynx {
         glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
             EventManager::SendEvent(MouseButtonEvent(button, action));
         });
+
+        log_debug("Fully initialized GLFW ( Ver. %s )", glfwGetVersionString());
 
     }
 
