@@ -1,18 +1,38 @@
-#include <GL/glew.h> 
 #include <glm/glm.hpp>
 #include <cassert>
+#include <GL/glew.h>
 #include "GLRendererAPI.h"
 #include "Core/logger.h"
+
+GLenum gl_checkerror_(const char* f, int l)
+{
+    GLenum errorCode;
+    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    {
+        const char* error;
+        switch (errorCode)
+        {
+            case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+            case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+            case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+            case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
+            case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+            case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+        }
+        log_error("%s ( %d ) : %s", f, l, error);
+    }
+    return errorCode;
+}
 
 namespace Lynx::Graphics::OpenGL {
 
     void GLRendererAPI::Init()
     {
-        bool err = glewInit() != GLEW_OK;   
-
-        if(err){
-            log_fatal("Failed to initalize GLEW");
-            exit(1);
+        if (glewInit() != GLEW_OK)
+        {
+            log_fatal("GLRendererAPI: Unable to load GLEW");
+            exit(-1);
         }
 
         glEnable(GL_DEPTH_TEST);
@@ -22,7 +42,7 @@ namespace Lynx::Graphics::OpenGL {
         glCullFace(GL_FRONT);  
         glFrontFace(GL_CW);  
 
-        log_info("Successfully loaded OpenGL API");
+        log_info("GLRendererAPI: Loaded API ( %s )", glGetString(GL_VERSION));
     }
 
     void GLRendererAPI::Clear(glm::vec4 color)
@@ -35,26 +55,7 @@ namespace Lynx::Graphics::OpenGL {
     {
         glViewport(0, 0, width, height);
     }
-
-    void GLRendererAPI::GenBuffers(uint* bufferObj)
-    {
-        glGenBuffers(1, bufferObj);
-    }
-
-    void GLRendererAPI::BindBuffer(BufferType bufferType, uint* bufferobj)
-    {
-        switch( bufferType )
-        {
-            case FRAMEBUF:
-                glBindBuffer(GL_FRAMEBUFFER, *bufferobj);
-                break;
-                
-            default:
-                glBindBuffer(GL_ARRAY_BUFFER, *bufferobj);
-                break;
-        }   
-    }
-
+    
     unsigned int GLRendererAPI::GenTexture()
     {
         unsigned int tex;
@@ -72,18 +73,21 @@ namespace Lynx::Graphics::OpenGL {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        glCheckError();
     }
 
     void GLRendererAPI::SetTextureParameter(unsigned int param, unsigned int value)
     {
         glTexParameteri(GL_TEXTURE_2D, param, value);
+        glCheckError();
     }
 
     void GLRendererAPI::UseTexture(unsigned int id)
     {
         glActiveTexture(GL_TEXTURE0 + id);
+        glCheckError();
     }
 
     void GLRendererAPI::BindTexture(unsigned int tex)
@@ -91,9 +95,20 @@ namespace Lynx::Graphics::OpenGL {
         glBindTexture(GL_TEXTURE_2D, tex);
     }
 
-    void GLRendererAPI::RenderIndexed(int n)
+    void GLRendererAPI::DrawIndexed(int n)
     {
         glDrawElements(GL_TRIANGLES, n, GL_UNSIGNED_INT, (void*)0);
+        glCheckError();
     }
 
+    void GLRendererAPI::DrawArrays(int n)
+    {
+        glDrawArrays(GL_TRIANGLES, 0, n);
+        glCheckError();
+    }
+
+    void GLRendererAPI::CheckErrors()
+    {
+        glCheckError();
+    }
 }

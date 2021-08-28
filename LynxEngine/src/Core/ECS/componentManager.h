@@ -8,6 +8,7 @@
 #include "entity.h"
 #include "Core/logger.h"
 #include "componentArray.h"
+#include "Core/assert.h"
 
 namespace Lynx::ECS {
 
@@ -27,7 +28,7 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		assert(componentTypes.find(typeName) == componentTypes.end() && "Component Type already exists.");
+		LYNX_ASSERT(componentTypes.find(typeName) == componentTypes.end(), "Component Type already exists.");
 		componentTypes.insert( { typeName, nextComponentType } );
 		log_debug("Registering component %s ", typeName);
 
@@ -41,7 +42,7 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		assert(componentTypes.find(typeName) != componentTypes.end() && "Component does not exist.");
+		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component does not exist.");
 
 		return componentTypes[typeName];
 	}
@@ -82,7 +83,7 @@ private:
 	std::shared_ptr<ComponentArray<T>> GetComponentArray(){
 		const char* typeName = typeid(T).name();
 
-		assert(componentTypes.find(typeName) != componentTypes.end() && "Component not registered before use.");
+		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
 
 		return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
 	}

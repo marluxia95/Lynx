@@ -12,66 +12,36 @@
 
 #include "Core/ECS/components.h"
 #include "Systems/renderSystem.h"
-#include "Systems/lightingSystem.h"
 
 using namespace glm;
 
 extern Lynx::Application gApplication;
-extern Lynx::WindowManager gWindowManager;
 
 namespace Lynx {
-
-    Entity RenderSystem::CreatePerspectiveCamera()
+    
+    void RenderSystem::Init()
     {
-        Entity entity = gApplication.CreateEntity("Main camera");
-        glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
+        log_debug("Creating Main Camera");
+        cameraEntity = gApplication.CreateEntity("Main camera");
+        const auto& mCameraSystem = gApplication.GetSystem<CameraSystem>();
         
-        gApplication.AddComponent(entity, Transform{
+        gApplication.AddComponent(cameraEntity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
-        gApplication.AddComponent(entity, Camera{
-            resolution.x,
-            resolution.y,
-            CAMERA_PERSPECTIVE,
-            60.0f,
-            0.0f,
-            1000.0f
+        gApplication.AddComponent(cameraEntity, Camera{
+            60, // Field of view
+            vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight()), // Resolution
+            CAMERA_PERSPECTIVE, // Camera type
+            true, // Is it a main camera ?
+            vec3(0.0f,1.0f,0.0f)   // Up vector
         });
 
-        return entity;
-    }
+        mCameraSystem->CalculateProjections();
 
-    Entity RenderSystem::CreateOrthographicCamera()
-    {
-        Entity entity = gApplication.CreateEntity("Main camera");
-        glm::vec2 resolution = glm::vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight());
-
-        gApplication.AddComponent(entity, Transform{
-            glm::vec3(0), 
-            glm::vec3(0), 
-            glm::vec3(0)
-        });
-
-        // Add camera component with default values
-        gApplication.AddComponent(entity, Camera{
-            resolution.x,
-            resolution.y,
-            CAMERA_ORTHOGRAPHIC,
-            NULL,
-            0.0f,
-            1.0f,
-        });
-
-        return entity;
-    }
-
-    Entity RenderSystem::CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor)
-    {
-        Entity directionalLight = gApplication.CreateEntity("Directional Light");
-
+        directionalLight = gApplication.CreateEntity("Directional Light");
 
         gApplication.AddComponent(directionalLight, Transform{
             glm::vec3(0), 
@@ -80,63 +50,32 @@ namespace Lynx {
         });
 
         gApplication.AddComponent(directionalLight, DirectionalLight{
-            direction,
-            ambientColor,
+            glm::vec3(-1.0f, 0.0f, 0.0f),
+            glm::vec3(1.0f),
             glm::vec3(1.0f),
             glm::vec3(0.8f),
             0.2f
         });
 
-        return directionalLight;
     }
 
-    Entity RenderSystem::GetMainCamera() 
+    void RenderSystem::SetCubemap(Graphics::Cubemap* cubemap)
     {
-        return cameraEntity;
-    }
-
-    Entity RenderSystem::GetDirectionalLight()
-    {
-        return directionalLight;
-    }
-    
-    void RenderSystem::Init()
-    {
-        lightingSystem = gApplication.GetSystem<LightingSystem>();
-    }
-
-    void RenderSystem::SetMainCamera(Entity cameraEnt)
-    {
-        cameraEntity = cameraEnt;
-        log_debug("Successfully set main camera to %d\n", cameraEnt);
-    }
-
-    void RenderSystem::SetDirectionalLight(Entity dirLight)
-    {
-        directionalLight = dirLight;
-        log_debug("Successfully set directional light to %d\n", dirLight);
-    }
-
-    void RenderSystem::SetRenderMode(RenderMode mode)
-    {
-        renderMode = mode;
-        log_debug("Successfully set rendering type to %d\n", ( mode == RENDER_2D ? "RENDER_2D" : "RENDER_3D"));
+        m_cubemap = cubemap;
     }
 
     void RenderSystem::Update()
-    {   
-        render3D();
-    }
-
-    void RenderSystem::render3D()
     {
         const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
         const auto& mCameraTransform = gApplication.GetComponent<Transform>(cameraEntity);
         const auto& mDirLightComponent = gApplication.GetComponent<DirectionalLight>(directionalLight);
+        const auto& mLightingSystem = gApplication.GetSystem<LightingSystem>();
 
         for (auto const& entity : entities) {
             const auto& mTransform = gApplication.GetComponent<Transform>(entity);
             const auto& mRenderComponent = gApplication.GetComponent<MeshRenderer>(entity);
+
+            if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
 
             mRenderComponent->shader->use();
             mat4 model = mTransform->GetModel();
@@ -148,15 +87,20 @@ namespace Lynx {
             mRenderComponent->shader->setMat4("model", model);
             mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
             mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
+
+            //log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
+            //    cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
+            
 			
-			if(mRenderComponent->lighting | lightingSystem->entities.size()){
+            
+			if(mRenderComponent->lighting | mLightingSystem->entities.size()){
 				// Set lighting shader values
 				int i = 0;
-				for (auto lightEnt : lightingSystem->entities){
+				for (auto lightEnt : mLightingSystem->entities){
 					auto lightComponent = gApplication.GetComponent<PointLight>(lightEnt);
                     auto transform = gApplication.GetComponent<Transform>(lightEnt);
 					char buffer[64];
-                        
+                    
 					sprintf(buffer, "pointLights[%d].position", i);
 					mRenderComponent->shader->setVec3(buffer , transform->position);
 					
@@ -176,6 +120,21 @@ namespace Lynx {
 					mRenderComponent->shader->setVec3("material.diffuse", mRenderComponent->diffuse);
                     mRenderComponent->shader->setVec3("material.specular", mRenderComponent->specular);
                     mRenderComponent->shader->setFloat("material.shininess", mRenderComponent->shininess);
+                    if(mRenderComponent->texture_diffuse != nullptr){
+                        mRenderComponent->shader->setBool("diffuse_map", true);
+                        mRenderComponent->shader->setInt("material.diffuse_tex", 0);
+                        mRenderComponent->texture_diffuse->use();
+                    }else{
+                        mRenderComponent->shader->setBool("diffuse_map", false);
+                    }
+
+                    if(mRenderComponent->texture_specular != nullptr){
+                        mRenderComponent->shader->setBool("specular_map", true);
+                        mRenderComponent->shader->setInt("material.specular_tex", 0);
+                        mRenderComponent->texture_specular->use();
+                    }else{
+                        mRenderComponent->shader->setBool("specular_map", false);
+                    }
 
                     mRenderComponent->shader->setVec3("directionalLight.direction", mDirLightComponent->direction);
                     mRenderComponent->shader->setVec3("directionalLight.ambient", mDirLightComponent->ambient);
@@ -190,46 +149,17 @@ namespace Lynx {
 			}
 
 
-            if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
             
-            // Check if mesh has a texture, if so, use it
-            if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
-            {
-            	if(mRenderComponent->texture != nullptr){
-                    
-                	mRenderComponent->texture->use();
-            	}   
-            }
+            // Check if mesh has a texture, if so, render it
+            if(mRenderComponent->texture != nullptr){    
+                mRenderComponent->texture->use();
+            }   
 
             mRenderComponent->mesh->VAO->Bind();
             mRenderComponent->mesh->Render();
-        }
 
-    }
-
-    void RenderSystem::render2D()
-    {
-        const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
-        const auto& mCameraTransform = gApplication.GetComponent<Transform>(cameraEntity);
-
-        for (auto const& entity : entities) {
-            const auto& mTransform = gApplication.GetComponent<Transform>(entity);
-            const auto& mRenderComponent = gApplication.GetComponent<MeshRenderer>(entity);
-
-            if(mRenderComponent->mesh->type > MESH_2D_SPRITE)
-                continue;
-
-            // Check if sprite has a texture, if so, use it
-            if(mRenderComponent->mesh->type >= MESH_3D_TEXTURED)
-            {
-                    
-                if(mRenderComponent->texture != nullptr){    
-                    mRenderComponent->texture->use();
-                }   
-            }
-
-            mRenderComponent->mesh->Render();
-
+            if(m_cubemap)
+                m_cubemap->Use(mCameraComponent->projection, mCameraComponent->view);
         }
 
     }

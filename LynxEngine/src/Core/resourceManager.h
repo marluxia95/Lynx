@@ -7,10 +7,7 @@
 #include "Graphics/mesh.h"
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
-#include "Graphics/vertexBuffer.h"
-#include "logger.h"
-
-using namespace Lynx::Graphics;
+#include "Graphics/buffers.h"
 
 namespace Lynx {
 
@@ -20,21 +17,18 @@ class ResourceManager{
 		~ResourceManager();
 		void clear();
 
-		Shader* LoadShader(const char* vertexFile, const char* fragmentFile, const char* Name);
-		Shader* GetShader(const char* name);
+		Graphics::Shader* LoadShader(const char* vertexFile, const char* fragmentFile, const char* Name);
+		Graphics::Shader* GetShader(const char* name);
 
-		Texture* LoadTexture(const char* file, const char* name);
-		Texture* GetTexture(const char* name);
+		Graphics::Texture* LoadTexture(const char* file, const char* name);
+		Graphics::Texture* GetTexture(const char* name);
 
-		Mesh* LoadMesh(const char* name, vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type);
-		Mesh* GetMesh(const char* name);
+		Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);
+		Graphics::Mesh* GetMesh(const char* name);
 
-		std::map<const char*, Shader*> Shaders;
-		std::map<const char*, Texture*> Textures;
-		std::map<const char*, Mesh*> Meshes;
-
-	private:
-		uint64_t textureCount;
+		std::map<const char*, Graphics::Shader*> Shaders;
+		std::map<const char*, Graphics::Texture*> Textures;
+		std::map<const char*, Graphics::Mesh*> Meshes;
  
 };
 

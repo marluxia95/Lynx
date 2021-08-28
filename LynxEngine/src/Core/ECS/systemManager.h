@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "entity.h"
 #include "system.h"
+#include "Core/assert.h"
 #include "Core/logger.h"
 
 namespace Lynx::ECS {
@@ -17,8 +18,8 @@ namespace Lynx::ECS {
 		template<class T>
 		std::shared_ptr<T> RegisterSystem(){
 			const char* typeName = typeid(T).name();
-			log_debug("Registering system %s ", typeName);
-			assert(systems.find(typeName) == systems.end() && "System already exists");
+			log_debug("SystemManager : Registering system %s ", typeName);
+			LYNX_ASSERT(systems.find(typeName) == systems.end(), "System already exists");
 
 			auto system = std::make_shared<T>();
 			systems.insert({ typeName, system });
@@ -32,7 +33,7 @@ namespace Lynx::ECS {
 		void SetSignature(Signature signature){
 			const char* typeName = typeid(T).name();
 
-			assert(systems.find(typeName) != systems.end() && "System used before registered" );
+			LYNX_ASSERT(systems.find(typeName) != systems.end(), "System used before registered" );
 
 			signatures.insert({ typeName, signature });
 		}
@@ -43,7 +44,7 @@ namespace Lynx::ECS {
 		template<class T>
 		std::shared_ptr<T> GetSystem(){
 			const char* typeName = typeid(T).name();
-			assert(systems.find(typeName) != systems.end() && "System does not exist!");
+			LYNX_ASSERT(systems.find(typeName) != systems.end(), "System does not exist!");
 			return static_pointer_cast<T>(systems.at(typeName));
 		}
 
@@ -56,7 +57,7 @@ namespace Lynx::ECS {
 
 
 		void EntitySignatureChanged(Entity entity, Signature signature){
-			log_debug("Entity %d changed signature ! Updating systems ...", entity);
+			log_debug("SystemManager : Entity %d changed signature ! Updating systems ...", entity);
 			// Notify each system that an entity's signature changed
 			for (auto const& pair : systems)
 			{
@@ -81,7 +82,7 @@ namespace Lynx::ECS {
 			Initializes all systems
 		*/
 		void InitSystems() {
-			log_info("Initializing systems...");
+			log_debug("SystemManager : Initializing systems...");
 			for (auto const& system : systems) {
 				system.second->Init();
 				log_debug("System %s initialized", system.first);

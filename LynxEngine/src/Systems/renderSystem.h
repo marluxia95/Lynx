@@ -1,45 +1,27 @@
 #ifndef RENDERSYSTEM_H
 #define RENDERSYSTEM_H
-
 #include <stdio.h>
-#include <memory>
+
 
 #include "Core/ECS/system.h"
 #include "Core/ECS/entity.h"
 #include "Core/ECS/components.h"
-#include "lightingSystem.h"
+#include "Graphics/cubemap.h"
 
 namespace Lynx 
 {
-    typedef enum {
-        RENDER_2D, RENDER_3D
-    } RenderMode;
+
     
     class RenderSystem : public ECS::System 
     {
         public:
             void Init();
             void Update();
-
-            Entity CreatePerspectiveCamera();
-            Entity CreateOrthographicCamera();
-            void SetMainCamera(Entity cameraEnt);
-            Entity GetMainCamera();
-
-            Entity CreateDirectionalLight(glm::vec3 direction, glm::vec3 ambientColor);
-            void SetDirectionalLight(Entity dirLight);
-            Entity GetDirectionalLight();
-
-            void SetRenderMode(RenderMode mode);
-            
-        private:
-            void render3D();
-            void render2D();
+            void SetCubemap(Graphics::Cubemap* cubemap);
             Entity cameraEntity;
             Entity directionalLight;
-
-            RenderMode renderMode;
-            std::shared_ptr<LightingSystem> lightingSystem;
+        private:
+            Graphics::Cubemap* m_cubemap;
     };
 
 }

@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <time.h>
 #include "logger.h"
-#include "imgui.h"
 #ifdef _WIN64
 #include <stdbool.h>
 #endif
@@ -13,7 +12,7 @@ static struct {
 	LogLevel level;
 	bool quiet;
 	const char* outputFile;
-	ImGuiTextBuffer buffer;
+	int errors, warnings;
 } Logger;
 
 static const char* levelStrings[] = {
@@ -63,20 +62,16 @@ void log_quiet(bool enable)
 	Logger.quiet = enable;
 }
 
-
-static void console_log(log_Event* ev)
+int log_geterrorcount()
 {
-	char buf[16];
-	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-	char buffer[sizeof(ev->format)+256];
-	sprintf(buffer, "%s %s ",  buf, levelStrings[ev->level]);
-	
-	Logger.buffer.append(buffer);
-	memset(buffer, 0, sizeof(buffer)); // Clear buffer
-	sprintf(buffer, ev->format, ev->ap);
-	Logger.buffer.append(buffer);
-	Logger.buffer.append("\n");
+	return Logger.errors;
 }
+
+int log_getwarningcount()
+{
+	return Logger.warnings;
+}
+
 
 void log_log(LogLevel level, const char* format, ...) 
 {
@@ -84,22 +79,18 @@ void log_log(LogLevel level, const char* format, ...)
 	ev.format = format;
 	ev.level = level;
 
-	if (!Logger.quiet && level <= Logger.level) {
+	if (!Logger.quiet && level <= Logger.level | level == LOG_FATAL) {
+		if(level == LOG_ERROR | level == LOG_FATAL)
+			Logger.errors++;
+
+		if(level == LOG_WARN)
+			Logger.warnings++;
+
 		event_init(&ev);
 		va_start(ev.ap, format);
 		log_print(&ev);
-		//console_log(&ev);
 		va_end(ev.ap);
 	}
 }
 
-
-void console_draw()
-{
-	ImGui::Begin("Console");
-
-	ImGui::TextUnformatted(Logger.buffer.begin());
-
-	ImGui::End();
-}
 

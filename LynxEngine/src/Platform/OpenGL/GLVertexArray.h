@@ -5,15 +5,14 @@
 
 namespace Lynx::Graphics::OpenGL {
 
-    class GLVertexArray : public Lynx::Graphics::VertexArray  {
-        public:
-            GLVertexArray();
-            ~GLVertexArray();
-            void Bind();
-            void Unbind();
-            unsigned int VAO_ID;
-
-    };
+	class GLVertexArray : public Lynx::Graphics::VertexArray {
+	public:
+		GLVertexArray();
+		~GLVertexArray();
+		void Bind();
+		void Unbind();
+		unsigned int VAO_ID;
+	};
 
 }
 

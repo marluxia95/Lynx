@@ -1,23 +1,28 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include <GL/glew.h> 
 #include <stdio.h>
-
-#include "rendererAPI.h"
 
 namespace Lynx::Graphics {
 
-    class Texture {
-        public:
-            Texture(const char* path,int t_id, unsigned int texture_wrap_mode_s, unsigned int texture_wrap_mode_t,unsigned int texture_minifying_filter,unsigned int texture_magnifying_filter);
-            Texture(const char* path,int t_id);
-            void use();
-            void Destroy();
+	class Texture {
+	public:
+		Texture(const char* path);
+		void use();
+		void Destroy();
+		unsigned int texture = 0;
+		int id;
 
-        private:
-            unsigned int tex;
+	};
 
-    };
+	typedef struct {
+		int width, height, channels;
+		unsigned char* data;
+	} TextureData;
+
+	TextureData* loadTexture(const char* path);
+	void textureData_free(TextureData* data);
 
 }
 

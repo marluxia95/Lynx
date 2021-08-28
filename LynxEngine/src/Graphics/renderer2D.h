@@ -1,25 +1,22 @@
 #ifndef RENDERER2D_H
 #define RENDERER2D_H
 
-#include <stdio.h>
-#include "Core/simpleGameEngine.h"
-#include "shader.h"
-#include "sprite.h"
-#include "rendererAPI.h"
-
-extern Lynx::Game game;
+#include <glm/glm.hpp>
+#include "vertexArray.h"
+#include "buffers.h"
+#include "Core/ECS/components.h"
 
 namespace Lynx::Graphics {
 
-    class Renderer2D {
-        public:
-            void Init( );
+class Renderer2D {
+    public:
+        static void Init();
+        static void RenderQuad();
 
-
-        private:
-
-    }
+        static void Destroy();
+};
 
 }
+
 
 #endif

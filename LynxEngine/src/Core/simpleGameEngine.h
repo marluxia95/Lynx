@@ -5,8 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <GL/glew.h> 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,7 +14,6 @@
 #include "resourceManager.h"
 #include "windowManager.h"
 
-#include "Graphics/renderer.h"
 #include "Graphics/model.h"
 #include "Graphics/mesh.h"
 
@@ -130,7 +127,6 @@ namespace Lynx {
         void LoadDefaultSystems();
 
         GLFWwindow* GetWindow() { return m_windowManager->window; }
-
 
 		float delta_time, last_FrameTime;
 	private:

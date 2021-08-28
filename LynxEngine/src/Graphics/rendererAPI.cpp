@@ -1,11 +1,10 @@
 #include "rendererAPI.h"
 #include "Platform/OpenGL/GLRendererAPI.h"
 
-
 namespace Lynx::Graphics {
 
     char* API_str[] = {
-        "Opengl"
+        "OpenGL"
     };
 
     API IRendererAPI::m_API = API_OPENGL;
@@ -58,19 +57,19 @@ namespace Lynx::Graphics {
         m_rendererAPI->BindTexture(tex); 
     }
 
-    void RendererAPI::GenBuffers(uint* bufferObj) 
+    void RendererAPI::DrawIndexed(int n) 
     { 
-        m_rendererAPI->GenBuffers(bufferObj); 
+        m_rendererAPI->DrawIndexed(n); 
     }
 
-    void RendererAPI::BindBuffer(BufferType buffer, uint* bufferobj) 
+    void RendererAPI::DrawArrays(int n) 
     { 
-        m_rendererAPI->BindBuffer(buffer, bufferobj); 
+        m_rendererAPI->DrawArrays(n); 
     }
 
-    void RendererAPI::RenderIndexed(int n) 
-    { 
-        m_rendererAPI->RenderIndexed(n); 
+    void RendererAPI::CheckErrors()
+    {
+        m_rendererAPI->CheckErrors();
     }
 
 

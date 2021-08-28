@@ -17,8 +17,6 @@ namespace Lynx::Graphics {
         API_OPENGL
     };
 
-
-
     // Abstract base class of the renderer API's, should only be used as base for other platform API's
     class IRendererAPI {
         
@@ -33,11 +31,11 @@ namespace Lynx::Graphics {
             virtual void SetTextureParameter(unsigned int param, unsigned int value) = 0;
             virtual void UseTexture(unsigned int id) = 0;
             virtual void BindTexture(unsigned int tex) = 0;
-            
-            virtual void GenBuffers(uint* bufferObj) = 0;
-            virtual void BindBuffer(BufferType buffer, uint* bufferobj) = 0;
 
-            virtual void RenderIndexed(int n) = 0;
+            virtual void CheckErrors() = 0;
+
+            virtual void DrawIndexed(int n) = 0;
+            virtual void DrawArrays(int n) = 0;
 
 
             static char* GetAPIStr();
@@ -67,10 +65,10 @@ namespace Lynx::Graphics {
             static void UseTexture(unsigned int id);
             static void BindTexture(unsigned int tex);
 
-            static void GenBuffers(uint* bufferObj);
-            static void BindBuffer(BufferType buffer, uint* bufferobj);
+            static void CheckErrors();
 
-            static void RenderIndexed(int n);
+            static void DrawIndexed(int n);
+            static void DrawArrays(int n);
 
         private:
             static std::unique_ptr<IRendererAPI> m_rendererAPI;

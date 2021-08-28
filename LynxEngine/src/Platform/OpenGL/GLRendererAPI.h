@@ -4,7 +4,13 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <GLFW/glfw3.h>
 #include "Graphics/rendererAPI.h"
+#include "Core/logger.h"
+
+GLenum gl_checkerror_(const char* f, int l);
+#define gl_checkerror() gl_checkerror_(__PRETTY_FUNCTION__, __LINE__)
+#define glCheckError() gl_checkerror_(__PRETTY_FUNCTION__, __LINE__)
 
 namespace Lynx::Graphics {
 
@@ -14,7 +20,7 @@ namespace Lynx::Graphics {
     namespace OpenGL {
 
         class GLRendererAPI : public Lynx::Graphics::IRendererAPI {
-            public:
+        public:
             void Init();
 
             void SetViewport(uint32_t width, uint32_t height);
@@ -26,13 +32,16 @@ namespace Lynx::Graphics {
             void UseTexture(unsigned int id);
             void BindTexture(unsigned int tex);
 
-            void GenBuffers(uint* bufferObj);
-            void BindBuffer(Lynx::Graphics::BufferType buffer, uint* bufferobj);
+            void CheckErrors();
 
-            void RenderIndexed(int n);
+            void DrawIndexed(int n);
+            void DrawArrays(int n);
         };
 
+
+
     }
+
 
 }
 

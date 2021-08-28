@@ -5,20 +5,12 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "Core/ECS/components.h"
-#include "Core/simpleGameEngine.h"
-#include "Core/windowManager.h"
-#include "Core/eventManager.h"
-
-#include "Events/event.h"
-#include "Events/keyEvent.h"
-#include "Events/mouseEvent.h"
-
-#include "Graphics/texture.h"
-#include "Graphics/model.h"
-#include "Graphics/shader.h"
+#include "lynx.h"
 
 #include "Systems/renderSystem.h"
+#include "Graphics/cubemap.h"
+#include "Graphics/terrain.h"
+
 
 using namespace Lynx;
 
@@ -32,7 +24,7 @@ float lastX, lastY;
 float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
-bool keys[1024];
+char title[40];
 Entity camera;
 
 void movement()
@@ -40,64 +32,66 @@ void movement()
 	auto transformComponent = gApplication.GetComponent<Transform>(camera);
 	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
 
-	float cameraSpeed = 2.5f * gApplication.delta_time * camera_Speed_Multiplier;
+	float cameraSpeed = 20.5f * gApplication.delta_time * camera_Speed_Multiplier;
 
-	if (keys[GLFW_KEY_W])
+	if (Input::IsKeyDown(GLFW_KEY_W))
         transformComponent->position += cameraSpeed * transformComponent->rotation;
-    if (keys[GLFW_KEY_S])
+    if (Input::IsKeyDown(GLFW_KEY_S))
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
-    if (keys[GLFW_KEY_A])
-        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
-    if (keys[GLFW_KEY_D])
-        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up) * cameraSpeed);
-    if (keys[GLFW_KEY_LEFT_SHIFT]){
+    if (Input::IsKeyDown(GLFW_KEY_A))
+        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
+    if (Input::IsKeyDown(GLFW_KEY_D))
+        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
+    if (Input::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+    	camera_Speed_Multiplier = 5.0f;
+    else
     	camera_Speed_Multiplier = 3.0f;
-    }else{
-    	camera_Speed_Multiplier = 1.0f;
-    }
+
+	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+		transformComponent->position += cameraSpeed * transformComponent->rotation * Input::GetJoyAxis(GLFW_JOYSTICK_1, 4);
+		transformComponent->position += cameraSpeed * transformComponent->rotation * Input::GetJoyAxis(GLFW_JOYSTICK_1, 3);
+	}
 }
 
-void keyboard_input(const Event& ev)//KeyPressedEvent* ev)
+void mouse_input()
 {
-	const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
-	if(key_event.m_keyCode > 1024)
-		return;
-
-	if(key_event.m_action == GLFW_PRESS)
-		keys[key_event.m_keyCode] = true;
-	else if(key_event.m_action == GLFW_RELEASE)
-		keys[key_event.m_keyCode] = false;
-}
-
-void mouse_input(const Event& ev)
-{
-	const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
 	auto transformComponent = gApplication.GetComponent<Transform>(camera);
 	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
-	double xpos = mouse_event.m_pos.x;
-	double ypos = mouse_event.m_pos.y;
 
-	if(!mouseActive){
-		firstMouse = true;
-		return;
-	}
 
-	if (firstMouse) {
+	double xpos;
+	double ypos;
+	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+		mYaw += Input::GetJoyAxis(GLFW_JOYSTICK_1, 0);
+		mPitch += Input::GetJoyAxis(GLFW_JOYSTICK_1, 1);
+	}else{
+		if(!mouseActive){
+			firstMouse = true;
+			return;
+		}
+		glm::dvec2 mpos = Input::GetMousePos();
+		xpos = mpos.x;
+		ypos = mpos.y;
+
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		mPitch += yoffset;
+		mYaw += xoffset;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	mPitch += yoffset;
-	mYaw += xoffset;
+	
 
 	if(mPitch > 89.9f) 
 		mPitch = 89.9f;
@@ -125,17 +119,32 @@ void mouse_button_input(const Event& ev)
 	}
 }
 
+void joystick_connected(const Event& ev)
+{
+	const JoystickConnectedEvent& joy_event = static_cast<const JoystickConnectedEvent&>(ev);
+
+	log_info("Joystick connected : %s ( ID : %d )", joy_event.joystick->name, joy_event.joystick->id);
+}
+
+void joystick_disconnected(const Event& ev)
+{
+	const JoystickDisconnectedEvent& joy_event = static_cast<const JoystickDisconnectedEvent&>(ev);
+
+	log_info("Joystick disconnected : %s", joy_event.joystick->name);
+}
+
 void Update(const Event& ev)
 {
-	char title[40];
-	snprintf(title,40 ,"Lynx Engine | %s | FPS : %f", IRendererAPI::GetAPIStr(), round(1/gApplication.delta_time));
+	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/gApplication.delta_time), log_geterrorcount());
 	glfwSetWindowTitle(gApplication.GetWindow(), title);
+	mouse_input();
 	movement();
 }
 
 vector<Entity>* getChildren(Entity parent)
 {
 	vector<Entity>* ents = new vector<Entity>();
+	LYNX_ASSERT(parent != NULL, "Parent must be a valid entity !");
 	for(int e = 0; e < gApplication.GetEntityCount(); e++){
 		if(gApplication.GetComponent<Parent>(e)->parentEntity == parent){
 			ents->push_back(e);
@@ -150,40 +159,82 @@ int main()
 	// Enables the gApplication's debug mode
 	log_set_level(LOG_DEBUG);
 
-	log_info("Adding init listeners");
+	// Initialize all default components and systems
 	EventManager::AddListener(EngineInit, [](const Event& ev) {
-		log_info("Loading default components and systems");
 		gApplication.LoadDefaultComponents();
 		gApplication.LoadDefaultSystems();
+
+		gApplication.RegisterSystem<RenderSystem>();
+		{
+			Signature signature;
+			signature.set(gApplication.GetComponentType<Transform>());
+			signature.set(gApplication.GetComponentType<MeshRenderer>());
+			gApplication.SetSystemSignature<RenderSystem>(signature);
+		}
 	});
 
-	log_info("Initializing application");
-	// Initialize window in windowed mode
-	gApplication.Init("Example", 1270, 720, false);
-
-	log_info("Creating perspective camera for scene");
-	auto renderSystem = gApplication.GetSystem<RenderSystem>();
-
-	camera = renderSystem->CreatePerspectiveCamera();
-	printf("Penis 1234\n", gApplication.GetComponent<Transform>(camera)->position);
-	renderSystem->SetMainCamera(camera);
-	
-
-	log_info("Loading shaders");
-	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
-	Shader* shader2 = gResourceManager.LoadShader("Light Shader", "res/shaders/standard/standard.vs", "res/shaders/standard/standard.fs");
-
-	log_info("Adding event listeners");
 	EventManager::AddListener(UpdateTick, Update);
-	EventManager::AddListener(KeyPressed, keyboard_input);
-	EventManager::AddListener(MousePosCallback, mouse_input);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
+	EventManager::AddListener(JoystickConnected, joystick_connected);
+	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
-	log_info("Loading cube model");
-	Entity cube = ModelLoader::loadModel("res/models/cube.obj", shader);
+	// Initialize window in windowed mode
+	gApplication.Init("Example", 1920, 1080, false);
+
+	Graphics::Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
+
+	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
+	{
+		vector<Entity>* chl = getChildren(link);
+		MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
+		meshRenderer->ambient = glm::vec3(0.1f);
+		meshRenderer->diffuse = glm::vec3(0.0f);
+		meshRenderer->specular = glm::vec3(1.0f);
+		meshRenderer->shininess = 64.0f;
+		Graphics::Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
+		meshRenderer->texture_diffuse = tex1;
+
+		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
+		gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
+		delete chl;
+	}
+
+	Entity lightEnt = gApplication.CreateEntity("Light");
+	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
+	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
+	auto directionalLight = gApplication.GetComponent<DirectionalLight>(gApplication.GetSystem<RenderSystem>()->directionalLight);
+	directionalLight->direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+	directionalLight->ambient = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight->intensity = 1.0f;
+
+	/*
+
+	Entity terrain = gApplication.CreateEntity("Terrain");
+	Terrain* terr_mesh = new Terrain(load_heightmap_from_image("res/images/testheightmap.jpg"));
+	gApplication.AddComponent<MeshRenderer>(terrain, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, terr_mesh, shader});
+
+	*/
+
+	
+	// Setup skybox/cubemap
+	std::vector<const char*> map_textures {
+		"res/images/cubemap/right.jpg",
+		"res/images/cubemap/left.jpg",
+		"res/images/cubemap/top.jpg",
+		"res/images/cubemap/bottom.jpg",
+		"res/images/cubemap/front.jpg",
+		"res/images/cubemap/back.jpg"
+	};
+
+	Graphics::Cubemap* map = new Graphics::Cubemap(&map_textures);
+	gApplication.GetSystem<RenderSystem>()->SetCubemap(map);	
+	
+
 	// Runs the gApplication
-	log_info("Starting application");
 	gApplication.Run();
+	//delete map;
 	return 0;
 }

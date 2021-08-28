@@ -1,8 +1,8 @@
-#include <GL/glew.h> 
 #include "windowManager.h"
 #include "logger.h"
 #include "simpleGameEngine.h"
 #include "eventManager.h"
+#include "Graphics/rendererAPI.h"
 #include "Events/event.h"
 #include "Events/windowEvent.h"
 #include "Events/keyEvent.h"
@@ -15,8 +15,8 @@ namespace Lynx {
     {
         glfwInit();
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
@@ -39,9 +39,9 @@ namespace Lynx {
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(1); 
-
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
+            Graphics::RendererAPI::SetViewport(width, height);
             EventManager::SendEvent(WindowResizeEvent(width, height));
         });  
 
@@ -56,6 +56,8 @@ namespace Lynx {
         glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods){
             EventManager::SendEvent(MouseButtonEvent(button, action));
         });
+
+        log_debug("Fully initialized GLFW ( Ver. %s )", glfwGetVersionString());
 
     }
 
