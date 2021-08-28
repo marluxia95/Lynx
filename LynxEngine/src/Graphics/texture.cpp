@@ -1,21 +1,20 @@
 #include <stdio.h>
-#include <GL/glew.h> 
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #include "texture.h"
-
 #include "Core/logger.h"
+#include "rendererAPI.h"
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	static int texcount = 0;
 
 	Texture::Texture(const char* path) 
 	{ 
-		glGenTextures(1,&texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		texture = RendererAPI::GenTexture();
+		RendererAPI::BindTexture(texture);
 		log_debug("Loading texture %s", path);
 
 		int width, height, channels;
@@ -23,13 +22,16 @@ namespace Lynx {
 
 		if(data){
 			// Wrapping / Filtering settings
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
+			switch ( IRendererAPI::GetAPI() ){
+				case API_OPENGL:
+					RendererAPI::SetTextureParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);	
+					RendererAPI::SetTextureParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+					RendererAPI::SetTextureParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					RendererAPI::SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					break;
+			}
+			
+			RendererAPI::LoadTexture(data, width, height,false);
 			id = texcount++;
 			log_debug("Texture id is %d", id);
 		}else{
@@ -46,8 +48,8 @@ namespace Lynx {
 
 	void Texture::use()
 	{
-		glActiveTexture(GL_TEXTURE0 + id);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		RendererAPI::UseTexture(id);
+		RendererAPI::BindTexture(texture);
 	}
 
 	TextureData* loadTexture(const char* path)

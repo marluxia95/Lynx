@@ -36,11 +36,13 @@ namespace Lynx {
             if (glfwGetGamepadState(joyid, &connectedJoysticks[joyid]->gpadstate))
                 return connectedJoysticks[joyid]->gpadstate.buttons[button];
         }
+
+        return false;
     }
 
     float Input::GetJoyAxis(int joyid, int axis)
     {
-        int c;
+        int c = 0;
         if(axis > GLFW_GAMEPAD_AXIS_LAST | axis < 0)
             return 0.0f;
 
@@ -53,6 +55,8 @@ namespace Lynx {
                 return connectedJoysticks[joyid]->gpadstate.axes[axis];
 
         }
+
+        return 0.0f;
     }
 
     bool Input::IsKeyDown(int kname)

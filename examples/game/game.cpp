@@ -5,23 +5,12 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "Core/ECS/components.h"
-#include "Core/simpleGameEngine.h"
-#include "Core/windowManager.h"
-#include "Core/eventManager.h"
-#include "Core/inputManager.h"
-
-#include "Events/event.h"
-#include "Events/keyEvent.h"
-#include "Events/mouseEvent.h"
-#include "Events/joystickEvent.h"
-
-#include "Graphics/texture.h"
-#include "Graphics/model.h"
-#include "Graphics/shader.h"
-#include "Graphics/cubemap.h"
+#include "lynx.h"
 
 #include "Systems/renderSystem.h"
+#include "Graphics/cubemap.h"
+#include "Graphics/terrain.h"
+
 
 using namespace Lynx;
 
@@ -57,6 +46,11 @@ void movement()
     	camera_Speed_Multiplier = 5.0f;
     else
     	camera_Speed_Multiplier = 3.0f;
+
+	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+		transformComponent->position += cameraSpeed * transformComponent->rotation * Input::GetJoyAxis(GLFW_JOYSTICK_1, 4);
+		transformComponent->position += cameraSpeed * transformComponent->rotation * Input::GetJoyAxis(GLFW_JOYSTICK_1, 3);
+	}
 }
 
 void mouse_input()
@@ -68,9 +62,8 @@ void mouse_input()
 	double xpos;
 	double ypos;
 	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
-		xpos = (double)Input::GetJoyAxis(GLFW_JOYSTICK_1, 0) * 1000;
-		ypos = (double)Input::GetJoyAxis(GLFW_JOYSTICK_1, 1) * 1000;
-		log_debug("%f %f", xpos, ypos);
+		mYaw += Input::GetJoyAxis(GLFW_JOYSTICK_1, 0);
+		mPitch += Input::GetJoyAxis(GLFW_JOYSTICK_1, 1);
 	}else{
 		if(!mouseActive){
 			firstMouse = true;
@@ -79,24 +72,26 @@ void mouse_input()
 		glm::dvec2 mpos = Input::GetMousePos();
 		xpos = mpos.x;
 		ypos = mpos.y;
-	}
 
-	if (firstMouse) {
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos;
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		xoffset *= sensitivity;
+		yoffset *= sensitivity;
+
+		mPitch += yoffset;
+		mYaw += xoffset;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	mPitch += yoffset;
-	mYaw += xoffset;
+	
 
 	if(mPitch > 89.9f) 
 		mPitch = 89.9f;
@@ -149,6 +144,7 @@ void Update(const Event& ev)
 vector<Entity>* getChildren(Entity parent)
 {
 	vector<Entity>* ents = new vector<Entity>();
+	LYNX_ASSERT(parent != NULL, "Parent must be a valid entity !");
 	for(int e = 0; e < gApplication.GetEntityCount(); e++){
 		if(gApplication.GetComponent<Parent>(e)->parentEntity == parent){
 			ents->push_back(e);
@@ -163,23 +159,31 @@ int main()
 	// Enables the gApplication's debug mode
 	log_set_level(LOG_DEBUG);
 
+	// Initialize all default components and systems
 	EventManager::AddListener(EngineInit, [](const Event& ev) {
 		gApplication.LoadDefaultComponents();
 		gApplication.LoadDefaultSystems();
+
+		gApplication.RegisterSystem<RenderSystem>();
+		{
+			Signature signature;
+			signature.set(gApplication.GetComponentType<Transform>());
+			signature.set(gApplication.GetComponentType<MeshRenderer>());
+			gApplication.SetSystemSignature<RenderSystem>(signature);
+		}
 	});
-
-	// Initialize window in windowed mode
-	gApplication.Init("Example", 800, 600, false);
-
-	Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
 
 	EventManager::AddListener(UpdateTick, Update);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
 	EventManager::AddListener(JoystickConnected, joystick_connected);
 	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
-	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
+	// Initialize window in windowed mode
+	gApplication.Init("Example", 1920, 1080, false);
 
+	Graphics::Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
+
+	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
 	{
 		vector<Entity>* chl = getChildren(link);
 		MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
@@ -187,11 +191,12 @@ int main()
 		meshRenderer->diffuse = glm::vec3(0.0f);
 		meshRenderer->specular = glm::vec3(1.0f);
 		meshRenderer->shininess = 64.0f;
-		Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
+		Graphics::Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
 		meshRenderer->texture_diffuse = tex1;
 
 		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
 		gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
+		delete chl;
 	}
 
 	Entity lightEnt = gApplication.CreateEntity("Light");
@@ -205,7 +210,15 @@ int main()
 	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->intensity = 1.0f;
 
+	/*
 
+	Entity terrain = gApplication.CreateEntity("Terrain");
+	Terrain* terr_mesh = new Terrain(load_heightmap_from_image("res/images/testheightmap.jpg"));
+	gApplication.AddComponent<MeshRenderer>(terrain, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, terr_mesh, shader});
+
+	*/
+
+	
 	// Setup skybox/cubemap
 	std::vector<const char*> map_textures {
 		"res/images/cubemap/right.jpg",
@@ -216,11 +229,12 @@ int main()
 		"res/images/cubemap/back.jpg"
 	};
 
-	Cubemap* map = new Cubemap(&map_textures);
-	gApplication.GetSystem<RenderSystem>()->SetCubemap(map);
+	Graphics::Cubemap* map = new Graphics::Cubemap(&map_textures);
+	gApplication.GetSystem<RenderSystem>()->SetCubemap(map);	
+	
 
 	// Runs the gApplication
 	gApplication.Run();
-	delete map;
+	//delete map;
 	return 0;
 }

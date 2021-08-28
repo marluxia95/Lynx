@@ -7,7 +7,7 @@ extern Lynx::ResourceManager gResourceManager;
 
 namespace Lynx::ModelLoader {
 
-Entity loadModel(const char* path, Shader* shader)
+Entity loadModel(const char* path, Graphics::Shader* shader)
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
@@ -27,16 +27,16 @@ Entity loadModel(const char* path, Shader* shader)
 	return parentEnt;
 }
 
-void processMesh(Entity meshEntity, const char* path, Shader* meshShader, aiMesh* mesh, const aiScene* scene)
+void processMesh(Entity meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh, const aiScene* scene)
 {
-	vector<Vertex>* vertices = new vector<Vertex>();
-	vector<GLuint>* indices = new vector<GLuint>();
+	vector<Graphics::Vertex>* vertices = new vector<Graphics::Vertex>();
+	vector<unsigned int>* indices = new vector<unsigned int>();
 	log_debug("Starting to process mesh");
 	// Process vertices
 	for(unsigned int i = 0; i < mesh->mNumVertices; i++) 
 	{
 		//log_debug("Creating vertex %d", i);
-		Vertex vertex;
+		Graphics::Vertex vertex;
 		glm::vec3 vector; 
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
@@ -70,11 +70,11 @@ void processMesh(Entity meshEntity, const char* path, Shader* meshShader, aiMesh
 		}
 	}  
 	log_debug("Indices processed");
-	gApplication.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, MESH_3D_TEXTURED_NORMAL), meshShader});
+	gApplication.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 
-void processNode(Entity parentEntity, const char* path, Shader* shader, aiNode* node, const aiScene* scene)
+void processNode(Entity parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* scene)
 {
 	if(scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)

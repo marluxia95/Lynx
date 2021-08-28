@@ -7,17 +7,20 @@
 #include <GL/glew.h> 
 #include <glm/glm.hpp>
 #include "vertexArray.h"
-#include "vertexBuffer.h"
-#include "elementBuffer.h"
+#include "buffers.h"
 #include "shader.h"
 #include "texture.h"
 
 using namespace std;
 using namespace glm;
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
-	enum MeshType {
+	class VertexBuffer;
+	class ElementBuffer;
+	struct Vertex;
+
+	enum MeshType : unsigned int {
 		MESH_2D_SPRITE,
 		MESH_3D,
 		MESH_3D_NORMAL,
@@ -25,7 +28,7 @@ namespace Lynx {
 		MESH_3D_TEXTURED_NORMAL
 	};
 
-	enum RenderType {
+	enum RenderType : unsigned int {
 		RENDER_ARRAYS,
 		RENDER_INDEXED
 	};
@@ -33,24 +36,24 @@ namespace Lynx {
 	class Mesh {
 
 		public:
-			Mesh(vector<Vertex>* vertices, vector<GLuint>* indices, MeshType type); // Element buffer mode
-			Mesh();
-			void Destroy();
+			Mesh(vector<Vertex>* vertices, vector<unsigned int>* indices, MeshType type); // Element buffer mode
+			Mesh() { };
+			~Mesh();
 			void Render();
 			vector<Vertex>* vertices;
-			vector<GLuint>* indices;
+			vector<unsigned int>* indices;
 
 			VertexArray* VAO;
-			GLuint VBO;
-			GLuint EBO;
+			VertexBuffer* VBO;
+			ElementBuffer* EBO;
 			MeshType type;
 			bool success = true;
 		protected:
 			char* error;
 	};
 
-	void meshToText(Mesh* mesh);
-	void meshToTextPretty(Mesh* mesh);
+	//void meshToText(Mesh* mesh);
+	//void meshToTextPretty(Mesh* mesh);
 }
 
 #endif

@@ -2,6 +2,7 @@
 #include "logger.h"
 #include "simpleGameEngine.h"
 #include "eventManager.h"
+#include "Graphics/rendererAPI.h"
 #include "Events/event.h"
 #include "Events/windowEvent.h"
 #include "Events/keyEvent.h"
@@ -14,8 +15,8 @@ namespace Lynx {
     {
         glfwInit();
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
@@ -40,7 +41,7 @@ namespace Lynx {
         glfwSwapInterval(1); 
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
-            glViewport(0, 0, width, height);
+            Graphics::RendererAPI::SetViewport(width, height);
             EventManager::SendEvent(WindowResizeEvent(width, height));
         });  
 

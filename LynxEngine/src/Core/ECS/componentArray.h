@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "entity.h"
 #include "Core/logger.h"
+#include "Core/assert.h"
 
 namespace Lynx::ECS {
 
@@ -28,7 +29,7 @@ namespace Lynx::ECS {
 
 		void InsertData(Entity entity, T component)
 		{
-			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component added to same entity more than once.");
+			LYNX_ASSERT(entityToIndexMap.find(entity) == entityToIndexMap.end(), "Component added to same entity more than once.");
 
 			size_t index = size;
 			entityToIndexMap[entity] = index;
@@ -38,7 +39,7 @@ namespace Lynx::ECS {
 		}
 		void RemoveData(Entity entity)
 		{
-			assert(entityToIndexMap.find(entity) == entityToIndexMap.end() && "Component out of range");
+			LYNX_ASSERT(entityToIndexMap.find(entity) == entityToIndexMap.end(), "Component out of range");
 			
 			log_debug("Component remove data");
 			size_t indexOfRemovedEntity = entityToIndexMap[entity];

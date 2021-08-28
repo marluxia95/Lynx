@@ -47,12 +47,17 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	Mesh*    mesh;
-	Shader*  shader;
-	Texture* texture;
-	Texture* texture_diffuse;
-	Texture* texture_specular;
+	Graphics::Mesh*    mesh;
+	Graphics::Shader*  shader;
+	Graphics::Texture* texture;
+	Graphics::Texture* texture_diffuse;
+	Graphics::Texture* texture_specular;
 	bool lighting = true;
+};
+
+struct SpriteRenderer {
+	Graphics::Shader* shader;
+	Graphics::Texture* texture;
 };
 
 struct RigidBody {

@@ -14,6 +14,7 @@
 #include "eventManager.h"
 #include "Events/event.h"
 
+#include "Graphics/rendererAPI.h"
 #include "Graphics/mesh.h"
 
 #include "Systems/lightingSystem.h"
@@ -35,30 +36,18 @@ namespace Lynx {
 
     void Application::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
     {
+        log_debug("Creating window object");
+
+        m_windowManager = WindowManager::Create();
+        m_windowManager->Init(title, width, height, fullScreen);
+
         m_entityManager = std::make_unique<ECS::EntityManager>();
         m_componentManager = std::make_unique<ECS::ComponentManager>();
         m_systemManager = std::make_unique<ECS::SystemManager>();
 
-        log_debug("Creating window object");
+        log_debug("Initializing renderer API");
 
-        m_windowManager = WindowManager::Create();
-        m_windowManager->Init();
-
-        log_debug("Initializing GLEW");
-
-        bool err = glewInit() != GLEW_OK;   
-
-        if(err){
-            log_fatal("Failed to initalize GLEW");
-            exit(1);
-        }
-
-        glEnable(GL_DEPTH_TEST);
-
-        // Enable face culling
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);  
-        glFrontFace(GL_CW);  
+        Graphics::RendererAPI::Init();
 
         Input::Init();
 
@@ -84,9 +73,8 @@ namespace Lynx {
             
             if(applicationState == STATE_ACTIVE) {
                 EventManager::SendEvent(UpdateTickEvent());
-                
-                glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                Graphics::RendererAPI::Clear(glm::vec4(0.3f, 0.3f, 0.3f, 1.0f));
 
                 // Update logic
                 EventManager::SendEvent(RenderEvent());
@@ -115,14 +103,6 @@ namespace Lynx {
     void Application::LoadDefaultSystems()
     {
         log_debug("Loading default systems");
-        RegisterSystem<RenderSystem>();
-        {
-            Signature signature;
-            signature.set(GetComponentType<Transform>());
-            signature.set(GetComponentType<MeshRenderer>());
-            SetSystemSignature<RenderSystem>(signature);
-        }
-
         RegisterSystem<CameraSystem>();
         {
             Signature signature;

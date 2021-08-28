@@ -17,11 +17,11 @@ namespace Lynx
         public:
             void Init();
             void Update();
-            void SetCubemap(Cubemap* cubemap);
+            void SetCubemap(Graphics::Cubemap* cubemap);
             Entity cameraEntity;
             Entity directionalLight;
         private:
-            Cubemap* m_cubemap;
+            Graphics::Cubemap* m_cubemap;
     };
 
 }

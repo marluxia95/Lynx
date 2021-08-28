@@ -79,8 +79,8 @@ void log_log(LogLevel level, const char* format, ...)
 	ev.format = format;
 	ev.level = level;
 
-	if (!Logger.quiet && level <= Logger.level) {
-		if(level == LOG_ERROR)
+	if (!Logger.quiet && level <= Logger.level | level == LOG_FATAL) {
+		if(level == LOG_ERROR | level == LOG_FATAL)
 			Logger.errors++;
 
 		if(level == LOG_WARN)

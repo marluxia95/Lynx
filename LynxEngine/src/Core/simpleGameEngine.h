@@ -128,7 +128,6 @@ namespace Lynx {
 
         GLFWwindow* GetWindow() { return m_windowManager->window; }
 
-
 		float delta_time, last_FrameTime;
 	private:
 		State applicationState;

@@ -3,10 +3,11 @@
 #include "Core/resourceManager.h"
 #include "cubemap.h"
 #include "texture.h"
+#include "Graphics/rendererAPI.h"
 
 extern Lynx::ResourceManager gResourceManager;
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	float cubemapVertices[] {
 		-1.0f,  1.0f, -1.0f,
@@ -55,7 +56,7 @@ namespace Lynx {
 	Cubemap::Cubemap(std::vector<const char*>* textures)
 	{
         log_debug("Creating cubemap ...");
-        VAO = new VertexArray();
+        VAO = VertexArray::Create();
 		glGenBuffers(1, &VBO);
 		VAO->Bind();
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);  
@@ -72,13 +73,18 @@ namespace Lynx {
             log_debug("Loading texture %s", textures->at(x));
 	    	TextureData* tdata = loadTexture(textures->at(x));
 	    	if(tdata->data){
-	    		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-			    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGB, tdata->width, tdata->height, 0, GL_RGB, GL_UNSIGNED_BYTE, tdata->data);
-                glGenerateMipmap(GL_TEXTURE_2D);
+				switch ( IRendererAPI::GetAPI() ) {
+					case API_OPENGL:
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+						glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+						glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGB, tdata->width, tdata->height, 0, GL_RGB, GL_UNSIGNED_BYTE, tdata->data);
+						glGenerateMipmap(GL_TEXTURE_2D);
+						break;
+				}
+	    		
             }else{
 	    		log_error("Unable to load cubemap texture %s", textures->at(x));
 	    	}
@@ -88,6 +94,11 @@ namespace Lynx {
         log_debug("Loading cubemap shader...");
 	    shader = gResourceManager.LoadShader("cubemap", "res/shaders/standard/cubemap.vs", "res/shaders/standard/cubemap.fs");
         log_debug("Cubemap created successfully");
+	}
+
+	Cubemap::~Cubemap()
+	{
+		delete VAO, shader;
 	}
 
 	void Cubemap::Use(glm::mat4 projection, glm::mat4 view)

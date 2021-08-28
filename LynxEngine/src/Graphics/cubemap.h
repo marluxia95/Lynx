@@ -6,11 +6,12 @@
 #include "shader.h"
 #include "vertexArray.h"
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	class Cubemap {
 		public:
 			Cubemap(std::vector<const char*>* textures);
+			~Cubemap();
 			void Use(glm::mat4 projection, glm::mat4 view);
 			
 		private:

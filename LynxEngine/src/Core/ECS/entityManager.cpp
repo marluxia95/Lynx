@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <cassert>
+#include "Core/assert.h"
 #include "entityManager.h"
 
 namespace Lynx::ECS {
@@ -13,18 +13,18 @@ Entity EntityManager::CreateEntity() {
 }
 
 void EntityManager::DestroyEntity(Entity ent) {
-	assert(ent < livingEntityCount && "Entity out of range.");
+	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	livingEntityCount--;
 	delete &ent;
 }
 
 void EntityManager::SetSignature(Entity ent, Signature signature) {
-	assert(ent < livingEntityCount && "Entity out of range.");
+	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	Signatures[ent] = signature;
 }
 
 Signature EntityManager::GetSignature(Entity ent) {
-	assert(ent < livingEntityCount && "Entity out of range.");
+	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	return Signatures[ent];
 }
 

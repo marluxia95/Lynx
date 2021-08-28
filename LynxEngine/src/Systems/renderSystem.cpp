@@ -59,7 +59,7 @@ namespace Lynx {
 
     }
 
-    void RenderSystem::SetCubemap(Cubemap* cubemap)
+    void RenderSystem::SetCubemap(Graphics::Cubemap* cubemap)
     {
         m_cubemap = cubemap;
     }

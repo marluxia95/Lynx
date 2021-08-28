@@ -4,7 +4,7 @@
 #include <GL/glew.h> 
 #include <stdio.h>
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	class Texture {
 	public:
@@ -18,7 +18,7 @@ namespace Lynx {
 
 	typedef struct {
 		int width, height, channels;
-		void* data;
+		unsigned char* data;
 	} TextureData;
 
 	TextureData* loadTexture(const char* path);
