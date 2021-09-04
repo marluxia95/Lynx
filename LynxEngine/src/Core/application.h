@@ -1,5 +1,5 @@
-#ifndef SIMPLEGAMEENGINE_H
-#define SIMPLEGAMEENGINE_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include <stdio.h>
 #include <iostream>

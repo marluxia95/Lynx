@@ -1,10 +1,13 @@
-#include <glm/glm.hpp>
-#include <cassert>
+#include <map>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "GLRendererAPI.h"
+#include "Graphics/shader.h"
 #include "Core/logger.h"
+#include "Core/assert.h"
 
-GLenum gl_checkerror_(const char* f, int l)
+GLenum checkerror_(const char* f, int l)
 {
     GLenum errorCode;
     while ((errorCode = glGetError()) != GL_NO_ERROR)
@@ -20,20 +23,24 @@ GLenum gl_checkerror_(const char* f, int l)
             case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
             case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
         }
-        log_error("%s ( %d ) : %s", f, l, error);
+        log_error("GLerror in %s ( %d ) : %s", f, l, error);
     }
     return errorCode;
 }
 
 namespace Lynx::Graphics::OpenGL {
 
+    std::map<ShaderType, GLenum> shader_type_map = {
+        {SHADER_NULL,       NULL                },
+        {SHADER_VERTEX,     GL_VERTEX_SHADER    },
+        {SHADER_FRAGMENT,   GL_FRAGMENT_SHADER  },
+        {SHADER_GEOMETRY,   GL_GEOMETRY_SHADER  },
+        {SHADER_COMPUTE,    GL_COMPUTE_SHADER   }
+    };
+
     void GLRendererAPI::Init()
     {
-        if (glewInit() != GLEW_OK)
-        {
-            log_fatal("GLRendererAPI: Unable to load GLEW");
-            exit(-1);
-        }
+        LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
 
         glEnable(GL_DEPTH_TEST);
 
@@ -63,9 +70,9 @@ namespace Lynx::Graphics::OpenGL {
         return tex;
     }
 
-    void GLRendererAPI::LoadTexture(unsigned char* data, int width, int height, bool useDefaults)
+    void GLRendererAPI::LoadTexture(unsigned char* data, int width, int height, bool useDefaults, int format)
     {
-        assert(data != NULL && "GL : Invalid data");
+        LYNX_ASSERT(data != NULL, "Invalid data");
         if(useDefaults) {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);	
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -73,7 +80,7 @@ namespace Lynx::Graphics::OpenGL {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
         glCheckError();
     }
@@ -107,8 +114,82 @@ namespace Lynx::Graphics::OpenGL {
         glCheckError();
     }
 
-    void GLRendererAPI::CheckErrors()
+    void GLRendererAPI::CheckErrors(const char* f, int l)
     {
-        glCheckError();
+        checkerror_(f,l);
     }
+
+    unsigned int GLRendererAPI::CompileShader(const char* shaderSource, ShaderType type)
+    {
+        unsigned int shaderID = glCreateShader(shader_type_map[type]);
+        glShaderSource(shaderID, 1, &shaderSource, NULL);
+        glCompileShader(shaderID);
+        glCheckError();
+
+        // Check shader errors
+        int success;
+        glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+        if(!success) {
+            glGetShaderInfoLog(shaderID, MAX_ERR_BUFSIZE, NULL, error_log);
+            log_error("Error while compiling shader! : %s", error_log);
+            return 0;
+        }
+        return shaderID;
+    }
+
+    void GLRendererAPI::SetShaderUniformBool(int location, bool value)
+    {
+        glUniform1i(location, value);
+    }
+
+    void GLRendererAPI::SetShaderUniformInt(int location, int value)
+    {
+        glUniform1i(location, value);
+    }
+
+    void GLRendererAPI::SetShaderUniformFloat(int location, float value)
+    {
+        glUniform1f(location, value);
+    }
+
+    void GLRendererAPI::SetShaderUniformVec2(int location, glm::vec2 value)
+    {
+        glUniform2fv(location, 1, &value[0]);
+    }
+
+    void GLRendererAPI::SetShaderUniformVec3(int location, glm::vec3 value)
+    {
+        glUniform3fv(location, 1, &value[0]);
+    }
+
+    void GLRendererAPI::SetShaderUniformVec4(int location, glm::vec4 value)
+    {
+        glUniform4fv(location, 1, &value[0]);
+    }
+
+    void GLRendererAPI::SetShaderUniformMat2(int location, glm::mat2 value)
+    {
+        glUniformMatrix2fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    void GLRendererAPI::SetShaderUniformMat3(int location, glm::mat3 value)
+    {
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+    void GLRendererAPI::SetShaderUniformMat4(int location, glm::mat4 value)
+    {
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+    }
+    
+    void GLRendererAPI::DestroyShader(unsigned int shaderID)
+    {
+        glDeleteShader(shaderID);
+    }
+
+    int GLRendererAPI::GetShaderUniformLocation(unsigned int programID, const char* uniformName)
+    {
+        return glGetUniformLocation(programID, uniformName);
+    }
+
 }

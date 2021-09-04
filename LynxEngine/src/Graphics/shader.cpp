@@ -1,226 +1,196 @@
+/**
+ * @file shader.cpp
+ * @author marlxx
+ * @brief A shader class wrapper that parses, compiles and manages a shader
+ * @version 0.0.3
+ * @date 2021-09-03
+ * 
+ * @copyright Copyright (c) 2021. See LICENSE for more information
+ * 
+ */
+
 #include <stdio.h>
+#include <string>
+#include <sstream>
 #include <string.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <list>
 #include <GL/glew.h> 
 #include "shader.h"
+#include "rendererAPI.h"
+#include "Platform/OpenGL/GLShader.h"
 #include "Core/logger.h"
+#include "Core/assert.h"
 
 namespace Lynx::Graphics {
 
-	Shader::Shader(const char* vertexPath, const char* fragmentPath) {
-		
-		loadShaderFromFile(vertexPath, fragmentPath);
+	ShaderProgram* ShaderProgram::Create()
+	{
+		switch ( IRendererAPI::GetAPI() ) {
+			case API_OPENGL: return new OpenGL::GLShaderProgram();
+			default : return nullptr;
+		}
 	}
 
-	Shader::Shader(const char* shaderPath){
-		FILE *shaderFile;
+	Shader::Shader(const char* path) {
+		loadShaderFromFile(path);
+	}
 
-		char* buffer = 0;
-
-		shaderFile = fopen(shaderPath, "r");
-		if(shaderFile == NULL){log_error("Unable to open shaderfile %s", shaderPath); return;}
-		fseek(shaderFile, 0, SEEK_END);
-		int fileSize = ftell(shaderFile);
-		rewind(shaderFile);
-
-		buffer = (char*)malloc(fileSize + 1);
-
-		fread(buffer, sizeof(char), fileSize, shaderFile);
-
-		char* vertexShaderSource, *fragmentShaderSource;
+	bool Shader::compile(const char* source)
+	{
+		std::list<unsigned int> shader_ids;
+		std::string shaderbuf;
+		std::string source_str(source);
+		std::istringstream stream(source_str);
+		std::string line;
+		unsigned int section = 0;
+		int isheader;
+		char shadertype_header[64];
+		size_t size;
 		
-		printf("%s\n",buffer);
+		API_CheckErrors();
 
-		char* line;
-		char* vertexShaderChunk = "", *fragmentShaderChunk = "";
-		/*
-		// Get the vertex shader chunk
-		while ( (line = strsep(&buffer, "\n") ) != NULL  ) {
-			char* header;
-			if( (header = strstr(line, "#shader vertex")) != NULL ) { 
-				vertexShaderChunk = header;
-				printf("Found vertex header\n");
+		// Create shader program
+		log_debug("Creating shader program", shader_path);
+		program = ShaderProgram::Create();
+
+		
+		while(std::getline(stream, line)) {	
+			isheader = sscanf(line.c_str(), "#shader %s", &shadertype_header);
+			//size_t shaderbuf_size = strlen(shaderbuf);
+			size_t line_size = line.size();
+			//log_debug("Line %d : %s", isheader, line.c_str());
+
+			if(section&&!isheader) {
+				shaderbuf = shaderbuf + line + '\n';
+				//log_debug("ShaderBuffer : %s", shaderbuf.c_str());
+			}
+
+			if(isheader > 0) { 
+				if(section) {
+					//log_debug("Section end %d", section);
+					log_debug("Total section : %s", shaderbuf.c_str());
+					// Compile buffer
+					unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);
+					API_CheckErrors();
+					program->AttachShader(shid);
+					shader_ids.push_back(shid); // Store the shader's id into the list to remove it after program is linked
+				}
+
+				section = StrToShaderType(shadertype_header);
+				//log_debug("New section %d", section);
+				shaderbuf.clear();
 			}
 		}
 
-		// Get the start pointer of the fragment chunk
-		while ( (line = strsep(&buffer, "\n") ) != NULL  ) {
-			char* header;
-			if( (header = strstr(line, "#shader fragment") ) != NULL ) {
-				fragmentShaderChunk = header;
-				printf("Found fragment header\n");
-			}
-
+		// Last line
+		if(section) {
+			log_debug("Total section : %s", shaderbuf.c_str());
+			log_debug("File end");
+			// Compile buffer
+			shaderbuf += '\0';
+			unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);
+			API_CheckErrors();
+			program->AttachShader(shid);
+			shader_ids.push_back(shid); // Store the shader's id into the list to remove it after program is linked
 		}
-		*/
-		fclose(shaderFile);
-		free(buffer);
+
+		log_debug("Linking shader program");
+		program->Link();
+
+		log_debug("Destroying shaders");
+		auto l_front = shader_ids.begin();
+		// Destroy all shaders, since program is linked now
+		for( int id = 0; id < shader_ids.size(); id++) {
+			std::advance(l_front, 1);
+			RendererAPI::DestroyShader(*l_front);
+		}
+
+		API_CheckErrors();
+	}
+
+
+	void Shader::loadShaderFromFile(const char* source_file) 
+	{
+		FILE *shader_file;
+		log_debug("Loading shader %s", source_file);
+		
+		shader_path = source_file;
+
+		shader_file = fopen(source_file,"r");
+		if(!shader_file){log_error("Unable to open shader %s", source_file); return;}
+
+		fseek(shader_file, 0, SEEK_END);
+		size_t total_shader_size = ftell(shader_file);
+		shaderSize = total_shader_size;
+
+		rewind( shader_file );
+
+		char* shader_source = (char*)malloc(total_shader_size+1); // Prevent buffering errors
+
+		int lpos = fread(shader_source, sizeof(char), total_shader_size, shader_file);
+
+		fclose(shader_file);
+
+		if(lpos != 0 | shader_source != NULL) {
+			shader_source[lpos] = '\0';
+		}else{
+			log_error("Failed to read shader %s", source_file);
+			free(shader_source);
+			success = false;
+			return;
+		}
+
+		log_debug("Compiling shader %s", shader_path);
+		compile(shader_source);
+
+		free(shader_source);
 
 	}
 
-	void Shader::loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath) {
-		FILE *vertexFile;
-		FILE *fragmentFile;
-		log_debug("Loading shaders %s, %s", vertexShaderPath, fragmentShaderPath);
-
-		vertexFilePath = vertexShaderPath;
-		fragmentFilePath = fragmentShaderPath;
-
-		vertexFile = fopen(vertexFilePath,"r");
-		fragmentFile = fopen(fragmentFilePath, "r");
-		if(!vertexFile|!fragmentFile){log_error("Unable to open shaderfiles %s %s", vertexFilePath, fragmentFilePath); return;}
-		fseek(vertexFile, 0, SEEK_END);
-		fseek(fragmentFile, 0, SEEK_END);
-		int vertexShaderSize = ftell(vertexFile);
-		int fragmentShaderSize = ftell(fragmentFile);
-
-		rewind( vertexFile );
-		rewind( fragmentFile );
-
-		// Allocate shader string variable and read from shader file
-
-		char *vertexShaderSource = NULL;
-		char *fragmentShaderSource = NULL;
-
-		vertexShaderSource = (char*)malloc(vertexShaderSize+10);
-		fragmentShaderSource = (char*)malloc(fragmentShaderSize+10);
-
-		int vspos = fread(vertexShaderSource, sizeof(char), vertexShaderSize,vertexFile);
-		int fspos = fread(fragmentShaderSource, sizeof(char), fragmentShaderSize, fragmentFile);
-
-		fclose(vertexFile);
-		fclose(fragmentFile);
-
-		if(vspos != 0|vertexShaderSource!=NULL){
-			vertexShaderSource[vspos] = '\0';
-		}
-		if(fspos != 0|fragmentShaderSource!=NULL){
-			fragmentShaderSource[fspos] = '\0';
-		}
-
-		log_debug("Compiling shaders %s, %s", vertexShaderPath, fragmentShaderPath);
-		
-		success = compile(vertexShaderSource, fragmentShaderSource);
-
-		log_debug("Finishing up");
-		
-		free(vertexShaderSource);
-		free(fragmentShaderSource);
-	}
-
-	bool Shader::compile(const char* vertexShaderSource, const char* fragmentShaderSource){
-		unsigned int vertex, fragment;
-		int success;
-
-		if(ID){
-			destroy();
-		}
-		
-		vertex = glCreateShader(GL_VERTEX_SHADER);
-		fragment = glCreateShader(GL_FRAGMENT_SHADER);
-
-		log_debug("Getting shader sources ...");
-		glShaderSource(vertex, 1, &vertexShaderSource, NULL);
-		glShaderSource(fragment, 1, &fragmentShaderSource, NULL);
-
-		log_debug("Starting to compile shaders ...");
-		log_debug("Compiling vertex shader ...");
-		glCompileShader(vertex);
-		glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-		log_debug("Compile status %d", success);
-
-		if(!success){
-			glGetShaderInfoLog(vertex, MAX_ERR_BUFSIZE, NULL, errorlog); 
-			log_error("Error while compiling vertex shader %s! :\n %s", vertexFilePath, errorlog);
-			return false;
-		}
-
-		log_debug("Compiling fragment shader ...");
-		glCompileShader(fragment);
-		glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-		log_debug("Compile status %d", success);
-
-		if(!success){
-			glGetShaderInfoLog(fragment, MAX_ERR_BUFSIZE, NULL, errorlog);
-			log_error("Error while compiling fragment shader %s! :\n %s", fragmentFilePath, errorlog);
-			return false;
-		}
-
-		log_debug("Linking and creating program...");
-		this->ID = glCreateProgram();
-		glAttachShader(this->ID,vertex);
-		glAttachShader(this->ID,fragment);
-		glLinkProgram(this->ID);
-		glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
-		if(!success){
-			glGetProgramInfoLog(ID, MAX_ERR_BUFSIZE, NULL, errorlog);
-			log_error("Error while linking shaders! : %s", errorlog);
-			return false;
-		}
-		log_debug("Successfully compiled shader ID : %d", this->ID);
-		
-		glDeleteShader(vertex);
-		glDeleteShader(fragment);
-
-		return true;
-
-		
-	}
-
+	/**
+	 * @brief Reloads the shader
+	 * 
+	 * @return bool True if shader was compiled successfully, false if there was an error while compiling the shader
+	 */
 	bool Shader::Reload(){
-		assert(vertexFilePath && fragmentFilePath && ID);
+		LYNX_ASSERT(shader_path && program, "Invalid shader");
 
-		loadShaderFromFile(vertexFilePath, fragmentFilePath);
+		loadShaderFromFile(shader_path);
 
 		return success;
 	}
 
-	char* Shader::getError(){
-		return errorlog;
+	/**
+	 * @brief Destroys the shader's program
+	 * 
+	 */
+	void Shader::Destroy(){
+		if(program && success)
+			delete program;
 	}
 
-	void Shader::destroy(){
-		if(ID)
-			glDeleteProgram(this->ID);
+	/**
+	 * @brief Uses the shader's program
+	 * 
+	 */
+	void Shader::Use(){
+		if(program && success)
+			program->Use();
+			API_CheckErrors();
 	}
 
-	void Shader::use(){
-		glUseProgram(this->ID);
-	}
-
-	GLuint Shader::getProgram(){
-		return this->ID;
-	}
-
-	// Uniform set functions 
-	void Shader::setBool(const char* name, bool value){
-		glUniform1i(glGetUniformLocation(this->ID, name), (int)value); 
-	}
-
-	void Shader::setInt(const char* name, int value){
-		glUniform1i(glGetUniformLocation(this->ID, name), value);
-	}
-
-	void Shader::setFloat(const char* name, float value){
-		glUniform1f(glGetUniformLocation(this->ID, name), value);
-	}
-
-	void Shader::setVec3(const char* name, float value1, float value2, float value3){
-		glUniform3f(glGetUniformLocation(this->ID, name), value1, value2, value3);
-	}
-
-	void Shader::setVec3(const char* name, const glm::vec3 &value)
-	{ 
-		glUniform3fv(glGetUniformLocation(this->ID, name), 1, &value[0]); 
-	}
-
-	void Shader::setVec4(const char* name, float value1, float value2, float value3, float value4){
-		glUniform4f(glGetUniformLocation(this->ID, name), value1, value2, value3, value4);
-	}
-
-	void Shader::setMat4(const char* name, const glm::mat4 &value){
-		glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, GL_FALSE, glm::value_ptr(value));
+	int Shader::getUniformLocation(const char* uniformName)
+	{
+		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
+			int loc = RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
+			API_CheckErrors();
+			uniform_cache_map.insert({uniformName, loc});
+			return loc;
+		}else{
+			return uniform_cache_map[uniformName];
+		}
 	}
 
 

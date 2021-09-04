@@ -13,7 +13,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-#include "Core/simpleGameEngine.h"
+#include "Core/application.h"
 #include "Core/logger.h"
 
 #include "Graphics/buffers.h"

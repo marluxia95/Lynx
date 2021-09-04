@@ -9,7 +9,9 @@ else
     echo "Downloading GLM"
     wget "https://github.com/g-truc/glm/releases/download/0.9.9.8/glm-0.9.9.8.zip"
     unzip glm-0.9.9.8.zip
-    cd ..
+    cd glm 
+    cp -R ./* ..
+    cd ../..
 fi
 
 echo "Checking if imgui is installed..."
@@ -36,10 +38,4 @@ else
     cd ..
 fi
 
-mkdir Build
-cd Build
-echo "Generating makefile"
-cmake ..
-echo "Building ..."
-make
-
+echo "Downloaded all dependencies"

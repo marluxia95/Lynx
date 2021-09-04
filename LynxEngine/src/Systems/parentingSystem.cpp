@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "parentingSystem.h"
 
-#include "Core/simpleGameEngine.h"
+#include "Core/application.h"
 
 
 #include "Core/ECS/entity.h"

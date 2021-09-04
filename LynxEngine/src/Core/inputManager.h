@@ -5,7 +5,7 @@
 #include <map>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "simpleGameEngine.h"
+#include "application.h"
 #include "eventManager.h"
 
 namespace Lynx {
