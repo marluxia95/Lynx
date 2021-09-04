@@ -6,7 +6,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "Core/simpleGameEngine.h"
+#include "Core/application.h"
 #include "Core/windowManager.h"
 #include "Core/logger.h"
 
@@ -77,16 +77,16 @@ namespace Lynx {
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
 
-            mRenderComponent->shader->use();
+            mRenderComponent->shader->Use();
             mat4 model = mTransform->GetModel();
             
             if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
-            mRenderComponent->shader->setMat4("projection", mCameraComponent->projection);
-            mRenderComponent->shader->setMat4("view", mCameraComponent->view);
-            mRenderComponent->shader->setMat4("model", model);
-            mRenderComponent->shader->setVec3("color", mRenderComponent->ambient);
-            mRenderComponent->shader->setVec3("viewPos", mCameraTransform->position);
+            mRenderComponent->shader->SetUniform("projection", mCameraComponent->projection);
+            mRenderComponent->shader->SetUniform("view", mCameraComponent->view);
+            mRenderComponent->shader->SetUniform("model", model);
+            mRenderComponent->shader->SetUniform("color", mRenderComponent->ambient);
+            mRenderComponent->shader->SetUniform("viewPos", mCameraTransform->position);
 
             //log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
             //    cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
@@ -102,46 +102,46 @@ namespace Lynx {
 					char buffer[64];
                     
 					sprintf(buffer, "pointLights[%d].position", i);
-					mRenderComponent->shader->setVec3(buffer , transform->position);
+					mRenderComponent->shader->SetUniform(buffer , transform->position);
 					
 					sprintf(buffer, "pointLights[%d].constant", i);
-					mRenderComponent->shader->setFloat(buffer, lightComponent->constant);
+					mRenderComponent->shader->SetUniform(buffer, lightComponent->constant);
 					
 					sprintf(buffer, "pointLights[%d].linear", i);
-					mRenderComponent->shader->setFloat(buffer, lightComponent->linear);
+					mRenderComponent->shader->SetUniform(buffer, lightComponent->linear);
 					
 					sprintf(buffer, "pointLights[%d].quadratic", i);
-					mRenderComponent->shader->setFloat(buffer, lightComponent->quadratic);
+					mRenderComponent->shader->SetUniform(buffer, lightComponent->quadratic);
 					
 					sprintf(buffer, "pointLights[%d].ambient", i);
-					mRenderComponent->shader->setVec3(buffer, lightComponent->ambient);
+					mRenderComponent->shader->SetUniform(buffer, lightComponent->ambient);
 
-                    mRenderComponent->shader->setVec3("material.ambient", mRenderComponent->ambient);
-					mRenderComponent->shader->setVec3("material.diffuse", mRenderComponent->diffuse);
-                    mRenderComponent->shader->setVec3("material.specular", mRenderComponent->specular);
-                    mRenderComponent->shader->setFloat("material.shininess", mRenderComponent->shininess);
+                    mRenderComponent->shader->SetUniform("material.ambient", mRenderComponent->ambient);
+					mRenderComponent->shader->SetUniform("material.diffuse", mRenderComponent->diffuse);
+                    mRenderComponent->shader->SetUniform("material.specular", mRenderComponent->specular);
+                    mRenderComponent->shader->SetUniform("material.shininess", mRenderComponent->shininess);
                     if(mRenderComponent->texture_diffuse != nullptr){
-                        mRenderComponent->shader->setBool("diffuse_map", true);
-                        mRenderComponent->shader->setInt("material.diffuse_tex", 0);
+                        mRenderComponent->shader->SetUniform("diffuse_map", true);
+                        mRenderComponent->shader->SetUniform("material.diffuse_tex", 0);
                         mRenderComponent->texture_diffuse->use();
                     }else{
-                        mRenderComponent->shader->setBool("diffuse_map", false);
+                        mRenderComponent->shader->SetUniform("diffuse_map", false);
                     }
 
                     if(mRenderComponent->texture_specular != nullptr){
-                        mRenderComponent->shader->setBool("specular_map", true);
-                        mRenderComponent->shader->setInt("material.specular_tex", 0);
+                        mRenderComponent->shader->SetUniform("specular_map", true);
+                        mRenderComponent->shader->SetUniform("material.specular_tex", 0);
                         mRenderComponent->texture_specular->use();
                     }else{
-                        mRenderComponent->shader->setBool("specular_map", false);
+                        mRenderComponent->shader->SetUniform("specular_map", false);
                     }
 
-                    mRenderComponent->shader->setVec3("directionalLight.direction", mDirLightComponent->direction);
-                    mRenderComponent->shader->setVec3("directionalLight.ambient", mDirLightComponent->ambient);
-                    mRenderComponent->shader->setVec3("directionalLight.diffuse", mDirLightComponent->diffuse);
-                    mRenderComponent->shader->setVec3("directionalLight.specular", mDirLightComponent->specular);
+                    mRenderComponent->shader->SetUniform("directionalLight.direction", mDirLightComponent->direction);
+                    mRenderComponent->shader->SetUniform("directionalLight.ambient", mDirLightComponent->ambient);
+                    mRenderComponent->shader->SetUniform("directionalLight.diffuse", mDirLightComponent->diffuse);
+                    mRenderComponent->shader->SetUniform("directionalLight.specular", mDirLightComponent->specular);
                     
-                    mRenderComponent->shader->setFloat("directionalLight.intensity", mDirLightComponent->intensity);
+                    mRenderComponent->shader->SetUniform("directionalLight.intensity", mDirLightComponent->intensity);
                     
 
 					i++;

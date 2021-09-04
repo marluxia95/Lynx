@@ -67,6 +67,9 @@ namespace Lynx::Graphics {
 	    glGenTextures(1, &textureID);
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
+		log_debug("Loading cubemap shader...");
+	    shader = gResourceManager.LoadShader("cubemap", "res/shaders/standard/cubemap.shader");
+
 	    int w,h,ch;
         log_debug("Starting to load cubemap textures...");
 	    for(unsigned int x = 0; x < textures->size(); x++){
@@ -90,9 +93,6 @@ namespace Lynx::Graphics {
 	    	}
 	    	textureData_free(tdata);
 	    }
-
-        log_debug("Loading cubemap shader...");
-	    shader = gResourceManager.LoadShader("cubemap", "res/shaders/standard/cubemap.vs", "res/shaders/standard/cubemap.fs");
         log_debug("Cubemap created successfully");
 	}
 
@@ -104,10 +104,10 @@ namespace Lynx::Graphics {
 	void Cubemap::Use(glm::mat4 projection, glm::mat4 view)
 	{
 		glDepthFunc(GL_LEQUAL);
-		shader->use();
+		shader->Use();
 		view = glm::mat4(glm::mat3(view));
-		shader->setMat4("projection", projection);
-		shader->setMat4("view", view);
+		shader->SetUniform("projection", projection);
+		shader->SetUniform("view", view);
 		VAO->Bind();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);

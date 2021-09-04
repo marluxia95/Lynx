@@ -17,10 +17,10 @@ class ResourceManager{
 		~ResourceManager();
 		void clear();
 
-		Graphics::Shader* LoadShader(const char* vertexFile, const char* fragmentFile, const char* Name);
+		Graphics::Shader* LoadShader(const char* name, const char* file);
 		Graphics::Shader* GetShader(const char* name);
 
-		Graphics::Texture* LoadTexture(const char* file, const char* name);
+		Graphics::Texture* LoadTexture(const char* name, const char* file);
 		Graphics::Texture* GetTexture(const char* name);
 
 		Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);

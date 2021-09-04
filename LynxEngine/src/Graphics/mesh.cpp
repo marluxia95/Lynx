@@ -32,7 +32,7 @@ namespace Lynx::Graphics {
 
 		VAO->Unbind();
 		log_debug("Generated EBO with %d indices. Total EBO size : %d", indices->size(), indices->size() * sizeof(unsigned int));
-		RendererAPI::CheckErrors();
+		API_CheckErrors();
 	}
 
 	void Mesh::Render()

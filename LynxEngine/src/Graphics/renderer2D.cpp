@@ -33,14 +33,14 @@ void Renderer2D::Init()
 
     quad_vao->Unbind();
 
-    RendererAPI::CheckErrors();
+    API_CheckErrors();
 }
 
 void Renderer2D::RenderQuad()
 {
     quad_ebo->Bind();
 	RendererAPI::DrawIndexed(sizeof(quad_indices) / sizeof(unsigned int));
-    RendererAPI::CheckErrors();
+    API_CheckErrors();
 }
 
 void Renderer2D::Destroy()

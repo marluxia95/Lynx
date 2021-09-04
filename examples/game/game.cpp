@@ -181,7 +181,7 @@ int main()
 	// Initialize window in windowed mode
 	gApplication.Init("Example", 1920, 1080, false);
 
-	Graphics::Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.vs", "res/shaders/standard/lighting.fs");
+	Graphics::Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.shader");
 
 	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
 	{

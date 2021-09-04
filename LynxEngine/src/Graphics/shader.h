@@ -3,12 +3,30 @@
 
 #include <stdio.h>
 #include <glm/glm.hpp>
-#include <GL/glew.h> 
 #include <map>
+#include <vector>
+#include "rendererAPI.h"
 
 #define MAX_ERR_BUFSIZE 2048
 
 namespace Lynx::Graphics {  
+
+    // Abstract base class for shader program
+    class ShaderProgram {
+        public:
+            ShaderProgram() = default;
+            ~ShaderProgram() = default;
+            unsigned int GetID() { return id; };
+            char* GetErrorLog() { return error_log; };
+            virtual void Use() = 0;
+            virtual void AttachShader(unsigned int shaderID) = 0;
+            virtual bool Link() = 0;
+
+            static ShaderProgram* Create();
+        protected:
+            unsigned int id;
+            char error_log[MAX_ERR_BUFSIZE];
+    };
 
     class Shader
     {
@@ -16,31 +34,33 @@ namespace Lynx::Graphics {
             Shader(const char* vertexPath, const char* fragmentPath);
             Shader(const char* shaderFile);
 
-            // Shader variables with initialized values
-            unsigned int ID = 0;
             bool success = true;
-            const char* name = "";
-            const char* vertexFilePath = "";
-            const char* fragmentFilePath = "";
+            const char* shader_path = "";
 
 
-            GLuint getProgram();
-            char* getError();
+            ShaderProgram* getProgram() { return program; };
+            char* GetError() { return errorlog; };
 
-            void destroy();
-            void use();
-            void setBool(const char* name, bool value);  
-            void setInt(const char* name, int value);   
-            void setFloat(const char* name, float value);
-            void setVec3(const char* name, float value1, float value2, float value3);
-            void setVec3(const char* name, const glm::vec3 &value);
-            void setVec4(const char* name, float value1, float value2, float value3, float value4);
-            void setMat4(const char* name, const glm::mat4 &value);
+            void Destroy();
+            void Use();
+
+            template<typename T>
+            void SetUniform(const char* name, T value)
+            {
+                RendererAPI::SetShaderUniform(getUniformLocation(name), value);
+            } 
+            
+            
             bool Reload();
         private:
-            bool compile(const char* vertexShaderSource, const char* fragmentShaderSource);
-            void loadShaderFromFile(const char* vertexShaderPath, const char* fragmentShaderPath);
-            char errorlog[MAX_ERR_BUFSIZE];
+            int getUniformLocation(const char* name);
+            bool compile(const char* source);
+            void parse(const char* raw_source);
+            void loadShaderFromFile(const char* file);
+            size_t shaderSize;
+            char* errorlog;
+            ShaderProgram* program;
+            std::map<const char*, int> uniform_cache_map;
     };
 
 }

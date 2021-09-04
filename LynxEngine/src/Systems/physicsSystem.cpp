@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "physicsSystem.h"
 
-#include "Core/simpleGameEngine.h"
+#include "Core/application.h"
 
 #include "Core/ECS/system.h"
 #include "Core/ECS/components.h"

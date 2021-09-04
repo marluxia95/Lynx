@@ -45,12 +45,12 @@ Graphics::Texture* ResourceManager::LoadTexture(const char* name, const char* pa
 	return Textures[name];
 }
 
-Graphics::Shader* ResourceManager::LoadShader(const char* name, const char* vertexPath, const char* fragmentPath)
+Graphics::Shader* ResourceManager::LoadShader(const char* name, const char* file)
 {
 	if(Shaders.find(name) != Shaders.end())
 		return Shaders[name];
 	
-	Shaders[name] = new Graphics::Shader(vertexPath, fragmentPath);
+	Shaders[name] = new Graphics::Shader(file);
 	return Shaders[name];
 }
 

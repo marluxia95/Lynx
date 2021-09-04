@@ -1,6 +1,6 @@
 #include "windowManager.h"
 #include "logger.h"
-#include "simpleGameEngine.h"
+#include "application.h"
 #include "eventManager.h"
 #include "Graphics/rendererAPI.h"
 #include "Events/event.h"
