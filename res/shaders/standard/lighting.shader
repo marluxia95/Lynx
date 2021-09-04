@@ -1,4 +1,4 @@
-#SHADER_VERTEX
+#shader SHADER_VERTEX
 #version 330 core
 /*
     -   =   Layout Locations    =   -
@@ -28,7 +28,7 @@ void main() {
     TexCoords = texcoords;
 }
 
-#SHADER_FRAGMENT
+#shader SHADER_FRAGMENT
 #version 330 core
 
 struct Material {
@@ -143,7 +143,6 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir
 
     return (ambient + diffuse + specular) * light.intensity;
 }
-
 
 void main() {
     vec3 norm = normalize(Normal);

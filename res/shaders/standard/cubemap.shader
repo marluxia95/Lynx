@@ -1,4 +1,4 @@
-#SHADER_VERTEX
+#shader SHADER_VERTEX
 #version 330
 layout (location = 0) in vec3 aPos;
 
@@ -14,7 +14,7 @@ void main(){
     gl_Position = pos.xyww;
 }
 
-#SHADER_FRAGMENT
+#shader SHADER_FRAGMENT
 #version 330 core
 out vec4 FragColor;
 

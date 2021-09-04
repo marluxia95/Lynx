@@ -42,7 +42,7 @@ namespace Lynx::Graphics {
             virtual void BindTexture(unsigned int tex) = 0;
             
             virtual unsigned int CompileShader(const char* shadersource, ShaderType type) = 0;
-            virtual int GetShaderUniformLocation(int programID, const char* uniformName) = 0;
+            virtual int GetShaderUniformLocation(unsigned int programID, const char* uniformName) = 0;
             virtual void SetShaderUniformBool(int location, bool value) = 0; // Can't use virtual templates :( sad
             virtual void SetShaderUniformInt(int location, int value) = 0;
             virtual void SetShaderUniformFloat(int location, float value) = 0;
