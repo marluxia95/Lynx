@@ -8,6 +8,7 @@ LynxEditor/build
 LynxEditor/Build
 Debug/
 docs/doxygen/
+.VSCodeCounter
 .vscode/
 .vs/
 x64/

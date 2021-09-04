@@ -8,7 +8,7 @@
 #include "Graphics/rendererAPI.h"
 #include "Core/logger.h"
 
-#define API_DEBUG 1
+#define API_DEBUG 0
 
 GLenum checkerror_(const char* f, int l);
 #define glCheckError() checkerror_(__PRETTY_FUNCTION__, __LINE__)
