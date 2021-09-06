@@ -1,3 +1,13 @@
+/**
+ * @file threadpool.h
+ * @author marlxx
+ * @brief Thread pool for engine. WORK IN PROGRESS
+ * @version 0.0.3
+ * @date 2021-09-06
+ * 
+ * @copyright Copyright (c) 2021. See LICENSE for more information
+ * 
+ */
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
