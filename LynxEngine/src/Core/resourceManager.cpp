@@ -6,14 +6,6 @@
 
 namespace Lynx {
 
-
-ResourceManager::ResourceManager() 
-{
-
-	log_log(LOG_INFO, "Resource manager started");
-
-}
-
 ResourceManager::~ResourceManager() 
 {
 	clear();

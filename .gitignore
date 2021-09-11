@@ -7,6 +7,7 @@ LynxEngine/LynxEngine.vcxproj.user
 LynxEditor/build
 LynxEditor/Build
 Debug/
+tests/
 docs/doxygen/
 .VSCodeCounter
 .vscode/

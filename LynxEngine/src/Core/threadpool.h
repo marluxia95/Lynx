@@ -15,85 +15,49 @@
 #include <thread>
 #include <mutex>
 #include <vector>
-#include <list>
+#include <queue>
+#include <functional>
+#include <atomic>
 #include <condition_variable>
+#define THPOOL_DEBUG 0
 
 namespace Lynx {
 
     class ThreadPool {
         private:
-            class Semaphore {
-                public:
-                    Semaphore(int val)
-                    {
-                        ThreadPool::Semaphore::v = val;
-                        
-                    }
-                    Semaphore()
-                    {
-                        ThreadPool::Semaphore::v = 0;
-                        
-                    }
-                    void reset()
-                    {
-                        ThreadPool::Semaphore::v = 0;
-                    }
-                    void notify()
-                    {
-                        mutex.lock();
-                        ThreadPool::Semaphore::v = 1;
-                        cond.notify_one();
-                        mutex.unlock();
-                    }
-                    void notify_all()
-                    {
-                        mutex.lock();
-                        ThreadPool::Semaphore::v = 1;
-                        cond.notify_all();
-                        mutex.unlock();
-                    }
-                    void wait()
-                    {
-                        mutex.lock();
-                        while( ThreadPool::Semaphore::v < 1 ) {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            cond.wait(lock, []{return ThreadPool::Semaphore::v != 0;});
-                        }
-                        ThreadPool::Semaphore::v = 0;
-                        mutex.unlock();
-                    }
-                private:
-                    std::mutex mutex;
-                    std::condition_variable cond;
-                    static int v;
-            };
-
             typedef struct {
-                void (*func)(void* args);
+                std::function<void(void*)> func;
                 void* args;
+                int id;
             } Job;
 
-            typedef struct {
-                std::thread thread;
-                unsigned int id;
-                ThreadPool* pool;
-            } Worker;
+            class Worker {
+                public:
+                    std::thread thread;
+                    int id;
+                    ThreadPool* pool;
+            };
 
-            static void* thread_work(Worker* worker_s);
+            static void thread_work(Worker* worker_s);
         
         public:
             ThreadPool(int n_threads = std::thread::hardware_concurrency());
             ~ThreadPool();
-            void PushJob(void (*job_func)(void*), void* job_args);
+            void PushJob(std::function<void(void*)>, void* job_args);
             void Wait();
 
         private:
-            std::list<Job> jobs;
+            std::queue<Job> jobs;
             std::vector<Worker*> workers;
             std::mutex mutex;
-            std::condition_variable cond;
+            std::condition_variable idle;
+            std::condition_variable job;
             Semaphore sem;
-            unsigned int last_id;
+            std::atomic<bool> shouldDestroy = false;
+            std::atomic<bool> ready = false;
+            int n_threads;
+            int alive_threads;
+            int working_threads;
 
     };
 

@@ -34,17 +34,20 @@ namespace Lynx {
         glfwTerminate();
     }
 
-    void Application::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
+    void Application::Init(const char* title, unsigned int width, unsigned int height, int flags)
     {
         log_debug("Creating window object");
 
         m_windowManager = WindowManager::Create();
-        m_windowManager->Init(title, width, height, fullScreen);
+        if(flags & APPLICATION_FULLSCREEN)
+            m_windowManager->Init(title, width, height, true);
 
+        m_threadPool = std::make_unique<ThreadPool>();
+        m_resourceManager = std::make_unique<ResourceManager>();
         m_entityManager = std::make_unique<ECS::EntityManager>();
         m_componentManager = std::make_unique<ECS::ComponentManager>();
         m_systemManager = std::make_unique<ECS::SystemManager>();
-
+        
         log_debug("Initializing renderer API");
 
         Graphics::RendererAPI::Init();

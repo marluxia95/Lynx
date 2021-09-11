@@ -8,12 +8,20 @@
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/buffers.h"
+#include "application.h"
 
 namespace Lynx {
 
+class Resource {
+	public:
+		int id;
+		const char* path;
+
+};
+
 class ResourceManager{
 	public:
-		ResourceManager();
+		ResourceManager(Application* application) : application(application) {}
 		~ResourceManager();
 		void clear();
 
@@ -29,6 +37,9 @@ class ResourceManager{
 		std::map<const char*, Graphics::Shader*> Shaders;
 		std::map<const char*, Graphics::Texture*> Textures;
 		std::map<const char*, Graphics::Mesh*> Meshes;
+
+	private:
+		Application* application; // Application reference
  
 };
 
