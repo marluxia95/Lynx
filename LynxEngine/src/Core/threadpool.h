@@ -52,7 +52,6 @@ namespace Lynx {
             std::mutex mutex;
             std::condition_variable idle;
             std::condition_variable job;
-            Semaphore sem;
             std::atomic<bool> shouldDestroy = false;
             std::atomic<bool> ready = false;
             int n_threads;

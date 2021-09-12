@@ -47,12 +47,14 @@ namespace Lynx {
         APPLICATION_BORDERLESS = 1 << 1,
         APPLICATION_VSYNC = 1 << 2
     };
+
+    class ResourceManager;
 	
 	class Application {
     public:
 		~Application();
 
-        void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, int flags);
+        void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, int flags = 0);
 		void Run();
 
 	
@@ -143,7 +145,7 @@ namespace Lynx {
         std::unique_ptr<ECS::ComponentManager> m_componentManager;
         std::unique_ptr<ECS::SystemManager> m_systemManager;
 		std::unique_ptr<WindowManager> m_windowManager;
-        std::unique_ptr<WindowManager> m_resourceManager;
+        std::unique_ptr<ResourceManager> m_resourceManager;
         std::unique_ptr<ThreadPool> m_threadPool;
 
 	};

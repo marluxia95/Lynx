@@ -12,6 +12,8 @@
 
 namespace Lynx {
 
+class Application;
+
 class Resource {
 	public:
 		int id;

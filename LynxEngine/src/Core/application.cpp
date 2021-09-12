@@ -43,7 +43,7 @@ namespace Lynx {
             m_windowManager->Init(title, width, height, true);
 
         m_threadPool = std::make_unique<ThreadPool>();
-        m_resourceManager = std::make_unique<ResourceManager>();
+        m_resourceManager = std::make_unique<ResourceManager>(this);
         m_entityManager = std::make_unique<ECS::EntityManager>();
         m_componentManager = std::make_unique<ECS::ComponentManager>();
         m_systemManager = std::make_unique<ECS::SystemManager>();
