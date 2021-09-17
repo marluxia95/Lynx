@@ -5,11 +5,16 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
+#include "Core/resourceManager.h"
 #include "rendererAPI.h"
 
 #define MAX_ERR_BUFSIZE 2048
 
-namespace Lynx::Graphics {  
+namespace Lynx {
+
+    class BaseResource;
+
+    namespace Graphics {  
 
     // Abstract base class for shader program
     class ShaderProgram {
@@ -28,11 +33,10 @@ namespace Lynx::Graphics {
             char error_log[MAX_ERR_BUFSIZE];
     };
 
-    class Shader
-    {
+    class Shader : public Lynx::BaseResource {
         public:
-            Shader(const char* vertexPath, const char* fragmentPath);
-            Shader(const char* shaderFile);
+            //Shader(const char* vertexPath, const char* fragmentPath);
+            Shader(int id, const char* path, const char* name);
 
             bool success = true;
             const char* shader_path = "";
@@ -62,6 +66,8 @@ namespace Lynx::Graphics {
             ShaderProgram* program;
             std::map<const char*, int> uniform_cache_map;
     };
+
+    }
 
 }
 #endif

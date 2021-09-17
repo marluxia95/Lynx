@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <memory>
 #include "shader.h"
 #include "vertexArray.h"
 
@@ -16,7 +17,7 @@ namespace Lynx::Graphics {
 			
 		private:
 			unsigned int textureID;
-			Shader* shader;
+			std::shared_ptr<Shader> shader;
 			VertexArray* VAO;
 			GLuint VBO;
 	};

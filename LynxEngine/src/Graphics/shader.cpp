@@ -28,12 +28,12 @@ namespace Lynx::Graphics {
 	ShaderProgram* ShaderProgram::Create()
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return new OpenGL::GLShaderProgram();
+			case API_OPENGL: return new Graphics::OpenGL::GLShaderProgram();
 			default : return nullptr;
 		}
 	}
 
-	Shader::Shader(const char* path) {
+	Shader::Shader(int id, const char* path, const char* name) : BaseResource(id, path, name) {
 		loadShaderFromFile(path);
 	}
 

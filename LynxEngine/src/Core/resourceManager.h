@@ -3,47 +3,56 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <memory>
 #include <map>
 #include "Graphics/mesh.h"
-#include "Graphics/shader.h"
-#include "Graphics/texture.h"
 #include "Graphics/buffers.h"
-#include "application.h"
 
 namespace Lynx {
 
-class Application;
+	class Application;
 
-class Resource {
-	public:
-		int id;
-		const char* path;
+	class BaseResource : public std::enable_shared_from_this<BaseResource> {
+		public:
+			BaseResource(int id, const char* Path, const char* name) : id(id), path(path), name(name) {};
+			int GetID() { return id; }
+			const char* GetPath() { return path; }
+			const char* GetName() { return name; }
+			shared_ptr<BaseResource> GetPtr() { return shared_from_this(); }
+		private:
+			int id;
+			const char* path;
+			const char* name;
+	};
 
-};
+	enum ResourceType {
+		RES_SHADER,
+		RES_TEXTURE,
+		RES_MESH,
+		RES_MODEL
+	};
 
-class ResourceManager{
-	public:
-		ResourceManager(Application* application) : application(application) {}
-		~ResourceManager();
-		void clear();
+	class ResourceManager{
+		public:
+			ResourceManager(Application* application) : application(application) {}
+			~ResourceManager();
+			void clear();
 
-		Graphics::Shader* LoadShader(const char* name, const char* file);
-		Graphics::Shader* GetShader(const char* name);
+			template<class T>
+			std::shared_ptr<T> LoadResource(const char* path);
 
-		Graphics::Texture* LoadTexture(const char* name, const char* file);
-		Graphics::Texture* GetTexture(const char* name);
+			Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);
+			Graphics::Mesh* GetMesh(const char* name);
 
-		Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);
-		Graphics::Mesh* GetMesh(const char* name);
+			std::map<const char*, std::shared_ptr<BaseResource>> ResourceMap;
+			std::map<const char*, Graphics::Mesh*> Meshes;
 
-		std::map<const char*, Graphics::Shader*> Shaders;
-		std::map<const char*, Graphics::Texture*> Textures;
-		std::map<const char*, Graphics::Mesh*> Meshes;
-
-	private:
-		Application* application; // Application reference
- 
-};
+		private:
+			int lastId;
+			const char* getFileName(const char* path);
+			Application* application; // Application reference
+	
+	};
 
 }
 

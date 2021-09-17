@@ -11,7 +11,7 @@ namespace Lynx::Graphics {
 
 	static int texcount = 0;
 
-	Texture::Texture(const char* path) 
+	Texture::Texture(int id, const char* path, const char* name) : BaseResource(id, path, name)
 	{ 
 		texture = RendererAPI::GenTexture();
 		RendererAPI::BindTexture(texture);

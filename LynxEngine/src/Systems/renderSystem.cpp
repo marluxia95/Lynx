@@ -11,7 +11,10 @@
 #include "Core/logger.h"
 
 #include "Core/ECS/components.h"
-#include "Systems/renderSystem.h"
+
+#include "renderSystem.h"
+#include "cameraSystem.h"
+#include "lightingSystem.h"
 
 using namespace glm;
 

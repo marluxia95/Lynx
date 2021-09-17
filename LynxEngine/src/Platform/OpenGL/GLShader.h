@@ -5,7 +5,7 @@
 
 namespace Lynx::Graphics::OpenGL {
 
-class GLShaderProgram : public ShaderProgram {
+class GLShaderProgram : public Lynx::Graphics::ShaderProgram {
     public:
         GLShaderProgram();
         ~GLShaderProgram();

@@ -8,8 +8,6 @@
 #include <glm/glm.hpp>
 #include "vertexArray.h"
 #include "buffers.h"
-#include "shader.h"
-#include "texture.h"
 
 using namespace std;
 using namespace glm;

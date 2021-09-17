@@ -3,12 +3,13 @@
 
 #include <GL/glew.h> 
 #include <stdio.h>
+#include "Core/resourceManager.h"
 
 namespace Lynx::Graphics {
 
-	class Texture {
+	class Texture : public BaseResource {
 	public:
-		Texture(const char* path);
+		Texture(int id, const char* path, const char* name);
 		void use();
 		void Destroy();
 		unsigned int texture = 0;

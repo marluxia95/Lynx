@@ -2,37 +2,20 @@
 #define APPLICATION_H
 
 #include <stdio.h>
-#include <iostream>
-#include <vector>
-#include <map>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <memory>
 
 #include "resourceManager.h"
 #include "windowManager.h"
 
-#include "Graphics/model.h"
-#include "Graphics/mesh.h"
-
+#include "ECS/components.h"
 #include "ECS/systemManager.h"
 #include "ECS/componentManager.h"
 #include "ECS/entityManager.h"
 #include "ECS/systemManager.h"
 
-#include "Events/event.h"
-
 #include "windowManager.h"
 #include "resourceManager.h"
 #include "threadpool.h"
-
-#include "Systems/parentingSystem.h"
-#include "Systems/lightingSystem.h"
-#include "Systems/physicsSystem.h"
-#include "Systems/renderSystem.h"
-#include "Systems/cameraSystem.h"
 
 namespace Lynx {
 
@@ -139,6 +122,7 @@ namespace Lynx {
         GLFWwindow* GetWindow() { return m_windowManager->window; }
 
 		float delta_time, last_FrameTime;
+        friend class ResourceManager;
 	private:
 		State applicationState;
 		std::unique_ptr<ECS::EntityManager> m_entityManager;

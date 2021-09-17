@@ -68,7 +68,7 @@ namespace Lynx::Graphics {
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 		log_debug("Loading cubemap shader...");
-	    shader = gResourceManager.LoadShader("cubemap", "res/shaders/standard/cubemap.shader");
+	    shader = gResourceManager.LoadResource<Shader>("res/shaders/standard/cubemap.shader");
 
 	    int w,h,ch;
         log_debug("Starting to load cubemap textures...");

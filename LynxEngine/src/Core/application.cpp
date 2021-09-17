@@ -17,6 +17,8 @@
 #include "Graphics/rendererAPI.h"
 #include "Graphics/mesh.h"
 
+#include "Systems/physicsSystem.h"
+
 #include "Systems/lightingSystem.h"
 #include "Systems/parentingSystem.h"
 #include "Systems/cameraSystem.h"
