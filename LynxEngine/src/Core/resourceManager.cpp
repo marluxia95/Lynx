@@ -48,12 +48,11 @@ Graphics::Shader* ResourceManager::LoadShader(const char* path)
 {
 	log_debug("e %d", shader_map.size());
 	std::string name = std::string(path);
-	const size_t name_hash = std::hash<std::string>{}(name);
-	const auto shader_found = shader_map.find(name_hash);
+	const auto shader_found = shader_map.find(name);
 	if(shader_found != shader_map.end())
 		return shader_found->second;
 	
-	return shader_map[name_hash] = new Graphics::Shader(path);
+	return shader_map[name] = new Graphics::Shader(path);
 }
 
 
@@ -84,14 +83,13 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 		return texture;
 
 	std::string name = std::string(path);
-	const size_t name_hash = std::hash<std::string>{}(name);
 
 	Graphics::Texture n_texture;
 
 	th_texdata data = {path, n_texture};
 	application->m_threadPool->PushJob(th_loadTex,&data);
 	
-	return texture_map[name_hash] = n_texture;
+	return texture_map[name] = n_texture;
 }
 
 
@@ -99,7 +97,7 @@ Graphics::Texture ResourceManager::FindTexture(const char* path)
 {
 	std::string name = std::string(path);
 	const size_t name_hash = std::hash<std::string>{}(name);
-	const auto found = texture_map.find(name_hash);
+	const auto found = texture_map.find(name);
 	if(found != texture_map.end()) {
 		if(found->second.IsValid())
 			return found->second;
@@ -114,16 +112,15 @@ Graphics::Mesh* ResourceManager::LoadMesh(const char* name, vector<Graphics::Ver
 	if( mesh != nullptr)
 		return mesh;
 
-	const size_t name_hash = std::hash<const char*>{}(name);
-	mesh_map[name_hash] = new Graphics::Mesh(vertices, indices, type);
-	return mesh_map[name_hash];
+	mesh_map[name] = new Graphics::Mesh(vertices, indices, type);
+	return mesh_map[name];
 }
 
 
 Graphics::Mesh* ResourceManager::FindMesh(const char* name)
 {
 	const size_t name_hash = std::hash<const char*>{}(name);
-	const auto found = mesh_map.find(name_hash);
+	const auto found = mesh_map.find(name);
 	if(found != mesh_map.end()) {
 		return found->second;
 	}

@@ -49,7 +49,7 @@ namespace Lynx {
 		public:
 			ResourceManager(Application* application) : application(application)
 			{
-				shader_map = std::unordered_map<size_t, Graphics::Shader*>();
+				shader_map = std::unordered_map<std::string, Graphics::Shader*>();
 				log_debug("e %d", shader_map.size());
 			}
 			~ResourceManager();
@@ -69,9 +69,9 @@ namespace Lynx {
 		private:
 			int lastId;
 			
-			std::unordered_map<size_t, Graphics::Shader*> shader_map;
-			std::unordered_map<size_t, Graphics::Mesh*>   mesh_map;
-			std::unordered_map<size_t, Graphics::Texture> texture_map;
+			std::unordered_map<std::string, Graphics::Shader*> shader_map;
+			std::unordered_map<std::string, Graphics::Mesh*>   mesh_map;
+			std::unordered_map<std::string, Graphics::Texture> texture_map;
 			std::mutex queue_mutex;
 
 			static void th_loadTex(void* data);
