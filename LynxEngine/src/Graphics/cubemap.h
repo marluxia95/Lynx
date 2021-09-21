@@ -17,7 +17,7 @@ namespace Lynx::Graphics {
 			
 		private:
 			unsigned int textureID;
-			std::shared_ptr<Shader> shader;
+			Shader* shader;
 			VertexArray* VAO;
 			GLuint VBO;
 	};

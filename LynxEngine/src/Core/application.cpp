@@ -29,35 +29,40 @@
 
 #include "logger.h"
 
+#ifdef __linux__
+#include <unistd.h>
+#endif
+
 namespace Lynx {
 
     Application::~Application()
     {
+        m_threadPool->Wait();
         glfwTerminate();
     }
 
     void Application::Init(const char* title, unsigned int width, unsigned int height, int flags)
     {
-        log_debug("Creating window object");
 
         m_windowManager = WindowManager::Create();
         if(flags & APPLICATION_FULLSCREEN)
             m_windowManager->Init(title, width, height, true);
+        else
+            m_windowManager->Init(title, width, height, false);
 
-        m_threadPool = std::make_unique<ThreadPool>();
-        m_resourceManager = std::make_unique<ResourceManager>(this);
+        log_debug("Initializing subsystems");
+        m_threadPool = std::make_unique<ThreadPool>(3);
+        m_resourceManager = new ResourceManager(this);
         m_entityManager = std::make_unique<ECS::EntityManager>();
         m_componentManager = std::make_unique<ECS::ComponentManager>();
         m_systemManager = std::make_unique<ECS::SystemManager>();
-        
-        log_debug("Initializing renderer API");
 
+        log_debug("Initializing renderer API");
         Graphics::RendererAPI::Init();
 
         Input::Init();
 
         log_debug("Sending event init");
-
         EventManager::SendEvent(InitEvent());
 
         log_debug("Initializing systems");

@@ -3,7 +3,6 @@
 using namespace std;
 
 extern Lynx::Application gApplication;
-extern Lynx::ResourceManager gResourceManager;
 
 namespace Lynx::ModelLoader {
 
@@ -70,7 +69,12 @@ void processMesh(Entity meshEntity, const char* path, Graphics::Shader* meshShad
 		}
 	}  
 	log_debug("Indices processed");
-	gApplication.AddComponent<MeshRenderer>(meshEntity, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, gResourceManager.LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
+	gApplication.AddComponent<MeshRenderer>(meshEntity, 
+	MeshRenderer{glm::vec3(0.0f), 
+	glm::vec3(0.0f), 
+	glm::vec3(0.0f), 
+	0.0f, 
+	gApplication.GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 

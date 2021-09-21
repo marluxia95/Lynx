@@ -40,6 +40,7 @@ namespace Lynx::Graphics::OpenGL {
 
     void GLRendererAPI::Init()
     {
+        glewExperimental = true;
         LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
 
         glEnable(GL_DEPTH_TEST);

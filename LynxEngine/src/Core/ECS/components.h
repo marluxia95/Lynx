@@ -49,9 +49,9 @@ struct MeshRenderer {
 	float shininess;
 	Graphics::Mesh*    mesh;
 	Graphics::Shader*  shader;
-	Graphics::Texture* texture;
-	Graphics::Texture* texture_diffuse;
-	Graphics::Texture* texture_specular;
+	Graphics::Texture  texture;
+	Graphics::Texture  texture_diffuse;
+	Graphics::Texture  texture_specular;
 	bool lighting = true;
 };
 

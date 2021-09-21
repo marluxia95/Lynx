@@ -1,6 +1,6 @@
-#include <iostream>
+
 #include <stdio.h>
-#include <future>
+
 #include "resourceManager.h"
 #include "logger.h"
 #include "Graphics/shader.h"
@@ -9,34 +9,27 @@
 
 namespace Lynx {
 
-typedef struct {
-	const char* name;
-	const char* path;
-	int id;
-	ResourceType res_type;
-	std::promise<BaseResource*>* res_ptr;
-} ResourceData;
-
-// Function prototypes
-void th_loadRes(void* data);
-
 ResourceManager::~ResourceManager() 
 {
 	clear();
 }
 
+
 void ResourceManager::clear() 
 {
 	log_debug("Cleaning resources");
 
-	//for(auto const& res : ResourceMap){
-	//	delete res.second;
-	//}
+	
 
-	for(auto const& rm : Meshes){
+	for(auto const& rm : mesh_map){
+		delete rm.second;
+	}
+
+	for(auto const& rm : shader_map){
 		delete rm.second;
 	}
 }
+
 
 const char* ResourceManager::getFileName(const char* path)
 {
@@ -51,61 +44,90 @@ const char* ResourceManager::getFileName(const char* path)
 }
 
 
-template<class T>
-std::shared_ptr<T> ResourceManager::LoadResource(const char* path)
+Graphics::Shader* ResourceManager::LoadShader(const char* path)
 {
-	const char* name = getFileName(path);
-	if(ResourceMap.find(name) != ResourceMap.end())
-		return std::static_pointer_cast<T>(ResourceMap[name]);;
-
-	std::promise<BaseResource*> res_promise;
-	std::future<BaseResource*> res_future = res_promise.get_future();
-
-	ResourceData resdata = {name, path, lastId++, RES_SHADER, &res_promise};
-
-	application->m_threadPool->PushJob(th_loadRes, &resdata);
-
-	ResourceMap[name] = res_future.get()->GetPtr();
-	return std::static_pointer_cast<T>(ResourceMap[name]);
-}
-
-
-void th_loadRes(void* data)
-{
-	ResourceData* res_data = (ResourceData*)data;
-	BaseResource* res;
-
-	switch(res_data->res_type) {
-		case RES_SHADER:
-			res = new Graphics::Shader(res_data->id, res_data->path, res_data->name);
-			res_data->res_ptr->set_value(res);
-			return;
-		case RES_TEXTURE:
-			res = new Graphics::Texture(res_data->id, res_data->path, res_data->name);
-			res_data->res_ptr->set_value(res);
-			return;
-		case RES_MODEL:
-			return;
-	}
+	log_debug("e %d", shader_map.size());
+	std::string name = std::string(path);
+	const size_t name_hash = std::hash<std::string>{}(name);
+	const auto shader_found = shader_map.find(name_hash);
+	if(shader_found != shader_map.end())
+		return shader_found->second;
 	
+	return shader_map[name_hash] = new Graphics::Shader(path);
 }
+
+
+Graphics::Shader* ResourceManager::LoadShader(const char* vertex_path, const char* fragment_path)
+{
+	std::string name = std::string(vertex_path);
+	name.append(std::string(fragment_path));
+	const size_t name_hash = std::hash<std::string>{}(name);
+
+
+}
+
+
+void ResourceManager::th_loadTex(void* data)
+{
+	char* path = (char*)data;
+
+	Graphics::Texture texture;
+	texture.LoadFromFile(path);
+	return;
+}
+
+
+Graphics::Texture ResourceManager::LoadTexture(const char* path)
+{
+	auto texture = FindTexture(path);
+	if( texture.IsValid() )
+		return texture;
+
+	std::string name = std::string(path);
+	const size_t name_hash = std::hash<std::string>{}(name);
+
+	Graphics::Texture n_texture;
+
+	th_texdata data = {path, n_texture};
+	application->m_threadPool->PushJob(th_loadTex,&data);
+	
+	return texture_map[name_hash] = n_texture;
+}
+
+
+Graphics::Texture ResourceManager::FindTexture(const char* path)
+{
+	std::string name = std::string(path);
+	const size_t name_hash = std::hash<std::string>{}(name);
+	const auto found = texture_map.find(name_hash);
+	if(found != texture_map.end()) {
+		if(found->second.IsValid())
+			return found->second;
+	}
+	return Graphics::Texture();
+}
+
 
 Graphics::Mesh* ResourceManager::LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type)
 {
-	if(Meshes.find(name) != Meshes.end())
-		return Meshes[name];
+	auto mesh = FindMesh(name);
+	if( mesh != nullptr)
+		return mesh;
 
-	Meshes[name] = new Graphics::Mesh(vertices, indices, type);
-	return Meshes[name];
+	const size_t name_hash = std::hash<const char*>{}(name);
+	mesh_map[name_hash] = new Graphics::Mesh(vertices, indices, type);
+	return mesh_map[name_hash];
 }
 
-Graphics::Mesh* ResourceManager::GetMesh(const char* name)
+
+Graphics::Mesh* ResourceManager::FindMesh(const char* name)
 {
-	if(Meshes.find(name) == Meshes.end()){
-		log_error("Mesh resource %s does not exist!", name);
-		return NULL;
+	const size_t name_hash = std::hash<const char*>{}(name);
+	const auto found = mesh_map.find(name_hash);
+	if(found != mesh_map.end()) {
+		return found->second;
 	}
-	return Meshes[name];
+	return nullptr;
 }
 
 }

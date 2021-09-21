@@ -8,6 +8,7 @@
 #include "lynx.h"
 
 #include "Systems/renderSystem.h"
+#include "Systems/cameraSystem.h"
 #include "Graphics/cubemap.h"
 #include "Graphics/terrain.h"
 
@@ -15,7 +16,6 @@
 using namespace Lynx;
 
 // Initialize global variables
-ResourceManager gResourceManager;
 Application gApplication;
 
 float camera_Speed_Multiplier = 0.0f;
@@ -159,6 +159,10 @@ int main()
 	// Enables the gApplication's debug mode
 	log_set_level(LOG_DEBUG);
 
+	log_debug("Adding initial events...");
+
+	auto resourceManager = gApplication.GetResourceManager();
+
 	// Initialize all default components and systems
 	EventManager::AddListener(EngineInit, [](const Event& ev) {
 		gApplication.LoadDefaultComponents();
@@ -181,7 +185,8 @@ int main()
 	// Initialize window in windowed mode
 	gApplication.Init("Example", 1920, 1080, false);
 
-	Graphics::Shader* shader = gResourceManager.LoadShader("Cube Shader", "res/shaders/standard/lighting.shader");
+	log_debug("Loading resources");
+	Graphics::Shader* shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
 
 	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
 	{
@@ -191,7 +196,7 @@ int main()
 		meshRenderer->diffuse = glm::vec3(0.0f);
 		meshRenderer->specular = glm::vec3(1.0f);
 		meshRenderer->shininess = 64.0f;
-		Graphics::Texture* tex1 = gResourceManager.LoadTexture("container2","res/images/Link_grp.png");
+		Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
 		meshRenderer->texture_diffuse = tex1;
 
 		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);

@@ -1,4 +1,5 @@
 lib/*
+!lib/CMakeLists.txt
 !lib/resolve_deps.cmake
 build/
 LynxEngine/build

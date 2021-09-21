@@ -9,14 +9,13 @@ namespace Lynx {
         ThreadPool* pool = worker_s->pool;
         Job n_job;
 
-        printf("[%d] Hello from thread\n", worker_s->id);
-
         {
             std::unique_lock<std::mutex> lock(pool->mutex);
             pool->alive_threads++;
         }
 
-        while (!pool->shouldDestroy) {
+
+        for (;;) {
             printf("[%d] Waiting for jobs\n", worker_s->id);
 
             {
@@ -53,6 +52,7 @@ namespace Lynx {
         printf("[%d] Destroyed\n", worker_s->id);
         
     }
+    
 
     ThreadPool::ThreadPool(int n_threads) : n_threads(n_threads)
     {
@@ -65,10 +65,12 @@ namespace Lynx {
             printf("Created thread %d\n", i);
         }
 
+        printf("Alive thread count : %d\n", alive_threads);
         while(alive_threads != n_threads) {};
         puts("All threads are ready!");
         ready = true;
     }
+
 
     ThreadPool::~ThreadPool()
     {
@@ -88,6 +90,7 @@ namespace Lynx {
         
     }
 
+
     void ThreadPool::PushJob(std::function<void(void*)> func, void* job_args)
     {
         
@@ -95,11 +98,12 @@ namespace Lynx {
 
         printf("Pushing job %d\n", jobs.size());
 
-        jobs.push(Job{func, job_args, jobs.size()});
+        jobs.push(Job{func, job_args, (int)jobs.size()});
         job.notify_one();
 
 
     }
+
 
     void ThreadPool::Wait()
     {

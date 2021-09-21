@@ -2,11 +2,19 @@
 #define RESOURCE_MANAGER_H
 
 #include <iostream>
+#include <future>
 #include <stdio.h>
 #include <memory>
 #include <map>
+#include <unordered_map>
+#include <queue>
+#include <mutex>
+#include "logger.h"
 #include "Graphics/mesh.h"
 #include "Graphics/buffers.h"
+#include "Graphics/shader.h"
+#include "Graphics/texture.h"
+#include "Graphics/cubemap.h"
 
 namespace Lynx {
 
@@ -33,22 +41,40 @@ namespace Lynx {
 	};
 
 	class ResourceManager{
+		private:
+			typedef struct {
+				const char* path;
+				Graphics::Texture tex;
+			} th_texdata;
 		public:
-			ResourceManager(Application* application) : application(application) {}
+			ResourceManager(Application* application) : application(application)
+			{
+				shader_map = std::unordered_map<size_t, Graphics::Shader*>();
+				log_debug("e %d", shader_map.size());
+			}
 			~ResourceManager();
 			void clear();
 
-			template<class T>
-			std::shared_ptr<T> LoadResource(const char* path);
+			void Update(float dt);
+
+			Graphics::Shader* LoadShader(const char* path);
+			Graphics::Shader* LoadShader(const char* vertex_path, const char* fragment_path);
+
+			Graphics::Texture LoadTexture(const char* path);
+			Graphics::Texture FindTexture(const char* path);
 
 			Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);
-			Graphics::Mesh* GetMesh(const char* name);
-
-			std::map<const char*, std::shared_ptr<BaseResource>> ResourceMap;
-			std::map<const char*, Graphics::Mesh*> Meshes;
+			Graphics::Mesh* FindMesh(const char* name);
 
 		private:
 			int lastId;
+			
+			std::unordered_map<size_t, Graphics::Shader*> shader_map;
+			std::unordered_map<size_t, Graphics::Mesh*>   mesh_map;
+			std::unordered_map<size_t, Graphics::Texture> texture_map;
+			std::mutex queue_mutex;
+
+			static void th_loadTex(void* data);
 			const char* getFileName(const char* path);
 			Application* application; // Application reference
 	

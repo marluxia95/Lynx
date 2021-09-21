@@ -1,11 +1,11 @@
 #include <glm/glm.hpp>
 #include "Core/logger.h"
-#include "Core/resourceManager.h"
+#include "Core/application.h"
 #include "cubemap.h"
 #include "texture.h"
 #include "Graphics/rendererAPI.h"
 
-extern Lynx::ResourceManager gResourceManager;
+extern Lynx::Application gApplication;
 
 namespace Lynx::Graphics {
 
@@ -68,7 +68,7 @@ namespace Lynx::Graphics {
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 		log_debug("Loading cubemap shader...");
-	    shader = gResourceManager.LoadResource<Shader>("res/shaders/standard/cubemap.shader");
+	    shader = gApplication.GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
 
 	    int w,h,ch;
         log_debug("Starting to load cubemap textures...");

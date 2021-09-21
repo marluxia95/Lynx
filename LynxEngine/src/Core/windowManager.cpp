@@ -23,6 +23,8 @@ namespace Lynx {
 #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
+
+        log_debug("Creating window object");
         
         if(fullScreen){
             window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);

@@ -113,6 +113,11 @@ namespace Lynx {
             return m_systemManager->GetSystem<T>();
         }
 
+        ResourceManager* GetResourceManager()
+        {
+            return m_resourceManager;
+        }
+
         unsigned int GetResolutionWidth();
         unsigned int GetResolutionHeight();
 
@@ -129,8 +134,8 @@ namespace Lynx {
         std::unique_ptr<ECS::ComponentManager> m_componentManager;
         std::unique_ptr<ECS::SystemManager> m_systemManager;
 		std::unique_ptr<WindowManager> m_windowManager;
-        std::unique_ptr<ResourceManager> m_resourceManager;
         std::unique_ptr<ThreadPool> m_threadPool;
+        ResourceManager* m_resourceManager;
 
 	};
 

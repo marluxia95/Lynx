@@ -11,16 +11,31 @@ namespace Lynx::Graphics {
 
 	static int texcount = 0;
 
-	Texture::Texture(int id, const char* path, const char* name) : BaseResource(id, path, name)
+	Texture::Texture(const char* path) : path(path)
 	{ 
+		LoadFromFile(path);
 		texture = RendererAPI::GenTexture();
+		RendererAPI::BindTexture(texture);	
+	}
+
+	void Texture::use()
+	{
+		if(!IsValid())
+			return;
+		
+		RendererAPI::UseTexture(id);
 		RendererAPI::BindTexture(texture);
+	}
+
+	void Texture::LoadFromFile(const char* path)
+	{
 		log_debug("Loading texture %s", path);
+		tex_data.data = stbi_load(path, &tex_data.width, &tex_data.height, &tex_data.channels, 0);
+	}
 
-		int width, height, channels;
-		unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
-
-		if(data){
+	void Texture::Generate(int tid)
+	{
+		if(tex_data.data){
 			// Wrapping / Filtering settings
 			switch ( IRendererAPI::GetAPI() ){
 				case API_OPENGL:
@@ -30,26 +45,13 @@ namespace Lynx::Graphics {
 					RendererAPI::SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					break;
 			}
-			
-			RendererAPI::LoadTexture(data, width, height,false);
-			id = texcount++;
+			RendererAPI::LoadTexture(tex_data.data, tex_data.width, tex_data.height, false);
+			id = tid;
 			log_debug("Texture id is %d", id);
 		}else{
 			log_error("Unable to load texture %s", path);
 		}
-
-		stbi_image_free(data);
-	}
-
-	void Texture::Destroy()
-	{
-
-	}
-
-	void Texture::use()
-	{
-		RendererAPI::UseTexture(id);
-		RendererAPI::BindTexture(texture);
+		stbi_image_free(tex_data.data);
 	}
 
 	TextureData* loadTexture(const char* path)

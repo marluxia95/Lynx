@@ -55,8 +55,8 @@ namespace Lynx {
             std::atomic<bool> shouldDestroy = false;
             std::atomic<bool> ready = false;
             int n_threads;
-            int alive_threads;
-            int working_threads;
+            int alive_threads = 0;
+            int working_threads = 0;
 
     };
 
