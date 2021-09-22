@@ -27,7 +27,42 @@ externalproject_add(glfw_ext
     URL https://github.com/glfw/glfw/releases/download/3.3.4/glfw-3.3.4.zip
 )
 
+externalproject_add(assimp_ext
+    PREFIX ${DEPS_INCLUDE_DIR}/assimp
+    CMAKE_ARGS -DGLFW_BUILD_TESTS=OFF
+               -DGLFW_BUILD_EXAMPLES=OFF
+               -DGLFW_BUILD_DOCS=OFF
+               -DGLFW_INSTALL=ON
+               -DBUILD_SHARED_LIBS=OFF
+               -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+    UPDATE_COMMAND ""
+    UPDATE_DISCONNECTED 1
+    URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
+)
+
+IF(UNIX)
 add_library(glfw STATIC IMPORTED GLOBAL)
 set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libglfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
+
+add_library(assimp STATIC IMPORTED GLOBAL)
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libassimp${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+ENDIF(UNIX)
+
+IF(WIN32)
+add_library(glfw STATIC IMPORTED GLOBAL)
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}glfw3${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_library(assimp STATIC IMPORTED GLOBAL)
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}assimp${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+ENDIF(WIN32)
+
+
+

@@ -21,14 +21,20 @@ target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib
 find_package(OpenGL REQUIRED)
 #find_package(glfw3 3.3 REQUIRED)
 
-include(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/findGLEW.cmake
-)
-
-find_package(ASSIMP REQUIRED)
-if(ASSIMP_FOUND)
-    include_directories(${ASSIMP_INCLUDE_DIR})
-endif() 
+if(UNIX)
+find_package(GLEW REQUIRED)
+if (GLEW_FOUND)
+    include_directories(${GLEW_INCLUDE_DIRS})
+    link_libraries(${GLEW_LIBRARIES})
+endif()
+elseif(WIN32)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+list(APPEND CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+find_library(GLEW_LIBRARY NAMES GLEW glew32 glew glew32s PATH_SUFFIXES lib64)
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+link_libraries(${GLEW_LIBRARIES})
+endif()
 
 include_directories( 
     LynxEngine
@@ -53,7 +59,7 @@ target_link_libraries(
     ${ASSIMP_LIBRARY}
 )
 
-add_dependencies(LynxEngine glfw_ext)
+add_dependencies(LynxEngine glfw_ext assimp_ext)
 
 install(TARGETS LynxEngine
     LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/bin

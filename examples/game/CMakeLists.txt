@@ -22,15 +22,6 @@ target_include_directories(Game PRIVATE ${LIBS})
 find_package(OpenGL REQUIRED)
 #find_package(glfw3 3.3 REQUIRED)
 
-include(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/cmake/findGLEW.cmake
-)
-
-find_package(ASSIMP REQUIRED)
-if(ASSIMP_FOUND)
-    include_directories(${ASSIMP_INCLUDE_DIR})
-endif() 
-
 include_directories( 
     Game
 
@@ -56,7 +47,7 @@ target_link_libraries(
     ${ASSIMP_LIBRARY}
 )
 
-add_dependencies(Game glfw_ext)
+add_dependencies(Game glfw_ext assimp_ext)
 
 install(TARGETS Game RUNTIME DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
