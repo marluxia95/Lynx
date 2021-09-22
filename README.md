@@ -4,6 +4,7 @@ Just a simple game engine made in C++ and OpenGL.
 
 Link model is from here `https://www.models-resource.com/nintendo_64/`
 
+NOTE: Current version is unstable and will probably not compile properly, please download the latest stable release from the `Releases` tab. 
 ## Features
 
 - Model Loading
@@ -34,20 +35,17 @@ GLM
 Assimp
 ```
 
+However, it is not necessary to install them, since it will download and build them automatically.
+
 ## Building
 
 ### Linux
 
-#### Installing Dependencies
-
-You can either build it or install it via APT as it is shown here:
-```bash 
-sudo apt install libglfw3-dev libglew-dev libassimp-dev
-```
-
-#### Building
-In order to build the project, run `chmod +x build_LINUX.sh` and `./build_LINUX.sh`, it will automatically download and check libraries. Once done that, you can build it by running `cmake ..` and `make` in the `Build` folder.
+Create a build folder then run `cmake ..` then run `make install` or `make -j8 install` if you want to use more than 1 thread for building.
+NOTE : `make install` won't install the program into your system, it will just create the necessary folders inside the `build` folder.
 
 ### Windows
  
-There's no support for windows, yet.
+To build the project on Windows, you need cmake and visual studio ( 2019 recommended ).
+
+Create a build folder then run `cmake ..`, it will generate a visual studio solution file, then open the `INSTALL` project with visual studio and press on build. 
