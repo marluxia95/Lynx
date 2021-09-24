@@ -1,6 +1,5 @@
 
 #include <stdio.h>
-
 #include "resourceManager.h"
 #include "logger.h"
 #include "Graphics/shader.h"
@@ -8,6 +7,11 @@
 #include "application.h"
 
 namespace Lynx {
+
+ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
+{
+	
+}
 
 ResourceManager::~ResourceManager() 
 {
@@ -18,8 +22,6 @@ ResourceManager::~ResourceManager()
 void ResourceManager::clear() 
 {
 	log_debug("Cleaning resources");
-
-	
 
 	for(auto const& rm : mesh_map){
 		delete rm.second;
@@ -61,7 +63,7 @@ Graphics::Shader* ResourceManager::LoadShader(const char* vertex_path, const cha
 	std::string name = std::string(vertex_path);
 	name.append(std::string(fragment_path));
 	const size_t name_hash = std::hash<std::string>{}(name);
-
+	
 
 }
 
@@ -87,7 +89,7 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 	Graphics::Texture n_texture;
 
 	th_texdata data = {path, n_texture};
-	application->m_threadPool->PushJob(th_loadTex,&data);
+	thpool->PushJob(th_loadTex,&data);
 	
 	return texture_map[name] = n_texture;
 }

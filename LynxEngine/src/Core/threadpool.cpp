@@ -93,7 +93,6 @@ namespace Lynx {
 
     void ThreadPool::PushJob(std::function<void(void*)> func, void* job_args)
     {
-        
         std::unique_lock<std::mutex> lock(mutex);
 
         printf("Pushing job %d\n", jobs.size());

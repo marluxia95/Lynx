@@ -35,6 +35,16 @@
 
 namespace Lynx {
 
+    Application::Application()
+    {
+        log_debug("Initializing subsystems");
+        m_threadPool = std::make_shared<ThreadPool>(3);
+        m_resourceManager = std::make_shared<ResourceManager>(m_threadPool.get());
+        m_entityManager = std::make_unique<ECS::EntityManager>();
+        m_componentManager = std::make_unique<ECS::ComponentManager>();
+        m_systemManager = std::make_unique<ECS::SystemManager>();
+    }
+
     Application::~Application()
     {
         m_threadPool->Wait();
@@ -49,13 +59,6 @@ namespace Lynx {
             m_windowManager->Init(title, width, height, true);
         else
             m_windowManager->Init(title, width, height, false);
-
-        log_debug("Initializing subsystems");
-        m_threadPool = std::make_unique<ThreadPool>(3);
-        m_resourceManager = new ResourceManager(this);
-        m_entityManager = std::make_unique<ECS::EntityManager>();
-        m_componentManager = std::make_unique<ECS::ComponentManager>();
-        m_systemManager = std::make_unique<ECS::SystemManager>();
 
         log_debug("Initializing renderer API");
         Graphics::RendererAPI::Init();

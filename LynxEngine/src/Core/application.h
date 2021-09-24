@@ -35,6 +35,7 @@ namespace Lynx {
 	
 	class Application {
     public:
+        Application();
 		~Application();
 
         void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, int flags = 0);
@@ -109,13 +110,13 @@ namespace Lynx {
         }
 
         template<typename T>
-        std::shared_ptr<T> GetSystem(){
-            return m_systemManager->GetSystem<T>();
+        T* GetSystem(){
+            return m_systemManager->GetSystem<T>().get();
         }
 
         ResourceManager* GetResourceManager()
         {
-            return m_resourceManager;
+            return m_resourceManager.get();
         }
 
         unsigned int GetResolutionWidth();
@@ -134,9 +135,8 @@ namespace Lynx {
         std::unique_ptr<ECS::ComponentManager> m_componentManager;
         std::unique_ptr<ECS::SystemManager> m_systemManager;
 		std::unique_ptr<WindowManager> m_windowManager;
-        std::unique_ptr<ThreadPool> m_threadPool;
-        ResourceManager* m_resourceManager;
-
+        std::shared_ptr<ThreadPool> m_threadPool;
+        std::shared_ptr<ResourceManager> m_resourceManager;
 	};
 
 }
