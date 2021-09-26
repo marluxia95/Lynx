@@ -8,6 +8,7 @@ namespace Lynx::ECS {
 
     class ParentingSystem : public System {
         public:
+            ParentingSystem(Scene* scene) : System(scene) {}
             void Init();
             void Update();
     };

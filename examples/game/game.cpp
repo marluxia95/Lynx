@@ -12,11 +12,7 @@
 #include "Graphics/cubemap.h"
 #include "Graphics/terrain.h"
 
-
 using namespace Lynx;
-
-// Initialize global variables
-Application gApplication;
 
 float camera_Speed_Multiplier = 0.0f;
 bool firstMouse = true;
@@ -26,13 +22,16 @@ float mPitch, mYaw;
 bool mouseActive = false;
 char title[40];
 Entity camera;
+Scene* scene;
+GameApplication* applicationInstance;
 
 void movement()
 {
-	auto transformComponent = gApplication.GetComponent<Transform>(camera);
-	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
+	Lynx::GameApplication* applicationInstance = GameApplication::GetGameInstance();
+	auto transformComponent = scene->GetComponent<Transform>(camera);
+	auto cameraComponent = scene->GetComponent<Camera>(camera);
 
-	float cameraSpeed = 20.5f * gApplication.delta_time * camera_Speed_Multiplier;
+	float cameraSpeed = 20.5f * applicationInstance->delta_time * camera_Speed_Multiplier;
 
 	if (Input::IsKeyDown(GLFW_KEY_W))
         transformComponent->position += cameraSpeed * transformComponent->rotation;
@@ -55,8 +54,8 @@ void movement()
 
 void mouse_input()
 {
-	auto transformComponent = gApplication.GetComponent<Transform>(camera);
-	auto cameraComponent = gApplication.GetComponent<Camera>(camera);
+	auto transformComponent = scene->GetComponent<Transform>(camera);
+	auto cameraComponent = scene->GetComponent<Camera>(camera);
 
 
 	double xpos;
@@ -112,10 +111,10 @@ void mouse_button_input(const Event& ev)
 	const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
 	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2 && button_event.m_action == GLFW_PRESS){
 		mouseActive = true;
-		glfwSetInputMode(gApplication.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(GameApplication::GetGameInstance()->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}else if(button_event.m_action == GLFW_RELEASE){
 		mouseActive = false;
-		glfwSetInputMode(gApplication.GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(GameApplication::GetGameInstance()->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 }
 
@@ -135,8 +134,8 @@ void joystick_disconnected(const Event& ev)
 
 void Update(const Event& ev)
 {
-	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/gApplication.delta_time), log_geterrorcount());
-	glfwSetWindowTitle(gApplication.GetWindow(), title);
+	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->delta_time), log_geterrorcount());
+	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
 	mouse_input();
 	movement();
 }
@@ -145,8 +144,8 @@ vector<Entity>* getChildren(Entity parent)
 {
 	vector<Entity>* ents = new vector<Entity>();
 	LYNX_ASSERT(parent != NULL, "Parent must be a valid entity !");
-	for(int e = 0; e < gApplication.GetEntityCount(); e++){
-		if(gApplication.GetComponent<Parent>(e)->parentEntity == parent){
+	for(int e = 0; e < scene->GetEntityCount(); e++){
+		if(scene->GetComponent<Parent>(e)->parentEntity == parent){
 			ents->push_back(e);
 		}
 	}
@@ -161,21 +160,21 @@ int main()
 
 	log_debug("Adding initial events...");
 
-	auto resourceManager = gApplication.GetResourceManager();
+	applicationInstance = new GameApplication();
+	scene = applicationInstance->CreateScene();
 
-	// Initialize all default components and systems
-	EventManager::AddListener(EngineInit, [](const Event& ev) {
-		gApplication.LoadDefaultComponents();
-		gApplication.LoadDefaultSystems();
+	auto resourceManager = applicationInstance->GetResourceManager();
 
-		gApplication.RegisterSystem<RenderSystem>();
-		{
-			Signature signature;
-			signature.set(gApplication.GetComponentType<Transform>());
-			signature.set(gApplication.GetComponentType<MeshRenderer>());
-			gApplication.SetSystemSignature<RenderSystem>(signature);
-		}
-	});
+	applicationInstance->LoadDefaultComponents();
+	applicationInstance->LoadDefaultSystems();
+
+	applicationInstance->RegisterSystem<RenderSystem>();
+	{
+		Signature signature;
+		signature.set(applicationInstance->GetComponentType<Transform>());
+		signature.set(applicationInstance->GetComponentType<MeshRenderer>());
+		applicationInstance->SetSystemSignature<RenderSystem>(signature);
+	}
 
 	EventManager::AddListener(UpdateTick, Update);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
@@ -183,15 +182,15 @@ int main()
 	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
 	// Initialize window in windowed mode
-	gApplication.Init("Example", 1920, 1080, false);
+	applicationInstance->Init("Example", 1920, 1080, false);
 
 	log_debug("Loading resources");
 	Graphics::Shader* shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
 
-	Entity link = ModelLoader::loadModel("res/models/link_adult.obj", shader);
+	Entity link = ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
 	{
 		vector<Entity>* chl = getChildren(link);
-		MeshRenderer* meshRenderer = gApplication.GetComponent<MeshRenderer>(chl->at(0));
+		MeshRenderer* meshRenderer = scene->GetComponent<MeshRenderer>(chl->at(0));
 		meshRenderer->ambient = glm::vec3(0.1f);
 		meshRenderer->diffuse = glm::vec3(0.0f);
 		meshRenderer->specular = glm::vec3(1.0f);
@@ -199,16 +198,16 @@ int main()
 		Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
 		meshRenderer->texture_diffuse = tex1;
 
-		gApplication.GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
-		gApplication.GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
+		scene->GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
+		scene->GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
 		delete chl;
 	}
 
-	Entity lightEnt = gApplication.CreateEntity("Light");
-	gApplication.AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
-	gApplication.AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
+	Entity lightEnt = scene->CreateEntity("Light");
+	scene->AddComponent(lightEnt, Transform{ glm::vec3(2,0,2), glm::vec3(0), glm::vec3(1) });
+	scene->AddComponent(lightEnt, PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
-	auto directionalLight = gApplication.GetComponent<DirectionalLight>(gApplication.GetSystem<RenderSystem>()->directionalLight);
+	auto directionalLight = scene->GetComponent<DirectionalLight>(applicationInstance->GetSystem<RenderSystem>()->directionalLight);
 	directionalLight->direction = glm::vec3(-1.0f, 0.0f, 0.0f);
 	directionalLight->ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -234,12 +233,13 @@ int main()
 		"res/images/cubemap/back.jpg"
 	};
 
-	Graphics::Cubemap* map = new Graphics::Cubemap(&map_textures);
-	gApplication.GetSystem<RenderSystem>()->SetCubemap(map);	
+	Graphics::Cubemap* map = new Graphics::Cubemap();
+	map->Load(&map_textures);
+	applicationInstance->GetSystem<RenderSystem>()->SetCubemap(map);	
 	
 
 	// Runs the gApplication
-	gApplication.Run();
+	applicationInstance->Run();
 	//delete map;
 	return 0;
 }

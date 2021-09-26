@@ -19,11 +19,11 @@ namespace Lynx::ECS{
     void ParentingSystem::Update()
     {
         for ( auto const ent : entities ) {
-            auto transform = gApplication.GetComponent<Transform>(ent);
-            auto parentEntity = gApplication.GetComponent<Parent>(ent)->parentEntity;
+            auto transform = scene->GetComponent<Transform>(ent);
+            auto parentEntity = scene->GetComponent<Parent>(ent)->parentEntity;
 
             // Copy the transform properties from the parent entity
-            transform = gApplication.GetComponent<Transform>(parentEntity); 
+            transform = scene->GetComponent<Transform>(parentEntity); 
         }
     }
 }

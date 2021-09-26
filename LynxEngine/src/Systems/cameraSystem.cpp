@@ -12,8 +12,6 @@
 
 using namespace glm;
 
-extern Lynx::Application gApplication;
-
 namespace Lynx {
 
 void CameraSystem::Init()
@@ -25,7 +23,7 @@ void CameraSystem::CalculateProjections()
 {
 	for ( auto const& entity : entities )
 	{
-		auto camera_component = gApplication.GetComponent<Camera>(entity);
+		auto camera_component = scene->GetComponent<Camera>(entity);
 			
 		camera_component->projection = GetProjection(camera_component);
 	}
@@ -35,7 +33,7 @@ void CameraSystem::Update()
 {
 	for ( auto const& entity : entities )
 	{
-		auto camera_component = gApplication.GetComponent<Camera>(entity);
+		auto camera_component = scene->GetComponent<Camera>(entity);
 
 		camera_component->view = GetView(entity, camera_component);
 	}
@@ -43,7 +41,7 @@ void CameraSystem::Update()
 
 mat4 CameraSystem::GetView(Entity entity, Camera* camera) 
 {
-	auto transform = gApplication.GetComponent<Transform>(entity);
+	auto transform = scene->GetComponent<Transform>(entity);
 	mat4 view = mat4(1.0f);
 	view = lookAt(transform->position, transform->position + transform->rotation, camera->up);
 	return view;

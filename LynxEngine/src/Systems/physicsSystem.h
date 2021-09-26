@@ -12,6 +12,7 @@ namespace Lynx {
 class PhysicsSystem : public ECS::System {
 	
 	public:
+		PhysicsSystem(Scene* scene) : ECS::System(scene) {}
 		void Init();
 		void Update();
 		vec3 gravityForce = vec3(0, -3.0f,0);

@@ -32,6 +32,37 @@ void ResourceManager::clear()
 	}
 }
 
+void ResourceManager::Update(float dt)
+{
+	if(!texdata_queue.empty()) {
+		th_texdata* data;
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+			data = texdata_queue.front();
+			texdata_queue.pop();
+		}
+		data->tex->Generate(lastId);
+	}
+
+	if(!texdata_raw_queue.empty()) {
+		th_texdata_raw* data;
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+			data = texdata_raw_queue.front();
+			texdata_raw_queue.pop();
+		}
+		if(data->baseTexture->GetTextureType() == Graphics::TEXTURE_CUBEMAP) {
+			gpuUploadCubemapTexture(data);
+		}
+	}
+}
+
+void ResourceManager::gpuUploadCubemapTexture(th_texdata_raw* data)
+{
+	Graphics::CubemapTexture* cubemap_tex = (Graphics::CubemapTexture*)data->baseTexture;
+
+	cubemap_tex->Generate(data->texdata);
+}
 
 const char* ResourceManager::getFileName(const char* path)
 {
@@ -67,17 +98,6 @@ Graphics::Shader* ResourceManager::LoadShader(const char* vertex_path, const cha
 
 }
 
-
-void ResourceManager::th_loadTex(void* data)
-{
-	char* path = (char*)data;
-
-	Graphics::Texture texture;
-	texture.LoadFromFile(path);
-	return;
-}
-
-
 Graphics::Texture ResourceManager::LoadTexture(const char* path)
 {
 	auto texture = FindTexture(path);
@@ -88,12 +108,62 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 
 	Graphics::Texture n_texture;
 
-	th_texdata data = {path, n_texture};
-	thpool->PushJob(th_loadTex,&data);
+	th_texdata data = {path, &n_texture};
+	thpool->PushJob([this](void* data){
+		th_texdata* tdata = (th_texdata*)data;
+
+		tdata->tex->Load(tdata->path);
+
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+			texdata_queue.push(tdata);
+		}
+		return;
+	}, &data);
 	
 	return texture_map[name] = n_texture;
 }
 
+Graphics::TextureData* ResourceManager::AsyncLoadTextureData(const char* path, Graphics::TextureBase* baseTexture)
+{
+	std::string name = std::string(path);
+
+	Graphics::TextureData* n_texture_data;
+
+	th_texdata_raw data = {path, n_texture_data, baseTexture};
+	thpool->PushJob([this](void* data){
+		th_texdata_raw* tdata = (th_texdata_raw*)data;
+
+		tdata->texdata = Graphics::loadTexture(tdata->path);;
+		{
+			std::unique_lock<std::mutex> lock(queue_mutex);
+			texdata_raw_queue.push(tdata);
+		}
+	}, &data);
+	return n_texture_data;
+}
+
+Graphics::CubemapTexture* ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
+{
+	Graphics::CubemapTexture* ctex = new Graphics::CubemapTexture();
+	for(int x = 0; x < textures->size(); x++) {
+		auto path = textures->at(x);
+
+		Graphics::TextureData* n_texture_data;
+
+		th_texdata_raw data = {path, n_texture_data, ctex};
+		thpool->PushJob([this](void* data){
+			th_texdata_raw* tdata = (th_texdata_raw*)data;
+
+			tdata->texdata = Graphics::loadTexture(tdata->path);
+			{
+				std::unique_lock<std::mutex> lock(queue_mutex);
+				texdata_raw_queue.push(tdata);
+			}
+		}, &data);
+	}
+	return ctex;
+}
 
 Graphics::Texture ResourceManager::FindTexture(const char* path)
 {

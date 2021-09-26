@@ -31,7 +31,8 @@ namespace Lynx {
             static bool IsKeyUp(int keycode);
             static glm::dvec2 GetMousePos();
             
-        friend class Application;
+            friend class Application;
+            friend class GameApplication;
         private:
             static void Init();
             static void joystick_callback(int id, int ev);

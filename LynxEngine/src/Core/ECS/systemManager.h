@@ -6,10 +6,12 @@
 #include <unordered_map>
 #include "entity.h"
 #include "system.h"
+#include "Core/scene.h"
 #include "Core/assert.h"
 #include "Core/logger.h"
 
 namespace Lynx::ECS {
+	
 	class SystemManager {
 	public:
 		/*
@@ -21,7 +23,7 @@ namespace Lynx::ECS {
 			log_debug("SystemManager : Registering system %s ", typeName);
 			LYNX_ASSERT(systems.find(typeName) == systems.end(), "System already exists");
 
-			auto system = std::make_shared<T>();
+			auto system = std::make_shared<T>(scene);
 			systems.insert({ typeName, system });
 			return system;
 		}	
@@ -97,9 +99,17 @@ namespace Lynx::ECS {
 				system.second->Update();
 			}
 		}
+
+		void SetScene(Lynx::Scene* scene) {
+			scene = scene;
+			for (auto const& system : systems) {
+				system.second->SetScene(scene);
+			}
+		}
 	private:
 		std::unordered_map<const char*, Signature> signatures = {};
 		std::unordered_map<const char*, std::shared_ptr<System>> systems = {};
+		Lynx::Scene* scene;
 	};
 }
 

@@ -1,33 +1,34 @@
+#include "Core/application.h"
 #include "model.h"
 
-using namespace std;
+namespace Lynx {
 
-extern Lynx::Application gApplication;
 
-namespace Lynx::ModelLoader {
 
-Entity loadModel(const char* path, Graphics::Shader* shader)
+Entity ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* shader)
 {
 	Assimp::Importer importer;
-	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+	const aiScene *ai_scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+	Application* applicationInstance = Lynx::Application::GetInstance();
 	
-	if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
+	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode) 
 	{
 		log_error("Error while loading model %s \n", importer.GetErrorString());
 		return NULL;
 	}
 
-	Entity parentEnt = gApplication.CreateEntity(path);
+	Entity parentEnt = scene->CreateEntity(path);
 	
-	gApplication.AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
+	scene->AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
 
-	processNode(parentEnt, path, shader, scene->mRootNode, scene);
+	processNode(scene, parentEnt, path, shader, ai_scene->mRootNode, ai_scene);
 
 	return parentEnt;
 }
 
-void processMesh(Entity meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh, const aiScene* scene)
+void ModelLoader::processMesh(Scene* scene, Entity meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh)
 {
+	Application* applicationInstance = Lynx::Application::GetInstance();
 	vector<Graphics::Vertex>* vertices = new vector<Graphics::Vertex>();
 	vector<unsigned int>* indices = new vector<unsigned int>();
 	log_debug("Starting to process mesh");
@@ -69,32 +70,33 @@ void processMesh(Entity meshEntity, const char* path, Graphics::Shader* meshShad
 		}
 	}  
 	log_debug("Indices processed");
-	gApplication.AddComponent<MeshRenderer>(meshEntity, 
+	scene->AddComponent<MeshRenderer>(meshEntity, 
 	MeshRenderer{glm::vec3(0.0f), 
 	glm::vec3(0.0f), 
 	glm::vec3(0.0f), 
 	0.0f, 
-	gApplication.GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
+	GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
 }
 
 
-void processNode(Entity parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* scene)
+void ModelLoader::processNode(Scene* scene, Entity parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene)
 {
-	if(scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}
+	Application* applicationInstance = Lynx::Application::GetInstance();
+	if(ai_scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		
-		aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
-		Entity meshEntity = gApplication.CreateEntity(mesh->mName.C_Str());
-		gApplication.AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
-		gApplication.AddComponent<Parent>(meshEntity, Parent{parentEntity});
-		//gApplication.GetComponent<Generic>(meshEntity)->isChild = true;
-		processMesh(meshEntity, path, shader, mesh, scene);
+		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
+		Entity meshEntity = scene->CreateEntity(mesh->mName.C_Str());
+		scene->AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
+		scene->AddComponent<Parent>(meshEntity, Parent{parentEntity});
+		//applicationInstance->GetComponent<Generic>(meshEntity)->isChild = true;
+		processMesh(scene, meshEntity, path, shader, mesh);
 	}
 
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		processNode(parentEntity, path, shader, node->mChildren[i], scene);
+		processNode(scene, parentEntity, path, shader, node->mChildren[i], ai_scene);
 	}
 }
 

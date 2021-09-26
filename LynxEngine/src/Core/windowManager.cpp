@@ -66,6 +66,7 @@ namespace Lynx {
     void WindowManager::Update()
     {
         glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     void WindowManager::Destroy()

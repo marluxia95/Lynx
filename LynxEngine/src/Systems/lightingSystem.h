@@ -8,6 +8,7 @@ namespace Lynx {
 
 class LightingSystem : public ECS::System {
     public:
+        LightingSystem(Scene* scene) : ECS::System(scene) {}
         void Init() {};
         void Update() {};
 

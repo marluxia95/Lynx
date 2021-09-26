@@ -9,27 +9,46 @@ namespace Lynx::Graphics {
 	typedef struct {
 		int width, height, channels;
 		unsigned char* data;
+		const char* path;
 	} TextureData;
 
-	class Texture {
+	enum TextureType {
+		TEXTURE_DEFAULT,
+		TEXTURE_CUBEMAP
+	};
+
+	class TextureBase {
+		public:
+			TextureBase(TextureType type) : id(-1), type(type) {}
+			virtual void Use() = 0;
+
+			bool IsValid() { return id != -1; }
+			
+			unsigned int GetTextureID() { return texture; }
+			int GetID() { return id; }
+			TextureType GetTextureType() { return type; }
+
+
+		protected:
+			TextureType type;
+			unsigned int texture = 0;
+			const char* path;
+			int id;
+	};
+
+	class Texture : public TextureBase {
 	public:
-		Texture() : id(-1) {}
+		Texture() : TextureBase(TEXTURE_DEFAULT) { }
 		Texture(const char* path);
 		
-		void LoadFromFile(const char* path);
+		void Load(const char* path);
 		void Generate(int tid);
+		void Use();
 
-		bool IsValid() { return id != -1; }
 		
-		void use();
-
-		unsigned int GetTextureID() { return texture; }
-		int GetID() { return id; }
 	private:
-		unsigned int texture = 0;
-		const char* path;
-		int id;
 		TextureData tex_data;
+	
 	};
 
 	TextureData* loadTexture(const char* path);

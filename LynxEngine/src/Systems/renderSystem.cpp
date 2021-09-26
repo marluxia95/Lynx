@@ -10,6 +10,7 @@
 #include "Core/windowManager.h"
 #include "Core/logger.h"
 
+#include "Core/application.h"
 #include "Core/ECS/components.h"
 
 #include "renderSystem.h"
@@ -18,25 +19,24 @@
 
 using namespace glm;
 
-extern Lynx::Application gApplication;
-
 namespace Lynx {
     
     void RenderSystem::Init()
     {
+        Lynx::GameApplication* applicationInstance = Lynx::GameApplication::GetGameInstance();
         log_debug("Creating Main Camera");
-        cameraEntity = gApplication.CreateEntity("Main camera");
-        const auto& mCameraSystem = gApplication.GetSystem<CameraSystem>();
+        cameraEntity = scene->CreateEntity("Main camera");
+        const auto& mCameraSystem = applicationInstance->GetSystem<CameraSystem>();
         
-        gApplication.AddComponent(cameraEntity, Transform{
+        scene->AddComponent(cameraEntity, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
-        gApplication.AddComponent(cameraEntity, Camera{
+        scene->AddComponent(cameraEntity, Camera{
             60, // Field of view
-            vec2(gApplication.GetResolutionWidth(), gApplication.GetResolutionHeight()), // Resolution
+            vec2(applicationInstance->GetResolutionWidth(), applicationInstance->GetResolutionHeight()), // Resolution
             CAMERA_PERSPECTIVE, // Camera type
             true, // Is it a main camera ?
             vec3(0.0f,1.0f,0.0f)   // Up vector
@@ -44,15 +44,15 @@ namespace Lynx {
 
         mCameraSystem->CalculateProjections();
 
-        directionalLight = gApplication.CreateEntity("Directional Light");
+        directionalLight = scene->CreateEntity("Directional Light");
 
-        gApplication.AddComponent(directionalLight, Transform{
+        scene->AddComponent(directionalLight, Transform{
             glm::vec3(0), 
             glm::vec3(0), 
             glm::vec3(0)
         });
 
-        gApplication.AddComponent(directionalLight, DirectionalLight{
+        scene->AddComponent(directionalLight, DirectionalLight{
             glm::vec3(-1.0f, 0.0f, 0.0f),
             glm::vec3(1.0f),
             glm::vec3(1.0f),
@@ -69,14 +69,15 @@ namespace Lynx {
 
     void RenderSystem::Update()
     {
-        const auto& mCameraComponent = gApplication.GetComponent<Camera>(cameraEntity);
-        const auto& mCameraTransform = gApplication.GetComponent<Transform>(cameraEntity);
-        const auto& mDirLightComponent = gApplication.GetComponent<DirectionalLight>(directionalLight);
-        const auto& mLightingSystem = gApplication.GetSystem<LightingSystem>();
+        Lynx::GameApplication* applicationInstance = Lynx::GameApplication::GetGameInstance();
+        const auto& mCameraComponent = scene->GetComponent<Camera>(cameraEntity);
+        const auto& mCameraTransform = scene->GetComponent<Transform>(cameraEntity);
+        const auto& mDirLightComponent = scene->GetComponent<DirectionalLight>(directionalLight);
+        const auto& mLightingSystem = applicationInstance->GetSystem<LightingSystem>();
 
         for (auto const& entity : entities) {
-            const auto& mTransform = gApplication.GetComponent<Transform>(entity);
-            const auto& mRenderComponent = gApplication.GetComponent<MeshRenderer>(entity);
+            const auto& mTransform = scene->GetComponent<Transform>(entity);
+            const auto& mRenderComponent = scene->GetComponent<MeshRenderer>(entity);
 
             if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
 
@@ -100,8 +101,8 @@ namespace Lynx {
 				// Set lighting shader values
 				int i = 0;
 				for (auto lightEnt : mLightingSystem->entities){
-					auto lightComponent = gApplication.GetComponent<PointLight>(lightEnt);
-                    auto transform = gApplication.GetComponent<Transform>(lightEnt);
+					auto lightComponent = scene->GetComponent<PointLight>(lightEnt);
+                    auto transform = scene->GetComponent<Transform>(lightEnt);
 					char buffer[64];
                     
 					sprintf(buffer, "pointLights[%d].position", i);
@@ -126,7 +127,7 @@ namespace Lynx {
                     if(mRenderComponent->texture_diffuse.IsValid()){
                         mRenderComponent->shader->SetUniform("diffuse_map", true);
                         mRenderComponent->shader->SetUniform("material.diffuse_tex", 0);
-                        mRenderComponent->texture_diffuse.use();
+                        mRenderComponent->texture_diffuse.Use();
                     }else{
                         mRenderComponent->shader->SetUniform("diffuse_map", false);
                     }
@@ -134,7 +135,7 @@ namespace Lynx {
                     if(mRenderComponent->texture_specular.IsValid()){
                         mRenderComponent->shader->SetUniform("specular_map", true);
                         mRenderComponent->shader->SetUniform("material.specular_tex", 0);
-                        mRenderComponent->texture_specular.use();
+                        mRenderComponent->texture_specular.Use();
                     }else{
                         mRenderComponent->shader->SetUniform("specular_map", false);
                     }
@@ -155,7 +156,7 @@ namespace Lynx {
             
             // Check if mesh has a texture, if so, render it
             if(mRenderComponent->texture.IsValid()){    
-                mRenderComponent->texture.use();
+                mRenderComponent->texture.Use();
             }   
 
             mRenderComponent->mesh->VAO->Bind();

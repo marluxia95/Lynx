@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 #include "Core/ECS/system.h"
 
 using namespace glm;
@@ -29,6 +28,7 @@ namespace Lynx {
 
 	class CameraSystem : public ECS::System {
 		public:
+			CameraSystem(Scene* scene) : ECS::System(scene) {}
 			void Init();
 			void Update();
 			void CalculateProjections();

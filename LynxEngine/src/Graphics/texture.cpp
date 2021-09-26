@@ -11,14 +11,14 @@ namespace Lynx::Graphics {
 
 	static int texcount = 0;
 
-	Texture::Texture(const char* path) : path(path)
+	Texture::Texture(const char* path) : TextureBase(TEXTURE_DEFAULT)
 	{ 
-		LoadFromFile(path);
+		Load(path);
 		texture = RendererAPI::GenTexture();
 		RendererAPI::BindTexture(texture);	
 	}
 
-	void Texture::use()
+	void Texture::Use()
 	{
 		if(!IsValid())
 			return;
@@ -27,7 +27,7 @@ namespace Lynx::Graphics {
 		RendererAPI::BindTexture(texture);
 	}
 
-	void Texture::LoadFromFile(const char* path)
+	void Texture::Load(const char* path)
 	{
 		log_debug("Loading texture %s", path);
 		tex_data.data = stbi_load(path, &tex_data.width, &tex_data.height, &tex_data.channels, 0);

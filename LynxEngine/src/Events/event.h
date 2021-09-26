@@ -4,13 +4,14 @@
 #include <unordered_map>
 #include <any>
 #include <vector>
+#include "Core/ECS/entity.h"
 
 namespace Lynx {
 
     enum EventType {
         None = 0,
         WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed, JoystickConnected, JoystickDisconnected,
-        LastTick, UpdateTick, EngineInit, Render
+        LastTick, UpdateTick, EngineInit, SignatureChanged, EntityDestroyed, Render
     };
 
     class Event {
@@ -48,6 +49,20 @@ namespace Lynx {
     class RenderEvent : public Event {
         public: 
             RenderEvent() : Event(Render) {}
+    };
+
+    class SignatureChangedEvent : public Event {
+        public:
+            SignatureChangedEvent(Entity entity, Signature signature) : Event(SignatureChanged), entity(entity), signature(signature) {}
+
+            Entity entity;
+            Signature signature;
+    };
+
+    class EntityDestroyedEvent : public Event {
+        public:
+            EntityDestroyedEvent(Entity entity) : Event(EntityDestroyed), entity(entity) {}
+            Entity entity;
     };
 
 }
