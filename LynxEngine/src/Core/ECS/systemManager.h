@@ -23,7 +23,7 @@ namespace Lynx::ECS {
 			log_debug("SystemManager : Registering system %s ", typeName);
 			LYNX_ASSERT(systems.find(typeName) == systems.end(), "System already exists");
 
-			auto system = std::make_shared<T>(scene);
+			auto system = std::make_shared<T>(m_scene);
 			systems.insert({ typeName, system });
 			return system;
 		}	
@@ -101,7 +101,7 @@ namespace Lynx::ECS {
 		}
 
 		void SetScene(Lynx::Scene* scene) {
-			scene = scene;
+			m_scene = scene;
 			for (auto const& system : systems) {
 				system.second->SetScene(scene);
 			}
@@ -109,7 +109,7 @@ namespace Lynx::ECS {
 	private:
 		std::unordered_map<const char*, Signature> signatures = {};
 		std::unordered_map<const char*, std::shared_ptr<System>> systems = {};
-		Lynx::Scene* scene;
+		Lynx::Scene* m_scene;
 	};
 }
 

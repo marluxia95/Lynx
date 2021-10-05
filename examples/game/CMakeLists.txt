@@ -39,6 +39,7 @@ include_directories(
 target_link_libraries(
     Game
 
+    #"${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_MODULE_PREFIX}LynxEngine${CMAKE_SHARED_LIBRARY_SUFFIX}"
     LynxEngine
     glfw
     assimp

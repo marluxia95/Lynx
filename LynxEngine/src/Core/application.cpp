@@ -35,6 +35,9 @@
 
 namespace Lynx {
 
+    Application* Application::s_applicationInstance = nullptr;
+    GameApplication* GameApplication::gameApplicationInstance = nullptr;
+
     Application::Application()
     {
         log_debug("Initializing subsystems");
@@ -184,6 +187,7 @@ namespace Lynx {
     {
         scene = new Scene(m_componentManager.get());
         m_systemManager->SetScene(scene);
+        log_debug("Successfully created scene");
         return scene;
     }
 

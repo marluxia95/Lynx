@@ -8,6 +8,9 @@ set(GLEW_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 endif()
 
+link_directories( ${CMAKE_BINARY_DIR}/lib )
+link_directories( ${CMAKE_BINARY_DIR}/bin )
+
 file(COPY res DESTINATION ${CMAKE_BINARY_DIR})
 
 add_subdirectory(lib)
