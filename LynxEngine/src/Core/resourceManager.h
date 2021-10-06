@@ -63,7 +63,7 @@ namespace Lynx {
 			std::unordered_map<std::string, Graphics::Texture> texture_map = {};
 
 			std::queue<th_texdata*> texdata_queue;
-			std::queue<th_texdata_raw*> texdata_raw_queue;
+			std::queue<th_texdata_raw> texdata_raw_queue;
 			std::mutex queue_mutex;
 
 			void gpuUploadCubemapTexture(th_texdata_raw* data);

@@ -55,12 +55,17 @@ namespace Lynx {
             std::atomic<bool> shouldDestroy = false;
             std::atomic<bool> ready = false;
             int n_threads;
+            int t_jobs = 0;
             int alive_threads = 0;
             int working_threads = 0;
 
     };
 
+    bool IsMainThread(std::thread::id thread);
+
 }
+
+
 
 
 #endif

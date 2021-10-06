@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <stdarg.h>
 #include <time.h>
+#include "threadpool.h"
+#include "application.h"
 #include "logger.h"
 #ifdef _WIN64
 #include <stdbool.h>
@@ -16,7 +18,7 @@ static struct {
 } Logger;
 
 static const char* levelStrings[] = {
-	"FATAL", "ERROR", "WARNING", "INFO", "DEBUG"
+	"FATAL", "ERROR", "WARNING", "INFO ", "DEBUG"
 };
 
 #ifdef __linux__
@@ -40,9 +42,21 @@ static void event_init(log_Event* ev)
 
 void log_print(log_Event* ev) 
 {
+	if(ev == nullptr | ev->format == nullptr | ev->ap == NULL)
+		return;
 	char buf[16];
 	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
-	printf("%s %s%s\x1b[0m \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level]);
+
+	if(Lynx::Application::GetInstance() != nullptr) {
+		if(Lynx::Application::GetInstance()->GetThread() == ev->th_id){
+			printf("%s %s%s\x1b[0m \033[32mMAIN \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level] );
+		}else{
+			printf("%s %s%s\x1b[0m \033[37m%d \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level], std::hash<std::thread::id>{}(ev->th_id));
+		}
+	}else{
+		printf("%s %s%s\x1b[0m \033[32mMAIN \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level] );
+	}
+	
 	vprintf(ev->format, ev->ap);
 	printf("%s\n", colour_clear);
 }
@@ -73,11 +87,12 @@ int log_getwarningcount()
 }
 
 
-void log_log(LogLevel level, const char* format, ...) 
+void log_log(std::thread::id th_id, LogLevel level, const char* format, ...) 
 {
 	log_Event ev;
 	ev.format = format;
 	ev.level = level;
+	ev.th_id = th_id;
 
 	if (!Logger.quiet && level <= Logger.level | level == LOG_FATAL) {
 		if(level == LOG_ERROR | level == LOG_FATAL)

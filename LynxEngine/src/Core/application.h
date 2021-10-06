@@ -61,6 +61,7 @@ namespace Lynx {
             return m_systemManager->GetSystem<T>().get();
         }
 
+        std::thread::id GetThread() { return thread_id; };
         static Application* GetInstance() { return s_applicationInstance; }
 
 		float delta_time, last_FrameTime;
@@ -69,6 +70,7 @@ namespace Lynx {
         static Application* s_applicationInstance;
     protected:
 		State applicationState;
+        std::thread::id thread_id;
         std::shared_ptr<ECS::SystemManager> m_systemManager;
         std::shared_ptr<ThreadPool> m_threadPool;	
 	};

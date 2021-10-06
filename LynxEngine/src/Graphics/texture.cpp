@@ -45,11 +45,12 @@ namespace Lynx::Graphics {
 					RendererAPI::SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					break;
 			}
+			log_debug("Generating texture %d", tid);
 			RendererAPI::LoadTexture(tex_data.data, tex_data.width, tex_data.height, false);
 			id = tid;
-			log_debug("Texture id is %d", id);
 		}else{
 			log_error("Unable to load texture %s", path);
+			log_error("Error while loading texture");
 		}
 		stbi_image_free(tex_data.data);
 	}

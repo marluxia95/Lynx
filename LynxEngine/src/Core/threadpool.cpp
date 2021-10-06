@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <chrono>
+#include "logger.h"
 #include "threadpool.h"
 
 namespace Lynx {
@@ -8,15 +9,15 @@ namespace Lynx {
     {
         ThreadPool* pool = worker_s->pool;
         Job n_job;
-
         {
             std::unique_lock<std::mutex> lock(pool->mutex);
+            log_debug("T%d : Active", worker_s->id);
             pool->alive_threads++;
         }
 
 
         for (;;) {
-            printf("[%d] Waiting for jobs\n", worker_s->id);
+            log_debug("T%d : Waiting for jobs", worker_s->id);
 
             {
                 std::unique_lock<std::mutex> lock(pool->mutex);
@@ -29,7 +30,7 @@ namespace Lynx {
                 n_job = pool->jobs.front();
                 pool->jobs.pop();
                 pool->working_threads++;
-                printf("[%d] Got a job!\n", worker_s->id);
+                log_debug("T%d : Got job %d", worker_s->id, n_job.id);
             }
 
             n_job.func(n_job.args);
@@ -40,7 +41,7 @@ namespace Lynx {
                 pool->working_threads--;
                 if(!pool->working_threads)
                     pool->idle.notify_one();
-                printf("[%d] Job done!\n", worker_s->id);
+                log_debug("T%d : Job %d done", worker_s->id, n_job.id);
             }
             
 
@@ -49,7 +50,7 @@ namespace Lynx {
         
         std::unique_lock<std::mutex> lock(pool->mutex);
         pool->alive_threads--;
-        printf("[%d] Destroyed\n", worker_s->id);
+        log_debug("T%d : Destroyed", worker_s->id);
         
     }
     
@@ -94,10 +95,11 @@ namespace Lynx {
     void ThreadPool::PushJob(std::function<void(void*)> func, void* job_args)
     {
         std::unique_lock<std::mutex> lock(mutex);
+        t_jobs++;
 
-        printf("Pushing job %d\n", jobs.size());
+        printf("Pushing job %d\n", t_jobs);
 
-        jobs.push(Job{func, job_args, (int)jobs.size()});
+        jobs.push(Job{func, job_args, t_jobs});
         job.notify_one();
 
 
@@ -115,6 +117,10 @@ namespace Lynx {
             idle.wait(lock);
         
         
+    }
+
+    bool IsMainThread(std::thread::id thread) {
+        return thread == std::this_thread::get_id();
     }
 
 }

@@ -43,6 +43,7 @@ namespace Lynx {
         log_debug("Initializing subsystems");
         m_threadPool = std::make_shared<ThreadPool>(3);
         m_systemManager = std::make_shared<ECS::SystemManager>();
+        thread_id = std::this_thread::get_id();
         s_applicationInstance = this;
     }
 
@@ -175,6 +176,7 @@ namespace Lynx {
 
                 // Update logic
                 EventManager::SendEvent(RenderEvent());
+                m_resourceManager->Update(delta_time);
                 UpdateSystems();
             }
 

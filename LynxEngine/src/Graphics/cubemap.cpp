@@ -64,6 +64,7 @@ namespace Lynx::Graphics {
 
 	void CubemapTexture::Generate(TextureData* data) 
 	{
+		log_debug("Generating cubemap texture");
 		glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 		switch ( IRendererAPI::GetAPI() ) {
 			case API_OPENGL:
@@ -104,7 +105,6 @@ namespace Lynx::Graphics {
 		log_debug("Loading cubemap shader...");
 	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
 
-	    int w,h,ch;
         log_debug("Starting to load cubemap textures...");
 	    applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);
         log_debug("Cubemap created successfully");
