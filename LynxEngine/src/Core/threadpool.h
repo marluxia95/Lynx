@@ -19,6 +19,7 @@
 #include <functional>
 #include <atomic>
 #include <condition_variable>
+#include <map>
 #define THPOOL_DEBUG 0
 
 namespace Lynx {
@@ -45,10 +46,12 @@ namespace Lynx {
             ~ThreadPool();
             void PushJob(std::function<void(void*)>, void* job_args);
             void Wait();
+            int GetWorkerID(std::thread::id tid);
 
         private:
             std::queue<Job> jobs;
             std::vector<Worker*> workers;
+            std::map<std::thread::id, int> thread_id_map;
             std::mutex mutex;
             std::condition_variable idle;
             std::condition_variable job;

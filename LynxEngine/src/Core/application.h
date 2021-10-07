@@ -62,6 +62,7 @@ namespace Lynx {
         }
 
         std::thread::id GetThread() { return thread_id; };
+        ThreadPool* GetThreadPool() { return m_threadPool.get(); }
         static Application* GetInstance() { return s_applicationInstance; }
 
 		float delta_time, last_FrameTime;

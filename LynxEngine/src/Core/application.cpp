@@ -89,6 +89,50 @@ namespace Lynx {
         EventManager::SendEvent(LastTickEvent());
     }
 
+    GameApplication::GameApplication() : Application()
+    {
+        m_resourceManager = std::make_shared<ResourceManager>(m_threadPool.get());
+        m_componentManager = std::make_unique<ECS::ComponentManager>();
+        m_systemManager = std::make_unique<ECS::SystemManager>();
+        gameApplicationInstance = this;
+    }
+
+    GameApplication::~GameApplication()
+    {
+        if(m_windowManager != nullptr)
+            m_windowManager->Destroy();
+    }
+
+    /**
+     * @brief Initializes the game application
+     * 
+     * @param title Window title
+     * @param width Window width
+     * @param height Window height
+     * @param flags Window flags
+     */
+    void GameApplication::Init(const char* title, unsigned int width, unsigned int height, int flags)
+    {
+        m_windowManager = WindowManager::Create();
+        if(flags & APPLICATION_FULLSCREEN)
+            m_windowManager->Init(title, width, height, true);
+        else
+            m_windowManager->Init(title, width, height, false);
+
+        log_debug("Initializing renderer API");
+        Graphics::RendererAPI::Init();
+
+        Input::Init();
+
+        log_debug("Sending event init");
+        EventManager::SendEvent(InitEvent());
+
+        log_debug("Initializing systems");
+        m_systemManager->InitSystems();
+
+        log_debug("Successfully initialized application");
+    }
+
     void GameApplication::LoadDefaultSystems()
     {
         log_debug("Loading default systems");
@@ -125,42 +169,6 @@ namespace Lynx {
     unsigned int GameApplication::GetResolutionHeight()
     {
         return m_windowManager->window_height;
-    }
-
-    GameApplication::GameApplication() : Application()
-    {
-        m_resourceManager = std::make_shared<ResourceManager>(m_threadPool.get());
-        m_componentManager = std::make_unique<ECS::ComponentManager>();
-        m_systemManager = std::make_unique<ECS::SystemManager>();
-        gameApplicationInstance = this;
-    }
-
-    GameApplication::~GameApplication()
-    {
-        if(m_windowManager != nullptr)
-            m_windowManager->Destroy();
-    }
-
-    void GameApplication::Init(const char* title, unsigned int width, unsigned int height, int flags)
-    {
-        m_windowManager = WindowManager::Create();
-        if(flags & APPLICATION_FULLSCREEN)
-            m_windowManager->Init(title, width, height, true);
-        else
-            m_windowManager->Init(title, width, height, false);
-
-        log_debug("Initializing renderer API");
-        Graphics::RendererAPI::Init();
-
-        Input::Init();
-
-        log_debug("Sending event init");
-        EventManager::SendEvent(InitEvent());
-
-        log_debug("Initializing systems");
-        m_systemManager->InitSystems();
-
-        log_debug("Successfully initialized application");
     }
 
     void GameApplication::Run()

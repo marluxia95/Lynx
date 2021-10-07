@@ -63,6 +63,7 @@ namespace Lynx {
             worker->pool = this;
             worker->thread = std::thread(thread_work, worker);
             workers.push_back(worker);
+            thread_id_map[worker->thread.get_id()] = i;
             printf("Created thread %d\n", i);
         }
 
@@ -89,6 +90,15 @@ namespace Lynx {
 
         workers.clear();
         
+    }
+
+
+    int ThreadPool::GetWorkerID(std::thread::id tid)
+    {
+        if(thread_id_map.find(tid) == thread_id_map.end())
+            return -1;
+
+        return thread_id_map[tid];
     }
 
 

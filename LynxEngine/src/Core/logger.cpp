@@ -51,10 +51,15 @@ void log_print(log_Event* ev)
 		if(Lynx::Application::GetInstance()->GetThread() == ev->th_id){
 			printf("%s %s%s\x1b[0m \033[32mMAIN \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level] );
 		}else{
-			printf("%s %s%s\x1b[0m \033[37m%d \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level], std::hash<std::thread::id>{}(ev->th_id));
+			
+			printf("%s %s%s\x1b[0m \033[33mWORKER%d\x1b[0m ",
+			buf, 
+			level_colours[ev->level], 
+			levelStrings[ev->level], 
+			Lynx::GameApplication::GetGameInstance()->GetThreadPool()->GetWorkerID(ev->th_id));
 		}
 	}else{
-		printf("%s %s%s\x1b[0m \033[32mMAIN \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level] );
+		printf("%s %s%s\x1b[0m ",buf, level_colours[ev->level], levelStrings[ev->level] );
 	}
 	
 	vprintf(ev->format, ev->ap);

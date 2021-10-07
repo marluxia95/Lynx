@@ -37,7 +37,7 @@ namespace Lynx {
 		public:
 			ResourceManager(ThreadPool* pool);
 			~ResourceManager();
-			void clear();
+			void Clear();
 
 			void Update(float dt);
 

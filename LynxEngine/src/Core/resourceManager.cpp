@@ -15,11 +15,11 @@ ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
 
 ResourceManager::~ResourceManager() 
 {
-	clear();
+	Clear();
 }
 
 
-void ResourceManager::clear() 
+void ResourceManager::Clear() 
 {
 	log_debug("Cleaning resources");
 
@@ -41,7 +41,7 @@ void ResourceManager::Update(float dt)
 			data = texdata_queue.front();
 		}
 
-		log_debug("Generating texture %s", data->path);
+		log_debug("Uploading texture %s to GPU", data->path);
 		data->tex->Generate(lastId);
 		
 		{
@@ -131,7 +131,7 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 			texdata_queue.push(tdata);
 		}
 
-		log_debug("Added texture %s to processing queue", tdata->path);
+		log_debug("Added texture %s to GPU queue", tdata->path);
 		return;
 	}, data);
 	
@@ -171,13 +171,13 @@ Graphics::CubemapTexture* ResourceManager::LoadCubemapTexture(std::vector<const 
 		thpool->PushJob([this](void* data){
 			th_texdata_raw* tdata = (th_texdata_raw*)data;
 
-			log_debug("Processing texture %s", tdata->path);
+			log_debug("Processing cubemap texture %s", tdata->path);
 			tdata->texdata = Graphics::loadTexture(tdata->path);
 			{
 				std::unique_lock<std::mutex> lock(queue_mutex);
 				texdata_raw_queue.push(*tdata);
 			}
-			log_debug("Adding texture %s to GPU queue", tdata->path);
+			log_debug("Added cubemap texture %s to GPU queue", tdata->path);
 		}, data);
 	}
 	return ctex;
