@@ -51,6 +51,7 @@ namespace Lynx::Graphics::OpenGL {
         glFrontFace(GL_CW);  
 
         log_info("GLRendererAPI: Loaded API ( %s )", glGetString(GL_VERSION));
+        glCheckError();
     }
 
     void GLRendererAPI::Clear(glm::vec4 color)
@@ -68,6 +69,7 @@ namespace Lynx::Graphics::OpenGL {
     {
         unsigned int tex;
         glGenTextures(1, &tex);
+        glCheckError();
         return tex;
     }
 

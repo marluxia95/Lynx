@@ -13,8 +13,9 @@ namespace Lynx::Graphics {
 	class CubemapTexture : public TextureBase {
 		public:
 			CubemapTexture();
-			TextureData* Load(const char* path);
-			void Generate(TextureData* data);
+			void Load();
+			void Load(const char* path) { loadFromFile(path); }
+			void Generate();
 			void Use();
 		private:
 			int count;

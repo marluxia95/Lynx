@@ -23,17 +23,6 @@ namespace Lynx {
 	};
 
 	class ResourceManager{
-		private:
-			typedef struct {
-				const char* path;
-				Graphics::Texture* tex;
-			} th_texdata;
-
-			typedef struct {
-				const char* path;
-				Graphics::TextureData* texdata;
-				Graphics::TextureBase* baseTexture;
-			} th_texdata_raw;
 		public:
 			ResourceManager(ThreadPool* pool);
 			~ResourceManager();
@@ -48,9 +37,7 @@ namespace Lynx {
 			Graphics::Texture LoadTexture(const char* path);
 			Graphics::Texture FindTexture(const char* path);
 
-			Graphics::CubemapTexture* LoadCubemapTexture(std::vector<const char*>* textures);
-
-			Graphics::TextureData* AsyncLoadTextureData(const char* path, Graphics::TextureBase* baseTexture);
+			Graphics::CubemapTexture LoadCubemapTexture(std::vector<const char*>* textures);
 
 			Graphics::Mesh* LoadMesh(const char* name, vector<Graphics::Vertex>* vertices, vector<unsigned int>* indices, Graphics::MeshType type);
 			Graphics::Mesh* FindMesh(const char* name);
@@ -62,11 +49,9 @@ namespace Lynx {
 			std::unordered_map<std::string, Graphics::Mesh*>   mesh_map = {};
 			std::unordered_map<std::string, Graphics::Texture> texture_map = {};
 
-			std::queue<th_texdata*> texdata_queue;
-			std::queue<th_texdata_raw> texdata_raw_queue;
+			std::queue<Graphics::TextureBase*> texdata_queue;
 			std::mutex queue_mutex;
 
-			void gpuUploadCubemapTexture(th_texdata_raw* data);
 			//static void async_loadCubemapTexData(void* data);
 			const char* getFileName(const char* path);
 

@@ -9,11 +9,13 @@
 #include "Core/scene.h"
 #include "Core/assert.h"
 #include "Core/logger.h"
+#include "Core/eventManager.h"
 
 namespace Lynx::ECS {
 	
 	class SystemManager {
 	public:
+
 		/*
 			Registers a system
 		*/
@@ -105,6 +107,7 @@ namespace Lynx::ECS {
 			for (auto const& system : systems) {
 				system.second->SetScene(scene);
 			}
+			log_debug("Changed scene");
 		}
 	private:
 		std::unordered_map<const char*, Signature> signatures = {};

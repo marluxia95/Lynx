@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include "resourceManager.h"
 #include "logger.h"
@@ -34,45 +33,24 @@ void ResourceManager::Clear()
 
 void ResourceManager::Update(float dt)
 {
+#ifdef LYNX_MULTITHREAD
 	if(!texdata_queue.empty()) {
-		th_texdata* data;
+		Graphics::TextureBase* tex;
 		{
 			std::unique_lock<std::mutex> lock(queue_mutex);
-			data = texdata_queue.front();
+			tex = texdata_queue.front();
 		}
 
-		log_debug("Uploading texture %s to GPU", data->path);
-		data->tex->Generate(lastId);
+		log_debug("Uploading texture %s to GPU", tex->GetPath());
+
+		tex->Generate();
 		
 		{
 			std::unique_lock<std::mutex> lock(queue_mutex);
 			texdata_queue.pop();
-			free(data);
 		}
 	}
-
-	if(!texdata_raw_queue.empty()) {
-		th_texdata_raw data;
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			data = texdata_raw_queue.front();
-		}
-		if(data.baseTexture->GetTextureType() == Graphics::TEXTURE_CUBEMAP) {
-			log_debug("Uploading cubemap texture %s to GPU", data.path);
-			gpuUploadCubemapTexture(&data);
-		}
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			texdata_raw_queue.pop();
-		}
-	}
-}
-
-void ResourceManager::gpuUploadCubemapTexture(th_texdata_raw* data)
-{
-	Graphics::CubemapTexture* cubemap_tex = (Graphics::CubemapTexture*)data->baseTexture;
-
-	cubemap_tex->Generate(data->texdata);
+#endif
 }
 
 const char* ResourceManager::getFileName(const char* path)
@@ -117,68 +95,60 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 
 	std::string name = std::string(path);
 
-	Graphics::Texture* n_texture = new Graphics::Texture();
-	th_texdata* data = new th_texdata({path, n_texture});
-
-	thpool->PushJob([this](void* data){
-		th_texdata* tdata = (th_texdata*)data;
-
-		log_debug("Processing texture %s", tdata->path);
-
-		tdata->tex->Load(tdata->path);
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			texdata_queue.push(tdata);
-		}
-
-		log_debug("Added texture %s to GPU queue", tdata->path);
-		return;
-	}, data);
+	Graphics::Texture n_texture = Graphics::Texture(path);
 	
-	return texture_map[name] = *n_texture;
-}
-
-Graphics::TextureData* ResourceManager::AsyncLoadTextureData(const char* path, Graphics::TextureBase* baseTexture)
-{
-	std::string name = std::string(path);
-
-	Graphics::TextureData* n_texture_data;
-
-	th_texdata_raw* data = new th_texdata_raw({path, n_texture_data, baseTexture});
+#ifdef LYNX_MULTITHREAD
+	log_debug("Starting to load texture %s in async mode", n_texture.GetPath());
 	thpool->PushJob([this](void* data){
-		th_texdata_raw* tdata = (th_texdata_raw*)data;
+		Graphics::TextureData* tdata = (Graphics::TextureData*)data;
 
-		tdata->texdata = Graphics::loadTexture(tdata->path);;
+		log_debug("Processing texture %s", tdata->GetPath());
+
+		tdata->linkedTexture->Load();
+
 		{
 			std::unique_lock<std::mutex> lock(queue_mutex);
-			texdata_raw_queue.push(*tdata);
-			free(tdata);
+			texdata_queue.push(tdata->linkedTexture);
 		}
-	}, data);
-	return n_texture_data;
+		log_debug("Added texture %s to GPU queue", tdata->GetPath());
+		return;
+	}, n_texture.GetData());
+#else
+	log_debug("Loading texture %s", n_texture.GetPath());
+	n_texture.Load();
+	n_texture.Generate();
+#endif
+	
+	return texture_map[name] = n_texture;
 }
 
-Graphics::CubemapTexture* ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
+Graphics::CubemapTexture ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
 {
-	Graphics::CubemapTexture* ctex = new Graphics::CubemapTexture();
+	Graphics::CubemapTexture ctex = Graphics::CubemapTexture();
 	for(int x = 0; x < textures->size(); x++) {
 		auto path = textures->at(x);
 
-		Graphics::TextureData* n_texture_data = new Graphics::TextureData();
-
-		th_texdata_raw* data = new th_texdata_raw({path, n_texture_data, ctex});
+#ifdef LYNX_MULTITHREAD
+		log_debug("Adding cubemap texture %s to queue", path);
 
 		thpool->PushJob([this](void* data){
-			th_texdata_raw* tdata = (th_texdata_raw*)data;
+			Graphics::TextureData* tdata = (Graphics::TextureData*)data;
 
-			log_debug("Processing cubemap texture %s", tdata->path);
-			tdata->texdata = Graphics::loadTexture(tdata->path);
+			log_debug("Processing cubemap texture %s", tdata->GetPath());
+			
+
+			tdata->linkedTexture->Load();
 			{
 				std::unique_lock<std::mutex> lock(queue_mutex);
-				texdata_raw_queue.push(*tdata);
+				texdata_queue.push(tdata->linkedTexture);
 			}
-			log_debug("Added cubemap texture %s to GPU queue", tdata->path);
-		}, data);
+			free(tdata);
+			log_debug("Added cubemap texture %s to GPU queue", tdata->GetPath());
+		}, ctex.GetData());
+#else
+		ctex.Load(path);
+		ctex.Generate();
+#endif
 	}
 	return ctex;
 }
@@ -186,7 +156,6 @@ Graphics::CubemapTexture* ResourceManager::LoadCubemapTexture(std::vector<const 
 Graphics::Texture ResourceManager::FindTexture(const char* path)
 {
 	std::string name = std::string(path);
-	const size_t name_hash = std::hash<std::string>{}(name);
 	const auto found = texture_map.find(name);
 	if(found != texture_map.end()) {
 		if(found->second.IsValid())

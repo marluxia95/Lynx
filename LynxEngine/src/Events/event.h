@@ -54,7 +54,7 @@ namespace Lynx {
     class SignatureChangedEvent : public Event {
         public:
             SignatureChangedEvent(Entity entity, Signature signature) : Event(SignatureChanged), entity(entity), signature(signature) {}
-
+           
             Entity entity;
             Signature signature;
     };

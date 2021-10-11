@@ -4,13 +4,14 @@
 #include <vector>
 #include <unordered_map>
 #include <map>
+#include <functional>
 #include "Events/event.h"
 
 namespace Lynx {
     
     class EventManager {
         
-        using EventFunc = void (*)(const Event&);
+        using EventFunc = std::function<void(const Event&)>;
 
         public:
             /*

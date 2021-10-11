@@ -92,9 +92,10 @@ namespace Lynx {
             mRenderComponent->shader->SetUniform("color", mRenderComponent->ambient);
             mRenderComponent->shader->SetUniform("viewPos", mCameraTransform->position);
 
-            //log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
-            //    cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
-            
+#ifdef LYNX_RENDER_DEBUG
+            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
+                cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
+#endif
 			
             
 			if(mRenderComponent->lighting | mLightingSystem->entities.size()){

@@ -5,7 +5,7 @@
 #include "texture.h"
 #include "Core/logger.h"
 #include "rendererAPI.h"
-
+/*
 namespace Lynx::Graphics {
 
     Terrain::Terrain(float** heightmap) : Mesh()
@@ -113,3 +113,4 @@ namespace Lynx::Graphics {
         return heightmap;
     }
 }
+*/

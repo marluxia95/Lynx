@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "lynx.h"
-
+#include "Graphics/rendererAPI.h"
 #include "Systems/renderSystem.h"
 #include "Systems/cameraSystem.h"
 #include "Graphics/cubemap.h"
@@ -181,11 +181,15 @@ int main()
 	EventManager::AddListener(JoystickConnected, joystick_connected);
 	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
+	log_info("Initializing window");
+
 	// Initialize window in windowed mode
 	applicationInstance->Init("Example", 1920, 1080, false);
 
 	log_debug("Loading resources");
 	Graphics::Shader* shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
+
+	log_info("Adding scene objects");
 
 	Entity link = ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
 	{
@@ -214,14 +218,7 @@ int main()
 	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->intensity = 1.0f;
 
-	/*
-
-	Entity terrain = gApplication.CreateEntity("Terrain");
-	Terrain* terr_mesh = new Terrain(load_heightmap_from_image("res/images/testheightmap.jpg"));
-	gApplication.AddComponent<MeshRenderer>(terrain, MeshRenderer{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), 0.0f, terr_mesh, shader});
-
-	*/
-
+	log_info("Loading cubemap");
 	
 	// Setup skybox/cubemap
 	std::vector<const char*> map_textures {
@@ -236,9 +233,11 @@ int main()
 	Graphics::Cubemap* map = new Graphics::Cubemap();
 	map->Load(&map_textures);
 	applicationInstance->GetSystem<RenderSystem>()->SetCubemap(map);	
-	
+	log_info("Application fully started");
 
 	// Runs the gApplication
+	applicationInstance->SetApplicationState(STATE_ACTIVE);
+	API_CheckErrors();
 	applicationInstance->Run();
 	//delete map;
 	return 0;

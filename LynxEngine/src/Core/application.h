@@ -17,6 +17,12 @@
 #include "resourceManager.h"
 #include "threadpool.h"
 
+// Only enable if you want to use multithread features. This is still in development
+//#define LYNX_MULTITHREAD
+
+// Enable if you want to debug rendering process
+//#define LYNX_RENDER_DEBUG
+
 namespace Lynx {
 
 	enum State{
@@ -61,12 +67,20 @@ namespace Lynx {
             return m_systemManager->GetSystem<T>().get();
         }
 
+        void SetApplicationState(State state) { applicationState = state; }
         std::thread::id GetThread() { return thread_id; };
         ThreadPool* GetThreadPool() { return m_threadPool.get(); }
         static Application* GetInstance() { return s_applicationInstance; }
 
 		float delta_time, last_FrameTime;
+    protected:
+        ECS::SystemManager* GetSystemManager() 
+        {
+            return m_systemManager.get();
+        }
+    public:
         friend class ResourceManager;
+        friend class ECS::SystemManager;
     private:
         static Application* s_applicationInstance;
     protected:
@@ -100,8 +114,10 @@ namespace Lynx {
             return m_componentManager->GetComponentType<T>();
         }
 
+        /*
         void EntitySignatureChanged(Entity entity, Signature signature) { m_systemManager->EntitySignatureChanged(entity, signature); }
         void EntityDestroyed(Entity entity) { m_systemManager->EntityDestroyed(entity);}
+        */
 
         void LoadDefaultSystems();
         Scene* CreateScene();

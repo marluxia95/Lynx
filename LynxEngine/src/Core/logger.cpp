@@ -18,7 +18,7 @@ static struct {
 } Logger;
 
 static const char* levelStrings[] = {
-	"FATAL", "ERROR", "WARNING", "INFO ", "DEBUG"
+	"FATAL  ", "ERROR  ", "WARNING", "INFO   ", "DEBUG  "
 };
 
 #ifdef __linux__
@@ -49,10 +49,10 @@ void log_print(log_Event* ev)
 
 	if(Lynx::Application::GetInstance() != nullptr) {
 		if(Lynx::Application::GetInstance()->GetThread() == ev->th_id){
-			printf("%s %s%s\x1b[0m \033[32mMAIN \x1b[0m",buf, level_colours[ev->level], levelStrings[ev->level] );
+			printf("%s %s%s\x1b[0m \033[32mMAIN\x1b[0m  ",buf, level_colours[ev->level], levelStrings[ev->level] );
 		}else{
 			
-			printf("%s %s%s\x1b[0m \033[33mWORKER%d\x1b[0m ",
+			printf("%s %s%s\x1b[0m \033[33mWORKER%d\x1b[0m  ",
 			buf, 
 			level_colours[ev->level], 
 			levelStrings[ev->level], 

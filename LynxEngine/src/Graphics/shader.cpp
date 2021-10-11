@@ -60,7 +60,9 @@ namespace Lynx::Graphics {
 			isheader = sscanf(line.c_str(), "#shader %s", &shadertype_header);
 			//size_t shaderbuf_size = strlen(shaderbuf);
 			size_t line_size = line.size();
-			//log_debug("Line %d : %s", isheader, line.c_str());
+#ifdef SHADER_DEBUG
+			log_debug("Line %d : %s", isheader, line.c_str());
+#endif
 
 			if(section&&!isheader) {
 				shaderbuf = shaderbuf + line + '\n';
@@ -69,8 +71,10 @@ namespace Lynx::Graphics {
 
 			if(isheader > 0) { 
 				if(section) {
-					//log_debug("Section end %d", section);
+#ifdef SHADER_DEBUG
+					log_debug("Section end %d", section);
 					log_debug("Total section : %s", shaderbuf.c_str());
+#endif
 					// Compile buffer
 					unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);
 					API_CheckErrors();
@@ -86,8 +90,10 @@ namespace Lynx::Graphics {
 
 		// Last line
 		if(section) {
+#ifdef SHADER_DEBUG
 			log_debug("Total section : %s", shaderbuf.c_str());
 			log_debug("File end");
+#endif
 			// Compile buffer
 			shaderbuf += '\0';
 			unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);

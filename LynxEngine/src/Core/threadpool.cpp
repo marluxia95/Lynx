@@ -11,13 +11,13 @@ namespace Lynx {
         Job n_job;
         {
             std::unique_lock<std::mutex> lock(pool->mutex);
-            log_debug("T%d : Active", worker_s->id);
+            log_debug("Active");
             pool->alive_threads++;
         }
 
 
         for (;;) {
-            log_debug("T%d : Waiting for jobs", worker_s->id);
+            log_debug("Waiting for jobs");
 
             {
                 std::unique_lock<std::mutex> lock(pool->mutex);
@@ -30,7 +30,7 @@ namespace Lynx {
                 n_job = pool->jobs.front();
                 pool->jobs.pop();
                 pool->working_threads++;
-                log_debug("T%d : Got job %d", worker_s->id, n_job.id);
+                log_debug("Got job %d", n_job.id);
             }
 
             n_job.func(n_job.args);
@@ -41,7 +41,7 @@ namespace Lynx {
                 pool->working_threads--;
                 if(!pool->working_threads)
                     pool->idle.notify_one();
-                log_debug("T%d : Job %d done", worker_s->id, n_job.id);
+                log_debug("Job %d done", n_job.id);
             }
             
 
@@ -50,7 +50,7 @@ namespace Lynx {
         
         std::unique_lock<std::mutex> lock(pool->mutex);
         pool->alive_threads--;
-        log_debug("T%d : Destroyed", worker_s->id);
+        log_debug("Destroyed");
         
     }
     
@@ -64,10 +64,10 @@ namespace Lynx {
             worker->thread = std::thread(thread_work, worker);
             workers.push_back(worker);
             thread_id_map[worker->thread.get_id()] = i;
-            printf("Created thread %d\n", i);
+            log_debug("Created thread %d\n", i);
         }
 
-        printf("Alive thread count : %d\n", alive_threads);
+        log_debug("Alive thread count : %d\n", alive_threads);
         while(alive_threads != n_threads) {};
         puts("All threads are ready!");
         ready = true;
@@ -107,7 +107,7 @@ namespace Lynx {
         std::unique_lock<std::mutex> lock(mutex);
         t_jobs++;
 
-        printf("Pushing job %d\n", t_jobs);
+        log_debug("Pushing job %d\n", t_jobs);
 
         jobs.push(Job{func, job_args, t_jobs});
         job.notify_one();
@@ -121,7 +121,7 @@ namespace Lynx {
         
         std::unique_lock<std::mutex> lock(mutex);
 
-        puts("Waiting until all threads are finished...");
+        log_debug("Waiting until all threads are finished...");
 
         while(working_threads || jobs.size())
             idle.wait(lock);

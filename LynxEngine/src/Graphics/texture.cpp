@@ -2,7 +2,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
+#include <chrono>
 #include "texture.h"
 #include "Core/logger.h"
 #include "rendererAPI.h"
@@ -11,11 +11,27 @@ namespace Lynx::Graphics {
 
 	static int texcount = 0;
 
-	Texture::Texture(const char* path) : TextureBase(TEXTURE_DEFAULT)
+	void TextureData::Free()
+	{
+		stbi_image_free(data);
+	}
+
+	TextureBase::TextureBase(TextureType type) : id(-1), type(type)
 	{ 
-		Load(path);
-		texture = RendererAPI::GenTexture();
-		RendererAPI::BindTexture(texture);	
+		log_debug("Created new texture");
+		data = new TextureData(this); 
+	}
+
+	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type)
+	{ 
+		log_debug("Created new texture with path %s", path);
+		data = new TextureData(this); 
+		data->path = path;
+	}
+
+	Texture::Texture(const char* path) : TextureBase(TEXTURE_DEFAULT, path)
+	{ 
+		
 	}
 
 	void Texture::Use()
@@ -27,15 +43,19 @@ namespace Lynx::Graphics {
 		RendererAPI::BindTexture(texture);
 	}
 
-	void Texture::Load(const char* path)
+	void TextureBase::loadFromFile(const char* path)
 	{
 		log_debug("Loading texture %s", path);
-		tex_data.data = stbi_load(path, &tex_data.width, &tex_data.height, &tex_data.channels, 0);
+		data->path = path;
+		data->data = stbi_load(path, &data->width, &data->height, &data->channels, 0);
+		if(!data)
+			log_error("Unable to load texture %s : %s", path, stbi_failure_reason());
 	}
 
-	void Texture::Generate(int tid)
+	void Texture::Generate()
 	{
-		if(tex_data.data){
+		log_debug("Before generating texture");
+		if(data){
 			// Wrapping / Filtering settings
 			switch ( IRendererAPI::GetAPI() ){
 				case API_OPENGL:
@@ -45,38 +65,16 @@ namespace Lynx::Graphics {
 					RendererAPI::SetTextureParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 					break;
 			}
-			log_debug("Generating texture %d", tid);
-			RendererAPI::LoadTexture(tex_data.data, tex_data.width, tex_data.height, false);
-			id = tid;
+			RendererAPI::LoadTexture(data->data, data->width, data->height, false);
+			log_debug("Texture data dump : Path=%s, Data len=%d, W=%d, H=%d", data->GetPath(), sizeof(data->data), data->width, data->height);
+			id = texcount++;
+			log_debug("After generating texture");
 		}else{
-			log_error("Unable to load texture %s", path);
-			log_error("Error while loading texture");
+			log_error("Unable to load texture %s", data->path);
 		}
-		stbi_image_free(tex_data.data);
+		API_CheckErrors();
+		data->Free();
 	}
 
-	TextureData* loadTexture(const char* path)
-	{
-		TextureData* texdata = (TextureData*)malloc(sizeof(TextureData));
-
-		int width, height, channels;
-		unsigned char *data = stbi_load(path, &width, &height, &channels, 0);
-
-		if(!data){
-			log_error("Unable to load texture %s", path);
-		}
-		texdata->width = width;
-		texdata->height = height;
-		texdata->channels = channels;
-		texdata->data = data;
-
-		return texdata;
-	}
-
-	void textureData_free(TextureData* data)
-	{
-		stbi_image_free(data->data);
-		free(data);
-	}
 
 }

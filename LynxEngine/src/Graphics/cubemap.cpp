@@ -57,27 +57,39 @@ namespace Lynx::Graphics {
 	    
 	}
 
-	TextureData* CubemapTexture::Load(const char* path) 
+	void CubemapTexture::Load()
 	{
-		TextureData* tdata = loadTexture(path);
+		if(data->GetPath() == NULL)
+			log_warn("CubemapTexture::Load() : Texture data must include a path");
+		else
+			loadFromFile(data->GetPath());
 	}
 
-	void CubemapTexture::Generate(TextureData* data) 
+	void CubemapTexture::Generate() 
 	{
-		log_debug("Generating cubemap texture");
-		glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+		if(data == nullptr | data == nullptr | data->GetPath() == NULL) { log_error("CubemapTexture::Generate() : Invalid texture data"); return; }
+		
+		log_debug("Cubemap texture generate : %s", data->GetPath());
+		
 		switch ( IRendererAPI::GetAPI() ) {
 			case API_OPENGL:
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, 0, GL_RGB, data->width, data->height, 0, GL_RGB, GL_UNSIGNED_BYTE, data->data);
+				glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, 0, GL_RGB, data->GetWidth(), data->GetHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, data->GetData());
+				unsigned char* rawdata = data->GetData();
+				log_debug("Texture data : Path=%s W=%d H=%d Data length=%d", data->GetPath(), data->GetWidth(), data->GetHeight(), sizeof(rawdata) / sizeof(*rawdata));
 				glGenerateMipmap(GL_TEXTURE_2D);
 				break;
 		}
+		API_CheckErrors();
+		log_debug("After cubemap texture generate");
 		count++;
+		data->Free();
 	}
 
 	void CubemapTexture::Use()

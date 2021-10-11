@@ -4,7 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "mesh.h"
-
+/*
 namespace Lynx::Graphics {
 
     class Terrain : public Mesh{
@@ -27,6 +27,6 @@ namespace Lynx::Graphics {
     float** load_heightmap_from_image(const char* path);
 
 }
-
+*/
 
 #endif

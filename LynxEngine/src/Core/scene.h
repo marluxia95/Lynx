@@ -12,8 +12,6 @@
 
 namespace Lynx {
 
-    class GameApplication;
-    
     class Scene {
         public:
             Scene(ECS::ComponentManager* componentManager) : m_componentManager(componentManager)
@@ -62,7 +60,6 @@ namespace Lynx {
         private:
             std::unique_ptr<ECS::EntityManager> m_entityManager;
             ECS::ComponentManager* m_componentManager; 
-            GameApplication* applicationInstance;
     };
 
 }

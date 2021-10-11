@@ -41,10 +41,23 @@ namespace Lynx {
     Application::Application()
     {
         log_debug("Initializing subsystems");
+#ifdef LYNX_MULTITHREAD
+        log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");
         m_threadPool = std::make_shared<ThreadPool>(3);
+#endif
         m_systemManager = std::make_shared<ECS::SystemManager>();
         thread_id = std::this_thread::get_id();
         s_applicationInstance = this;
+
+        EventManager::AddListener(SignatureChanged, [this](const Event& ev){
+            const SignatureChangedEvent& event = static_cast<const SignatureChangedEvent&>(ev);
+            m_systemManager->EntitySignatureChanged(event.entity, event.signature);
+        });
+
+        EventManager::AddListener(EntityDestroyed, [this](const Event& ev){
+            const EntityDestroyedEvent& event = static_cast<const EntityDestroyedEvent&>(ev);
+            m_systemManager->EntityDestroyed(event.entity);
+        });
     }
 
     Application::~Application()

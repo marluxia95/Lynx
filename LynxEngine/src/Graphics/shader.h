@@ -7,6 +7,7 @@
 #include <vector>
 #include "rendererAPI.h"
 
+//#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
 
 namespace Lynx {
