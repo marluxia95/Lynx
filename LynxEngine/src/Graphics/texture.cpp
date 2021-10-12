@@ -9,7 +9,7 @@
 
 namespace Lynx::Graphics {
 
-	static int texcount = 0;
+	int TextureBase::total_textures = 0;
 
 	void TextureData::Free()
 	{
@@ -67,7 +67,7 @@ namespace Lynx::Graphics {
 			}
 			RendererAPI::LoadTexture(data->data, data->width, data->height, false);
 			log_debug("Texture data dump : Path=%s, Data len=%d, W=%d, H=%d", data->GetPath(), sizeof(data->data), data->width, data->height);
-			id = texcount++;
+			id = TextureBase::PushTextureID();
 			log_debug("After generating texture");
 		}else{
 			log_error("Unable to load texture %s", data->path);

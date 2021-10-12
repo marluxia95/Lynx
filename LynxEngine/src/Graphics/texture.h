@@ -31,6 +31,7 @@ namespace Lynx::Graphics {
 		TextureBase* linkedTexture;
 		friend class TextureBase;
 		friend class Texture;
+
 	private:
 		const char* path;
 		int width, height, channels;
@@ -51,6 +52,11 @@ namespace Lynx::Graphics {
 			int GetID() { return id; }
 			TextureData* GetData() { return data; }
 			TextureType GetTextureType() { return type; }
+
+			static int PushTextureID() { return total_textures++; }
+
+		private:
+			static int total_textures;
 
 		protected:
 			void loadFromFile(const char* path);

@@ -18,7 +18,7 @@ namespace Lynx::Graphics {
 			void Generate();
 			void Use();
 		private:
-			int count;
+			int count = 0;
 	};
 
 	class Cubemap{

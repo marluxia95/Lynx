@@ -90,6 +90,10 @@ namespace Lynx::Graphics {
 		log_debug("After cubemap texture generate");
 		count++;
 		data->Free();
+		if(count==6) {
+			id = TextureBase::PushTextureID();
+			log_debug("New ID for cubemap texture : %d", id);
+		}
 	}
 
 	void CubemapTexture::Use()
@@ -118,7 +122,7 @@ namespace Lynx::Graphics {
 	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
 
         log_debug("Starting to load cubemap textures...");
-	    applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);
+	    texture = applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);
         log_debug("Cubemap created successfully");
 	}
 
@@ -135,7 +139,8 @@ namespace Lynx::Graphics {
 		shader->SetUniform("projection", projection);
 		shader->SetUniform("view", view);
 		VAO->Bind();
-		
+
+		texture.Use();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS);
