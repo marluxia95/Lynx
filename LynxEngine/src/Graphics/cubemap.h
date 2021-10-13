@@ -17,6 +17,7 @@ namespace Lynx::Graphics {
 			void Load(const char* path) { loadFromFile(path); }
 			void Generate();
 			void Use();
+			friend class Cubemap;
 		private:
 			int count = 0;
 	};

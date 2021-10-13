@@ -73,8 +73,6 @@ namespace Lynx::Graphics {
 		
 		switch ( IRendererAPI::GetAPI() ) {
 			case API_OPENGL:
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -92,14 +90,18 @@ namespace Lynx::Graphics {
 		data->Free();
 		if(count==6) {
 			id = TextureBase::PushTextureID();
-			log_debug("New ID for cubemap texture : %d", id);
+			log_debug("New ID for cubemap texture : %d, texture %d", id, texture);
 		}
 	}
 
 	void CubemapTexture::Use()
 	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+		switch ( IRendererAPI::GetAPI() ) {
+			case API_OPENGL:
+				glActiveTexture(GL_TEXTURE0 + id);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+				break;
+		}
 	}
 
 	Cubemap::Cubemap()
@@ -110,6 +112,10 @@ namespace Lynx::Graphics {
 	{
 		Lynx::GameApplication* applicationInstance = GameApplication::GetGameInstance();
         log_debug("Creating cubemap ...");
+
+		glGenTextures(1, &texture.texture);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, texture.texture);
+
         VAO = VertexArray::Create();
 		glGenBuffers(1, &VBO);
 		VAO->Bind();
