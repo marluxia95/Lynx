@@ -3,10 +3,23 @@ include(ExternalProject)
 set(DEPS_INSTALL_DIR ${CMAKE_BINARY_DIR})
 set(DEPS_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
+externalproject_add(lua_ext
+    PREFIX ${DEPS_INCLUDE_DIR}/lua
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    <SOURCE_DIR>/src ${DEPS_INSTALL_DIR}/include/lua
+    BUILD_COMMAND ${CMAKE_COMMAND} -E env
+        HOST_CC=...   # See below
+        CC=${CMAKE_C_COMPILER}
+        make -C <SOURCE_DIR>
+    CONFIGURE_COMMAND ""
+    BUILD_IN_SOURCE TRUE
+    URL https://www.lua.org/ftp/lua-5.4.3.tar.gz
+)
+
 externalproject_add(glm_ext
     PREFIX ${DEPS_INCLUDE_DIR}/glm
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    <SOURCE_DIR>/glm ${DEPS_INSTALL_DIR}/glm
+                    <SOURCE_DIR>/glm ${DEPS_INSTALL_DIR}/include/glm
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     UPDATE_COMMAND ""
@@ -40,29 +53,22 @@ externalproject_add(assimp_ext
     URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
 )
 
-IF(UNIX)
-add_library(glfw STATIC IMPORTED GLOBAL)
+add_library(lua STATIC IMPORTED GLOBAL)
+set_target_properties(lua PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}liblua${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+
+add_library(glfw SHARED IMPORTED GLOBAL)
 set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libglfw${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
 
-add_library(assimp STATIC IMPORTED GLOBAL)
+add_library(assimp SHARED IMPORTED GLOBAL)
 set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libassimp${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
-ENDIF(UNIX)
 
-IF(WIN32)
-add_library(glfw STATIC IMPORTED GLOBAL)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
-  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}glfw${CMAKE_SHARED_LIBRARY_SUFFIX}"
-)
 
-add_library(assimp STATIC IMPORTED GLOBAL)
-set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
-  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX}"
-)
-ENDIF(WIN32)
 
 
 

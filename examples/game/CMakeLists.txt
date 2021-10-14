@@ -25,6 +25,7 @@ find_package(OpenGL REQUIRED)
 include_directories( 
     Game
 
+    ${CMAKE_BINARY_DIR}/include
     ${OPENGL_INCLUDE_DIRS}  
     ${GLEW_INCLUDE}
     ${GLFW_INCLUDE}    

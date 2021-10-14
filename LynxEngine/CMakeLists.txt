@@ -40,6 +40,7 @@ endif()
 include_directories( 
     LynxEngine
 
+    ${CMAKE_BINARY_DIR}/include
     ${OPENGL_INCLUDE_DIRS}  
     ${GLEW_INCLUDE}
     ${GLFW_INCLUDE}    
@@ -53,6 +54,7 @@ include_directories(
 target_link_libraries(
     LynxEngine
 
+    lua
     glfw
     assimp
     ${OPENGL_LIBRARIES}
