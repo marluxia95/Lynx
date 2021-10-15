@@ -10,9 +10,14 @@ namespace Lynx::ECS {
 	class System {
 		public:
 			System(Scene* scene) : scene(scene) {}
-			virtual void Init() {};
-			virtual void Update() {};
+
 			void SetScene(Scene* scene) { scene = scene; }
+
+			virtual void Init() {}
+			virtual void Update() {}
+			virtual void OnEntityAdded(Entity ent) {}
+			virtual void OnEntityRemoved(Entity ent) {}
+			
 			std::set<Entity> entities;
 		protected:
 			Scene* scene;

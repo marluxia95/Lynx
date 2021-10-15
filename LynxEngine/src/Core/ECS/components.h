@@ -90,6 +90,10 @@ struct DirectionalLight {
 	float intensity;
 };
 
+struct LuaScript {
+	const char* path;
+};
+
 }
 
 #endif

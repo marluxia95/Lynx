@@ -45,5 +45,5 @@ log_log(std::this_thread::get_id(), level, format, __VA_ARGS__)
 #define log_warn(...)  log_log(std::this_thread::get_id(), LOG_WARN, __VA_ARGS__)
 #define log_error(...) log_log(std::this_thread::get_id(), LOG_ERROR, __VA_ARGS__)
 #define log_fatal(...) log_log(std::this_thread::get_id(), LOG_FATAL, __VA_ARGS__)
-
+#define log_pref(level, preffix, ...) log_log(std::this_thread::get_id(), level, __VA_ARGS__, preffix)
 #endif

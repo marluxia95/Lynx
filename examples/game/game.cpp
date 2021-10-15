@@ -9,6 +9,7 @@
 #include "Graphics/rendererAPI.h"
 #include "Systems/renderSystem.h"
 #include "Systems/cameraSystem.h"
+#include "Scripting/luaRuntime.h"
 #include "Graphics/cubemap.h"
 #include "Graphics/terrain.h"
 
@@ -176,6 +177,13 @@ int main()
 		applicationInstance->SetSystemSignature<RenderSystem>(signature);
 	}
 
+	applicationInstance->RegisterSystem<LuaRuntime>();
+	{
+		Signature signature;
+		signature.set(applicationInstance->GetComponentType<LuaScript>());
+		applicationInstance->SetSystemSignature<LuaRuntime>(signature);
+	}
+
 	EventManager::AddListener(UpdateTick, Update);
 	EventManager::AddListener(MouseKeyPressed, mouse_button_input);
 	EventManager::AddListener(JoystickConnected, joystick_connected);
@@ -205,6 +213,11 @@ int main()
 		scene->GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
 		scene->GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
 		delete chl;
+	}
+
+	Entity scriptedEnt = scene->CreateEntity();
+	{
+		scene->AddComponent(scriptedEnt, LuaScript{"res/scripts/test.lua"});
 	}
 
 	Entity lightEnt = scene->CreateEntity("Light");

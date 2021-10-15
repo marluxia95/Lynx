@@ -32,7 +32,8 @@ namespace Lynx {
 			void Init();
 			void Update();
 			void CalculateProjections();
-
+			void OnEntityAdded(Entity ent) {}
+            void OnEntityRemoved(Entity ent) {}
 		private:
 			mat4 GetProjection(Camera* camera);
 			mat4 GetView(Entity entity, Camera* camera);

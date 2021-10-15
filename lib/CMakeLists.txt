@@ -10,7 +10,7 @@ externalproject_add(lua_ext
     BUILD_COMMAND ${CMAKE_COMMAND} -E env
         HOST_CC=...   # See below
         CC=${CMAKE_C_COMPILER}
-        make -C <SOURCE_DIR>
+        make CFLAGS="-fPIC" -C <SOURCE_DIR>
     CONFIGURE_COMMAND ""
     BUILD_IN_SOURCE TRUE
     URL https://www.lua.org/ftp/lua-5.4.3.tar.gz

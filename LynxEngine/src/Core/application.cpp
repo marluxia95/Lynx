@@ -225,6 +225,7 @@ namespace Lynx {
         RegisterComponent<Parent>();
         RegisterComponent<PointLight>();
         RegisterComponent<DirectionalLight>();
+        RegisterComponent<LuaScript>();
     }
 
 }

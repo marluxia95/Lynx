@@ -55,6 +55,7 @@ namespace Lynx::ECS {
 		void EntityDestroyed(Entity entity){
 			for (auto const& pair : systems) {
 				auto const& system = pair.second;
+				system->OnEntityRemoved(entity);
 				system->entities.erase(entity);
 			}
 		}
@@ -73,10 +74,12 @@ namespace Lynx::ECS {
 				if ((signature & systemSignature) == systemSignature)
 				{
 					system->entities.insert(entity);
+					system->OnEntityAdded(entity);
 				}
 				// Entity signature does not match system signature - erase from set
 				else
 				{
+					system->OnEntityRemoved(entity);
 					system->entities.erase(entity);
 				}
 			}

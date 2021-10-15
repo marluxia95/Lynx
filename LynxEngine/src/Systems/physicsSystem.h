@@ -15,6 +15,8 @@ class PhysicsSystem : public ECS::System {
 		PhysicsSystem(Scene* scene) : ECS::System(scene) {}
 		void Init();
 		void Update();
+		void OnEntityAdded(Entity ent) {}
+        void OnEntityRemoved(Entity ent) {}
 		vec3 gravityForce = vec3(0, -3.0f,0);
 };
 
