@@ -177,11 +177,11 @@ int main()
 		applicationInstance->SetSystemSignature<RenderSystem>(signature);
 	}
 
-	applicationInstance->RegisterSystem<LuaRuntime>();
+	applicationInstance->RegisterSystem<Lua::LuaRuntime>();
 	{
 		Signature signature;
 		signature.set(applicationInstance->GetComponentType<LuaScript>());
-		applicationInstance->SetSystemSignature<LuaRuntime>(signature);
+		applicationInstance->SetSystemSignature<Lua::LuaRuntime>(signature);
 	}
 
 	EventManager::AddListener(UpdateTick, Update);

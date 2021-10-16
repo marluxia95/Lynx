@@ -30,16 +30,6 @@ void log_log(std::thread::id th_id, LogLevel level, const char* format, ...);
 int log_geterrorcount();
 int log_getwarningcount(); 
 
-/*
-log_log(std::this_thread::get_id(), level, format, __VA_ARGS__)
-#define log_debug(...) log(LOG_DEBUG, __VA_ARGS__)
-#define log_info(...)  log(LOG_INFO,  __VA_ARGS__)
-#define log_warn(...)  log(LOG_WARN,  __VA_ARGS__)
-#define log_warnf(...) log(LOG_WARN,  __VA_ARGS__)
-#define log_error(...) log(LOG_ERROR, __VA_ARGS__)
-#define log_fatal(...) log(LOG_FATAL, __VA_ARGS__)
-*/
-
 #define log_debug(...) log_log(std::this_thread::get_id(), LOG_DEBUG, __VA_ARGS__)
 #define log_info(...)  log_log(std::this_thread::get_id(), LOG_INFO, __VA_ARGS__)
 #define log_warn(...)  log_log(std::this_thread::get_id(), LOG_WARN, __VA_ARGS__)

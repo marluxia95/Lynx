@@ -1,12 +1,11 @@
 #ifndef LYNX_LUARUNTIME_H
 #define LYNX_LUARUNTIME_H
 
-#include <lua/lua.hpp>
-
+#include "luaCommon.h"
 #include "Core/logger.h"
 #include "Core/ECS/system.h"
 
-namespace Lynx {
+namespace Lynx::Lua {
 
     class LuaRuntime : public ECS::System {
         public:

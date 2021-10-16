@@ -1,8 +1,9 @@
 #include "Core/application.h"
 #include "luaRuntime.h"
 
+#include "luaAPI_core.h"
 
-namespace Lynx {
+namespace Lynx::Lua {
 
     int test(lua_State* state)
     {
@@ -24,9 +25,14 @@ namespace Lynx {
     void LuaRuntime::Init()
     {
         state = luaL_newstate();
-        luaL_openlibs(state);
         lua_register(state, "test", test);
-        log_debug("Lua initialized");
+        luaL_openlibs(state);
+        {
+            luaL_requiref(state, "LynxCore", luaopen_lynxcoreapi, 1);
+            lua_pop(state, 1);
+        }
+
+        log_debug("Lua initialized sucessfully");
     }
 
     void LuaRuntime::Update()
@@ -44,7 +50,7 @@ namespace Lynx {
     {
         auto lua_component = scene->GetComponent<LuaScript>(ent);
         const char* file_path = lua_component->path;
-
+        
         int success;
 
         success = luaL_loadfile(state, file_path);
@@ -62,6 +68,8 @@ namespace Lynx {
             lua_error(file_path);
             return;
         }
+
+        log_debug("LUA After run file");
     }
 
     void LuaRuntime::OnEntityRemoved(Entity ent)
