@@ -7,24 +7,24 @@ Link model is from here `https://www.models-resource.com/nintendo_64/`
 NOTE: Current version is unstable and will probably not compile properly, please download the latest stable release from the `Releases` tab. 
 ## Features
 
-- Model Loading
-- Cross-platform ( different API support, for now there's only OpenGL )
-- ECS
-- Lighting 
-- Custom shader parsing
-- Skyboxes
-- Pretty organized input system with joystick support 
-- Logging and debug features
-- Fully event-driven
-- Fully documented ( Via doxygen )
+  - Model Loading
+  - Cross-platform ( different API support, for now there's only OpenGL )
+  - ECS
+  - Lighting 
+  - Custom shader parsing
+  - Skyboxes
+  - Pretty organized input system with joystick support 
+  - Logging and debug features
+  - Fully event-driven
+  - Fully documented ( Via doxygen )
 
 ## TODO
 
-- Terrain rendering 
-- Physics engine
-- Sound system
-- Batch rendering ( with dynamic VBOs )
-- Better resource loading
+  - Terrain rendering 
+  - Physics engine
+  - Sound system
+  - Batch rendering ( with dynamic VBOs )
+  - Better resource loading
 
 ## Dependencies
 This project requires the following libraries :
