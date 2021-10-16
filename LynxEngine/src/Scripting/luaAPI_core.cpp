@@ -54,14 +54,5 @@ namespace Lynx::Lua {
 
         return 1;
     }
-/*
-LUAMOD_API int luaopen_base (lua_State *L) {
-  lua_pushglobaltable(L);
-  luaL_setfuncs(L, base_funcs, 0);
-  lua_pushvalue(L, -1);
-  lua_setfield(L, -2, LUA_GNAME);
-  lua_pushliteral(L, LUA_VERSION);
-  lua_setfield(L, -2, "_VERSION");
-  return 1;
-}*/
+
 }
