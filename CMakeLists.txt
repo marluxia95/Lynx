@@ -3,7 +3,7 @@ project(Lynx VERSION 0.0.3)
 
 set (CMAKE_CXX_STANDARD 17)
 if(UNIX)
-set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp -Wwrite-strings -Wconversion-null")
+set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp -Wwrite-strings -Wreorder -Wconversion-null")
 set(GLEW_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 endif()

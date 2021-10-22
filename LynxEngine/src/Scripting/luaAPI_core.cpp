@@ -1,4 +1,9 @@
+#include "Core/application.h"
+#include "Core/eventManager.h"
+#include "Events/event.h"
 #include "luaAPI_core.h"
+#include "luaAPI_events.h"
+
 
 namespace Lynx::Lua {
 
@@ -6,35 +11,94 @@ namespace Lynx::Lua {
     {
         const char* string = luaL_checkstring(L, 1);
         log_info(string);
-        return 1;
+        return 0;
     }
 
     static int core_log_debug(lua_State* L)
     {
         const char* string = luaL_checkstring(L, 1);
         log_debug(string);
-        return 1;
+        return 0;
     }
 
     static int core_log_warn(lua_State* L)
     {
         const char* string = luaL_checkstring(L, 1);
         log_warn(string);
-        return 1;
+        return 0;
     }
 
     static int core_log_error(lua_State* L)
     {
         const char* string = luaL_checkstring(L, 1);
         log_error(string);
-        return 1;
+        return 0;
     }
 
     static int core_log_fatal(lua_State* L)
     {
         const char* string = luaL_checkstring(L, 1);
         log_fatal(string);
+        return 0;
+    }
+
+    static int core_application_getDeltaTime(lua_State* L)
+    {
+        lua_pushnumber(L, GameApplication::GetGameInstance()->GetDeltaTime());
         return 1;
+    }
+
+    static int core_application_getScene(lua_State* l)
+    {
+        
+        return 1;
+    }
+
+    static int core_addEventListener(lua_State* L)
+    {
+        int argcount = lua_gettop(L);
+
+        if(argcount != 2){
+            log_warn("LUA : AddEventListener must be called with 2 arguments");
+            return 0;
+        }
+
+        const char* event_str = lua_tostring(L, 1);
+
+        EventType event_type = StringToEventMap[event_str];
+        
+        log_debug("LUA AddEventListener() : Event %s %d", event_str, event_type);
+
+        int func;
+
+        if(lua_isfunction(L, 2)) {
+            log_debug("Got function");
+            lua_newtable(L);
+            lua_pushvalue(L, 2);
+            func = luaL_ref(L, LUA_REGISTRYINDEX);
+        }else{
+            log_error("LUA : AddEventListener argument 2 must be a function !");
+            return -1;
+        }
+
+        EventManager::AddListener(event_type, [L, func](const Event& ev){
+            log_debug("LUA : Got event");
+            EventType type = ev.GetType();
+            lua_rawgeti(L, LUA_REGISTRYINDEX, func);
+            EventToTable(L, type, ev);
+            log_debug("LUA : Calling event function");
+            if(lua_isfunction(L, 1)) {
+                lua_call(L, 1, 0);
+            }else{
+                log_warn("LUA : EventManager::AddListener() Argument is not a function");
+            }
+            return;
+        });
+
+        EventManager::AddListener(LastTick, [L, func](const Event&ev){
+            luaL_unref(L, LUA_REGISTRYINDEX, func);
+        });
+        return 0;
     }
 
     static const struct luaL_Reg lynx_core_lib [] = 
@@ -44,6 +108,14 @@ namespace Lynx::Lua {
         {"log_warn",  core_log_warn },
         {"log_error", core_log_error},
         {"log_fatal", core_log_fatal},
+        {"AddEventListener", core_addEventListener},
+        {NULL, NULL}
+    };
+
+    static const struct luaL_Reg lynx_application [] = 
+    {
+        {"GetDeltaTime", core_application_getDeltaTime},
+        {"GetScene", core_application_getScene},
         {NULL, NULL}
     };
 
@@ -51,6 +123,10 @@ namespace Lynx::Lua {
     {
         lua_pushglobaltable(L);
         luaL_setfuncs(L, lynx_core_lib, 0);
+
+        lua_newtable(L);
+        luaL_setfuncs(L, lynx_application, 0);
+        lua_setglobal(L, "Application");
 
         return 1;
     }

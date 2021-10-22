@@ -186,6 +186,7 @@ namespace Lynx {
 
     void GameApplication::Run()
     {
+        EventManager::SendEvent(FirstTickEvent());
         do
         {
             CalculateFrameTime();

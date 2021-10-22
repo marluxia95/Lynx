@@ -13,7 +13,7 @@ namespace Lynx {
 
 	void PhysicsSystem::Update() 
 	{
-		float deltaTime = Lynx::GameApplication::GetInstance()->delta_time;
+		float deltaTime = Lynx::GameApplication::GetInstance()->GetDeltaTime();
 	
 		for (auto entity : entities)
 		{

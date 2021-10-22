@@ -32,7 +32,7 @@ void movement()
 	auto transformComponent = scene->GetComponent<Transform>(camera);
 	auto cameraComponent = scene->GetComponent<Camera>(camera);
 
-	float cameraSpeed = 20.5f * applicationInstance->delta_time * camera_Speed_Multiplier;
+	float cameraSpeed = 20.5f * applicationInstance->GetDeltaTime() * camera_Speed_Multiplier;
 
 	if (Input::IsKeyDown(GLFW_KEY_W))
         transformComponent->position += cameraSpeed * transformComponent->rotation;
@@ -135,7 +135,7 @@ void joystick_disconnected(const Event& ev)
 
 void Update(const Event& ev)
 {
-	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->delta_time), log_geterrorcount());
+	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
 	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
 	mouse_input();
 	movement();
@@ -154,10 +154,13 @@ vector<Entity>* getChildren(Entity parent)
 	return ents;
 }
 
-int main()
+int main(int argc, char** argv)
 {
 	// Enables the gApplication's debug mode
-	log_set_level(LOG_DEBUG);
+	for (int i = 1; i < argc; ++i) {
+		if(std::string(argv[i]) == "--debug")
+			log_set_level(LOG_DEBUG);
+	}
 
 	log_debug("Adding initial events...");
 

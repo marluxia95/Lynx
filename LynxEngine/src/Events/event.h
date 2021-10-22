@@ -3,7 +3,9 @@
 
 #include <unordered_map>
 #include <any>
+#include <string>
 #include <vector>
+#include <map>
 #include "Core/ECS/entity.h"
 
 namespace Lynx {
@@ -11,8 +13,12 @@ namespace Lynx {
     enum EventType {
         None = 0,
         WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed, JoystickConnected, JoystickDisconnected,
-        LastTick, UpdateTick, EngineInit, SignatureChanged, EntityDestroyed, Render
+        FirstTick, LastTick, UpdateTick, EngineInit, SignatureChanged, EntityDestroyed, Render
     };
+
+    extern std::map<std::string, EventType> StringToEventMap;
+
+    const char* GetEventString(EventType type);
 
     class Event {
         public:
@@ -28,6 +34,12 @@ namespace Lynx {
 
         protected:
             EventType type;
+    };
+
+    class FirstTickEvent : public Event {
+        public:
+            FirstTickEvent() : Event(FirstTick) {}
+
     };
 
     class LastTickEvent : public Event {

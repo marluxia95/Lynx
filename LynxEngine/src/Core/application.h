@@ -47,8 +47,8 @@ namespace Lynx {
         virtual void Init(const char* title, unsigned int width, unsigned int height, int flags);
 		virtual void Run();
         
+        float GetDeltaTime() { return delta_time; }
         void InitializeSubsystems();
-        void CalculateFrameTime();
         void UpdateSystems() { m_systemManager->UpdateSystems(); };
         virtual void InitializeSystems() { m_systemManager->InitSystems(); }
 
@@ -72,8 +72,9 @@ namespace Lynx {
         ThreadPool* GetThreadPool() { return m_threadPool.get(); }
         static Application* GetInstance() { return s_applicationInstance; }
 
-		float delta_time, last_FrameTime;
     protected:
+        void CalculateFrameTime();
+
         ECS::SystemManager* GetSystemManager() 
         {
             return m_systemManager.get();
@@ -84,6 +85,7 @@ namespace Lynx {
     private:
         static Application* s_applicationInstance;
     protected:
+        float delta_time, last_FrameTime;
 		State applicationState;
         std::thread::id thread_id;
         std::shared_ptr<ECS::SystemManager> m_systemManager;
@@ -121,6 +123,7 @@ namespace Lynx {
 
         void LoadDefaultSystems();
         Scene* CreateScene();
+        Scene* GetScene() { return scene; }
 
         unsigned int GetResolutionWidth();
         unsigned int GetResolutionHeight();

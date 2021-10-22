@@ -5,12 +5,6 @@
 
 namespace Lynx::Lua {
 
-    int test(lua_State* state)
-    {
-        log_info("Hello from lua!");
-        return 1;
-    }
-
     LuaRuntime::LuaRuntime(Scene* scene) : ECS::System(scene) 
     {
         
@@ -25,7 +19,6 @@ namespace Lynx::Lua {
     void LuaRuntime::Init()
     {
         state = luaL_newstate();
-        lua_register(state, "test", test);
         luaL_openlibs(state);
         {
             luaL_requiref(state, "LynxCore", luaopen_lynxcoreapi, 1);
