@@ -10,31 +10,20 @@
 namespace Lynx {
     
     class EventManager {
-        
-        using EventFunc = std::function<void(const Event&)>;
 
         public:
+
+            using EventFunc = std::function<int(const Event&)>;
+
             /*
                 Adds a listener to an event
             */
-            static void AddListener(const EventType& type, EventFunc&& func)
-            {
-                listeners[type].push_back(func);
-            }
+            static void AddListener(const EventType& type, EventFunc&& func);
 
             /*
                 Sends an event signal
             */
-            static void SendEvent(const Event& event)
-            {
-                EventType type = event.GetType();
-                
-                if(listeners.find(type) == listeners.end())
-                    return;
-
-                for(auto const& listener : listeners[type])
-                    listener(event);
-            }
+            static void SendEvent(const Event& event);
 
         private:
             static std::map<EventType, std::vector<EventFunc>> listeners;

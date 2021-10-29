@@ -5,6 +5,7 @@
 
 namespace Lynx::Lua {
 
+
     LuaRuntime::LuaRuntime(Scene* scene) : ECS::System(scene) 
     {
         
@@ -33,10 +34,9 @@ namespace Lynx::Lua {
 
 
     }
-
-    void LuaRuntime::lua_error(const char* file)
+    void LuaError(lua_State* L)
     {
-        log_error("LUA Error in %s : %s", file, lua_tostring(state,-1));
+        log_error("LUA Error %s", lua_tostring(L,-1));
     }
 
     void LuaRuntime::OnEntityAdded(Entity ent)
@@ -49,7 +49,7 @@ namespace Lynx::Lua {
         success = luaL_loadfile(state, file_path);
 
         if(success != LUA_OK) {
-            lua_error(file_path);
+            LuaError(state);
             return;
         }
 
@@ -58,7 +58,7 @@ namespace Lynx::Lua {
         success = lua_pcall(state, 0, LUA_MULTRET, 0);
 
         if(success != LUA_OK) {
-            lua_error(file_path);
+            LuaError(state);
             return;
         }
 

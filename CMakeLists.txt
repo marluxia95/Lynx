@@ -8,6 +8,10 @@ set(GLEW_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 set(GLEW_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 endif()
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 link_directories( ${CMAKE_BINARY_DIR}/bin )
 
@@ -16,6 +20,7 @@ file(COPY res DESTINATION ${CMAKE_BINARY_DIR})
 add_subdirectory(lib)
 add_subdirectory(examples/game)
 add_subdirectory(LynxEngine)
+add_subdirectory(EngineModules)
 
 # No windows support
 if(UNIX)

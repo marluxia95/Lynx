@@ -10,7 +10,7 @@ file(GLOB_RECURSE SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/imgui/backends/imgui_impl_opengl3.cpp
 )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -fPIC" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -fPIC -Wwrite-strings" )
 
 link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
 
@@ -65,8 +65,3 @@ target_link_libraries(
 )
 
 add_dependencies(LynxEngine glfw_ext assimp_ext)
-
-install(TARGETS LynxEngine
-    LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/bin
-    ARCHIVE DESTINATION ${CMAKE_BINARY_DIR}/bin
-)

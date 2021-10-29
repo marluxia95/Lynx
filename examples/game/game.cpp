@@ -107,7 +107,7 @@ void mouse_input()
 
 }
 
-void mouse_button_input(const Event& ev)
+int mouse_button_input(const Event& ev)
 {
 	const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
 	if(button_event.m_keyCode == GLFW_MOUSE_BUTTON_2 && button_event.m_action == GLFW_PRESS){
@@ -119,26 +119,32 @@ void mouse_button_input(const Event& ev)
 	}
 }
 
-void joystick_connected(const Event& ev)
+int joystick_connected(const Event& ev)
 {
 	const JoystickConnectedEvent& joy_event = static_cast<const JoystickConnectedEvent&>(ev);
 
 	log_info("Joystick connected : %s ( ID : %d )", joy_event.joystick->name, joy_event.joystick->id);
+	
+	return 1;
 }
 
-void joystick_disconnected(const Event& ev)
+int joystick_disconnected(const Event& ev)
 {
 	const JoystickDisconnectedEvent& joy_event = static_cast<const JoystickDisconnectedEvent&>(ev);
 
 	log_info("Joystick disconnected : %s", joy_event.joystick->name);
+
+	return 1;
 }
 
-void Update(const Event& ev)
+int Update(const Event& ev)
 {
 	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
 	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
 	mouse_input();
 	movement();
+	
+	return 1;
 }
 
 vector<Entity>* getChildren(Entity parent)
@@ -161,6 +167,8 @@ int main(int argc, char** argv)
 		if(std::string(argv[i]) == "--debug")
 			log_set_level(LOG_DEBUG);
 	}
+
+	ModuleLoader::LoadModule("TestModule");
 
 	log_debug("Adding initial events...");
 

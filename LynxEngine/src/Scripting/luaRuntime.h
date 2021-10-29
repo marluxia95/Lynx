@@ -16,9 +16,10 @@ namespace Lynx::Lua {
             void OnEntityAdded(Entity ent);
             void OnEntityRemoved(Entity ent);
         private:
-            void lua_error(const char* file);
             lua_State* state;
     };
+
+    void LuaError(lua_State* L);
 
 }
 

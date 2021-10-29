@@ -3,6 +3,7 @@
 #include "Events/event.h"
 #include "luaAPI_core.h"
 #include "luaAPI_events.h"
+#include "luaRuntime.h"
 
 
 namespace Lynx::Lua {
@@ -81,22 +82,31 @@ namespace Lynx::Lua {
             return -1;
         }
 
-        EventManager::AddListener(event_type, [L, func](const Event& ev){
+        EventManager::AddListener(event_type, [L, func](const Event& ev) -> int{
             log_debug("LUA : Got event");
             EventType type = ev.GetType();
             lua_rawgeti(L, LUA_REGISTRYINDEX, func);
             EventToTable(L, type, ev);
             log_debug("LUA : Calling event function");
+            int success;
             if(lua_isfunction(L, 1)) {
-                lua_call(L, 1, 0);
+                lua_pcall(L, 1, 0, 0);
+
+                if(success != LUA_OK) {
+                    LuaError(L);
+                    luaL_unref(L, LUA_REGISTRYINDEX, func);
+                    return -1;
+                }
+
             }else{
                 log_warn("LUA : EventManager::AddListener() Argument is not a function");
             }
-            return;
+            return 0;
         });
 
-        EventManager::AddListener(LastTick, [L, func](const Event&ev){
+        EventManager::AddListener(LastTick, [L, func](const Event&ev) -> int{
             luaL_unref(L, LUA_REGISTRYINDEX, func);
+            return 0;
         });
         return 0;
     }

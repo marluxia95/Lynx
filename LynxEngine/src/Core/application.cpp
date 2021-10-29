@@ -26,6 +26,7 @@
 
 #include "ECS/systemManager.h"
 #include "ECS/components.h"
+#include "module.h"
 
 #include "logger.h"
 
@@ -49,12 +50,12 @@ namespace Lynx {
         thread_id = std::this_thread::get_id();
         s_applicationInstance = this;
 
-        EventManager::AddListener(SignatureChanged, [this](const Event& ev){
+        EventManager::AddListener(SignatureChanged, [this](const Event& ev) -> int{
             const SignatureChangedEvent& event = static_cast<const SignatureChangedEvent&>(ev);
             m_systemManager->EntitySignatureChanged(event.entity, event.signature);
         });
 
-        EventManager::AddListener(EntityDestroyed, [this](const Event& ev){
+        EventManager::AddListener(EntityDestroyed, [this](const Event& ev) -> int{
             const EntityDestroyedEvent& event = static_cast<const EntityDestroyedEvent&>(ev);
             m_systemManager->EntityDestroyed(event.entity);
         });
@@ -62,7 +63,10 @@ namespace Lynx {
 
     Application::~Application()
     {
+        ModuleLoader::UnloadModules();
+#ifdef LYNX_MULTITHREAD
         m_threadPool->Wait();
+#endif
     }
 
     void Application::Init(const char* title, unsigned int width, unsigned int height, int flags)
@@ -112,6 +116,12 @@ namespace Lynx {
 
     GameApplication::~GameApplication()
     {
+        ModuleLoader::UnloadModules();
+
+#ifdef LYNX_MULTITHREAD
+        m_threadPool->Wait();
+#endif
+
         if(m_windowManager != nullptr)
             m_windowManager->Destroy();
     }

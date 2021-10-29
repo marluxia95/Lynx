@@ -20,6 +20,7 @@
 #include "Core/eventManager.h"
 #include "Core/inputManager.h"
 #include "Core/assert.h"
+#include "Core/module.h"
 
 #include "Events/event.h"
 #include "Events/keyEvent.h"

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 17)
 project(Game VERSION 0.1)
 
-set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -pthread -lXrandr -ldl -lassimp -Wwrite-strings")
+set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -pthread -lXrandr -ldl -lassimp")
 
 file(GLOB_RECURSE SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/game.cpp
@@ -50,6 +50,4 @@ target_link_libraries(
 )
 
 add_dependencies(Game glfw_ext assimp_ext)
-
-install(TARGETS Game RUNTIME DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
