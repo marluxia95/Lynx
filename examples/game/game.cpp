@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 			log_set_level(LOG_DEBUG);
 	}
 
-	ModuleLoader::LoadModule("TestModule");
+	ModuleLoader::LoadModule("LynxPhysics");
 
 	log_debug("Adding initial events...");
 

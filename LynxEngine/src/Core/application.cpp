@@ -17,8 +17,6 @@
 #include "Graphics/rendererAPI.h"
 #include "Graphics/mesh.h"
 
-#include "Systems/physicsSystem.h"
-
 #include "Systems/lightingSystem.h"
 #include "Systems/parentingSystem.h"
 #include "Systems/cameraSystem.h"
@@ -167,14 +165,6 @@ namespace Lynx {
             SetSystemSignature<CameraSystem>(signature);
         }
 
-        RegisterSystem<PhysicsSystem>();
-        {
-            Signature signature;
-            signature.set(GetComponentType<Transform>());
-            signature.set(GetComponentType<RigidBody>());
-            SetSystemSignature<PhysicsSystem>(signature);
-        }
-
         RegisterSystem<LightingSystem>();
         {
             Signature signature;
@@ -229,7 +219,6 @@ namespace Lynx {
     {
         log_debug("Loading default components");
         RegisterComponent<Transform>();
-        RegisterComponent<RigidBody>();
         RegisterComponent<Generic>();
         RegisterComponent<MeshRenderer>();
         RegisterComponent<Camera>();

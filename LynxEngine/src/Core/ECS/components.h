@@ -60,12 +60,6 @@ struct SpriteRenderer {
 	Graphics::Texture* texture;
 };
 
-struct RigidBody {
-	vec3 velocity;
-	vec3 acceleration;
-	float mass;
-};
-
 struct Material {
     glm::vec3 ambient;
     glm::vec3 diffuse;

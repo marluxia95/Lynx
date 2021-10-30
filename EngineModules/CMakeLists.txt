@@ -1,2 +1,2 @@
 add_subdirectory(TestModule)
-
+add_subdirectory(Physics)
