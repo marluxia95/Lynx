@@ -37,7 +37,7 @@ namespace Lynx::Graphics {
 			Mesh(vector<Vertex>* vertices, vector<unsigned int>* indices, MeshType type); // Element buffer mode
 			Mesh() { };
 			~Mesh();
-			void Render();
+			virtual void Render();
 			vector<Vertex>* vertices;
 			vector<unsigned int>* indices;
 

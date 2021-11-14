@@ -40,12 +40,16 @@ namespace Lynx {
     Application::Application()
     {
         log_debug("Initializing subsystems");
+
+        thread_id = std::this_thread::get_id();
+        m_allocator = std::make_shared<MemoryPool>(0xFFFF, 1024);
+
 #ifdef LYNX_MULTITHREAD
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");
         m_threadPool = std::make_shared<ThreadPool>(3);
 #endif
-        m_systemManager = std::make_shared<ECS::SystemManager>();
-        thread_id = std::this_thread::get_id();
+        m_systemManager = std::allocate_shared<ECS::SystemManager>(MemoryAllocator<ECS::SystemManager>());
+
         s_applicationInstance = this;
 
         EventManager::AddListener(SignatureChanged, [this](const Event& ev) -> int{

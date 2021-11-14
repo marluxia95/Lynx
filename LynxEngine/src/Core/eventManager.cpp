@@ -5,12 +5,24 @@
 
 namespace Lynx {
 
-std::map<EventType, std::vector<EventManager::EventFunc>> EventManager::listeners = std::map<EventType, std::vector<EventFunc>>();
+std::map<EventType, std::vector<EventListener>> EventManager::listeners = std::map<EventType, std::vector<EventListener>>();
+unsigned int EventManager::last_ev_id = 0;
 
-
-void EventManager::AddListener(const EventType& type, EventFunc&& func)
+EventListener EventManager::AddListener(const EventType& type, EventCallbackFunc&& func)
 {
-    listeners[type].push_back(func);
+    EventListener n_listener = EventListener(func, last_ev_id++);
+    listeners[type].push_back(n_listener);
+    return n_listener;
+}
+
+void EventManager::RemoveListener(const EventType& type, EventListener listener)
+{
+    auto p = std::find(listeners[type].begin(), listeners[type].end(), listener);
+
+    if(p == listeners[type].end())
+        return;
+    
+    listeners[type].erase(p);
 }
 
 void EventManager::SendEvent(const Event& event)
@@ -23,10 +35,7 @@ void EventManager::SendEvent(const Event& event)
     for(int i = 0; i < listeners[type].size(); i++){
         auto listener = listeners[type][i];
 
-        if(listener(event) < 0 ){ // Remove listener
-            listeners[type].erase(listeners[type].begin() + i);
-            log_debug("EventManager : Removed index %d New Size : %d", i, listeners[type].size());
-        }
+        listener(event);
     }
 }
 

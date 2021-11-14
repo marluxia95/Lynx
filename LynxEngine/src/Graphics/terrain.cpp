@@ -5,11 +5,13 @@
 #include "texture.h"
 #include "Core/logger.h"
 #include "rendererAPI.h"
-/*
+#include "lynx.h"
+
 namespace Lynx::Graphics {
 
-    Terrain::Terrain(float** heightmap) : Mesh()
+    Terrain::Terrain(std::vector<float> heightmap) : Mesh()
     {
+        log_debug("Creating terrain");
         m_heightmap = heightmap;
 
         VAO = VertexArray::Create();
@@ -19,7 +21,29 @@ namespace Lynx::Graphics {
         m_columns = sizeof(heightmap[0])/sizeof(float);
         m_vertcount = m_rows * m_columns;
         VBO = VertexBuffer::Create();
+        log_debug("Creating terrain mesh");
         SetupMesh();
+    }
+
+    Terrain::Terrain(const char* image) : Mesh()
+    {
+        log_debug("Creating terrain");
+        load_heightmap_from_image(image);
+
+        VAO = VertexArray::Create();
+        VAO->Bind();
+
+        m_rows = sizeof(m_heightmap)/sizeof(float);
+        m_columns = sizeof(m_heightmap[0])/sizeof(float);
+        m_vertcount = m_rows * m_columns;
+        VBO = VertexBuffer::Create();
+        log_debug("Creating terrain mesh");
+        SetupMesh();
+    }
+
+    Terrain::~Terrain()
+    {
+
     }
 
     glm::vec3 Terrain::calculate_normal(unsigned int x, unsigned int z)
@@ -27,10 +51,10 @@ namespace Lynx::Graphics {
         x = x == 0 ? 1 : x;
         z = z == 0 ? 1 : z;
 
-        float height_l = m_heightmap[x-1][z];
-        float height_r = m_heightmap[x+1][z];
-        float height_u = m_heightmap[x][z+1];
-        float height_d = m_heightmap[x][z-1];
+        float height_l = m_heightmap[x-1 + z     * gridlen];
+        float height_r = m_heightmap[x+1 + z     * gridlen];
+        float height_u = m_heightmap[x   + (z+1) * gridlen];
+        float height_d = m_heightmap[x   + (z-1) * gridlen];
 
         return glm::normalize(glm::vec3(height_l - height_r,1.0f, height_d - height_u));
     }
@@ -43,15 +67,19 @@ namespace Lynx::Graphics {
     void Terrain::SetupMesh()
     {
         // Process vertices
-        vertices = (Vertex*)malloc(m_vertcount * sizeof(Vertex));
+        vertices = new std::vector<Vertex>();
+        vertices->resize(m_rows * m_columns);
 
+        log_debug("Processing vertices ");
 
         for ( int r = 0; r < m_rows; r++) {
             for (int c = 0; c < m_columns; c++) {
-                vertices[getpos(r,c)].Position = glm::vec3(-1.0f + float(r) / float(m_rows-1), m_heightmap[r][c], -1.0f + float(c) / float(m_columns-1));
+                vertices->at(getpos(r,c)).Position = glm::vec3(-1.0f + float(r) / float(m_rows-1), m_heightmap[r + c * gridlen], -1.0f + float(c) / float(m_columns-1));
             }
             
         }
+
+        log_debug("Processing UV's ");
 
         // Process UV's
         const float tex_stepU = 0.1f;
@@ -59,14 +87,16 @@ namespace Lynx::Graphics {
 
         for ( int r = 0; r < m_rows; r++) {
             for (int c = 0; c < m_columns; c++) {
-                vertices[getpos(r,c)].TextureCoords = glm::vec2(tex_stepU * r, tex_stepV * c);
+                vertices->at(getpos(r,c)).TextureCoords = glm::vec2(tex_stepU * r, tex_stepV * c);
             }
         }
+
+        log_debug("Processing normals ");
 
         // Process normals
         for ( int r = 0; r < m_rows; r++) {
             for (int c = 0; c < m_columns; c++) {
-                vertices[getpos(r,c)].Normal = calculate_normal(r,c);
+                vertices->at(getpos(r,c)).Normal = calculate_normal(r,c);
             }
         }
         
@@ -74,43 +104,52 @@ namespace Lynx::Graphics {
 
         // Process indices
 
+        log_debug("Processing indices ");
+
         int index_count = (m_rows-1)*m_columns*2 + m_rows-1;
         int index_size = index_count * sizeof(unsigned int);
-        indices = (unsigned int*)malloc(index_count*sizeof(unsigned int));
+
+        indices = new std::vector<unsigned int>;
+        log_debug("indice array size %d", index_count);
+        indices->resize(index_count);
 
         for ( int r = 0; r < m_rows; r++) {
             for (int c = 0; c < m_columns; c++) {
                 for (int n = 0; n < 2; n++){
-                    int index = (r+n)*m_columns+c;
-                    indices[r + c * m_columns + n *2] = index;
+                    unsigned int index = (r+n)*m_columns+c;
+                    indices->at(r + c * m_columns + n *2) = index;
+                    log_debug("%d", r + c * m_columns + n *2);
                 }
             }
         }
 
+        log_debug("Creating EBO ");
+
         EBO = ElementBuffer::Create(indices, index_count*sizeof(unsigned int));
     }
 
-    void Terrain::Render()
+    void Terrain::load_heightmap_from_image(const char* path)
     {
-        EBO->Bind();
-        RendererAPI::DrawIndexed(index_size);
-    }
+        Texture* texture = new Texture(path);
+        TextureData* tdata = texture->GetData();
+        
+        LYNX_ASSERT(tdata->GetData(), "Invalid terrain data");
 
-    float** load_heightmap_from_image(const char* path)
-    {
-        TextureData* texture = loadTexture(path);
-        float** heightmap = (float**)malloc((texture->height * texture->width) * sizeof(float));
+        gridlen = tdata->GetWidth();
 
-        unsigned char* pixel_ptr = &texture->data[0];
-        for ( int x = 0; x < texture->height; x++ ) {
-            for ( int z = 0; z < texture->width; z++ ) {
-                log_debug("T %d %d", x,z);
-                heightmap[x][z] = float(*pixel_ptr) / 255.0f;
-                pixel_ptr += texture->channels;
+        m_heightmap.resize(tdata->GetWidth() * tdata->GetHeight());
+
+        m_heightmap[0] = 1.0f;        
+
+        log_debug("Loading terrain with heightmap image %s ( %d:%d )", path, tdata->GetWidth(), tdata->GetHeight());
+
+        unsigned char* data = tdata->GetData();
+        for ( int x = 0; x < tdata->GetHeight(); x++ ) {
+            for ( int z = 0; z < tdata->GetWidth(); z++ ) {
+                m_heightmap[x + z * gridlen] = data[x + z] / 255.0f;
             }
         }
-        
-        return heightmap;
+
+        delete texture;
     }
 }
-*/

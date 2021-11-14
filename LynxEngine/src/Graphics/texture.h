@@ -19,7 +19,7 @@ namespace Lynx::Graphics {
 		TextureData(const char* path, unsigned char* data, int width, int height, int channels) : path(path), data(data), width(width), height(height),
 		channels(channels) {}
 
-		~TextureData();
+		~TextureData() { Free(); }
 		
 		bool LoadFromFile(const char* path);
 		void Free();
@@ -27,6 +27,7 @@ namespace Lynx::Graphics {
 		unsigned char* GetData() { return data; }
 		int GetWidth() { return width; }
 		int GetHeight() { return height; }
+		int GetChannels() { return channels; }
 		
 		TextureBase* linkedTexture;
 		friend class TextureBase;

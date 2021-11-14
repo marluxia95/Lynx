@@ -22,6 +22,7 @@ float sensitivity = 0.3f;
 float mPitch, mYaw;
 bool mouseActive = false;
 char title[40];
+
 Entity camera;
 Scene* scene;
 GameApplication* applicationInstance;
@@ -117,6 +118,7 @@ int mouse_button_input(const Event& ev)
 		mouseActive = false;
 		glfwSetInputMode(GameApplication::GetGameInstance()->GetWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
+	return 1;
 }
 
 int joystick_connected(const Event& ev)
@@ -167,8 +169,6 @@ int main(int argc, char** argv)
 		if(std::string(argv[i]) == "--debug")
 			log_set_level(LOG_DEBUG);
 	}
-
-	ModuleLoader::LoadModule("LynxPhysics");
 
 	log_debug("Adding initial events...");
 
@@ -254,15 +254,27 @@ int main(int argc, char** argv)
 		"res/images/cubemap/back.jpg"
 	};
 
+	/*
+	Graphics::Terrain* ter = new Graphics::Terrain("res/images/ter.jpg");
+	Entity terrainEnt = scene->CreateEntity();
+	{
+		scene->AddComponent(terrainEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)});
+		scene->AddComponent(terrainEnt, MeshRenderer{glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f),
+													0.0f, ter, shader});
+	}*/
+	
+
 	Graphics::Cubemap* map = new Graphics::Cubemap();
 	map->Load(&map_textures);
 	applicationInstance->GetSystem<RenderSystem>()->SetCubemap(map);	
 	log_info("Application fully started");
 
+	
 	// Runs the gApplication
 	applicationInstance->SetApplicationState(STATE_ACTIVE);
 	API_CheckErrors();
 	applicationInstance->Run();
-	//delete map;
+
+	//delete ter;
 	return 0;
 }

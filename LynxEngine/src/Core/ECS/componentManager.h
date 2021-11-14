@@ -9,6 +9,7 @@
 #include "Core/logger.h"
 #include "componentArray.h"
 #include "Core/assert.h"
+#include "Core/memman.h"
 
 namespace Lynx::ECS {
 
@@ -32,7 +33,7 @@ public:
 		componentTypes.insert( { typeName, nextComponentType } );
 		log_debug("Registering component %s ", typeName);
 
-		componentArrays.insert( { typeName, std::make_shared<ComponentArray<T>>() } );
+		componentArrays.insert( { typeName, std::allocate_shared<ComponentArray<T>>(MemoryAllocator<ComponentArray<T>>()) } );
 
 		nextComponentType++;
 	}

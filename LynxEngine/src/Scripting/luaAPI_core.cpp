@@ -55,6 +55,10 @@ namespace Lynx::Lua {
         return 1;
     }
 
+    static void core_event(const Event& ev) {
+
+    }
+
     static int core_addEventListener(lua_State* L)
     {
         int argcount = lua_gettop(L);
@@ -68,12 +72,11 @@ namespace Lynx::Lua {
 
         EventType event_type = StringToEventMap[event_str];
         
-        log_debug("LUA AddEventListener() : Event %s %d", event_str, event_type);
+        //log_debug("LUA AddEventListener() : Event %s %d", event_str, event_type);
 
         int func;
 
         if(lua_isfunction(L, 2)) {
-            log_debug("Got function");
             lua_newtable(L);
             lua_pushvalue(L, 2);
             func = luaL_ref(L, LUA_REGISTRYINDEX);
@@ -82,31 +85,28 @@ namespace Lynx::Lua {
             return -1;
         }
 
-        EventManager::AddListener(event_type, [L, func](const Event& ev) -> int{
-            log_debug("LUA : Got event");
+        EventManager::AddListener(event_type, [L, func](const Event& ev){
+            //log_debug("LUA : Got event");
             EventType type = ev.GetType();
             lua_rawgeti(L, LUA_REGISTRYINDEX, func);
             EventToTable(L, type, ev);
-            log_debug("LUA : Calling event function");
+            //log_debug("LUA : Calling event function");
             int success;
             if(lua_isfunction(L, 1)) {
-                lua_pcall(L, 1, 0, 0);
+                success = lua_pcall(L, 1, 0, 0);
 
                 if(success != LUA_OK) {
                     LuaError(L);
                     luaL_unref(L, LUA_REGISTRYINDEX, func);
-                    return -1;
+                    return;
                 }
-
             }else{
                 log_warn("LUA : EventManager::AddListener() Argument is not a function");
             }
-            return 0;
         });
 
-        EventManager::AddListener(LastTick, [L, func](const Event&ev) -> int{
+        EventManager::AddListener(LastTick, [L, func](const Event&ev){
             luaL_unref(L, LUA_REGISTRYINDEX, func);
-            return 0;
         });
         return 0;
     }

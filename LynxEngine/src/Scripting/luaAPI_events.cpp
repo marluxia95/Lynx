@@ -9,12 +9,9 @@ namespace Lynx::Lua {
 
     void EventToTable(lua_State* L, EventType ev, const Event& r_event)
     {        
-        log_debug("Creating table");
         lua_newtable(L);
-        log_debug("Table created");
         lua_pushstring(L, "Type");
         lua_pushstring(L, GetEventString(r_event.GetType()) );
-        log_debug("Pushed data");
         lua_settable(L, -3);
 
         switch (ev) {
@@ -63,8 +60,6 @@ namespace Lynx::Lua {
                 }
                 break;
         };
-        
-        log_debug("Set table information");
     }
 
 }

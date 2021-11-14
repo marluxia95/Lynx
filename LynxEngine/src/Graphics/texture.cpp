@@ -26,7 +26,7 @@ namespace Lynx::Graphics {
 	{ 
 		log_debug("Created new texture with path %s", path);
 		data = new TextureData(this); 
-		data->path = path;
+		loadFromFile(path);
 	}
 
 	Texture::Texture(const char* path) : TextureBase(TEXTURE_DEFAULT, path)
@@ -48,7 +48,7 @@ namespace Lynx::Graphics {
 		log_debug("Loading texture %s", path);
 		data->path = path;
 		data->data = stbi_load(path, &data->width, &data->height, &data->channels, 0);
-		if(!data)
+		if(!data|!data->height)
 			log_error("Unable to load texture %s : %s", path, stbi_failure_reason());
 	}
 

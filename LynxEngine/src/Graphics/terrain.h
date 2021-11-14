@@ -4,29 +4,32 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "mesh.h"
-/*
+
 namespace Lynx::Graphics {
 
     class Terrain : public Mesh{
     private:
         void SetupMesh();
     public:
-        Terrain(float** heightmap);
+        Terrain(std::vector<float> heightmap);
+        Terrain(const char* image);
+        ~Terrain();
 
-        void Render();
     private:
         glm::vec3 calculate_normal(unsigned int x, unsigned int z);
         int getpos(unsigned int x, unsigned int z);
-        float** m_heightmap;
-        Vertex* vertices;
-        unsigned int* indices;
+        void load_heightmap_from_image(const char* path);
+    
+    private:
+
+        std::vector<float> m_heightmap;
+        
+        int gridlen;
         int m_rows, m_columns, m_vertcount, index_size;
 
     };
 
-    float** load_heightmap_from_image(const char* path);
-
 }
-*/
+
 
 #endif
