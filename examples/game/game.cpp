@@ -170,6 +170,9 @@ int main(int argc, char** argv)
 			log_set_level(LOG_DEBUG);
 	}
 
+	auto module = ModuleManager::LoadEngineModule("TestModule");
+	module->Init();
+
 	log_debug("Adding initial events...");
 
 	applicationInstance = new GameApplication();

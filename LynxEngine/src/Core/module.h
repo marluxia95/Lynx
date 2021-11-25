@@ -33,16 +33,14 @@ namespace Lynx {
 
             virtual std::shared_ptr<T> GetInstance() = 0;
 
-        private:
-            T* module_instance;
-
     };
 
     class ModuleManager {
 
         public:
-            static IModule* LoadEngineModule(std::string path);
+            static std::shared_ptr<IModule> LoadEngineModule(std::string path);
             static void UnloadAllModules();
+            static std::shared_ptr<IModule> GetModule(std::string path);
 
         private:
             static std::map<std::string, IModuleLoader<IModule>*> loaded_modules;

@@ -209,6 +209,7 @@ namespace Lynx {
             m_windowManager->Update();
         } while(( !glfwWindowShouldClose(m_windowManager->window) ) | applicationState == STATE_CLOSED);
         EventManager::SendEvent(LastTickEvent());
+        ModuleManager::UnloadAllModules();
     }
 
     Scene* GameApplication::CreateScene()

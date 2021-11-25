@@ -1,12 +1,34 @@
 #include "Core/logger.h"
-#include "Core/moduleInterface.h"
 
-extern "C" { ENGINE_MODULE_INIT; ENGINE_MODULE_CLOSE; }
+#include "Core/module.h"
 
-ENGINE_MODULE_INIT {
-    log_info("Module test loaded!");
-}
+using namespace Lynx;
 
-ENGINE_MODULE_CLOSE {
-    log_info("Module test unloaded!");
+class TestModule : public IModule {
+    public:
+        TestModule() : IModule(0) {}
+        ~TestModule() { Last(); }
+            
+        void Init() {
+            log_debug("Hello!");
+        }
+            
+        void Last() {
+            log_debug("Goodbye!");
+        }
+
+};
+
+extern "C" { 
+
+    IModule* alloc() 
+    {
+        return new TestModule();
+    }
+
+    void dealloc(IModule* mod) 
+    {
+        delete mod;
+    }
+
 }

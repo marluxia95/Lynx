@@ -9,6 +9,7 @@
 #include <memory>
 #include "Core/logger.h"
 #include "Core/module.h"
+#include "Utils/path.hpp"
 
 namespace Lynx {
 
@@ -18,28 +19,34 @@ namespace Lynx {
             ModuleLoader(const std::string& path, 
                         const std::string& alloc_sym = "alloc", 
                         const std::string& dealloc_sym = "dealloc") : 
-                        m_path(path), m_allocSymbol(alloc_sym), m_deallocSymbol(dealloc_sym) {
+                        m_path(Utils::GetPosixLibraryPath(path)), m_allocSymbol(alloc_sym), m_deallocSymbol(dealloc_sym) {
                 
 
             }
 
-            ~ModuleLoader() {
-                Unload();
-            }
+
 
             void Load() {
-                if(!(m_handle = dlopen(m_path.c_str(), RTLD_LAZY | RTLD_NOW))) {
+                if(!(m_handle = dlopen(m_path.c_str(), RTLD_NOW))) {
                     log_error("Couldn't open module %s ! %s", m_path.c_str(), dlerror());
+                    return;
                 }
+
+                log_debug("Successfully loaded module %s", m_path.c_str());
             }
             
             void Unload() {
+                m_moduleInstance->Last();
                 if(dlclose(m_handle) != 0) {
                     log_error("Couldn't close module %s ! %s", m_path.c_str(), dlerror());
+                    return;
                 }
             }
 
             std::shared_ptr<T> GetInstance() {
+                if(!m_handle){return NULL;}
+                if(m_moduleInstance) { return m_moduleInstance; }
+
                 auto alloc_fn   = reinterpret_cast<T*(*)()>(dlsym(m_handle, m_allocSymbol.c_str()));
                 auto dealloc_fn = reinterpret_cast<void(*)(T*)>(dlsym(m_handle, m_deallocSymbol.c_str()));
 
@@ -47,7 +54,9 @@ namespace Lynx {
                     log_error("Unable to load symbol from module %s ! %s", m_path, dlerror());
                 }
 
-                return std::shared_ptr<T>( alloc_fn(), [dealloc_fn](T* i) { dealloc_fn(i); } );
+                m_moduleInstance = std::shared_ptr<T>( alloc_fn(), [dealloc_fn](T* i) { dealloc_fn(i); } );
+
+                return m_moduleInstance;
             }
 
         private:
@@ -55,6 +64,8 @@ namespace Lynx {
             std::string m_allocSymbol;
             std::string m_deallocSymbol;
             void* m_handle;
+
+            std::shared_ptr<T> m_moduleInstance;
 
     };
     
