@@ -2,32 +2,50 @@
 #define LYNX_MODULE_H
 
 #include <string>
-#include <vector>
+#include <map>
+#include <memory>
 
 namespace Lynx {
 
-    class Module {
+    class IModule {
         public:
-            Module(int id, const char* path, void* l_obj);
-            ~Module();
-            int GetID() { return id; }
-            const char* GetPath() { return path; }
-            void* GetLibraryObj() { return library_obj; }
+            IModule(int id) : id(id) {}
+            
+            virtual ~IModule() = default;
+            
+            virtual void Init() = 0;
+            
+            virtual void Last() = 0;
 
+            int GetID() { return id; }
         private:
             int id;
-            const char* path;
-            void* library_obj;
     };
 
-    class ModuleLoader {
-
+    template<class T> 
+    class IModuleLoader {
         public:
-            static void UnloadModules();
-            static Module* LoadModule(std::string path);
+            ~IModuleLoader() = default;
+
+            virtual void Load() = 0;
+            
+            virtual void Unload() = 0;
+
+            virtual std::shared_ptr<T> GetInstance() = 0;
 
         private:
-            static std::vector<Module*> loaded_modules;
+            T* module_instance;
+
+    };
+
+    class ModuleManager {
+
+        public:
+            static IModule* LoadEngineModule(std::string path);
+            static void UnloadAllModules();
+
+        private:
+            static std::map<std::string, IModuleLoader<IModule>*> loaded_modules;
     };
 
 }

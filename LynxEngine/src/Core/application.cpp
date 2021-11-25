@@ -65,7 +65,7 @@ namespace Lynx {
 
     Application::~Application()
     {
-        ModuleLoader::UnloadModules();
+        ModuleManager::UnloadAllModules();
 #ifdef LYNX_MULTITHREAD
         m_threadPool->Wait();
 #endif
@@ -118,7 +118,7 @@ namespace Lynx {
 
     GameApplication::~GameApplication()
     {
-        ModuleLoader::UnloadModules();
+        ModuleManager::UnloadAllModules();
 
 #ifdef LYNX_MULTITHREAD
         m_threadPool->Wait();
