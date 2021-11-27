@@ -36,8 +36,8 @@ namespace Lynx {
         private:
             static void Init();
             static void joystick_callback(int id, int ev);
-            static int mouse_callback(const Event& ev);
-            static int UpdateKeys(const Event& ev);
+            static void mouse_callback(const Event& ev);
+            static void UpdateKeys(const Event& ev);
             static int keysUp[GLFW_KEY_LAST];
             static int keysDown[GLFW_KEY_LAST];
             static int isJoystickPresent;

@@ -65,7 +65,7 @@ namespace Lynx::Graphics
 
         char *GetError() { return error_log; };
 
-        static char *GetAPIStr();
+        static const char *GetAPIStr();
         static API GetAPI() { return m_API; };
         static std::unique_ptr<IRendererAPI> Create();
 
@@ -117,6 +117,10 @@ namespace Lynx::Graphics
 }
 
 void check_api_errors(const char *f, int l);
+#ifdef __linux__
 #define API_CheckErrors() check_api_errors(__PRETTY_FUNCTION__, __LINE__)
+#elif _WIN32
+#define API_CheckErrors() check_api_errors(__FUNCDNAME__, __LINE__)
+#endif
 
 #endif

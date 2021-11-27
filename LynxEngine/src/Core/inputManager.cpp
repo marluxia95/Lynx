@@ -120,11 +120,11 @@ namespace Lynx {
         }
     }
 
-    int Input::UpdateKeys(const Event& ev)
+    void Input::UpdateKeys(const Event& ev)
     {
         const KeyPressedEvent& key_event = static_cast<const KeyPressedEvent&>(ev);
         if(key_event.m_keyCode > 1024)
-            return 0;
+            return;
 
         if(key_event.m_action == GLFW_PRESS){
             keysDown[key_event.m_keyCode] = true;
@@ -135,7 +135,7 @@ namespace Lynx {
         }
     }
 
-    int Input::mouse_callback(const Event& ev)
+    void Input::mouse_callback(const Event& ev)
     {
         const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
         mouse_pos.x = mouse_event.m_pos.x;

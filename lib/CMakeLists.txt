@@ -3,6 +3,7 @@ include(ExternalProject)
 set(DEPS_INSTALL_DIR ${CMAKE_BINARY_DIR})
 set(DEPS_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
+if(UNIX)
 externalproject_add(lua_ext
     PREFIX ${DEPS_INCLUDE_DIR}/lua
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -15,6 +16,17 @@ externalproject_add(lua_ext
     BUILD_IN_SOURCE TRUE
     URL https://www.lua.org/ftp/lua-5.4.3.tar.gz
 )
+elif(WIN32)
+externalproject_add(lua_ext
+    PREFIX ${DEPS_INCLUDE_DIR}/lua
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    <SOURCE_DIR>/src ${DEPS_INSTALL_DIR}/include/lua
+    BUILD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_IN_SOURCE TRUE
+    URL https://www.lua.org/ftp/lua-5.4.3.tar.gz
+)
+endif()
 
 externalproject_add(glm_ext
     PREFIX ${DEPS_INCLUDE_DIR}/glm
@@ -53,19 +65,31 @@ externalproject_add(assimp_ext
     URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
 )
 
+
+if(UNIX)
 add_library(lua STATIC IMPORTED GLOBAL)
 set_target_properties(lua PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}liblua${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
+elseif(WIN32)
+add_library(lua SHARED IMPORTED GLOBAL)
+set_target_properties(lua PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/lua54.dll"
+)
+set_target_properties(lua PROPERTIES LOCATION
+  "${DEPS_INSTALL_DIR}/lib/lua54.dll"
+)
+endif()
+
 
 add_library(glfw SHARED IMPORTED GLOBAL)
 set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
-  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libglfw${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}glfw${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
 
 add_library(assimp SHARED IMPORTED GLOBAL)
 set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
-  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}libassimp${CMAKE_SHARED_LIBRARY_SUFFIX}"
+  "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
 
 

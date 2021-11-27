@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 set (CMAKE_CXX_STANDARD 17)
 project(Game VERSION 0.1)
 
-set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -pthread -lXrandr -ldl -lassimp")
+if(UNIX)
+set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -pthread -lXrandr -ldl -lassimp -Wwrite-strings")
+endif()
 
 file(GLOB_RECURSE SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/game.cpp
@@ -20,7 +22,6 @@ target_include_directories(Game PRIVATE ${LIBS}/imgui)
 target_include_directories(Game PRIVATE ${LIBS})
 
 find_package(OpenGL REQUIRED)
-#find_package(glfw3 3.3 REQUIRED)
 
 include_directories( 
     Game
@@ -37,17 +38,29 @@ include_directories(
     ${LIBS}/glm 
 )
 
-target_link_libraries(
-    Game
+if(UNIX)
+	target_link_libraries(
+		Game
 
-    #"${CMAKE_BINARY_DIR}/bin/${CMAKE_SHARED_MODULE_PREFIX}LynxEngine${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    LynxEngine
-    glfw
-    assimp
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARY}
-    ${ASSIMP_LIBRARY}
-)
+		LynxEngine
+		glfw
+		assimp
+		${OPENGL_LIBRARIES}
+		${GLEW_LIBRARY}
+		${ASSIMP_LIBRARY}
+	)
+elseif(WIN32)
+	target_link_libraries(
+		Game
+
+		LynxEngine
+		glfw
+		glew
+		assimp
+		${OPENGL_LIBRARIES}
+		${ASSIMP_LIBRARY}
+	)
+endif()
 
 add_dependencies(Game glfw_ext assimp_ext)
 

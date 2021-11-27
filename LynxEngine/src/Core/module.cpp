@@ -36,7 +36,7 @@ namespace Lynx {
 
     std::shared_ptr<IModule> ModuleManager::GetModule(std::string path)
     {
-
+        return loaded_modules[path]->GetInstance();
     }
 
 }

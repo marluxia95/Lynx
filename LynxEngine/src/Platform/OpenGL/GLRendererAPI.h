@@ -11,7 +11,11 @@
 //#define API_DEBUG
 
 GLenum checkerror_(const char* f, int l);
+#ifdef __linux__
 #define glCheckError() checkerror_(__PRETTY_FUNCTION__, __LINE__)
+#elif _WIN32
+#define glCheckError() checkerror_(__FUNCDNAME__, __LINE__)
+#endif
 
 namespace Lynx::Graphics {
 

@@ -21,7 +21,7 @@ namespace Lynx::Graphics {
     /*
      *  Used for conversion 
      */
-    char* API_str[] = {
+    const char* API_str[] = {
         "OpenGL"
     };
 
@@ -88,7 +88,7 @@ namespace Lynx::Graphics {
         Returns the currently used renderer API
         @return The used renderer API
     */
-    char* IRendererAPI::GetAPIStr()
+    const char* IRendererAPI::GetAPIStr()
     {
         return API_str[(unsigned int)m_API];
     }
@@ -204,7 +204,7 @@ namespace Lynx::Graphics {
     */
     unsigned int RendererAPI::CompileShader(const char* shadersource, ShaderType type)
     {
-        m_rendererAPI->CompileShader(shadersource, type);
+        return m_rendererAPI->CompileShader(shadersource, type);
     }
 
     /**

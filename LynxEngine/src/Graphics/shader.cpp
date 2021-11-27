@@ -114,6 +114,8 @@ namespace Lynx::Graphics {
 		}
 
 		API_CheckErrors();
+
+		return success;
 	}
 
 

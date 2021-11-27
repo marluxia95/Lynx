@@ -83,8 +83,8 @@ Graphics::Shader* ResourceManager::LoadShader(const char* vertex_path, const cha
 	std::string name = std::string(vertex_path);
 	name.append(std::string(fragment_path));
 	const size_t name_hash = std::hash<std::string>{}(name);
-	
-
+	//WIP
+	return NULL;
 }
 
 Graphics::Texture ResourceManager::LoadTexture(const char* path)

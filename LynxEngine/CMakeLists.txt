@@ -10,17 +10,23 @@ file(GLOB_RECURSE SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/imgui/backends/imgui_impl_opengl3.cpp
 )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC -Wwrite-strings" )
+file(GLOB_RECURSE HEADERS
+	${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.h
+	${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
+)
+
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -fPIC" )
 
 link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
 
 add_library( 
-    LynxEngine SHARED ${SOURCES}
+    LynxEngine STATIC ${SOURCES} ${HEADERS}
 )
 
 target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib/imgui)
 target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
+target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../build/include)
 
 find_package(OpenGL REQUIRED)
 
@@ -31,12 +37,10 @@ if(UNIX)
         link_libraries(${GLEW_LIBRARIES})
     endif()
 elseif(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
-    list(APPEND CMAKE_LIBRARY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
-    find_library(GLEW_LIBRARY NAMES GLEW glew32 glew glew32s PATH_SUFFIXES lib64)
-    find_package(GLEW REQUIRED)
-    include_directories(${GLEW_INCLUDE_DIRS})
-    link_libraries(${GLEW_LIBRARIES})
+    add_library(glew STATIC IMPORTED GLOBAL)
+	set_target_properties(glew PROPERTIES IMPORTED_LOCATION 
+	"${CMAKE_BINARY_DIR}/lib/glew32.lib"
+	)
 endif()
 
 include_directories( 
@@ -44,7 +48,6 @@ include_directories(
 
     ${CMAKE_BINARY_DIR}/include
     ${OPENGL_INCLUDE_DIRS}  
-    ${GLEW_INCLUDE}
     ${GLFW_INCLUDE}    
     ${ASSIMP_INCLUDE}
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/ 
@@ -53,15 +56,28 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/glm 
 )
 
-target_link_libraries(
-    LynxEngine
+if(UNIX)
+	target_link_libraries(
+		LynxEngine
 
-    lua
-    glfw
-    assimp
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARY}
-    ${ASSIMP_LIBRARY}
-)
+		lua
+		glfw
+		assimp
+		${OPENGL_LIBRARIES}
+		${GLEW}
+		${ASSIMP_LIBRARY}
+	)
+elseif(WIN32)
+	target_link_libraries(
+		LynxEngine
+
+		lua
+		glew
+		glfw
+		assimp
+		${OPENGL_LIBRARIES}
+		${ASSIMP_LIBRARY}
+	)
+endif()
 
 add_dependencies(LynxEngine glfw_ext assimp_ext)

@@ -52,12 +52,12 @@ namespace Lynx {
 
         s_applicationInstance = this;
 
-        EventManager::AddListener(SignatureChanged, [this](const Event& ev) -> int{
+        EventManager::AddListener(SignatureChanged, [this](const Event& ev){
             const SignatureChangedEvent& event = static_cast<const SignatureChangedEvent&>(ev);
             m_systemManager->EntitySignatureChanged(event.entity, event.signature);
         });
 
-        EventManager::AddListener(EntityDestroyed, [this](const Event& ev) -> int{
+        EventManager::AddListener(EntityDestroyed, [this](const Event& ev){
             const EntityDestroyedEvent& event = static_cast<const EntityDestroyedEvent&>(ev);
             m_systemManager->EntityDestroyed(event.entity);
         });
