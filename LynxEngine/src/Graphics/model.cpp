@@ -19,7 +19,7 @@ Entity ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* 
 
 	Entity parentEnt = scene->CreateEntity(path);
 	
-	scene->AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f)});
+	scene->AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)});
 
 	processNode(scene, parentEnt, path, shader, ai_scene->mRootNode, ai_scene);
 
@@ -75,7 +75,9 @@ void ModelLoader::processMesh(Scene* scene, Entity meshEntity, const char* path,
 	glm::vec3(0.0f), 
 	glm::vec3(0.0f), 
 	0.0f, 
-	GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL), meshShader});
+	std::vector<Graphics::Mesh*>{GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL)},
+	meshShader
+	});
 }
 
 
@@ -87,11 +89,8 @@ void ModelLoader::processNode(Scene* scene, Entity parentEntity, const char* pat
 	{
 		
 		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
-		Entity meshEntity = scene->CreateEntity(mesh->mName.C_Str());
-		scene->AddComponent<Transform>(meshEntity, Transform{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
-		scene->AddComponent<Parent>(meshEntity, Parent{parentEntity});
 		//applicationInstance->GetComponent<Generic>(meshEntity)->isChild = true;
-		processMesh(scene, meshEntity, path, shader, mesh);
+		processMesh(scene, parentEntity, path, shader, mesh);
 	}
 
 	for(unsigned int i = 0; i < node->mNumChildren; i++)

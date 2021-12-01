@@ -48,7 +48,8 @@ namespace Lynx {
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");
         m_threadPool = std::make_shared<ThreadPool>(3);
 #endif
-        m_systemManager = std::allocate_shared<ECS::SystemManager>(MemoryAllocator<ECS::SystemManager>());
+        //m_systemManager = std::allocate_shared<ECS::SystemManager>(MemoryAllocator<ECS::SystemManager>());
+        m_systemManager = std::make_shared<ECS::SystemManager>();
 
         s_applicationInstance = this;
 

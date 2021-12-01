@@ -1,33 +1,25 @@
+#include "Core/application.h"
 #include "physicsSystem.h"
 
-namespace Lynx::Physics {
+namespace Lynx {
 
-    void World::Init()
+    void PhysicsSystem::Init()
     {
-
-    }   
-
-    void World::Step(float dt)
-    {
-
+        phys_world = new Physics::World();
     }
 
-    void System::Init()
+    void PhysicsSystem::Update()
     {
+        phys_world->Step(GameApplication::GetInstance()->GetDeltaTime());
+    }
+
+    void PhysicsSystem::OnEntityAdded(Entity ent)
+    {
+        phys_world->AddObject(scene->GetComponent<PhysicsObject>(ent));
         
     }
 
-    void System::Update()
-    {
-
-    }
-
-    void System::OnEntityAdded(Entity ent)
-    {
-
-    }
-
-    void System::OnEntityRemoved(Entity ent)
+    void PhysicsSystem::OnEntityRemoved(Entity ent)
     {
 
     }

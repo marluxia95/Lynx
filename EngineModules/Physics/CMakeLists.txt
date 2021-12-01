@@ -4,6 +4,7 @@ project(LynxPhysics VERSION 0.1)
 
 file(GLOB_RECURSE SOURCES
     lynxPhysics.cpp
+    physicsWorld.cpp
     physicsSystem.cpp
 )
 

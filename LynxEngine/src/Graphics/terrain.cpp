@@ -110,7 +110,7 @@ namespace Lynx::Graphics {
         int index_size = index_count * sizeof(unsigned int);
 
         indices = new std::vector<unsigned int>;
-        log_debug("indice array size %d", index_count);
+        log_debug("index array size %d", index_count);
         indices->resize(index_count);
 
         for ( int r = 0; r < m_rows; r++) {
@@ -118,7 +118,6 @@ namespace Lynx::Graphics {
                 for (int n = 0; n < 2; n++){
                     unsigned int index = (r+n)*m_columns+c;
                     indices->at(r + c * m_columns + n *2) = index;
-                    log_debug("%d", r + c * m_columns + n *2);
                 }
             }
         }

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
 #include "Graphics/texture.h"
@@ -47,7 +48,7 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	Graphics::Mesh*    mesh;
+	std::vector<Graphics::Mesh*> meshes;
 	Graphics::Shader*  shader;
 	Graphics::Texture  texture;
 	Graphics::Texture  texture_diffuse;

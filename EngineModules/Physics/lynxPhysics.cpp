@@ -14,12 +14,26 @@ class PhysicsModule : public IModule {
         ~PhysicsModule() { Last(); }
                 
         void Init() {
+            applicationInstance = GameApplication::GetGameInstance();
+
+            applicationInstance->RegisterComponent<PhysicsObject>();
+
+            applicationInstance->RegisterSystem<PhysicsSystem>();
+            {
+                Signature s;
+                s.set(applicationInstance->GetComponentType<Transform>());
+                s.set(applicationInstance->GetComponentType<PhysicsObject>());
+                applicationInstance->SetSystemSignature<PhysicsSystem>(s);
+            }
             log_debug("Loaded physics module!");
         }
                 
         void Last() {
             log_debug("Unloaded physics module!");
         }
+    
+    private:
+        GameApplication* applicationInstance;
 };
 
 extern "C" { 

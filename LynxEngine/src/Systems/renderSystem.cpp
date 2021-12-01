@@ -79,16 +79,15 @@ namespace Lynx {
             const auto& mTransform = scene->GetComponent<Transform>(entity);
             const auto& mRenderComponent = scene->GetComponent<MeshRenderer>(entity);
 
-            if(mRenderComponent->mesh == nullptr){log_error("Render component not bind to a mesh"); continue;}
+            if(mRenderComponent->meshes.size() <= 0){log_error("Render component not bind to a mesh"); continue;}
 
             mRenderComponent->shader->Use();
-            mat4 model = mTransform->GetModel();
             
             if(mRenderComponent->shader == NULL){log_error("Invalid shader for entity %d!", entity); return;}
 
             mRenderComponent->shader->SetUniform("projection", mCameraComponent->projection);
             mRenderComponent->shader->SetUniform("view", mCameraComponent->view);
-            mRenderComponent->shader->SetUniform("model", model);
+            mRenderComponent->shader->SetUniform("model", mTransform->GetModel());
             mRenderComponent->shader->SetUniform("color", mRenderComponent->ambient);
             mRenderComponent->shader->SetUniform("viewPos", mCameraTransform->position);
 
@@ -96,7 +95,6 @@ namespace Lynx {
             log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
                 cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
 #endif
-			
             
 			if(mRenderComponent->lighting | mLightingSystem->entities.size()){
 				// Set lighting shader values
@@ -160,8 +158,10 @@ namespace Lynx {
                 mRenderComponent->texture.Use();
             }   
 
-            mRenderComponent->mesh->VAO->Bind();
-            mRenderComponent->mesh->Render();
+            for(auto& mesh : mRenderComponent->meshes) {
+                mesh->VAO->Bind();
+                mesh->Render();
+            }
 
             if(m_cubemap)
                 m_cubemap->Use(mCameraComponent->projection, mCameraComponent->view);

@@ -3,10 +3,10 @@
 
 #include <glm/glm.hpp>
 
-namespace Lynx::Physics {
+namespace Lynx {
 
     struct PhysicsObject {
-        glm::vec3   Position;
+        glm::vec3*  Position;
         glm::vec3   Velocity;
         glm::vec3   Force;
         float       Mass;

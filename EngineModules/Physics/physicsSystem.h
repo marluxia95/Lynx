@@ -5,28 +5,13 @@
 #include <glm/glm.hpp>
 #include "Core/ECS/system.h"
 #include "physicsObject.h"
+#include "physicsWorld.h"
 
-namespace Lynx::Physics {
-    
-    class World {
+namespace Lynx {
+
+    class PhysicsSystem : public Lynx::ECS::System {
         public:
-            void Init();
-
-            void Step(float dt);
-
-            void AddObject(PhysicsObject* phys_obj) { m_objs.push_back(phys_obj); }
-
-            void RemoveObject(PhysicsObject* phys_obj) { }
-
-        private:
-            std::vector<PhysicsObject*> m_objs;
-            glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
-
-    };
-
-    class System : public Lynx::ECS::System {
-        public:
-            System(Scene* scene) : ECS::System(scene) {}
+            PhysicsSystem(Scene* scene) : ECS::System(scene) {}
 
             void Init();
 
@@ -37,7 +22,7 @@ namespace Lynx::Physics {
             void OnEntityRemoved(Entity ent);
 
         private:
-            World* phys_world;
+            Physics::World* phys_world;
     };
 }
 

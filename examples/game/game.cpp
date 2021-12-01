@@ -13,12 +13,14 @@
 #include "Graphics/cubemap.h"
 #include "Graphics/terrain.h"
 
+#include "Physics/physicsObject.h"
+
 using namespace Lynx;
 
-float camera_Speed_Multiplier = 0.0f;
+float camera_Speed_Multiplier = 1.0f;
 bool firstMouse = true;
 float lastX, lastY;
-float sensitivity = 0.3f;
+float sensitivity = 0.1f;
 float mPitch, mYaw;
 bool mouseActive = false;
 char title[40];
@@ -33,7 +35,7 @@ void movement()
 	auto transformComponent = scene->GetComponent<Transform>(camera);
 	auto cameraComponent = scene->GetComponent<Camera>(camera);
 
-	float cameraSpeed = 20.5f * applicationInstance->GetDeltaTime() * camera_Speed_Multiplier;
+	float cameraSpeed = applicationInstance->GetDeltaTime() * camera_Speed_Multiplier;
 
 	if (Input::IsKeyDown(GLFW_KEY_W))
         transformComponent->position += cameraSpeed * transformComponent->rotation;
@@ -60,8 +62,8 @@ void mouse_input()
 	auto cameraComponent = scene->GetComponent<Camera>(camera);
 
 
-	double xpos;
-	double ypos;
+	float xpos;
+	float ypos;
 	if(Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
 		mYaw += Input::GetJoyAxis(GLFW_JOYSTICK_1, 0);
 		mPitch += Input::GetJoyAxis(GLFW_JOYSTICK_1, 1);
@@ -70,7 +72,7 @@ void mouse_input()
 			firstMouse = true;
 			return;
 		}
-		glm::dvec2 mpos = Input::GetMousePos();
+		glm::vec2 mpos = Input::GetMousePos();
 		xpos = mpos.x;
 		ypos = mpos.y;
 
@@ -170,12 +172,10 @@ int main(int argc, char** argv)
 			log_set_level(LOG_DEBUG);
 	}
 
-	auto module = ModuleManager::LoadEngineModule("TestModule");
-	module->Init();
-
 	log_debug("Adding initial events...");
 
 	applicationInstance = new GameApplication();
+
 	scene = applicationInstance->CreateScene();
 
 	auto resourceManager = applicationInstance->GetResourceManager();
@@ -203,6 +203,9 @@ int main(int argc, char** argv)
 	EventManager::AddListener(JoystickConnected, joystick_connected);
 	EventManager::AddListener(JoystickDisconnected, joystick_disconnected);
 
+	auto module = ModuleManager::LoadEngineModule("LynxPhysics");
+	module->Init();
+
 	log_info("Initializing window");
 
 	// Initialize window in windowed mode
@@ -213,21 +216,22 @@ int main(int argc, char** argv)
 
 	log_info("Adding scene objects");
 
-	Entity link = ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
+	Entity cube = ModelLoader::loadModel(scene, "res/models/cube.fbx", shader);
 	{
-		vector<Entity>* chl = getChildren(link);
-		MeshRenderer* meshRenderer = scene->GetComponent<MeshRenderer>(chl->at(0));
+		MeshRenderer* meshRenderer = scene->GetComponent<MeshRenderer>(cube);
 		meshRenderer->ambient = glm::vec3(0.1f);
 		meshRenderer->diffuse = glm::vec3(0.0f);
 		meshRenderer->specular = glm::vec3(1.0f);
 		meshRenderer->shininess = 64.0f;
-		Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
-		meshRenderer->texture_diffuse = tex1;
+		auto transform = scene->GetComponent<Transform>(cube);
+		scene->AddComponent(cube, PhysicsObject{&transform->position, glm::vec3(0.0f), glm::vec3(0.0f), 10.0f});
+		//Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
+		//meshRenderer->texture_diffuse = tex1;
 
-		scene->GetComponent<Transform>(chl->at(0))->scale = glm::vec3(0.1f);
-		scene->GetComponent<Transform>(chl->at(0))->position = glm::vec3(20.0f);
-		delete chl;
+		//scene->GetComponent<Transform>(cube)->scale = glm::vec3(0.05f);
 	}
+
+	
 
 	Entity scriptedEnt = scene->CreateEntity();
 	{
@@ -256,16 +260,6 @@ int main(int argc, char** argv)
 		"res/images/cubemap/front.jpg",
 		"res/images/cubemap/back.jpg"
 	};
-
-	/*
-	Graphics::Terrain* ter = new Graphics::Terrain("res/images/ter.jpg");
-	Entity terrainEnt = scene->CreateEntity();
-	{
-		scene->AddComponent(terrainEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)});
-		scene->AddComponent(terrainEnt, MeshRenderer{glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f),
-													0.0f, ter, shader});
-	}*/
-	
 
 	Graphics::Cubemap* map = new Graphics::Cubemap();
 	map->Load(&map_textures);

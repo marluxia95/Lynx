@@ -10,7 +10,7 @@ class TestModule : public IModule {
         ~TestModule() { Last(); }
             
         void Init() {
-            log_debug("Hello!");
+            log_debug("Hello from test module!");
         }
             
         void Last() {

@@ -11,6 +11,8 @@
 #include "Core/assert.h"
 #include "Core/memman.h"
 
+#define COMPONENT_DEBUG
+
 namespace Lynx::ECS {
 
 using ComponentType = uint64_t;
@@ -31,9 +33,13 @@ public:
 
 		LYNX_ASSERT(componentTypes.find(typeName) == componentTypes.end(), "Component Type already exists.");
 		componentTypes.insert( { typeName, nextComponentType } );
-		log_debug("Registering component %s ", typeName);
-
-		componentArrays.insert( { typeName, std::allocate_shared<ComponentArray<T>>(MemoryAllocator<ComponentArray<T>>()) } );
+		log_debug("Registering component '%s'", typeName);
+	
+#ifdef COMPONENT_DEBUG
+		Debug();
+#endif
+		//componentArrays.insert( { typeName, std::allocate_shared<ComponentArray<T>>(MemoryAllocator<ComponentArray<T>>()) } );
+		componentArrays.insert( { typeName, std::make_shared<ComponentArray<T>>() } );
 
 		nextComponentType++;
 	}
@@ -75,6 +81,16 @@ public:
 	}
 
 private:
+	void Debug() {
+		log_debug("Registered Components : ");
+		int i = 0;
+		for(auto [k,v] : componentTypes) {
+			i++;
+			log_debug(" %d : '%s' -> %x", i, k, v);
+		}
+	}
+
+private:
 	std::unordered_map<const char*, ComponentType> componentTypes{};
 	std::unordered_map<const char*, std::shared_ptr<IComponentArray>> componentArrays{};
 
@@ -83,6 +99,11 @@ private:
 	template<typename T>
 	std::shared_ptr<ComponentArray<T>> GetComponentArray(){
 		const char* typeName = typeid(T).name();
+
+#ifdef COMPONENT_DEBUG
+		Debug();
+#endif
+		log_debug("Getting component array '%s'", typeName );
 
 		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
 

@@ -26,16 +26,19 @@ namespace Lynx {
 
             void* allocate(size_t size)
             {
-                MemoryBlock* block = popLastBlock();
+                MemoryBlock* first_block = popLastBlock();
 
-                LYNX_ASSERT(block != nullptr, "Out of memory");
+                LYNX_ASSERT(first_block != nullptr, "Out of memory");
 
                 log_debug("Allocating %d bytes", size);
 
-                m_used += m_chunk_size;
-                m_peak = std::max(m_peak, m_used);
+                for(int c = 0; c < (size % m_chunk_size)-1; c++){
+                    popLastBlock();
+                    m_used += m_chunk_size;
+                    m_peak = std::max(m_peak, m_used);
+                }
 
-                return block;
+                return first_block;
             }
 
             void deallocate(void* ptr)

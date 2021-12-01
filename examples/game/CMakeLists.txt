@@ -16,6 +16,7 @@ add_executable(
 
 set(ENGINE ${CMAKE_CURRENT_SOURCE_DIR}/../../LynxEngine/src)
 set(LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
+set(MODULES ${CMAKE_CURRENT_SOURCE_DIR}/../../EngineModules)
 
 target_include_directories(Game PRIVATE $(ENGINE))
 target_include_directories(Game PRIVATE ${LIBS}/imgui)
@@ -36,6 +37,7 @@ include_directories(
     ${LIBS}/imgui
     ${LIBS}/backends
     ${LIBS}/glm 
+    ${MODULES}
 )
 
 if(UNIX)
