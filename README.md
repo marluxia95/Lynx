@@ -17,6 +17,8 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Logging and debug features
 - Fully event-driven
 - Fully documented ( Via doxygen )
+- LUA Scripting ( API isnt finsihed )
+- Multithreading ( Optional. for now )
 
 ## TODO
 
@@ -25,8 +27,6 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Sound system
 - Batch rendering ( with dynamic VBOs )
 - Better resource loading
-- LUA Scripting
-- Multithreading
 
 ## Dependencies
 This project requires the following libraries :
