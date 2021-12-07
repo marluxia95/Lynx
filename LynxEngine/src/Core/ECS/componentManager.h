@@ -5,13 +5,13 @@
 #include <stdint.h>
 #include <unordered_map>
 #include <memory>
-#include "entity.h"
+#include "common.h"
 #include "Core/logger.h"
 #include "componentArray.h"
 #include "Core/assert.h"
 #include "Core/memman.h"
 
-#define COMPONENT_DEBUG
+//#define COMPONENT_DEBUG
 
 namespace Lynx::ECS {
 
@@ -55,24 +55,24 @@ public:
 	}
 
 	template<typename T>
-	void AddComponent(Entity entity, T component)
+	void AddComponent(EntityID entity, T component)
 	{
 		GetComponentArray<T>()->InsertData(entity, component);
 	}
 
 	template<typename T>
-	void RemoveComponent(Entity entity)
+	void RemoveComponent(EntityID entity)
 	{
 		GetComponentArray<T>()->RemoveData(entity);
 	}
 
 	template<typename T>
-	T* GetComponent(Entity entity)
+	T* GetComponent(EntityID entity)
 	{
 		return GetComponentArray<T>()->GetData(entity);
 	}
 
-	void EntityDestroyed(Entity entity)
+	void EntityDestroyed(EntityID entity)
 	{
 		for (auto const& pair : componentArrays) {
 			auto const& component = pair.second;
@@ -102,8 +102,9 @@ private:
 
 #ifdef COMPONENT_DEBUG
 		Debug();
-#endif
 		log_debug("Getting component array '%s'", typeName );
+#endif
+		
 
 		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
 

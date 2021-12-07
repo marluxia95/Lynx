@@ -80,4 +80,4 @@ elseif(WIN32)
 	)
 endif()
 
-add_dependencies(LynxEngine glfw_ext assimp_ext)
+add_dependencies(LynxEngine glfw_ext assimp_ext stb_image_ext)

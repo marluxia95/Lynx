@@ -16,11 +16,11 @@ namespace Lynx
             RenderSystem(Scene* scene) : ECS::System(scene) {}
             void Init();
             void Update();
-            void OnEntityAdded(Entity ent) {}
-            void OnEntityRemoved(Entity ent) {}
+            void OnEntityAdded(EntityID ent) {}
+            void OnEntityRemoved(EntityID ent) {}
             void SetCubemap(Graphics::Cubemap* cubemap);
-            Entity cameraEntity;
-            Entity directionalLight;
+            EntityID cameraEntity;
+            EntityID directionalLight;
         private:
             Graphics::Cubemap* m_cubemap;
     };

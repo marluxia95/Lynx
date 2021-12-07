@@ -5,7 +5,7 @@ namespace Lynx {
 
 
 
-Entity ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* shader)
+EntityID ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* shader)
 {
 	Assimp::Importer importer;
 	const aiScene *ai_scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
@@ -17,7 +17,7 @@ Entity ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* 
 		return NULL;
 	}
 
-	Entity parentEnt = scene->CreateEntity(path);
+	EntityID parentEnt = scene->CreateEntity(path);
 	
 	scene->AddComponent<Transform>(parentEnt, Transform{glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f)});
 
@@ -26,7 +26,7 @@ Entity ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* 
 	return parentEnt;
 }
 
-void ModelLoader::processMesh(Scene* scene, Entity meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh)
+void ModelLoader::processMesh(Scene* scene, EntityID meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh)
 {
 	Application* applicationInstance = Lynx::Application::GetInstance();
 	vector<Graphics::Vertex>* vertices = new vector<Graphics::Vertex>();
@@ -81,7 +81,7 @@ void ModelLoader::processMesh(Scene* scene, Entity meshEntity, const char* path,
 }
 
 
-void ModelLoader::processNode(Scene* scene, Entity parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene)
+void ModelLoader::processNode(Scene* scene, EntityID parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene)
 {
 	Application* applicationInstance = Lynx::Application::GetInstance();
 	if(ai_scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}

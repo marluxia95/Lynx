@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <set>
 #include "Core/scene.h"
-#include "entity.h"
+#include "common.h"
 
 namespace Lynx::ECS {
 	class System {
@@ -15,10 +15,10 @@ namespace Lynx::ECS {
 
 			virtual void Init() {}
 			virtual void Update() {}
-			virtual void OnEntityAdded(Entity ent) {}
-			virtual void OnEntityRemoved(Entity ent) {}
+			virtual void OnEntityAdded(EntityID ent) {}
+			virtual void OnEntityRemoved(EntityID ent) {}
 			
-			std::set<Entity> entities;
+			std::set<EntityID> entities;
 		protected:
 			Scene* scene;
 

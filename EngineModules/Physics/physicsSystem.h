@@ -17,9 +17,9 @@ namespace Lynx {
 
             void Update();
 
-            void OnEntityAdded(Entity ent);
+            void OnEntityAdded(EntityID ent);
 
-            void OnEntityRemoved(Entity ent);
+            void OnEntityRemoved(EntityID ent);
 
         private:
             Physics::World* phys_world;

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include "entity.h"
+#include "common.h"
 #include "system.h"
 #include "Core/scene.h"
 #include "Core/assert.h"
@@ -52,7 +52,7 @@ namespace Lynx::ECS {
 			return static_pointer_cast<T>(systems.at(typeName));
 		}
 
-		void EntityDestroyed(Entity entity){
+		void EntityDestroyed(EntityID entity){
 			for (auto const& pair : systems) {
 				auto const& system = pair.second;
 				system->OnEntityRemoved(entity);
@@ -61,7 +61,7 @@ namespace Lynx::ECS {
 		}
 
 
-		void EntitySignatureChanged(Entity entity, Signature signature){
+		void EntitySignatureChanged(EntityID entity, Signature signature){
 			log_debug("SystemManager : Entity %d changed signature ! Updating systems ...", entity);
 			// Notify each system that an entity's signature changed
 			for (auto const& pair : systems)

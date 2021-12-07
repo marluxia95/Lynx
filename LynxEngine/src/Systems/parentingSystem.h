@@ -9,8 +9,8 @@ namespace Lynx::ECS {
     class ParentingSystem : public System {
         public:
             ParentingSystem(Scene* scene) : System(scene) {}
-            void OnEntityAdded(Entity ent) {}
-            void OnEntityRemoved(Entity ent) {}
+            void OnEntityAdded(EntityID ent) {}
+            void OnEntityRemoved(EntityID ent) {}
             void Init();
             void Update();
     };

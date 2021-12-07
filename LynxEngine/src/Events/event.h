@@ -65,16 +65,16 @@ namespace Lynx {
 
     class SignatureChangedEvent : public Event {
         public:
-            SignatureChangedEvent(Entity entity, Signature signature) : Event(SignatureChanged), entity(entity), signature(signature) {}
+            SignatureChangedEvent(EntityID entity, Signature signature) : Event(SignatureChanged), entity(entity), signature(signature) {}
            
-            Entity entity;
+            EntityID entity;
             Signature signature;
     };
 
     class EntityDestroyedEvent : public Event {
         public:
-            EntityDestroyedEvent(Entity entity) : Event(EntityDestroyed), entity(entity) {}
-            Entity entity;
+            EntityDestroyedEvent(EntityID entity) : Event(EntityDestroyed), entity(entity) {}
+            EntityID entity;
     };
 
 }

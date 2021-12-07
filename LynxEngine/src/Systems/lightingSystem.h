@@ -11,8 +11,8 @@ class LightingSystem : public ECS::System {
         LightingSystem(Scene* scene) : ECS::System(scene) {}
         void Init() {}
         void Update() {}
-        void OnEntityAdded(Entity ent) {}
-        void OnEntityRemoved(Entity ent) {}
+        void OnEntityAdded(EntityID ent) {}
+        void OnEntityRemoved(EntityID ent) {}
 
 };
 

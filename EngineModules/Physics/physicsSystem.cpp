@@ -13,13 +13,13 @@ namespace Lynx {
         phys_world->Step(GameApplication::GetInstance()->GetDeltaTime());
     }
 
-    void PhysicsSystem::OnEntityAdded(Entity ent)
+    void PhysicsSystem::OnEntityAdded(EntityID ent)
     {
         phys_world->AddObject(scene->GetComponent<PhysicsObject>(ent));
         
     }
 
-    void PhysicsSystem::OnEntityRemoved(Entity ent)
+    void PhysicsSystem::OnEntityRemoved(EntityID ent)
     {
 
     }

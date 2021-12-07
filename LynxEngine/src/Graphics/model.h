@@ -22,15 +22,15 @@
 
 #include "Core/scene.h"
 #include "Core/ECS/components.h"
-#include "Core/ECS/entity.h"
+#include "Core/ECS/common.h"
 
 namespace Lynx {
 
 class ModelLoader {
 	public:
-		static Entity loadModel(Scene* scene, const char* path, Graphics::Shader* shader);
-		static void processNode(Scene* scene, Entity parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene);
-		static void processMesh(Scene* scene, Entity meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh);
+		static EntityID loadModel(Scene* scene, const char* path, Graphics::Shader* shader);
+		static void processNode(Scene* scene, EntityID parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene);
+		static void processMesh(Scene* scene, EntityID meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh);
 	
 };
 

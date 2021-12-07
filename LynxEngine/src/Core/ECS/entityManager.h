@@ -5,22 +5,28 @@
 #include <stdint.h>
 #include <vector>
 #include <queue>
-#include "entity.h"
+#include "common.h"
 
 namespace Lynx::ECS {
+
 	class EntityManager {
 		public:
 			~EntityManager()
 			{
 				Signatures.clear();
 			}
-			Entity CreateEntity();
-			void DestroyEntity(Entity ent);
-			void SetSignature(Entity ent, Signature signature);
-			Signature GetSignature(Entity ent);
-			uint64_t livingEntityCount = 0;
-		private:
 
+			EntityID CreateEntity();
+			
+			void DestroyEntity(EntityID ent);
+			
+			void SetSignature(EntityID ent, Signature signature);
+			
+			Signature GetSignature(EntityID ent);
+			
+			uint64_t livingEntityCount = 0;
+		
+		private:
 			std::vector<Signature> Signatures;
 
 	};

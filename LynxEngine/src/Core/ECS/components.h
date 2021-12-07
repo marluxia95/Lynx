@@ -8,7 +8,7 @@
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
 #include "Graphics/texture.h"
-#include "entity.h"
+#include "common.h"
 
 using namespace glm;
 
@@ -40,7 +40,7 @@ struct Generic {
 };
 
 struct Parent {
-	Entity parentEntity;
+	EntityID parentEntity;
 };
 
 struct MeshRenderer {

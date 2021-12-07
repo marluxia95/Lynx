@@ -39,7 +39,7 @@ void CameraSystem::Update()
 	}
 }
 
-mat4 CameraSystem::GetView(Entity entity, Camera* camera) 
+mat4 CameraSystem::GetView(EntityID entity, Camera* camera) 
 {
 	auto transform = scene->GetComponent<Transform>(entity);
 	mat4 view = mat4(1.0f);

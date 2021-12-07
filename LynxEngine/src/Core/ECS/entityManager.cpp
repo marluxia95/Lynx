@@ -5,25 +5,25 @@
 
 namespace Lynx::ECS {
 
-Entity EntityManager::CreateEntity() {
-	Entity newEnt = Entity();
+EntityID EntityManager::CreateEntity() {
+	EntityID newEnt = EntityID();
 	Signatures.push_back(Signature());
 	newEnt = livingEntityCount++;
 	return newEnt;
 }
 
-void EntityManager::DestroyEntity(Entity ent) {
+void EntityManager::DestroyEntity(EntityID ent) {
 	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	livingEntityCount--;
 	delete &ent;
 }
 
-void EntityManager::SetSignature(Entity ent, Signature signature) {
+void EntityManager::SetSignature(EntityID ent, Signature signature) {
 	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	Signatures[ent] = signature;
 }
 
-Signature EntityManager::GetSignature(Entity ent) {
+Signature EntityManager::GetSignature(EntityID ent) {
 	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	return Signatures[ent];
 }
