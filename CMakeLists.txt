@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2.0)
 project(Lynx VERSION 0.0.3)
 
 set (CMAKE_CXX_STANDARD 20 )
+
 if(UNIX)
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
 endif()

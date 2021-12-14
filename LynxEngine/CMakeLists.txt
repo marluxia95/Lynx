@@ -15,12 +15,12 @@ file(GLOB_RECURSE HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
 )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -fPIC" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
 
 link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
 
 add_library( 
-    LynxEngine STATIC ${SOURCES} ${HEADERS}
+    LynxEngine SHARED ${SOURCES} ${HEADERS}
 )
 
 target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)

@@ -259,11 +259,7 @@ int main(int argc, char** argv)
 		"res/images/cubemap/back.jpg"
 	};
 
-	//Lynx::Graphics::Cubemap* map = new Lynx::Graphics::Cubemap();
-	//map->Load(&map_textures);
-	//applicationInstance->GetSystem<Lynx::RenderSystem>()->SetCubemap(map);	
 	log_info("Application fully started");
-
 	
 	// Runs the gApplication
 	applicationInstance->SetApplicationState(Lynx::STATE_ACTIVE);

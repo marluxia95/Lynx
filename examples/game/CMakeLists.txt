@@ -3,7 +3,7 @@ set (CMAKE_CXX_STANDARD 17)
 project(Game VERSION 0.1)
 
 if(UNIX)
-set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -pthread -lXrandr -ldl -lassimp -Wwrite-strings")
+set(CMAKE_CXX_FLAGS "-lXrandr -lXext -lXrender -lX11 -lpthread -lxcb -lXau -lXdmcp -lGLEW -lGLU -lm -lGL -lglfw -lrt -lm -ldl")
 endif()
 
 file(GLOB_RECURSE SOURCES
@@ -23,6 +23,7 @@ target_include_directories(Game PRIVATE ${LIBS}/imgui)
 target_include_directories(Game PRIVATE ${LIBS})
 
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
 include_directories( 
     Game
@@ -48,7 +49,7 @@ if(UNIX)
 		glfw
 		assimp
 		${OPENGL_LIBRARIES}
-		${GLEW_LIBRARY}
+		${GLEW_LIBRARIES}
 		${ASSIMP_LIBRARY}
 	)
 elseif(WIN32)
@@ -65,4 +66,3 @@ elseif(WIN32)
 endif()
 
 add_dependencies(Game glfw_ext assimp_ext)
-
