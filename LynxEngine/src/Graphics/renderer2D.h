@@ -5,16 +5,17 @@
 #include "vertexArray.h"
 #include "buffers.h"
 #include "Core/ECS/components.h"
+#include "lynx_common.h"
 
 namespace Lynx::Graphics {
 
-class Renderer2D {
-    public:
-        static void Init();
-        static void RenderQuad();
+    class LYNXENGINE_API Renderer2D {
+        public:
+            static void Init();
+            static void RenderQuad();
 
-        static void Destroy();
-};
+            static void Destroy();
+    };
 
 }
 

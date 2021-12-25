@@ -1,9 +1,11 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
+#include "lynx_common.h"
+
 namespace Lynx::Graphics {
 
-	class VertexArray {
+	class LYNXENGINE_API VertexArray {
 	public:
 		VertexArray() = default;
 		~VertexArray() = default;

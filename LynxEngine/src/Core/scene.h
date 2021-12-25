@@ -7,10 +7,11 @@
 #include "ECS/componentManager.h"
 #include "ECS/components.h"
 #include "ECS/common.h"
+#include "lynx_common.h"
 
 namespace Lynx {
 
-    class Scene {
+    class LYNXENGINE_API Scene {
         private:
             void updateSignature(EntityID entity, Signature signature);
 

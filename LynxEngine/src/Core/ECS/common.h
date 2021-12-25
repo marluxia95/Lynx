@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <bitset>
+#include "lynx_common.h"
 
 namespace Lynx {
 

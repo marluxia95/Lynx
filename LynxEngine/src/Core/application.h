@@ -18,6 +18,8 @@
 #include "threadpool.h"
 #include "memman.h"
 
+#include "lynx_common.h"
+
 // Only enable if you want to use multithread features. This is still in development
 //#define LYNX_MULTITHREAD
 
@@ -40,7 +42,7 @@ namespace Lynx {
 
     class ResourceManager;
 
-	class Application {
+	class LYNXENGINE_API Application {
     public:
         Application();
 		~Application();
@@ -97,7 +99,7 @@ namespace Lynx {
         std::shared_ptr<MemoryPool> m_allocator;
 	};
 
-    class GameApplication : public Application {
+    class LYNXENGINE_API GameApplication : public Application {
     public:
         GameApplication();
         ~GameApplication();

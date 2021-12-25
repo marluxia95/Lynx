@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include "mesh.h"
+#include "lynx_common.h"
 
 using namespace std;
 using namespace glm;
@@ -22,7 +23,7 @@ namespace Lynx::Graphics {
 
 	void debugVBO(vector<Vertex>* vertices, vector<GLuint>* indices);
 
-	class VertexBuffer{
+	class LYNXENGINE_API VertexBuffer{
 	public:
 		VertexBuffer() = default;
 		~VertexBuffer() = default;
@@ -40,7 +41,7 @@ namespace Lynx::Graphics {
 		static VertexBuffer* Create(vector<Vertex>* vertices, MeshType type);
 	};
 
-	class ElementBuffer {
+	class LYNXENGINE_API ElementBuffer {
     public:
 		ElementBuffer() = default;
 		~ElementBuffer() = default;

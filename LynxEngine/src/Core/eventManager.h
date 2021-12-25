@@ -6,12 +6,13 @@
 #include <map>
 #include <functional>
 #include "Events/event.h"
+#include "lynx_common.h"
 
 namespace Lynx {
 
     using EventCallbackFunc = std::function<void(const Event&)>;
 
-    class EventListener {
+    class LYNXENGINE_API EventListener {
         public:
             EventListener(EventCallbackFunc function, unsigned int id) : m_callbackfunc(function), id(id) {}
 
@@ -31,7 +32,7 @@ namespace Lynx {
             EventCallbackFunc m_callbackfunc;
     };
 
-    class EventManager {
+    class LYNXENGINE_API EventManager {
 
         public:
 

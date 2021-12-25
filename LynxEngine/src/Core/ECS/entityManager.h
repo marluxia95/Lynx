@@ -9,7 +9,7 @@
 
 namespace Lynx::ECS {
 
-	class EntityManager {
+	class LYNXENGINE_API EntityManager {
 		public:
 			~EntityManager()
 			{

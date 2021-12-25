@@ -12,6 +12,7 @@
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/cubemap.h"
+#include "lynx_common.h"
 
 namespace Lynx {
 
@@ -22,7 +23,7 @@ namespace Lynx {
 		RES_MODEL
 	};
 
-	class ResourceManager{
+	class LYNXENGINE_API ResourceManager{
 		public:
 			ResourceManager(ThreadPool* pool);
 			~ResourceManager();

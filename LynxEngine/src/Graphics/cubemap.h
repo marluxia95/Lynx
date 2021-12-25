@@ -7,10 +7,11 @@
 #include "shader.h"
 #include "vertexArray.h"
 #include "texture.h"
+#include "lynx_common.h"
 
 namespace Lynx::Graphics {
 
-	class CubemapTexture : public TextureBase {
+	class LYNXENGINE_API CubemapTexture : public TextureBase {
 		public:
 			CubemapTexture();
 			void Load();
@@ -22,7 +23,7 @@ namespace Lynx::Graphics {
 			int count = 0;
 	};
 
-	class Cubemap{
+	class LYNXENGINE_API Cubemap{
 		public:
 			Cubemap();
 			~Cubemap();

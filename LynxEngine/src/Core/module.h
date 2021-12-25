@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include "lynx_common.h"
 
 namespace Lynx {
 
@@ -35,7 +36,7 @@ namespace Lynx {
 
     };
 
-    class ModuleManager {
+    class LYNXENGINE_API ModuleManager {
 
         public:
             static std::shared_ptr<IModule> LoadEngineModule(std::string path);

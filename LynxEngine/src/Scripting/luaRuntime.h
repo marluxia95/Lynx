@@ -4,10 +4,11 @@
 #include "luaCommon.h"
 #include "Core/logger.h"
 #include "Core/ECS/system.h"
+#include "lynx_common.h"
 
 namespace Lynx::Lua {
 
-    class LuaRuntime : public ECS::System {
+    class LYNXENGINE_API LuaRuntime : public ECS::System {
         public:
             LuaRuntime(Scene* scene);
             ~LuaRuntime();

@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include "Core/ECS/entity.h"
+#include "lynx_common.h"
 
 namespace Lynx {
 

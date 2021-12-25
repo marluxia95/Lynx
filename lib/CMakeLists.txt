@@ -48,7 +48,6 @@ ExternalProject_Add(
               -DGLFW_BUILD_DOCS=OFF
               -DGLFW_INSTALL=ON
               -DBUILD_SHARED_LIBS=ON
-              -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
   UPDATE_COMMAND ""
   UPDATE_DISCONNECTED 1
   URL https://github.com/glfw/glfw/releases/download/3.3.4/glfw-3.3.4.zip
@@ -57,12 +56,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   assimp_ext
   PREFIX ${DEPS_INCLUDE_DIR}/assimp
-  CMAKE_ARGS  -DGLFW_BUILD_TESTS=OFF
-              -DGLFW_BUILD_EXAMPLES=OFF
-              -DGLFW_BUILD_DOCS=OFF
-              -DGLFW_INSTALL=ON
-              -DBUILD_SHARED_LIBS=ON
-              -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+  CMAKE_ARGS -DBUILD_SHARED_LIBS=ON
   UPDATE_COMMAND ""
   UPDATE_DISCONNECTED 1
   URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
@@ -83,16 +77,6 @@ add_library(lua STATIC IMPORTED GLOBAL)
 set_target_properties(lua PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_STATIC_MODULE_PREFIX}liblua${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
-elseif(WIN32)
-add_library(lua SHARED IMPORTED GLOBAL)
-set_target_properties(lua PROPERTIES IMPORTED_LOCATION
-  "${DEPS_INSTALL_DIR}/lib/lua54.dll"
-)
-set_target_properties(lua PROPERTIES LOCATION
-  "${DEPS_INSTALL_DIR}/lib/lua54.dll"
-)
-endif()
-
 
 add_library(glfw SHARED IMPORTED GLOBAL)
 set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
@@ -103,6 +87,29 @@ add_library(assimp SHARED IMPORTED GLOBAL)
 set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
   "${DEPS_INSTALL_DIR}/lib/${CMAKE_SHARED_MODULE_PREFIX}assimp${CMAKE_SHARED_LIBRARY_SUFFIX}"
 )
+
+elseif(WIN32)
+add_library(lua SHARED IMPORTED GLOBAL)
+set_target_properties(lua PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/lua.dll"
+)
+set_target_properties(lua PROPERTIES LOCATION
+  "${DEPS_INSTALL_DIR}/lib/lua.dll"
+)
+
+add_library(glfw SHARED IMPORTED GLOBAL)
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/glfw3dll.lib"
+)
+
+add_library(assimp SHARED IMPORTED GLOBAL)
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION
+  "${DEPS_INSTALL_DIR}/lib/assimp-vc142-mtd.lib"
+)
+
+endif()
+
+
 
 
 

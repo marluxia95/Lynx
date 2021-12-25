@@ -10,7 +10,7 @@
 
 namespace Lynx {
 
-    class MemoryPool {
+    class LYNXENGINE_API MemoryPool {
         private:
             struct MemoryBlock {
                 MemoryBlock* next_block;

@@ -23,7 +23,10 @@ target_include_directories(Game PRIVATE ${LIBS}/imgui)
 target_include_directories(Game PRIVATE ${LIBS})
 
 find_package(OpenGL REQUIRED)
+
+if(UNIX)
 find_package(GLEW REQUIRED)
+endif()
 
 include_directories( 
     Game

@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdint.h>
 #include <glm/glm.hpp>
+#include "lynx_common.h"
 
 #define MAX_LOG_SIZE 2048
 
@@ -77,7 +78,7 @@ namespace Lynx::Graphics
     };
 
     // Static instance of the renderer API
-    class RendererAPI
+    class LYNXENGINE_API RendererAPI
     {
     public:
         static void Init()
@@ -116,7 +117,7 @@ namespace Lynx::Graphics
     };
 }
 
-void check_api_errors(const char *f, int l);
+LYNXENGINE_API void check_api_errors(const char *f, int l);
 #ifdef __linux__
 #define API_CheckErrors() check_api_errors(__PRETTY_FUNCTION__, __LINE__)
 #elif _WIN32

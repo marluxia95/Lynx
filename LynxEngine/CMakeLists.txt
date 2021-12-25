@@ -39,7 +39,7 @@ if(UNIX)
 elseif(WIN32)
     add_library(glew STATIC IMPORTED GLOBAL)
 	set_target_properties(glew PROPERTIES IMPORTED_LOCATION 
-	"${CMAKE_BINARY_DIR}/lib/glew32.lib"
+	"${CMAKE_BINARY_DIR}/glew32.lib"
 	)
 endif()
 

@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include "application.h"
 #include "eventManager.h"
+#include "lynx_common.h"
 
 namespace Lynx {
 
@@ -21,7 +22,7 @@ namespace Lynx {
         void* ptr;
     } Joystick;
 
-    class Input {
+    class LYNXENGINE_API Input {
         public:
             ~Input();
             static bool IsJoystickConnected(int joyid);

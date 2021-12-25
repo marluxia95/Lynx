@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include "vertexArray.h"
 #include "buffers.h"
+#include "lynx_common.h"
 
 using namespace std;
 using namespace glm;
@@ -31,8 +32,7 @@ namespace Lynx::Graphics {
 		RENDER_INDEXED
 	};
 
-	class Mesh {
-
+	class LYNXENGINE_API Mesh {
 		public:
 			Mesh(vector<Vertex>* vertices, vector<unsigned int>* indices, MeshType type); // Element buffer mode
 			Mesh() { };

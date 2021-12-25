@@ -15,7 +15,10 @@ namespace Lynx {
 
     class scene;
 
-    class Entity {
+    /*
+        Front-end class for ECS API 
+    */
+    class LYNXENGINE_API Entity {
     public:
         Entity() {}
         Entity(Scene* scene, EntityID id);

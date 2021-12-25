@@ -4,11 +4,11 @@
 #include <memory>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
+#include "lynx_common.h"
 
 namespace Lynx {
 
-    class WindowManager {
+    class LYNXENGINE_API WindowManager {
 		public:
 			void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false);
 			

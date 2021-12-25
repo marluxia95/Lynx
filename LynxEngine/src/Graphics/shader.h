@@ -31,7 +31,7 @@ namespace Lynx {
             char error_log[MAX_ERR_BUFSIZE];
     };
 
-    class Shader {
+    class LYNXENGINE_API Shader {
         public:
             //Shader(const char* vertexPath, const char* fragmentPath);
             Shader(const char* path);

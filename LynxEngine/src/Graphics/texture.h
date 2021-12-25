@@ -3,6 +3,7 @@
 
 #include <GL/glew.h> 
 #include <stdio.h>
+#include "lynx_common.h"
 
 namespace Lynx::Graphics {
 

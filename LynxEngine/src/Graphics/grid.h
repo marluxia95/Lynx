@@ -3,6 +3,7 @@
 
 #include "mesh.h"
 #include "shader.h"
+#include "lynx_common.h"
 
 namespace Lynx::Graphics {
 

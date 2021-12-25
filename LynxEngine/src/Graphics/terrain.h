@@ -7,7 +7,7 @@
 
 namespace Lynx::Graphics {
 
-    class Terrain : public Mesh{
+    class LYNXENGINE_API Terrain : public Mesh{
     private:
         void SetupMesh();
     public:

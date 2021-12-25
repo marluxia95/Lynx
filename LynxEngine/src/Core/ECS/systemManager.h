@@ -13,7 +13,7 @@
 
 namespace Lynx::ECS {
 	
-	class SystemManager {
+	class LYNXENGINE_API SystemManager {
 	public:
 
 		/*

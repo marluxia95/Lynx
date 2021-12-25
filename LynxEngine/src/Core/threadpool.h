@@ -20,11 +20,13 @@
 #include <atomic>
 #include <condition_variable>
 #include <map>
+#include "lynx_common.h"
+
 #define THPOOL_DEBUG 0
 
 namespace Lynx {
 
-    class ThreadPool {
+    class LYNXENGINE_API ThreadPool {
         private:
             typedef struct {
                 std::function<void(void*)> func;
