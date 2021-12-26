@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
     
     - name: Install dependencies
-      run: sudo apt-get install --no-install-recommends libglfw3-dev libassimp-dev libglew-dev qt5-default 
+      run: sudo apt-get install --no-install-recommends libglfw3-dev libassimp-dev libglew-dev libXcursor-devel libXi-devel libXinerama-devel libXrandr-devel
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
