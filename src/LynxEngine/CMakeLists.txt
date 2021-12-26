@@ -26,7 +26,8 @@ include_directories(
     LynxEngine
 
     ${CMAKE_BINARY_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/../../deps/
+	${DEPS_INCLUDE_DIR}
+	${DEPS_MAIN_DIR}
     ${OPENGL_INCLUDE_DIRS}  
     ${GLFW_INCLUDE}    
     ${ASSIMP_INCLUDE}
@@ -56,4 +57,4 @@ elseif(WIN32)
 	)
 endif()
 
-add_dependencies(LynxEngine lua glfw assimp glew)
+add_dependencies(LynxEngine lua glfw_ext assimp_ext glew)

@@ -12,7 +12,7 @@ add_library(
     LynxPhysics SHARED ${SOURCES}
 )
 
-target_include_directories(LynxPhysics PRIVATE $(ENGINE))
+target_include_directories(LynxPhysics PRIVATE ${SOURCE_DIR}/LynxEngine)
 target_include_directories(LynxPhysics PRIVATE ${LIBS}/imgui)
 target_include_directories(LynxPhysics PRIVATE ${LIBS})
 
@@ -23,3 +23,11 @@ include_directories(
     ${DEPS_INCLUDE_DIR}
     ${SOURCE_DIR}/LynxEngine
 )
+
+target_link_libraries(
+	LynxPhysics
+
+	LynxEngine
+)
+
+add_dependencies(LynxPhysics LynxEngine)

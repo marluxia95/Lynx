@@ -10,14 +10,15 @@ add_library(
     TestModule SHARED ${SOURCES}
 )
 
-target_include_directories(TestModule PRIVATE $(ENGINE))
+target_include_directories(TestModule PRIVATE ${SOURCE_DIR}/LynxEngine)
 target_include_directories(TestModule PRIVATE ${LIBS}/imgui)
 target_include_directories(TestModule PRIVATE ${LIBS})
 
-include_directories( 
-    TestModule
 
-    ${CMAKE_BINARY_DIR}/include
-    ${DEPS_INCLUDE_DIR}
-    ${SOURCE_DIR}/LynxEngine
+target_link_libraries(
+	TestModule
+
+	LynxEngine
 )
+
+add_dependencies(TestModule LynxEngine)

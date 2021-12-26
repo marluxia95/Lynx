@@ -1,3 +1,9 @@
+deps/*
+!deps/CMakeLists.txt
+!deps/stb_image.h
+!deps/lib
+!deps/include
+!deps/bin
 build/
 LynxEngine/build
 LynxEngine/Build
