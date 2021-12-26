@@ -1,6 +1,3 @@
-lib/*
-!lib/CMakeLists.txt
-!lib/resolve_deps.cmake
 build/
 LynxEngine/build
 LynxEngine/Build
@@ -14,8 +11,6 @@ docs/doxygen/
 .vs/
 x64/
 imgui.ini
-assimp-vc140-mt.dll
-glew32.dll
 SimpleGameEngine.exe
 SimpleGameEngine
 main
