@@ -4,6 +4,10 @@ file(COPY bin DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY lib DESTINATION ${CMAKE_BINARY_DIR})
 
+option(PREBUILT_DEPENDENCIES "Do not download and build dependencies, just use prebuilt ones" OFF)
+
+if(!PREBUILT_DEPENDENCIES)
+
 if(UNIX)
     externalproject_add(lua_ext
         PREFIX ${DEPS_INCLUDE_DIR}/lua
@@ -77,6 +81,8 @@ ExternalProject_Add(
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
 )
+
+endif()
 
 if(WIN32)
 
