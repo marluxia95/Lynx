@@ -64,7 +64,7 @@ void log_print(log_Event* ev)
 	}
 	
 	vprintf(ev->format, ev->ap);
-	printf("%s\n", Utils::GetColourString(Utils::FG_WHITE));
+	std::cout << Utils::GetColourString(Utils::FG_WHITE) << std::endl;
 }
 
 std::string log_level_to_string(LogLevel level) 
