@@ -6,7 +6,7 @@ file(COPY lib DESTINATION ${CMAKE_BINARY_DIR})
 
 option(PREBUILT_DEPENDENCIES "Do not download and build dependencies, just use prebuilt ones" OFF)
 
-if(!PREBUILT_DEPENDENCIES)
+if(NOT PREBUILT_DEPENDENCIES)
 
 if(UNIX)
     externalproject_add(lua_ext
