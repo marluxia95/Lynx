@@ -15,7 +15,6 @@
 #include <string.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <list>
 #include <GL/glew.h> 
 #include "shader.h"
 #include "rendererAPI.h"
@@ -39,7 +38,7 @@ namespace Lynx::Graphics {
 
 	bool Shader::compile(const char* source)
 	{
-		std::list<unsigned int> shader_ids;
+		std::vector<unsigned int> shader_ids;
 		std::string shaderbuf;
 		std::string source_str(source);
 		std::istringstream stream(source_str);
@@ -106,11 +105,9 @@ namespace Lynx::Graphics {
 		program->Link();
 
 		log_debug("Destroying shaders");
-		auto l_front = shader_ids.begin();
 		// Destroy all shaders, since program is linked now
-		for( int id = 0; id < shader_ids.size(); id++) {
-			std::advance(l_front, 1);
-			RendererAPI::DestroyShader(*l_front);
+		for( auto& v : shader_ids) {
+			RendererAPI::DestroyShader(v);
 		}
 
 		API_CheckErrors();

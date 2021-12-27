@@ -181,6 +181,7 @@ int main(int argc, char** argv)
 	applicationInstance->LoadDefaultComponents();
 	applicationInstance->LoadDefaultSystems();
 
+
 	applicationInstance->RegisterSystem<Lynx::RenderSystem>();
 	{
 		Lynx::Signature signature;
@@ -216,6 +217,8 @@ int main(int argc, char** argv)
 
 	Lynx::EntityID link = Lynx::ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
 	{
+		if (link == NULL)
+			return 0;
 		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(link);
 		auto transform = scene->GetComponent<Lynx::Transform>(link);
 		transform->scale = glm::vec3(0.1f);
