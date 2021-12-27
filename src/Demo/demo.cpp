@@ -214,22 +214,18 @@ int main(int argc, char** argv)
 
 	log_info("Adding scene objects");
 
-	Lynx::EntityID cube = Lynx::ModelLoader::loadModel(scene, "res/models/cube.fbx", shader);
+	Lynx::EntityID link = Lynx::ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
 	{
-		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(cube);
+		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(link);
+		auto transform = scene->GetComponent<Lynx::Transform>(link);
+		transform->scale = glm::vec3(0.1f);
 		meshRenderer->ambient = glm::vec3(0.1f);
 		meshRenderer->diffuse = glm::vec3(0.0f);
 		meshRenderer->specular = glm::vec3(1.0f);
 		meshRenderer->shininess = 64.0f;
-		//auto transform = scene->GetComponent<Lynx::Transform>(cube);
-		//scene->AddComponent(cube, Lynx::PhysicsObject{&transform->position, glm::vec3(0.0f), glm::vec3(0.0f), 10.0f});
-		//Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
-		//meshRenderer->texture_diffuse = tex1;
-
-		//scene->GetComponent<Transform>(cube)->scale = glm::vec3(0.05f);
+		Lynx::Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
+		meshRenderer->texture_diffuse = tex1;
 	}
-
-	
 
 	Lynx::EntityID scriptedEnt = scene->CreateEntity();
 	{
@@ -258,6 +254,9 @@ int main(int argc, char** argv)
 		"res/images/cubemap/front.jpg",
 		"res/images/cubemap/back.jpg"
 	};
+	Lynx::Graphics::Cubemap* cubemap = new Lynx::Graphics::Cubemap();
+	cubemap->Load(&map_textures);
+	applicationInstance->GetSystem<Lynx::RenderSystem>()->SetCubemap(cubemap);
 
 	log_info("Application fully started");
 	
@@ -266,6 +265,6 @@ int main(int argc, char** argv)
 	API_CheckErrors();
 	applicationInstance->Run();
 
-	//delete ter;
+	delete cubemap;
 	return 0;
 }

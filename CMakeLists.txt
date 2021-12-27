@@ -11,9 +11,9 @@ set(DEPS_MAIN_DIR ${CMAKE_CURRENT_LIST_DIR}/deps)
 
 if(UNIX)
 set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
-endif()
-
+elseif(WIN32)
 cmake_policy(SET CMP0111 NEW)
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
