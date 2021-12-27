@@ -1,12 +1,12 @@
 #pragma once
 
-#ifndef _WIN
+#if _WIN32
 #ifdef LynxEngine_EXPORTS
 #define LYNXENGINE_API __declspec(dllexport) 
 #else
 #define LYNXENGINE_API __declspec(dllimport)
 #endif
-#elif __linux__
+#else
 #define LYNXENGINE_API 
 #endif
 

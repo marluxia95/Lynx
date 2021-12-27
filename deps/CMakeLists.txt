@@ -10,11 +10,11 @@ if(NOT PREBUILT_DEPENDENCIES)
 
 if(UNIX)
     externalproject_add(lua_ext
-        PREFIX ${DEPS_INCLUDE_DIR}/lua
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
-                        <SOURCE_DIR>/src ${DEPS_INSTALL_DIR}/include/lua
+	SOURCE_DIR ${DEPS_INCLUDE_DIR}/lua
+	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/liblua.a ${DEPS_INSTALL_DIR}/lib/liblua.a
+	COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/src <SOURCE_DIR>
         BUILD_COMMAND ${CMAKE_COMMAND} -E env
-            HOST_CC=...   # See below
+            HOST_CC=...
             CC=${CMAKE_C_COMPILER}
             make CFLAGS="-fPIC" -C <SOURCE_DIR>
         CONFIGURE_COMMAND ""
@@ -101,15 +101,14 @@ set_target_properties(assimp PROPERTIES IMPORTED_IMPLIB "${DEPS_INSTALL_DIR}/lib
 elseif(UNIX)
 
 add_library(lua SHARED IMPORTED GLOBAL)
-set_target_properties(lua PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/lua${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set_target_properties(lua PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/liblua.a")
 
 add_library(glfw SHARED IMPORTED GLOBAL)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/glfw3${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libglfw${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
-add_library(glew SHARED IMPORTED GLOBAL)
-set_target_properties(glew PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/glew32${CMAKE_SHARED_LIBRARY_SUFFIX}")
+find_package(GLEW REQUIRED)
 
 add_library(assimp SHARED IMPORTED GLOBAL)
-set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/assimp-vc142-mtd${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libassimp${CMAKE_SHARED_LIBRARY_SUFFIX}")
 
 endif()

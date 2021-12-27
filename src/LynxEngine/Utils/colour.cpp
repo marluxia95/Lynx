@@ -29,10 +29,11 @@ const std::map<ColourType, std::string> colour_strings = {
 
 std::string GetColourString(ColourType colour) 
 {
-    if(colour_strings.find(colour) != colour_strings.end())
-        return colour_strings[colour];
-
-    return "";
+	auto p = colour_strings.find(colour);
+	if(p == colour_strings.end())
+		return "";
+	else
+		return p->second;
 } 
 #else
 

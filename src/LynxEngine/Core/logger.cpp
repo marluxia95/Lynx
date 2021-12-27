@@ -10,7 +10,7 @@
 #ifdef _WIN64
 #include <stdbool.h>
 #endif
-#include "utils/colour.h"
+#include "Utils/colour.h"
 
 
 static struct {

@@ -44,6 +44,7 @@ if(UNIX)
 		${GLEW}
 		${ASSIMP_LIBRARY}
 	)
+	add_dependencies(LynxEngine lua glfw_ext assimp_ext)
 elseif(WIN32)
 	target_link_libraries(
 		LynxEngine
@@ -55,6 +56,6 @@ elseif(WIN32)
 		${OPENGL_LIBRARIES}
 		${ASSIMP_LIBRARY}
 	)
+	add_dependencies(LynxEngine lua glfw_ext assimp_ext glew)
 endif()
 
-add_dependencies(LynxEngine lua glfw_ext assimp_ext glew)

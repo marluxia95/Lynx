@@ -14,6 +14,9 @@ target_include_directories(Demo PRIVATE $(ENGINE))
 target_include_directories(Demo PRIVATE ${LIBS}/imgui)
 target_include_directories(Demo PRIVATE ${LIBS})
 
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+
 include_directories( 
     Demo
 
@@ -35,6 +38,7 @@ if(UNIX)
 		LynxEngine
 		glfw
 		assimp
+		${GLEW}
 		${OPENGL_LIBRARIES}
 		${GLEW_LIBRARIES}
 		${ASSIMP_LIBRARY}
