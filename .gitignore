@@ -13,7 +13,8 @@ LynxEditor/Build
 Debug/
 tests/
 docs/doxygen/
-.VSCodeCounter
+.VSCodeCounter/
+.vscode/
 .vs/
 x64/
 imgui.ini
