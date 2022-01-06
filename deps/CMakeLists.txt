@@ -1,8 +1,16 @@
 include(ExternalProject)
 
+if(WIN32)
+file(GLOB libs "lib/win32")
 file(COPY bin DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY lib DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${libs} DESTINATION ${CMAKE_BINARY_DIR})
+elseif(UNIX)
+file(GLOB libs "lib/linux")
+file(COPY bin DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${libs} DESTINATION ${CMAKE_BINARY_DIR})
+endif()
 
 option(PREBUILT_DEPENDENCIES "Do not download and build dependencies, just use prebuilt ones" OFF)
 
@@ -32,6 +40,18 @@ elseif(WIN32)
         URL https://www.lua.org/ftp/lua-5.4.3.tar.gz
     )
 endif()
+
+ExternalProject_Add(
+  gli_ext
+  PREFIX ${DEPS_INCLUDE_DIR}/gli
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                  <SOURCE_DIR>/gli ${DEPS_INSTALL_DIR}/include/gli
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  UPDATE_COMMAND ""
+  UPDATE_DISCONNECTED 1
+  URL https://codeload.github.com/g-truc/gli/zip/refs/heads/master
+)
 
 ExternalProject_Add(
   glm_ext

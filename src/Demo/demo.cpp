@@ -11,7 +11,6 @@
 #include "Systems/cameraSystem.h"
 #include "Scripting/luaRuntime.h"
 #include "Graphics/cubemap.h"
-#include "Graphics/terrain.h"
 
 #include "Physics/physicsObject.h"
 
@@ -141,8 +140,8 @@ int joystick_disconnected(const Lynx::Event& ev)
 
 int Update(const Lynx::Event& ev)
 {
-	snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
-	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
+	//snprintf(title,40 ,"Test game FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
+	//glfwSetWindowTitle(applicationInstance->GetWindow(), title);
 	mouse_input();
 	movement();
 	
@@ -210,26 +209,18 @@ int main(int argc, char** argv)
 	applicationInstance->Init("Example", 1920, 1080, false);
 
 	log_debug("Loading resources");
-	Lynx::Graphics::Shader* shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
+	std::shared_ptr<Lynx::Graphics::Shader> shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
 
 	log_info("Adding scene objects");
 
-	Lynx::EntityID link = Lynx::ModelLoader::loadModel(scene, "res/models/link_adult.obj", shader);
+	Lynx::EntityID cube = Lynx::ModelLoader::loadModel(scene, "res/models/cube.fbx", shader);
 	{
-		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(link);
-		auto transform = scene->GetComponent<Lynx::Transform>(link);
-		transform->scale = glm::vec3(0.1f);
+		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(cube);
 		meshRenderer->ambient = glm::vec3(0.1f);
 		meshRenderer->diffuse = glm::vec3(0.0f);
-		meshRenderer->specular = glm::vec3(1.0f);
-		meshRenderer->shininess = 64.0f;
-		Lynx::Graphics::Texture tex1 = resourceManager->LoadTexture("res/images/Link_grp.png");
-		meshRenderer->texture_diffuse = tex1;
-	}
-
-	Lynx::EntityID scriptedEnt = scene->CreateEntity();
-	{
-		scene->AddComponent(scriptedEnt, Lynx::LuaScript{"res/scripts/test.lua"});
+		meshRenderer->specular = glm::vec3(0.1f);
+		meshRenderer->shininess = 24.0f;
+		meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
 	}
 
 	Lynx::EntityID lightEnt = scene->CreateEntity("Light");
@@ -246,7 +237,7 @@ int main(int argc, char** argv)
 	log_info("Loading cubemap");
 	
 	// Setup skybox/cubemap
-	std::vector<const char*> map_textures {
+	/*std::vector<const char*> map_textures {
 		"res/images/cubemap/right.jpg",
 		"res/images/cubemap/left.jpg",
 		"res/images/cubemap/top.jpg",
@@ -256,7 +247,7 @@ int main(int argc, char** argv)
 	};
 	Lynx::Graphics::Cubemap* cubemap = new Lynx::Graphics::Cubemap();
 	cubemap->Load(&map_textures);
-	applicationInstance->GetSystem<Lynx::RenderSystem>()->SetCubemap(cubemap);
+	applicationInstance->GetSystem<Lynx::RenderSystem>()->SetCubemap(cubemap);*/
 
 	log_info("Application fully started");
 	
@@ -265,6 +256,6 @@ int main(int argc, char** argv)
 	API_CheckErrors();
 	applicationInstance->Run();
 
-	delete cubemap;
+	//delete cubemap;
 	return 0;
 }

@@ -48,17 +48,17 @@ struct MeshRenderer {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
-	std::vector<Graphics::Mesh*> meshes;
-	Graphics::Shader*  shader;
-	Graphics::Texture  texture;
-	Graphics::Texture  texture_diffuse;
-	Graphics::Texture  texture_specular;
+	std::vector<std::shared_ptr<Graphics::Mesh>> meshes;
+	std::shared_ptr<Graphics::Shader > shader;
+	std::shared_ptr<Graphics::TextureBase> texture;
+	std::shared_ptr<Graphics::TextureBase> texture_diffuse;
+	std::shared_ptr<Graphics::TextureBase> texture_specular;
 	bool lighting = true;
 };
 
 struct SpriteRenderer {
 	Graphics::Shader* shader;
-	Graphics::Texture* texture;
+	Graphics::TextureBase* texture;
 };
 
 struct Material {

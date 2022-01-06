@@ -51,6 +51,8 @@ namespace Lynx::Graphics {
 	     1.0f, -1.0f,  1.0f
 	};
 
+	/*
+
 	CubemapTexture::CubemapTexture() : TextureBase(TEXTURE_CUBEMAP) 
 	{
 		glGenTextures(1, &texture);
@@ -102,7 +104,7 @@ namespace Lynx::Graphics {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 				break;
 		}
-	}
+	}*/
 
 	Cubemap::Cubemap()
 	{
@@ -113,8 +115,17 @@ namespace Lynx::Graphics {
 		Lynx::GameApplication* applicationInstance = GameApplication::GetGameInstance();
         log_debug("Creating cubemap ...");
 
-		glGenTextures(1, &texture.texture);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, texture.texture);
+		log_debug("Loading cubemap shader...");
+	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
+
+        log_debug("Starting to load cubemap textures...");
+	    texture = applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);
+        log_debug("Cubemap created successfully");
+
+		LYNX_ASSERT(texture, "Invalid cubemap texture");
+
+		//glGenTextures(1, &texture->texture);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, texture->texture);
 
         VAO = VertexArray::Create();
 		glGenBuffers(1, &VBO);
@@ -124,12 +135,6 @@ namespace Lynx::Graphics {
 		glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-		log_debug("Loading cubemap shader...");
-	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
-
-        log_debug("Starting to load cubemap textures...");
-	    texture = applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);
-        log_debug("Cubemap created successfully");
 	}
 
 	Cubemap::~Cubemap()
@@ -146,7 +151,7 @@ namespace Lynx::Graphics {
 		shader->SetUniform("view", view);
 		VAO->Bind();
 
-		texture.Use();
+		texture->Use();
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS);

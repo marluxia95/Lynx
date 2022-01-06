@@ -5,7 +5,7 @@ namespace Lynx {
 
 
 
-EntityID ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader* shader)
+EntityID ModelLoader::loadModel(Scene* scene, const char* path, std::shared_ptr<Graphics::Shader> shader)
 {
 	Assimp::Importer importer;
 	const aiScene *ai_scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
@@ -26,7 +26,7 @@ EntityID ModelLoader::loadModel(Scene* scene, const char* path, Graphics::Shader
 	return parentEnt;
 }
 
-void ModelLoader::processMesh(Scene* scene, EntityID meshEntity, const char* path, Graphics::Shader* meshShader, aiMesh* mesh)
+void ModelLoader::processMesh(Scene* scene, EntityID meshEntity, const char* path, std::shared_ptr<Graphics::Shader> meshShader, aiMesh* mesh)
 {
 	Application* applicationInstance = Lynx::Application::GetInstance();
 	std::vector<Graphics::Vertex>* vertices = new std::vector<Graphics::Vertex>();
@@ -75,13 +75,13 @@ void ModelLoader::processMesh(Scene* scene, EntityID meshEntity, const char* pat
 	glm::vec3(0.0f), 
 	glm::vec3(0.0f), 
 	0.0f, 
-	std::vector<Graphics::Mesh*>{GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL)},
+	std::vector<std::shared_ptr<Graphics::Mesh>>{GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL)},
 	meshShader
 	});
 }
 
 
-void ModelLoader::processNode(Scene* scene, EntityID parentEntity, const char* path, Graphics::Shader* shader, aiNode* node, const aiScene* ai_scene)
+void ModelLoader::processNode(Scene* scene, EntityID parentEntity, const char* path, std::shared_ptr<Graphics::Shader> shader, aiNode* node, const aiScene* ai_scene)
 {
 	Application* applicationInstance = Lynx::Application::GetInstance();
 	if(ai_scene->HasMeshes() != true) {log_error("File has no meshes !"); return;}

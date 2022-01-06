@@ -16,7 +16,6 @@
 #include "windowManager.h"
 #include "resourceManager.h"
 #include "threadpool.h"
-#include "memman.h"
 
 #include "lynx_common.h"
 
@@ -74,9 +73,6 @@ namespace Lynx {
 
         std::thread::id GetThread() { return thread_id; };
         ThreadPool* GetThreadPool() { return m_threadPool.get(); }
-
-        MemoryPool* GetAllocator() { return m_allocator.get(); }
-
         static Application* GetInstance() { return s_applicationInstance; }
     protected:
         void CalculateFrameTime();
@@ -96,7 +92,6 @@ namespace Lynx {
         std::thread::id thread_id;
         std::shared_ptr<ECS::SystemManager> m_systemManager;
         std::shared_ptr<ThreadPool> m_threadPool;	
-        std::shared_ptr<MemoryPool> m_allocator;
 	};
 
     class LYNXENGINE_API GameApplication : public Application {

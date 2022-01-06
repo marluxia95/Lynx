@@ -42,7 +42,6 @@ namespace Lynx {
         log_debug("Initializing subsystems");
 
         thread_id = std::this_thread::get_id();
-        m_allocator = std::make_shared<MemoryPool>(0xFFFF, 1024);
 
 #ifdef LYNX_MULTITHREAD
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");

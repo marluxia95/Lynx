@@ -9,7 +9,6 @@
 #include "Core/logger.h"
 #include "componentArray.h"
 #include "Core/assert.h"
-#include "Core/memman.h"
 
 //#define COMPONENT_DEBUG
 

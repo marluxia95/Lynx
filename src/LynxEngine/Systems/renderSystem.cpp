@@ -123,18 +123,20 @@ namespace Lynx {
 					mRenderComponent->shader->SetUniform("material.diffuse", mRenderComponent->diffuse);
                     mRenderComponent->shader->SetUniform("material.specular", mRenderComponent->specular);
                     mRenderComponent->shader->SetUniform("material.shininess", mRenderComponent->shininess);
-                    if(mRenderComponent->texture_diffuse.IsValid()){
+
+                    
+                    if(mRenderComponent->texture_diffuse){
                         mRenderComponent->shader->SetUniform("diffuse_map", true);
                         mRenderComponent->shader->SetUniform("material.diffuse_tex", 0);
-                        mRenderComponent->texture_diffuse.Use();
+                        mRenderComponent->texture_diffuse->Use();
                     }else{
                         mRenderComponent->shader->SetUniform("diffuse_map", false);
                     }
 
-                    if(mRenderComponent->texture_specular.IsValid()){
+                    if(mRenderComponent->texture_specular){
                         mRenderComponent->shader->SetUniform("specular_map", true);
                         mRenderComponent->shader->SetUniform("material.specular_tex", 0);
-                        mRenderComponent->texture_specular.Use();
+                        mRenderComponent->texture_specular->Use();
                     }else{
                         mRenderComponent->shader->SetUniform("specular_map", false);
                     }
@@ -151,11 +153,9 @@ namespace Lynx {
 				}
 			}
 
-
-            
             // Check if mesh has a texture, if so, render it
-            if(mRenderComponent->texture.IsValid()){    
-                mRenderComponent->texture.Use();
+            if(mRenderComponent->texture){    
+                mRenderComponent->texture->Use();
             }   
 
             for(auto& mesh : mRenderComponent->meshes) {

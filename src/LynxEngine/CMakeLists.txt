@@ -8,7 +8,13 @@ file(GLOB_RECURSE HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/**/*.hpp
 )
 
+if(UNIX)
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
+endif()
+
+if(BUILD_DEBUG)
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g" )
+endif()
 
 link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
 

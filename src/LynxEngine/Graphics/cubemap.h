@@ -11,17 +11,18 @@
 
 namespace Lynx::Graphics {
 
+	/*
 	class LYNXENGINE_API CubemapTexture : public TextureBase {
 		public:
 			CubemapTexture();
 			void Load();
-			void Load(const char* path) { loadFromFile(path); }
+			void Load(const char* path) { LoadFromFile(path); }
 			void Generate();
 			void Use();
 			friend class Cubemap;
 		private:
 			int count = 0;
-	};
+	};*/
 
 	class LYNXENGINE_API Cubemap{
 		public:
@@ -31,8 +32,8 @@ namespace Lynx::Graphics {
 			void Use(glm::mat4 projection, glm::mat4 view);
 			
 		private:
-			CubemapTexture texture;
-			Shader* shader;
+			std::shared_ptr<TextureBase> texture;
+			std::shared_ptr<Shader> shader;
 			VertexArray* VAO;
 			GLuint VBO;
 	};

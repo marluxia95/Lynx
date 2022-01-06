@@ -33,7 +33,8 @@ namespace Lynx::Graphics {
 		}
 	}
 
-	Shader::Shader(const char* path) {
+	Shader::Shader(const char* path) : ResourceBase(path)
+	{
 		loadShaderFromFile(path);
 	}
 

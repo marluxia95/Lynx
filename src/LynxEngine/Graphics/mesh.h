@@ -9,6 +9,7 @@
 #include "vertexArray.h"
 #include "buffers.h"
 #include "lynx_common.h"
+#include "Core/resource.h"
 
 using namespace glm;
 
@@ -31,10 +32,11 @@ namespace Lynx::Graphics {
 		RENDER_INDEXED
 	};
 
-	class LYNXENGINE_API Mesh {
+	class LYNXENGINE_API Mesh : public ResourceBase {
 		public:
-			Mesh(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type); // Element buffer mode
-			Mesh() { };
+			Mesh(std::string name, std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type); // Element buffer mode
+			Mesh(std::string name) : ResourceBase(name) { };
+			Mesh() : ResourceBase() { };
 			~Mesh();
 			virtual void Render();
 			std::vector<Vertex>* vertices;

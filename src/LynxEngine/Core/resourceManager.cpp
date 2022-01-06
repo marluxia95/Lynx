@@ -21,14 +21,6 @@ ResourceManager::~ResourceManager()
 void ResourceManager::Clear() 
 {
 	log_debug("Cleaning resources");
-
-	for(auto const& rm : mesh_map){
-		delete rm.second;
-	}
-
-	for(auto const& rm : shader_map){
-		delete rm.second;
-	}
 }
 
 void ResourceManager::Update(float dt)
@@ -66,37 +58,30 @@ const char* ResourceManager::getFileName(const char* path)
 }
 
 
-Graphics::Shader* ResourceManager::LoadShader(const char* path)
+std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* path)
 {
-	log_debug("e %d", shader_map.size());
 	std::string name = std::string(path);
-	const auto shader_found = shader_map.find(name);
-	if(shader_found != shader_map.end())
-		return shader_found->second;
+	const auto shader_found = GetResource<Graphics::Shader>(path);
+	if(shader_found != NULL)
+		return shader_found;
+
+	auto n_shader = std::make_shared<Graphics::Shader>(path);
+	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_shader);
 	
-	return shader_map[name] = new Graphics::Shader(path);
+	return n_shader;
 }
 
-
-Graphics::Shader* ResourceManager::LoadShader(const char* vertex_path, const char* fragment_path)
+std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path)
 {
-	std::string name = std::string(vertex_path);
-	name.append(std::string(fragment_path));
-	const size_t name_hash = std::hash<std::string>{}(name);
-	//WIP
-	return NULL;
-}
-
-Graphics::Texture ResourceManager::LoadTexture(const char* path)
-{
-	auto texture = FindTexture(path);
-	if( texture.IsValid() )
-		return texture;
+	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
+	if( texture )
+		if( texture->IsValid( ))
+			return texture;
 
 	std::string name = std::string(path);
 
-	Graphics::Texture n_texture = Graphics::Texture(path);
-	
+	log_debug("Calling constructor of texture object");
+	auto n_tex = Graphics::TextureBase::CreateTexture(path);
 #ifdef LYNX_MULTITHREAD
 	log_debug("Starting to load texture %s in async mode", n_texture.GetPath());
 	thpool->PushJob([this](void* data){
@@ -113,18 +98,16 @@ Graphics::Texture ResourceManager::LoadTexture(const char* path)
 		log_debug("Added texture %s to GPU queue", tdata->GetPath());
 		return;
 	}, n_texture.GetData());
-#else
-	log_debug("Loading texture %s", n_texture.GetPath());
-	n_texture.Load();
-	n_texture.Generate();
 #endif
 	
-	return texture_map[name] = n_texture;
+	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_tex);
+	
+	return n_tex;
 }
 
-Graphics::CubemapTexture ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
-{
-	Graphics::CubemapTexture ctex = Graphics::CubemapTexture();
+std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
+{/*
+	std::shared_ptr<Graphics::TextureBase> ctex = Graphics::TextureBase::CreateTexture("");
 	for(int x = 0; x < textures->size(); x++) {
 		auto path = textures->at(x);
 
@@ -146,44 +129,37 @@ Graphics::CubemapTexture ResourceManager::LoadCubemapTexture(std::vector<const c
 			log_debug("Added cubemap texture %s to GPU queue", tdata->GetPath());
 		}, ctex.GetData());
 #else
-		ctex.Load(path);
-		ctex.Generate();
+		ctex->Load(path);
+		ctex->Generate();
+		resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(ctex);
 #endif
 	}
-	return ctex;
+	return ctex;*/
 }
 
-Graphics::Texture ResourceManager::FindTexture(const char* path)
+std::shared_ptr<Graphics::Mesh> 
+ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, 
+	std::vector<unsigned int>* indices, 
+	Graphics::MeshType type)
 {
-	std::string name = std::string(path);
-	const auto found = texture_map.find(name);
-	if(found != texture_map.end()) {
-		if(found->second.IsValid())
-			return found->second;
+	std::string res_name = name;
+	const auto found = GetResource<Graphics::Mesh>(name);
+	if(found != NULL)
+		return found;
+
+	auto n_shader = std::make_shared<Graphics::Mesh>(name, vertices, indices, type);
+	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_shader);
+	
+	return n_shader;
+}
+
+std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(std::string path)
+{
+	for(auto const& [k,v] : resource_map) {
+		if(v->GetResourcePath() == path)
+			return v;
 	}
-	return Graphics::Texture();
-}
-
-
-Graphics::Mesh* ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, std::vector<unsigned int>* indices, Graphics::MeshType type)
-{
-	auto mesh = FindMesh(name);
-	if( mesh != nullptr)
-		return mesh;
-
-	mesh_map[name] = new Graphics::Mesh(vertices, indices, type);
-	return mesh_map[name];
-}
-
-
-Graphics::Mesh* ResourceManager::FindMesh(const char* name)
-{
-	const size_t name_hash = std::hash<const char*>{}(name);
-	const auto found = mesh_map.find(name);
-	if(found != mesh_map.end()) {
-		return found->second;
-	}
-	return nullptr;
+	return NULL;
 }
 
 }

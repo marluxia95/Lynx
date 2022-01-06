@@ -12,8 +12,8 @@ using namespace glm;
 
 namespace Lynx::Graphics {
 
-	Mesh::Mesh(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type )
-		: vertices(vertices), indices(indices), type(type)
+	Mesh::Mesh(std::string name, std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type )
+		: vertices(vertices), indices(indices), type(type), ResourceBase(name)
 	{
 		
 		VBO = VertexBuffer::Create(vertices);

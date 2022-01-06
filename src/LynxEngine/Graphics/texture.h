@@ -1,9 +1,10 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <GL/glew.h> 
+#include <memory>
 #include <stdio.h>
 #include "lynx_common.h"
+#include "Core/resource.h"
 
 namespace Lynx::Graphics {
 
@@ -13,73 +14,32 @@ namespace Lynx::Graphics {
 	};
 	
 	class TextureBase;
-	
-	class TextureData {
-	public:
-		TextureData(TextureBase* baseTex) : linkedTexture(baseTex) {}
-		TextureData(const char* path, unsigned char* data, int width, int height, int channels) : path(path), data(data), width(width), height(height),
-		channels(channels) {}
 
-		~TextureData() { Free(); }
-		
-		bool LoadFromFile(const char* path);
-		void Free();
-		const char* GetPath() { return path; }
-		unsigned char* GetData() { return data; }
-		int GetWidth() { return width; }
-		int GetHeight() { return height; }
-		int GetChannels() { return channels; }
-		
-		TextureBase* linkedTexture;
-		friend class TextureBase;
-		friend class Texture;
-
-	private:
-		const char* path;
-		int width, height, channels;
-		unsigned char* data;
-	};
-
-	class TextureBase {
+	class TextureBase : public ResourceBase {
 		public:
 			TextureBase(TextureType type);
 			TextureBase(TextureType type, const char* path);
+			
 			virtual void Generate() = 0;
 			virtual void Use() = 0;
-			virtual void Load() = 0;
+			virtual void LoadFromFile(std::string path) = 0;
 
 			bool IsValid() { return id != -1; }
-			const char* GetPath() { return data->path; }
 			unsigned int GetTextureID() { return texture; }
 			int GetID() { return id; }
-			TextureData* GetData() { return data; }
 			TextureType GetTextureType() { return type; }
 
 			static int PushTextureID() { return total_textures++; }
+
+			static std::shared_ptr<TextureBase> CreateTexture(std::string path);
 
 		private:
 			static int total_textures;
 
 		protected:
-			void loadFromFile(const char* path);
-
-		protected:
 			TextureType type;
 			unsigned int texture = 0;
-			TextureData* data;
 			int id;
-	};
-
-	class Texture : public TextureBase {
-	public:
-		Texture() : TextureBase(TEXTURE_DEFAULT) { }
-		Texture(const char* path);
-		
-		void Load() { loadFromFile(data->path); }
-		void Load(const char* path) { loadFromFile(path); }
-		void Generate();
-		void Use();
-
 	};
 }
 

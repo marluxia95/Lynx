@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "rendererAPI.h"
+#include "Core/resource.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
@@ -31,7 +32,7 @@ namespace Lynx {
             char error_log[MAX_ERR_BUFSIZE];
     };
 
-    class LYNXENGINE_API Shader {
+    class LYNXENGINE_API Shader : public ResourceBase {
         public:
             //Shader(const char* vertexPath, const char* fragmentPath);
             Shader(const char* path);

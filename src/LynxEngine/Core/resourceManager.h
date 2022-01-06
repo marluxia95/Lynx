@@ -12,6 +12,7 @@
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/cubemap.h"
+#include "resource.h"
 #include "lynx_common.h"
 
 namespace Lynx {
@@ -31,24 +32,26 @@ namespace Lynx {
 
 			void Update(float dt);
 
-			Graphics::Shader* LoadShader(const char* path);
-			Graphics::Shader* LoadShader(const char* vertex_path, const char* fragment_path);
-			int GetShaderCount() { return shader_map.size(); }
+			std::shared_ptr<Graphics::Shader> LoadShader(const char* path);
 
-			Graphics::Texture LoadTexture(const char* path);
-			Graphics::Texture FindTexture(const char* path);
+			std::shared_ptr<Graphics::TextureBase> LoadTexture(const char* path);
 
-			Graphics::CubemapTexture LoadCubemapTexture(std::vector<const char*>* textures);
+			std::shared_ptr<Graphics::TextureBase> LoadCubemapTexture(std::vector<const char*>* textures);
 
-			Graphics::Mesh* LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, std::vector<unsigned int>* indices, Graphics::MeshType type);
-			Graphics::Mesh* FindMesh(const char* name);
+			std::shared_ptr<Graphics::Mesh> LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, std::vector<unsigned int>* indices, Graphics::MeshType type);
+
+			template<typename T>
+			std::shared_ptr<T> GetResource(std::string path)
+			{
+				return std::static_pointer_cast<T>(FindResourceByPath(path));
+			}
+
+			std::shared_ptr<ResourceBase> FindResourceByPath(std::string path);
 
 		private:
 			int lastId;
 			
-			std::unordered_map<std::string, Graphics::Shader*> shader_map = {};
-			std::unordered_map<std::string, Graphics::Mesh*>   mesh_map = {};
-			std::unordered_map<std::string, Graphics::Texture> texture_map = {};
+			std::map<long int, std::shared_ptr<ResourceBase>> resource_map = {};
 
 			std::queue<Graphics::TextureBase*> texdata_queue;
 			std::mutex queue_mutex;

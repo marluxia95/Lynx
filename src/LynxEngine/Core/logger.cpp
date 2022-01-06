@@ -28,7 +28,7 @@ static std::map<LogLevel, Utils::ColourType> log_colours = {
 	{LOG_DEBUG,   Utils::FG_BLUE},
 	{LOG_INFO,    Utils::FG_WHITE},
 	{LOG_WARN,    Utils::FG_ORANGE},
-	{LOG_ERROR,   Utils::FG_LIGHT_RED},
+	{LOG_ERROR,   Utils::FG_RED},
 	{LOG_FATAL,   Utils::FG_RED}
 };
 

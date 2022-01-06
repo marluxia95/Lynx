@@ -3,7 +3,11 @@ set (CMAKE_CXX_STANDARD 17)
 project(Demo VERSION 0.1)
 
 if(UNIX)
-set(CMAKE_CXX_FLAGS "-lXrandr -lXext -lXrender -lX11 -lpthread -lxcb -lXau -lXdmcp -lGLEW -lGLU -lm -lGL -lglfw -lrt -lm -ldl")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lXrandr -lXext -lXrender -lX11 -lpthread -lxcb -lXau -lXdmcp -lGLEW -lGLU -lm -lGL -lglfw -lrt -lm -ldl")
+endif()
+
+if(BUILD_DEBUG)
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g" )
 endif()
 
 add_executable( 
