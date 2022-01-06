@@ -13,7 +13,7 @@ EntityID ModelLoader::loadModel(Scene* scene, const char* path, std::shared_ptr<
 	
 	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode) 
 	{
-		log_error("Error while loading model %s \n", importer.GetErrorString());
+		log_error("Error while loading model ! %s \n", importer.GetErrorString());
 		return NULL;
 	}
 

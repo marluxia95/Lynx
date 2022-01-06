@@ -180,6 +180,7 @@ int main(int argc, char** argv)
 	applicationInstance->LoadDefaultComponents();
 	applicationInstance->LoadDefaultSystems();
 
+
 	applicationInstance->RegisterSystem<Lynx::RenderSystem>();
 	{
 		Lynx::Signature signature;

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unordered_map>
+#include <typeindex>
 #include <memory>
 #include "common.h"
 #include "Core/logger.h"
@@ -28,17 +29,17 @@ public:
 	template<typename T>
 	void RegisterComponent()
 	{
+		std::type_index typeInfo = typeid(T);
 		const char* typeName = typeid(T).name();
 
-		LYNX_ASSERT(componentTypes.find(typeName) == componentTypes.end(), "Component Type already exists.");
-		componentTypes.insert( { typeName, nextComponentType } );
+		LYNX_ASSERT(componentTypes.find(typeInfo) == componentTypes.end(), "Component Type already exists.");
+		componentTypes.insert( { typeInfo, nextComponentType } );
 		log_debug("Registering component '%s'", typeName);
 	
 #ifdef COMPONENT_DEBUG
 		Debug();
 #endif
-		//componentArrays.insert( { typeName, std::allocate_shared<ComponentArray<T>>(MemoryAllocator<ComponentArray<T>>()) } );
-		componentArrays.insert( { typeName, std::make_shared<ComponentArray<T>>() } );
+		componentArrays.insert( { typeInfo, std::make_shared<ComponentArray<T>>() } );
 
 		nextComponentType++;
 	}
@@ -46,11 +47,13 @@ public:
 	template<typename T>
 	ComponentType GetComponentType()
 	{
+		std::type_index typeInfo = typeid(T);
 		const char* typeName = typeid(T).name();
+		log_debug("Attempting to get component type %s", typeName);
 
-		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component does not exist.");
+		LYNX_ASSERT(componentTypes.find(typeInfo) != componentTypes.end(), "Component does not exist.");
 
-		return componentTypes[typeName];
+		return componentTypes[typeInfo];
 	}
 
 	template<typename T>
@@ -83,31 +86,31 @@ private:
 	void Debug() {
 		log_debug("Registered Components : ");
 		int i = 0;
-		for(auto [k,v] : componentTypes) {
+		for(auto& [k,v] : componentTypes) {
 			i++;
-			log_debug(" %d : '%s' -> %x", i, k, v);
+			log_debug(" %d : '%s' -> %x", i, k.name(), v);
 		}
 	}
 
 private:
-	std::unordered_map<const char*, ComponentType> componentTypes{};
-	std::unordered_map<const char*, std::shared_ptr<IComponentArray>> componentArrays{};
+	std::unordered_map<std::type_index, ComponentType> componentTypes{};
+	std::unordered_map<std::type_index, std::shared_ptr<IComponentArray>> componentArrays{};
 
 	ComponentType nextComponentType{};
 
 	template<typename T>
 	std::shared_ptr<ComponentArray<T>> GetComponentArray(){
-		const char* typeName = typeid(T).name();
+		std::type_index typeInfo = typeid(T);
 
 #ifdef COMPONENT_DEBUG
 		Debug();
-		log_debug("Getting component array '%s'", typeName );
+		log_debug("Getting component array '%s'", typeInfo.name());
 #endif
 		
 
-		LYNX_ASSERT(componentTypes.find(typeName) != componentTypes.end(), "Component not registered before use.");
+		LYNX_ASSERT(componentTypes.find(typeInfo) != componentTypes.end(), "Component not registered before use.");
 
-		return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
+		return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeInfo]);
 	}
 
 };
