@@ -126,7 +126,7 @@ namespace Lynx::Graphics {
 		//glGenTextures(1, &texture->texture);
 		//glBindTexture(GL_TEXTURE_CUBE_MAP, texture->texture);
 
-        VAO = VertexArray::Create();
+        VAO = new VertexArray();
 		glGenBuffers(1, &VBO);
 		VAO->Bind();
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);  

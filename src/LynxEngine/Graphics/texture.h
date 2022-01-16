@@ -31,8 +31,6 @@ namespace Lynx::Graphics {
 
 			static int PushTextureID() { return total_textures++; }
 
-			static std::shared_ptr<TextureBase> CreateTexture(std::string path);
-
 		private:
 			static int total_textures;
 

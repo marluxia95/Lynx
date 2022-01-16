@@ -43,7 +43,6 @@ namespace Lynx::Graphics {
     void ShaderProgram::Use()
     {
         glUseProgram(id);
-        log_debug("[GL] Used shader program with ID %d", id);
     }
     
     bool ShaderProgram::Link()
@@ -68,7 +67,7 @@ namespace Lynx::Graphics {
 	{
 		PushSource(vertexPath, GL_VERTEX_SHADER);
 		PushSource(fragmentPath, GL_FRAGMENT_SHADER);
-		
+		Link();
 	}
 
 	void Shader::PushSource(std::string shaderPath, GLuint type)
@@ -172,6 +171,60 @@ namespace Lynx::Graphics {
 			return uniform_cache_map[uniformName];
 		}
 	}
+
+	template <>
+	void Shader::SetUniform(const char* name, bool value)
+    {
+        glUniform1i(getUniformLocation(name), value);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, int value)
+    {
+        glUniform1i(getUniformLocation(name), value);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, float value)
+    {
+        glUniform1f(getUniformLocation(name), value);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::vec2 value)
+    {
+        glUniform2fv(getUniformLocation(name), 1, &value[0]);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::vec3 value)
+    {
+        glUniform3fv(getUniformLocation(name), 1, &value[0]);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::vec4 value)
+    {
+        glUniform4fv(getUniformLocation(name), 1, &value[0]);
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::mat2 value)
+    {
+        glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::mat3 value)
+    {
+        glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+    }
+
+	template <>
+    void Shader::SetUniform(const char* name, glm::mat4 value)
+    {
+        glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+    }
 
 
 }

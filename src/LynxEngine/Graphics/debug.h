@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "Core/logger.h"
 
-GLenum gl_checkerror(const char* f, int l)
+inline GLenum gl_checkerror(const char* f, int l)
 {
     GLenum errorCode;
     while ((errorCode = glGetError()) != GL_NO_ERROR)

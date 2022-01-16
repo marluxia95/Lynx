@@ -6,7 +6,6 @@
 #include <glm/glm.hpp>
 
 #include "lynx.h"
-#include "Graphics/rendererAPI.h"
 #include "Systems/renderSystem.h"
 #include "Systems/cameraSystem.h"
 #include "Scripting/luaRuntime.h"
@@ -210,7 +209,7 @@ int main(int argc, char** argv)
 	applicationInstance->Init("Example", 1920, 1080, false);
 
 	log_debug("Loading resources");
-	std::shared_ptr<Lynx::Graphics::Shader> shader = resourceManager->LoadShader("res/shaders/standard/lighting.shader");
+	std::shared_ptr<Lynx::Graphics::Shader> shader = resourceManager->LoadShader("res/shaders/standard/lighting.vert", "res/shaders/standard/lighting.frag");
 
 	log_info("Adding scene objects");
 
@@ -238,7 +237,8 @@ int main(int argc, char** argv)
 	log_info("Loading cubemap");
 	
 	// Setup skybox/cubemap
-	/*std::vector<const char*> map_textures {
+	/*
+	std::vector<const char*> map_textures {
 		"res/images/cubemap/right.jpg",
 		"res/images/cubemap/left.jpg",
 		"res/images/cubemap/top.jpg",
@@ -254,7 +254,6 @@ int main(int argc, char** argv)
 	
 	// Runs the gApplication
 	applicationInstance->SetApplicationState(Lynx::STATE_ACTIVE);
-	API_CheckErrors();
 	applicationInstance->Run();
 
 	//delete cubemap;

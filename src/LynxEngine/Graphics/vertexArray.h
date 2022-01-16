@@ -13,8 +13,6 @@ namespace Lynx::Graphics {
 		void Bind();
 		void Unbind();
 		GLuint VAO_ID;
-
-		static VertexArray* Create();
 	};
 
 }
