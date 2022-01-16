@@ -3,7 +3,6 @@
 #include "cubemap.h"
 #include "texture.h"
 #include "Core/application.h"
-#include "Graphics/rendererAPI.h"
 
 namespace Lynx::Graphics {
 
@@ -116,7 +115,7 @@ namespace Lynx::Graphics {
         log_debug("Creating cubemap ...");
 
 		log_debug("Loading cubemap shader...");
-	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.shader");
+	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.vert", "res/shaders/standard/cubemap.frag");
 
         log_debug("Starting to load cubemap textures...");
 	    texture = applicationInstance->GetResourceManager()->LoadCubemapTexture(textures);

@@ -41,6 +41,26 @@ namespace Lynx::Graphics {
 			unsigned int texture = 0;
 			int id;
 	};
+
+	class Texture : public Lynx::Graphics::TextureBase {
+    private:
+        void loadDDSTex(std::string path);
+        void freeDDSTex();
+    public:
+        Texture();
+        Texture(std::string path);
+        void Generate();
+        void Use();
+        void LoadFromFile(std::string path);
+    };
+
+    class CubemapTexture : public Lynx::Graphics::TextureBase {
+    public:
+        CubemapTexture();
+        CubemapTexture(std::string basepath);
+        void Use();
+        void LoadFromFile(std::string path);
+    };
 }
 
 #endif

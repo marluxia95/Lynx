@@ -15,114 +15,68 @@
 #include <string.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GL/glew.h> 
 #include "shader.h"
-#include "rendererAPI.h"
-#include "Platform/OpenGL/GLShader.h"
 #include "Core/logger.h"
 #include "Core/assert.h"
+#include "debug.h"
 
 namespace Lynx::Graphics {
 
-	ShaderProgram* ShaderProgram::Create()
-	{
-		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return new Graphics::OpenGL::GLShaderProgram();
-			default : return nullptr;
+	ShaderProgram::ShaderProgram()
+    {
+        id = glCreateProgram(); 
+        log_debug("[GL] Initialized shader program with ID %d", id);
+    }
+
+    ShaderProgram::~ShaderProgram()
+    {
+        glDeleteProgram(id);
+        log_debug("[GL] Deleted shader program with ID %d", id);
+    }
+
+    void ShaderProgram::AttachShader(unsigned int shaderID)
+    {
+        glAttachShader(id, shaderID);
+        log_debug("[GL] Attached shader program with ID %d to %d", shaderID, id);
+    }
+
+    void ShaderProgram::Use()
+    {
+        glUseProgram(id);
+        log_debug("[GL] Used shader program with ID %d", id);
+    }
+    
+    bool ShaderProgram::Link()
+    {
+        glLinkProgram(id);
+		int success;
+        glGetProgramiv(id, GL_LINK_STATUS, &success);
+		if(!success){
+			glGetProgramInfoLog(id, MAX_ERR_BUFSIZE, NULL, error_log);
+			log_error("Error while linking shaders! : %s", error_log);
 		}
-	}
+        log_debug("[GL] Linked shader program with ID %d; Success : %d", id, success);
+		return (bool)success;
+    }
 
-	Shader::Shader(const char* path) : ResourceBase(path)
+	Shader::Shader() : ResourceBase()
 	{
-		loadShaderFromFile(path);
-	}
-
-	bool Shader::compile(const char* source)
-	{
-		std::vector<unsigned int> shader_ids;
-		std::string shaderbuf;
-		std::string source_str(source);
-		std::istringstream stream(source_str);
-		std::string line;
-		unsigned int section = 0;
-		int isheader;
-		char shadertype_header[64];
-		size_t size;
 		
-		API_CheckErrors();
-
-		// Create shader program
-		log_debug("Creating shader program", shader_path);
-		program = ShaderProgram::Create();
-
-		
-		while(std::getline(stream, line)) {	
-			isheader = sscanf(line.c_str(), "#shader %s", &shadertype_header);
-			//size_t shaderbuf_size = strlen(shaderbuf);
-			size_t line_size = line.size();
-#ifdef SHADER_DEBUG
-			log_debug("Line %d : %s", isheader, line.c_str());
-#endif
-
-			if(section&&!isheader) {
-				shaderbuf = shaderbuf + line + '\n';
-				//log_debug("ShaderBuffer : %s", shaderbuf.c_str());
-			}
-
-			if(isheader > 0) { 
-				if(section) {
-#ifdef SHADER_DEBUG
-					log_debug("Section end %d", section);
-					log_debug("Total section : %s", shaderbuf.c_str());
-#endif
-					// Compile buffer
-					unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);
-					API_CheckErrors();
-					program->AttachShader(shid);
-					shader_ids.push_back(shid); // Store the shader's id into the list to remove it after program is linked
-				}
-
-				section = StrToShaderType(shadertype_header);
-				//log_debug("New section %d", section);
-				shaderbuf.clear();
-			}
-		}
-
-		// Last line
-		if(section) {
-#ifdef SHADER_DEBUG
-			log_debug("Total section : %s", shaderbuf.c_str());
-			log_debug("File end");
-#endif
-			// Compile buffer
-			shaderbuf += '\0';
-			unsigned int shid = RendererAPI::CompileShader(shaderbuf.c_str(), (ShaderType)section);
-			API_CheckErrors();
-			program->AttachShader(shid);
-			shader_ids.push_back(shid); // Store the shader's id into the list to remove it after program is linked
-		}
-
-		log_debug("Linking shader program");
-		program->Link();
-
-		log_debug("Destroying shaders");
-		// Destroy all shaders, since program is linked now
-		for( auto& v : shader_ids) {
-			RendererAPI::DestroyShader(v);
-		}
-
-		API_CheckErrors();
-
-		return success;
 	}
 
+	Shader::Shader(std::string vertexPath, std::string fragmentPath) : ResourceBase()
+	{
+		PushSource(vertexPath, GL_VERTEX_SHADER);
+		PushSource(fragmentPath, GL_FRAGMENT_SHADER);
+		
+	}
 
-	void Shader::loadShaderFromFile(const char* source_file) 
+	void Shader::PushSource(std::string shaderPath, GLuint type)
 	{
 		FILE *shader_file;
-		log_debug("Loading shader %s", source_file);
-		
-		shader_path = source_file;
+		log_debug("Loading shader %s", shaderPath.c_str());
+
+		const char* source_file = shaderPath.c_str();
 
 		shader_file = fopen(source_file,"r");
 		if(!shader_file){log_error("Unable to open shader %s", source_file); return;}
@@ -148,11 +102,42 @@ namespace Lynx::Graphics {
 			return;
 		}
 
-		log_debug("Compiling shader %s", shader_path);
-		compile(shader_source);
+		log_debug("Compiling shader %s", source_file);
+		compile(ShaderObj(source_file, shader_source, type));
 
-		free(shader_source);
+	}
 
+	bool Shader::compile(ShaderObj obj)
+	{
+		obj.shader = glCreateShader(obj.type);
+		glShaderSource(obj.shader, 1, &obj.source, NULL);
+
+		glCompileShader(obj.shader);
+		glGetShaderiv(obj.shader, GL_COMPILE_STATUS, (GLint*)&success);
+		if(!success){
+			glGetShaderInfoLog(obj.shader, 512, NULL, errorlog); 
+			printf("Error while compiling vertex shader %s! :\n %s\n", obj.path, errorlog);
+			return false;
+		}
+
+		shader_objs.push_back(obj);
+
+		return success;
+	}
+
+	bool Shader::Link()
+	{
+		program = std::make_unique<ShaderProgram>();
+
+		for( auto& shobj : shader_objs ) {
+			program->AttachShader(shobj.shader);
+		}
+
+		program->Link();
+
+		for( auto& shobj : shader_objs ) {
+			glDeleteShader(shobj.shader);
+		}
 	}
 
 	/**
@@ -161,20 +146,9 @@ namespace Lynx::Graphics {
 	 * @return bool True if shader was compiled successfully, false if there was an error while compiling the shader
 	 */
 	bool Shader::Reload(){
-		LYNX_ASSERT(shader_path && program, "Invalid shader");
-
-		loadShaderFromFile(shader_path);
+		LYNX_ASSERT(program, "Invalid shader");
 
 		return success;
-	}
-
-	/**
-	 * @brief Destroys the shader's program
-	 * 
-	 */
-	void Shader::Destroy(){
-		if(program && success)
-			delete program;
 	}
 
 	/**
@@ -184,14 +158,14 @@ namespace Lynx::Graphics {
 	void Shader::Use(){
 		if(program && success)
 			program->Use();
-			API_CheckErrors();
+			glCheckError();
 	}
 
 	int Shader::getUniformLocation(const char* uniformName)
 	{
 		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
-			int loc = RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
-			API_CheckErrors();
+			int loc = glGetUniformLocation(program->GetID(), uniformName);
+			glCheckError();
 			uniform_cache_map.insert({uniformName, loc});
 			return loc;
 		}else{

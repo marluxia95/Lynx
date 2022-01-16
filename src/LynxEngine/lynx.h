@@ -14,12 +14,10 @@
 #include "Events/mouseEvent.h"
 #include "Events/joystickEvent.h"
 
-#include "Graphics/renderer2D.h"
 #include "Graphics/texture.h"
 #include "Graphics/model.h"
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
-#include "Graphics/rendererAPI.h"
 #include "Graphics/buffers.h"
 
 #endif

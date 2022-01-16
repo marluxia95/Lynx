@@ -14,7 +14,6 @@
 #include "eventManager.h"
 #include "Events/event.h"
 
-#include "Graphics/rendererAPI.h"
 #include "Graphics/mesh.h"
 
 #include "Systems/lightingSystem.h"
@@ -144,8 +143,16 @@ namespace Lynx {
         else
             m_windowManager->Init(title, width, height, false);
 
-        log_debug("Initializing renderer API");
-        Graphics::RendererAPI::Init();
+        LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
+
+        glEnable(GL_DEPTH_TEST);
+
+        // Enable face culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);  
+        glFrontFace(GL_CW);  
+
+        log_info("%s", glGetString(GL_VERSION));
 
         Input::Init();
 
@@ -198,7 +205,8 @@ namespace Lynx {
             if(applicationState == STATE_ACTIVE) {
                 EventManager::SendEvent(UpdateTickEvent());
 
-                Graphics::RendererAPI::Clear(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+                glClearColor(0, 0, 0, 0);
+		        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // Update logic
                 EventManager::SendEvent(RenderEvent());

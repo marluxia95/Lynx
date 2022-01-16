@@ -58,14 +58,14 @@ const char* ResourceManager::getFileName(const char* path)
 }
 
 
-std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* path)
+std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
 {
-	std::string name = std::string(path);
-	const auto shader_found = GetResource<Graphics::Shader>(path);
+	std::string name = std::string(vpath);
+	const auto shader_found = GetResource<Graphics::Shader>(vpath);
 	if(shader_found != NULL)
 		return shader_found;
 
-	auto n_shader = std::make_shared<Graphics::Shader>(path);
+	auto n_shader = std::make_shared<Graphics::Shader>(vpath, fpath);
 	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_shader);
 	
 	return n_shader;

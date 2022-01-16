@@ -1,8 +1,8 @@
+#include <GL/glew.h>
 #include "windowManager.h"
 #include "logger.h"
 #include "application.h"
 #include "eventManager.h"
-#include "Graphics/rendererAPI.h"
 #include "Events/event.h"
 #include "Events/windowEvent.h"
 #include "Events/keyEvent.h"
@@ -43,7 +43,7 @@ namespace Lynx {
         glfwSwapInterval(1); 
         
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
-            Graphics::RendererAPI::SetViewport(width, height);
+            glViewport(0,0, width, height);
             EventManager::SendEvent(WindowResizeEvent(width, height));
         });  
 
