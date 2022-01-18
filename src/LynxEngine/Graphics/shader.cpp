@@ -108,14 +108,19 @@ namespace Lynx::Graphics {
 
 	bool Shader::compile(ShaderObj obj)
 	{
+		if(!obj.source)
+			return false;
+		
 		obj.shader = glCreateShader(obj.type);
 		glShaderSource(obj.shader, 1, &obj.source, NULL);
 
 		glCompileShader(obj.shader);
 		glGetShaderiv(obj.shader, GL_COMPILE_STATUS, (GLint*)&success);
 		if(!success){
+			errorlog = (char*)malloc(512);
 			glGetShaderInfoLog(obj.shader, 512, NULL, errorlog); 
-			printf("Error while compiling vertex shader %s! :\n %s\n", obj.path, errorlog);
+			log_error("Error while linking shader %s! :\n\t%s", obj.path, errorlog);
+			free(errorlog);
 			return false;
 		}
 
@@ -132,7 +137,7 @@ namespace Lynx::Graphics {
 			program->AttachShader(shobj.shader);
 		}
 
-		program->Link();
+		success = program->Link();
 
 		for( auto& shobj : shader_objs ) {
 			glDeleteShader(shobj.shader);
@@ -155,9 +160,10 @@ namespace Lynx::Graphics {
 	 * 
 	 */
 	void Shader::Use(){
-		if(program && success)
-			program->Use();
-			glCheckError();
+		if(!success) return;
+		
+		program->Use();
+		glCheckError();
 	}
 
 	int Shader::getUniformLocation(const char* uniformName)
@@ -175,54 +181,72 @@ namespace Lynx::Graphics {
 	template <>
 	void Shader::SetUniform(const char* name, bool value)
     {
+		if(!success) return;
+
         glUniform1i(getUniformLocation(name), value);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, int value)
     {
+		if(!success) return;
+		
         glUniform1i(getUniformLocation(name), value);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, float value)
     {
+		if(!success) return;
+		
         glUniform1f(getUniformLocation(name), value);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::vec2 value)
     {
+		if(!success) return;
+		
         glUniform2fv(getUniformLocation(name), 1, &value[0]);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::vec3 value)
     {
+		if(!success) return;
+		
         glUniform3fv(getUniformLocation(name), 1, &value[0]);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::vec4 value)
     {
+		if(!success) return;
+		
         glUniform4fv(getUniformLocation(name), 1, &value[0]);
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::mat2 value)
     {
+		if(!success) return;
+		
         glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::mat3 value)
     {
+		if(!success) return;
+		
         glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
 	template <>
     void Shader::SetUniform(const char* name, glm::mat4 value)
     {
+		if(!success) return;
+		
         glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
     }
 

@@ -16,6 +16,11 @@ namespace Lynx::Graphics {
 	class TextureBase;
 
 	class TextureBase : public ResourceBase {
+		protected:
+			typedef struct TextureData {
+				unsigned char* data;
+				int width, height, channels;
+			} TextureData;
 		public:
 			TextureBase(TextureType type);
 			TextureBase(TextureType type, const char* path);
@@ -36,6 +41,7 @@ namespace Lynx::Graphics {
 
 		protected:
 			TextureType type;
+			TextureData data;
 			unsigned int texture = 0;
 			int id;
 	};
@@ -43,7 +49,7 @@ namespace Lynx::Graphics {
 	class Texture : public Lynx::Graphics::TextureBase {
     private:
         void loadDDSTex(std::string path);
-        void freeDDSTex();
+		void loadSTBTex(std::string path);
     public:
         Texture();
         Texture(std::string path);

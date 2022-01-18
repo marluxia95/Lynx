@@ -82,6 +82,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 
 	log_debug("Calling constructor of texture object");
 	auto n_tex = std::make_shared<Graphics::Texture>(path);
+	
 #ifdef LYNX_MULTITHREAD
 	log_debug("Starting to load texture %s in async mode", n_texture.GetPath());
 	thpool->PushJob([this](void* data){

@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <GL/glew.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 #include <gli/gli.hpp>
+
 #include <chrono>
 #include "texture.h"
 #include "Core/logger.h"
+#include "Utils/path.hpp"
 
 namespace Lynx::Graphics {
 
@@ -31,7 +37,26 @@ namespace Lynx::Graphics {
 
     void Texture::Generate()
     {
-        
+        glGenTextures(1,&texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        // Wrapping / Filtering settings
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        if(data.data){
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, data.width, data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            printf("Texture 1 loaded successfully\n");
+        }else{
+            printf("Unable to load texture\n");
+        }
+
+        id = TextureBase::PushTextureID();
+
+        stbi_image_free(data.data);
     }
 
     void Texture::Use()
@@ -40,8 +65,26 @@ namespace Lynx::Graphics {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
-	// From GLI example code, should change
     void Texture::LoadFromFile(std::string path)
+    {
+        std::string extension = Utils::GetFileExtension(path);
+
+        if(extension == "dds" | extension == "ktx") {
+            loadDDSTex(path);
+        }else{
+            loadSTBTex(path);
+        }
+    }
+
+    void Texture::loadSTBTex(std::string path)
+    {
+        stbi_set_flip_vertically_on_load(true);  
+	    data.data = stbi_load(path.c_str(), &data.width, &data.height, &data.channels, 0);
+        Generate();
+    }
+
+    // From GLI examples
+    void Texture::loadDDSTex(std::string path)
     {
         gli::texture Tex = gli::load(path);
         if(Tex.empty()) {
@@ -158,7 +201,6 @@ namespace Lynx::Graphics {
         }
 
         id = TextureBase::PushTextureID();
-
     }
 
 }

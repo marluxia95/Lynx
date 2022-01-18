@@ -213,14 +213,17 @@ int main(int argc, char** argv)
 
 	log_info("Adding scene objects");
 
-	Lynx::EntityID cube = Lynx::ModelLoader::loadModel(scene, "res/models/cube.fbx", shader);
+	Lynx::EntityID cube = Lynx::ModelLoader::loadModel(scene, "res/models/plane.fbx", shader);
 	{
 		Lynx::MeshRenderer* meshRenderer = scene->GetComponent<Lynx::MeshRenderer>(cube);
+		Lynx::Transform* mTransform = scene->GetComponent<Lynx::Transform>(cube);
+		mTransform->rotation = glm::vec3(-90,0,0);
+		mTransform->scale = glm::vec3(30.0);
 		meshRenderer->ambient = glm::vec3(0.1f);
-		meshRenderer->diffuse = glm::vec3(0.0f);
-		meshRenderer->specular = glm::vec3(0.1f);
+		meshRenderer->diffuse = glm::vec3(0.5f);
+		meshRenderer->specular = glm::vec3(0.5f);
 		meshRenderer->shininess = 24.0f;
-		meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
+		meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
 	}
 
 	Lynx::EntityID lightEnt = scene->CreateEntity("Light");
@@ -228,7 +231,7 @@ int main(int argc, char** argv)
 	scene->AddComponent(lightEnt, Lynx::PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
 	
 	auto directionalLight = scene->GetComponent<Lynx::DirectionalLight>(applicationInstance->GetSystem<Lynx::RenderSystem>()->directionalLight);
-	directionalLight->direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+	directionalLight->direction = glm::vec3(-1.0f, -0.5f, 0.0f);
 	directionalLight->ambient = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
