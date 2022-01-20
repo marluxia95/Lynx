@@ -6,8 +6,10 @@
 #include "Core/application.h"
 #include "Core/eventManager.h"
 #include "Core/inputManager.h"
+#include "Core/resourceManager.h"
 #include "Core/assert.h"
 #include "Core/module.h"
+#include "Core/scene.h"
 
 #include "Events/event.h"
 #include "Events/keyEvent.h"
@@ -19,5 +21,7 @@
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
 #include "Graphics/buffers.h"
+
+#include "Systems/cameraSystem.h"
 
 #endif

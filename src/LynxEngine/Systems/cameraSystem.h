@@ -28,7 +28,7 @@ namespace Lynx {
 
 	class CameraSystem : public ECS::System {
 		public:
-			CameraSystem(Scene* scene) : ECS::System(scene) {}
+			CameraSystem(std::shared_ptr<Lynx::Scene> scene) : ECS::System(scene) {}
 			void Init();
 			void Update();
 			void CalculateProjections();

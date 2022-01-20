@@ -2,6 +2,7 @@
 #define SYSTEM_H
 
 #include <stdio.h>
+#include <memory>
 #include <set>
 #include "Core/scene.h"
 #include "common.h"
@@ -9,9 +10,9 @@
 namespace Lynx::ECS {
 	class System {
 		public:
-			System(Scene* scene) : scene(scene) {}
+			System(std::shared_ptr<Lynx::Scene> scene) : scene(scene) {}
 
-			void SetScene(Scene* scene) { scene = scene; }
+			void SetScene(std::shared_ptr<Lynx::Scene> n_scene) { scene = n_scene; }
 
 			virtual void Init() {}
 			virtual void Update() {}
@@ -20,7 +21,7 @@ namespace Lynx::ECS {
 			
 			std::set<EntityID> entities;
 		protected:
-			Scene* scene;
+			std::shared_ptr<Lynx::Scene> scene;
 
 	};
 }

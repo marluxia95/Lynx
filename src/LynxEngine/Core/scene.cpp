@@ -1,9 +1,22 @@
+#include "application.h"
 #include "eventManager.h"
 #include "Events/event.h"
 #include "Systems/cameraSystem.h"
 #include "scene.h"
 
 namespace Lynx {
+
+    Scene::Scene(std::shared_ptr<ECS::ComponentManager> componentManager) : m_componentManager(componentManager)
+    {
+        log_debug("Created scene");
+        m_entityManager = std::make_unique<ECS::EntityManager>();
+    }
+
+    Scene::Scene() : m_componentManager(Application::GetInstance()->GetComponentManager())
+    {
+        log_debug("Created scene");
+        m_entityManager = std::make_unique<ECS::EntityManager>();
+    }
 
     EntityID Scene::CreateEntity(const char* name) {
         EntityID ent = m_entityManager->CreateEntity();

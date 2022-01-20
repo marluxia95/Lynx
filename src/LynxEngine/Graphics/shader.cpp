@@ -103,17 +103,18 @@ namespace Lynx::Graphics {
 
 		log_debug("Compiling shader %s", source_file);
 		compile(ShaderObj(source_file, shader_source, type));
-
 	}
 
 	bool Shader::compile(ShaderObj obj)
 	{
 		if(!obj.source)
 			return false;
-		
+
+		log_debug("Creating shader object");
 		obj.shader = glCreateShader(obj.type);
 		glShaderSource(obj.shader, 1, &obj.source, NULL);
 
+		log_debug("Compiling shader object");
 		glCompileShader(obj.shader);
 		glGetShaderiv(obj.shader, GL_COMPILE_STATUS, (GLint*)&success);
 		if(!success){
@@ -124,6 +125,7 @@ namespace Lynx::Graphics {
 			return false;
 		}
 
+		log_debug("Pushing shader object");
 		shader_objs.push_back(obj);
 
 		return success;

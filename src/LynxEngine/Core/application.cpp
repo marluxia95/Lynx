@@ -145,6 +145,8 @@ namespace Lynx {
 
         LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
 
+        LYNX_ASSERT(GLEW_VERSION_2_1, "Unsupported OpenGL version");
+
         glEnable(GL_DEPTH_TEST);
 
         // Enable face culling
@@ -161,6 +163,8 @@ namespace Lynx {
 
         log_debug("Initializing systems");
         m_systemManager->InitSystems();
+
+        scene = std::make_shared<Scene>();
 
         log_debug("Successfully initialized application");
     }
@@ -220,12 +224,15 @@ namespace Lynx {
         ModuleManager::UnloadAllModules();
     }
 
-    Scene* GameApplication::CreateScene()
+    void GameApplication::SetScene(std::shared_ptr<Scene> n_scene)
     {
-        scene = new Scene(m_componentManager.get());
-        m_systemManager->SetScene(scene);
-        log_debug("Successfully created scene");
-        return scene;
+        if(scene_listener.GetID())
+            EventManager::RemoveListener(LastTick, scene_listener);
+        
+        scene = n_scene;
+        scene_listener = EventManager::AddListener(LastTick, [n_scene](const Event& ev){n_scene->Destroy();});
+        m_systemManager->SetScene(n_scene);
+        n_scene->Init();
     }
 
     void GameApplication::LoadDefaultComponents()

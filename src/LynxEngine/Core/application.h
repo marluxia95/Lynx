@@ -59,6 +59,10 @@ namespace Lynx {
             return m_systemManager->RegisterSystem<T>();
         }
 
+        std::shared_ptr<ECS::ComponentManager> GetComponentManager() {
+            return m_componentManager;
+        }
+
         template<typename T>
         void SetSystemSignature(Signature signature){
             m_systemManager->SetSignature<T>(signature);
@@ -90,6 +94,7 @@ namespace Lynx {
         float delta_time, last_FrameTime;
 		State applicationState;
         std::thread::id thread_id;
+        std::shared_ptr<ECS::ComponentManager> m_componentManager; 
         std::shared_ptr<ECS::SystemManager> m_systemManager;
         std::shared_ptr<ThreadPool> m_threadPool;	
 	};
@@ -118,14 +123,9 @@ namespace Lynx {
             return m_componentManager->GetComponentType<T>();
         }
 
-        /*
-        void EntitySignatureChanged(Entity entity, Signature signature) { m_systemManager->EntitySignatureChanged(entity, signature); }
-        void EntityDestroyed(Entity entity) { m_systemManager->EntityDestroyed(entity);}
-        */
-
         void LoadDefaultSystems();
-        Scene* CreateScene();
-        Scene* GetScene() { return scene; }
+        void SetScene(std::shared_ptr<Scene> scene);
+        std::shared_ptr<Scene> GetScene() { return scene; }
 
         unsigned int GetResolutionWidth();
         unsigned int GetResolutionHeight();
@@ -134,10 +134,10 @@ namespace Lynx {
     private:
         static GameApplication* gameApplicationInstance;
     protected:
-        std::shared_ptr<ECS::ComponentManager> m_componentManager; 
 		std::unique_ptr<WindowManager> m_windowManager;
         std::shared_ptr<ResourceManager> m_resourceManager;
-        Scene* scene;
+        std::shared_ptr<Scene> scene;
+        EventListener scene_listener;
     }; 
 
 }

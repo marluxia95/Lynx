@@ -14,7 +14,10 @@ namespace Lynx {
 
     class LYNXENGINE_API EventListener {
         public:
+            EventListener() {}
             EventListener(EventCallbackFunc function, unsigned int id) : m_callbackfunc(function), id(id) {}
+
+            unsigned int GetID() { return id; }
 
             bool operator==(const EventListener& obj2) {
                 if(id == obj2.id)
@@ -28,7 +31,7 @@ namespace Lynx {
             }
         
         private:
-            unsigned int id;
+            unsigned int id = -1;
             EventCallbackFunc m_callbackfunc;
     };
 

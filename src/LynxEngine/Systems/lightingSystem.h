@@ -8,7 +8,7 @@ namespace Lynx {
 
 class LightingSystem : public ECS::System {
     public:
-        LightingSystem(Scene* scene) : ECS::System(scene) {}
+        LightingSystem(std::shared_ptr<Lynx::Scene> scene) : ECS::System(scene) {}
         void Init() {}
         void Update() {}
         void OnEntityAdded(EntityID ent) {}

@@ -105,17 +105,19 @@ namespace Lynx::ECS {
 			}
 		}
 
-		void SetScene(Lynx::Scene* scene) {
+		void SetScene(std::shared_ptr<Lynx::Scene> scene) {
 			m_scene = scene;
 			for (auto const& system : systems) {
 				system.second->SetScene(scene);
 			}
-			log_debug("Changed scene");
+			log_debug("Scene changed! Reloading systems...");
+			InitSystems();
+			
 		}
 	private:
 		std::unordered_map<const char*, Signature> signatures = {};
 		std::unordered_map<const char*, std::shared_ptr<System>> systems = {};
-		Lynx::Scene* m_scene;
+		std::shared_ptr<Lynx::Scene> m_scene;
 	};
 }
 
