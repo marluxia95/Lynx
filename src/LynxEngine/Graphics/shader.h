@@ -2,11 +2,13 @@
 #define SHADER_H
 
 #include <stdio.h>
+#include <memory>
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
-#include "rendererAPI.h"
+#include <GL/glew.h> 
 #include "Core/resource.h"
+#include "lynx_common.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
@@ -15,16 +17,17 @@ namespace Lynx {
 
     namespace Graphics {  
 
+
     // Abstract base class for shader program
     class ShaderProgram {
         public:
-            ShaderProgram() = default;
-            ~ShaderProgram() = default;
+            ShaderProgram();
+            ~ShaderProgram();
             unsigned int GetID() { return id; };
             char* GetErrorLog() { return error_log; };
-            virtual void Use() = 0;
-            virtual void AttachShader(unsigned int shaderID) = 0;
-            virtual bool Link() = 0;
+            void Use();
+            void AttachShader(unsigned int shaderID);
+            bool Link();
 
             static ShaderProgram* Create();
         protected:
@@ -33,37 +36,46 @@ namespace Lynx {
     };
 
     class LYNXENGINE_API Shader : public ResourceBase {
-        public:
-            //Shader(const char* vertexPath, const char* fragmentPath);
-            Shader(const char* path);
-
-            bool success = true;
-            const char* shader_path = "";
-
-
-            ShaderProgram* getProgram() { return program; };
-            char* GetError() { return errorlog; };
-
-            void Destroy();
-            void Use();
-
-            template<typename T>
-            void SetUniform(const char* name, T value)
-            {
-                RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-            } 
-            
-            
-            bool Reload();
         private:
+            class ShaderObj {
+            public:
+                ShaderObj(const char* path, const char* source, GLenum type) : path(path), source(source), type(type) { }
+                const char* path;
+                const char* source;
+                GLenum type;
+                GLuint shader;
+            };  
+
             int getUniformLocation(const char* name);
-            bool compile(const char* source);
+            bool compile(ShaderObj obj);
             void parse(const char* raw_source);
             void loadShaderFromFile(const char* file);
+        public:
+            Shader(std::string vertexPath, std::string fragmentPath);
+            Shader();
+
+            void PushSource(std::string shaderPath, GLenum type);
+
+            void Use();
+
+            bool Link();
+
+            template<typename T>
+            void SetUniform(const char* name, T value);
+            
+            bool Reload();
+            char* GetError() { return errorlog; };
+
+            bool success = true;
+        private:
             size_t shaderSize;
             char* errorlog;
-            ShaderProgram* program;
+
+            std::unique_ptr<ShaderProgram> program;
+
             std::map<const char*, int> uniform_cache_map;
+
+            std::vector<ShaderObj> shader_objs;
     };
 
     }

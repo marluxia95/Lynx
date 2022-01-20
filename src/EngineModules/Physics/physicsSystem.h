@@ -11,7 +11,7 @@ namespace Lynx {
 
     class PhysicsSystem : public Lynx::ECS::System {
         public:
-            PhysicsSystem(Scene* scene) : ECS::System(scene) {}
+            PhysicsSystem(std::shared_ptr<Lynx::Scene> scene) : ECS::System(scene) {}
 
             void Init();
 

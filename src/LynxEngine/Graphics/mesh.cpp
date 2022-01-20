@@ -5,8 +5,8 @@
 #include "Graphics/buffers.h"
 #include "Graphics/vertexArray.h"
 #include "Graphics/mesh.h"
-#include "Graphics/rendererAPI.h"
 #include "Core/logger.h"
+#include "debug.h"
 
 using namespace glm;
 
@@ -16,28 +16,28 @@ namespace Lynx::Graphics {
 		: vertices(vertices), indices(indices), type(type), ResourceBase(name)
 	{
 		
-		VBO = VertexBuffer::Create(vertices);
+		VBO = new VertexBuffer(vertices);
 
 		log_debug("Mesh type : %d", type);
 		log_debug("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d", vertices->size(), vertices->size() * sizeof(Vertex));
 
-		VAO = VertexArray::Create();
+		VAO = new VertexArray();
 		VAO->Bind();
 		
 		VBO->Configure(type);
 
-		EBO = ElementBuffer::Create(indices);
+		EBO = new ElementBuffer(indices);
 
 		VAO->Unbind();
 		log_debug("Generated EBO with %d indices. Total EBO size : %d", indices->size(), indices->size() * sizeof(unsigned int));
-		API_CheckErrors();
+		glCheckError();
 	}
 
 	void Mesh::Render()
 	{
 		// Indices mode
 		EBO->Bind();
-		RendererAPI::DrawIndexed(indices->size());
+		glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, (void*)0);
 	}
 
 	Mesh::~Mesh()

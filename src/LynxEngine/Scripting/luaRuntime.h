@@ -10,7 +10,7 @@ namespace Lynx::Lua {
 
     class LYNXENGINE_API LuaRuntime : public ECS::System {
         public:
-            LuaRuntime(Scene* scene);
+            LuaRuntime(std::shared_ptr<Lynx::Scene> scene);
             ~LuaRuntime();
             void Init();
             void Update();

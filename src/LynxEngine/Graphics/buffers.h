@@ -24,35 +24,31 @@ namespace Lynx::Graphics {
 
 	class LYNXENGINE_API VertexBuffer{
 	public:
-		VertexBuffer() = default;
-		~VertexBuffer() = default;
-		virtual void SetData(const void* data, unsigned int size) = 0;
-		virtual void AddData(const void* data, unsigned int size) = 0;
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
-		virtual void Configure(MeshType type) = 0;
-		unsigned int VBO_ID;
-
-		static VertexBuffer* Create();
-		static VertexBuffer* Create(const void* data, unsigned int size);
-		static VertexBuffer* Create(unsigned int size);
-		static VertexBuffer* Create(std::vector<Vertex>* vertices);
-		static VertexBuffer* Create(std::vector<Vertex>* vertices, MeshType type);
+		VertexBuffer();
+		VertexBuffer(const void* data, unsigned int size);
+        VertexBuffer(std::vector<Vertex>* vertices);
+        VertexBuffer(std::vector<Vertex>* vertices, MeshType type);
+        VertexBuffer(unsigned int size);
+		~VertexBuffer();
+		void SetData(const void* data, unsigned int size);
+		void AddData(const void* data, unsigned int size);
+		void Bind();
+		void Unbind();
+		void Configure(MeshType type);
+		GLuint VBO_ID;
 	};
 
 	class LYNXENGINE_API ElementBuffer {
     public:
-		ElementBuffer() = default;
-		~ElementBuffer() = default;
-        virtual void AddData(const void* data, unsigned int size) = 0;
-        virtual void Bind() = 0;
-        virtual void Unbind() = 0;
-        unsigned int ID;
-
-		static ElementBuffer* Create();
-		static ElementBuffer* Create(unsigned int size);
-		static ElementBuffer* Create(const void* indices, unsigned int indexNumber);
-        static ElementBuffer* Create(std::vector<GLuint>* indices);
+		ElementBuffer(const void* indices, unsigned int indexNumber);
+        ElementBuffer(std::vector<unsigned int>* indices);
+        ElementBuffer(unsigned int size);
+        ElementBuffer();
+		~ElementBuffer();
+        void AddData(const void* data, unsigned int size);
+        void Bind();
+        void Unbind();
+        GLuint ID;
     };
 
 }

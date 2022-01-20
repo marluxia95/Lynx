@@ -94,12 +94,13 @@ ExternalProject_Add(
 )
 
 ExternalProject_Add(
-  stb_image_ext
+  stb_ext
   PREFIX ${DEPS_INCLUDE_DIR}/stb
   URL https://github.com/nothings/stb/archive/refs/heads/master.zip
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
-  INSTALL_COMMAND ""
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        <SOURCE_DIR> ${DEPS_INSTALL_DIR}/include/stb
 )
 
 endif()

@@ -8,7 +8,7 @@ namespace Lynx::ECS {
 
     class ParentingSystem : public System {
         public:
-            ParentingSystem(Scene* scene) : System(scene) {}
+            ParentingSystem(std::shared_ptr<Lynx::Scene> scene) : System(scene) {}
             void OnEntityAdded(EntityID ent) {}
             void OnEntityRemoved(EntityID ent) {}
             void Init();

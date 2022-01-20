@@ -32,7 +32,7 @@ namespace Lynx {
 
 			void Update(float dt);
 
-			std::shared_ptr<Graphics::Shader> LoadShader(const char* path);
+			std::shared_ptr<Graphics::Shader> LoadShader(const char* vpath, const char* fpath);
 
 			std::shared_ptr<Graphics::TextureBase> LoadTexture(const char* path);
 

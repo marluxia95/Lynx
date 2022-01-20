@@ -6,7 +6,7 @@
 namespace Lynx::Lua {
 
 
-    LuaRuntime::LuaRuntime(Scene* scene) : ECS::System(scene) 
+    LuaRuntime::LuaRuntime(std::shared_ptr<Lynx::Scene> scene) : ECS::System(scene) 
     {
         
 

@@ -14,7 +14,7 @@ namespace Lynx
     class LYNXENGINE_API RenderSystem : public ECS::System 
     {
         public:
-            RenderSystem(Scene* scene) : ECS::System(scene) {}
+            RenderSystem(std::shared_ptr<Lynx::Scene> scene) : ECS::System(scene) {}
             void Init();
             void Update();
             void OnEntityAdded(EntityID ent) {}

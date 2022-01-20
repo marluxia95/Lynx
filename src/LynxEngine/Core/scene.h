@@ -16,14 +16,15 @@ namespace Lynx {
             void updateSignature(EntityID entity, Signature signature);
 
         public:
-            Scene(ECS::ComponentManager* componentManager) : m_componentManager(componentManager)
-            {
-                m_entityManager = std::make_unique<ECS::EntityManager>();
-            }
+            Scene();
+            Scene(std::shared_ptr<ECS::ComponentManager> componentManager);
 
             EntityID CreateEntity(const char* name);
             EntityID CreateEntity();
             void DestroyEntity(EntityID entity);
+
+            virtual void Init() {}
+            virtual void Destroy() {}
 
             template<typename T>
             void RegisterComponent(){
@@ -55,9 +56,9 @@ namespace Lynx {
 
             int GetEntityCount() { return m_entityManager->livingEntityCount; }
             
-        private:
+        protected:
             std::unique_ptr<ECS::EntityManager> m_entityManager;
-            ECS::ComponentManager* m_componentManager; 
+            std::shared_ptr<ECS::ComponentManager> m_componentManager; 
     };
 
 }

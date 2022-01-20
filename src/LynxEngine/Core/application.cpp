@@ -14,7 +14,6 @@
 #include "eventManager.h"
 #include "Events/event.h"
 
-#include "Graphics/rendererAPI.h"
 #include "Graphics/mesh.h"
 
 #include "Systems/lightingSystem.h"
@@ -144,8 +143,18 @@ namespace Lynx {
         else
             m_windowManager->Init(title, width, height, false);
 
-        log_debug("Initializing renderer API");
-        Graphics::RendererAPI::Init();
+        LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
+
+        LYNX_ASSERT(GLEW_VERSION_2_1, "Unsupported OpenGL version");
+
+        glEnable(GL_DEPTH_TEST);
+
+        // Enable face culling
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);  
+        glFrontFace(GL_CW);  
+
+        log_info("%s", glGetString(GL_VERSION));
 
         Input::Init();
 
@@ -154,6 +163,8 @@ namespace Lynx {
 
         log_debug("Initializing systems");
         m_systemManager->InitSystems();
+
+        scene = std::make_shared<Scene>();
 
         log_debug("Successfully initialized application");
     }
@@ -198,7 +209,8 @@ namespace Lynx {
             if(applicationState == STATE_ACTIVE) {
                 EventManager::SendEvent(UpdateTickEvent());
 
-                Graphics::RendererAPI::Clear(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+                glClearColor(0, 0, 0, 0);
+		        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // Update logic
                 EventManager::SendEvent(RenderEvent());
@@ -212,12 +224,15 @@ namespace Lynx {
         ModuleManager::UnloadAllModules();
     }
 
-    Scene* GameApplication::CreateScene()
+    void GameApplication::SetScene(std::shared_ptr<Scene> n_scene)
     {
-        scene = new Scene(m_componentManager.get());
-        m_systemManager->SetScene(scene);
-        log_debug("Successfully created scene");
-        return scene;
+        if(scene_listener.GetID())
+            EventManager::RemoveListener(LastTick, scene_listener);
+        
+        scene = n_scene;
+        scene_listener = EventManager::AddListener(LastTick, [n_scene](const Event& ev){n_scene->Destroy();});
+        m_systemManager->SetScene(n_scene);
+        n_scene->Init();
     }
 
     void GameApplication::LoadDefaultComponents()

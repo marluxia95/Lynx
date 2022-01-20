@@ -140,18 +140,15 @@ namespace Lynx {
                     }else{
                         mRenderComponent->shader->SetUniform("specular_map", false);
                     }
-
-                    mRenderComponent->shader->SetUniform("directionalLight.direction", mDirLightComponent->direction);
-                    mRenderComponent->shader->SetUniform("directionalLight.ambient", mDirLightComponent->ambient);
-                    mRenderComponent->shader->SetUniform("directionalLight.diffuse", mDirLightComponent->diffuse);
-                    mRenderComponent->shader->SetUniform("directionalLight.specular", mDirLightComponent->specular);
-                    
-                    mRenderComponent->shader->SetUniform("directionalLight.intensity", mDirLightComponent->intensity);
-                    
-
 					i++;
 				}
 			}
+
+            mRenderComponent->shader->SetUniform("directionalLight.direction", mDirLightComponent->direction);
+            mRenderComponent->shader->SetUniform("directionalLight.ambient", mDirLightComponent->ambient);
+            mRenderComponent->shader->SetUniform("directionalLight.diffuse", mDirLightComponent->diffuse);
+            mRenderComponent->shader->SetUniform("directionalLight.specular", mDirLightComponent->specular);
+            mRenderComponent->shader->SetUniform("directionalLight.intensity", mDirLightComponent->intensity);
 
             // Check if mesh has a texture, if so, render it
             if(mRenderComponent->texture){    
