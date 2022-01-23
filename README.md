@@ -48,8 +48,4 @@ NOTE : `make install` won't install the program into your system, it will just c
 
 ### Windows
 
-Building on windows does not work at the moment. I will fix it as soon as possible.
-
-To build the project on Windows, you need cmake and visual studio ( 2019 recommended ).
-
-Create a build folder then run `cmake ..`, it will generate a visual studio solution file, then open the `INSTALL` project with visual studio and press on build. 
+To build this project on Windows, you should have `visual studio 2019` and `cmake` installed. Then follow the same steps above except that you should run the visual studio project file.
