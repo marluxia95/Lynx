@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
+#include "Graphics/model.h"
 #include "application.h"
 
 namespace Lynx {
@@ -57,7 +58,6 @@ const char* ResourceManager::getFileName(const char* path)
 	return "";
 }
 
-
 std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
 {
 	std::string name = std::string(vpath);
@@ -74,14 +74,16 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
 std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path)
 {
 	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
-	if( texture )
-		if( texture->IsValid( ))
+	if( texture ) {
+		if( texture->IsValid() )
 			return texture;
+	}
 
 	std::string name = std::string(path);
 
 	log_debug("Calling constructor of texture object");
 	auto n_tex = std::make_shared<Graphics::Texture>(path);
+	log_debug("New texture resource id : %ld", n_tex->GetResourceID());
 	
 #ifdef LYNX_MULTITHREAD
 	log_debug("Starting to load texture %s in async mode", n_texture.GetPath());
@@ -157,8 +159,10 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(std::string path)
 {
 	for(auto const& [k,v] : resource_map) {
-		if(v->GetResourcePath() == path)
+		if(v->GetResourcePath() == path) {
+			log_debug("Found matching resource in cache : %d", v->GetResourceID());
 			return v;
+		}
 	}
 	return NULL;
 }

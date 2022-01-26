@@ -66,7 +66,7 @@ namespace Lynx {
             bool Reload();
             char* GetError() { return errorlog; };
 
-            bool success = true;
+            int success = true;
         private:
             size_t shaderSize;
             char* errorlog;

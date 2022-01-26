@@ -39,21 +39,21 @@ struct Generic {
 	const char* name;
 };
 
-struct Parent {
-	EntityID parentEntity;
+struct Children {
+	std::vector<EntityID> entityChildren;
 };
 
 struct MeshRenderer {
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
-	float shininess;
-	std::vector<std::shared_ptr<Graphics::Mesh>> meshes;
+	std::shared_ptr<Graphics::Mesh> mesh;
 	std::shared_ptr<Graphics::Shader > shader;
 	std::shared_ptr<Graphics::TextureBase> texture;
 	std::shared_ptr<Graphics::TextureBase> texture_diffuse;
 	std::shared_ptr<Graphics::TextureBase> texture_specular;
 	bool lighting = true;
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
 };
 
 struct SpriteRenderer {

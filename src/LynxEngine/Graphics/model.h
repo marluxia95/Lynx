@@ -15,10 +15,10 @@
 
 #include "Core/logger.h"
 
-#include "Graphics/buffers.h"
-#include "Graphics/texture.h"
-#include "Graphics/shader.h"
-#include "Graphics/model.h"
+#include "buffers.h"
+#include "texture.h"
+#include "shader.h"
+#include "mesh.h"
 
 #include "Core/scene.h"
 #include "Core/ECS/components.h"
@@ -29,10 +29,14 @@
 namespace Lynx {
 
 	class LYNXENGINE_API ModelLoader {
+		private:
+			Scene* scene;
+
 		public:
-			static EntityID loadModel(Scene* scene, const char* path, std::shared_ptr<Graphics::Shader> shader);
-			static void processNode(Scene* scene, EntityID parentEntity, const char* path, std::shared_ptr<Graphics::Shader> shader, aiNode* node, const aiScene* ai_scene);
-			static void processMesh(Scene* scene, EntityID meshEntity, const char* path, std::shared_ptr<Graphics::Shader> meshShader, aiMesh* mesh);
+			ModelLoader(Scene* scene) : scene(scene) {}
+			Entity LoadModel(const char* path);
+			Entity LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
+			std::shared_ptr<Graphics::Mesh> ProcessMesh( const char* path, aiMesh* mesh);
 		
 	};
 
