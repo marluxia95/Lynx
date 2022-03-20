@@ -167,14 +167,14 @@ namespace Lynx::Graphics {
 		if(!success|!program) return;
 		
 		program->Use();
-		glCheckError();
+		checkerror();
 	}
 
 	int Shader::getUniformLocation(const char* uniformName)
 	{
 		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
 			int loc = glGetUniformLocation(program->GetID(), uniformName);
-			glCheckError();
+			checkerror();
 			uniform_cache_map.insert({uniformName, loc});
 			return loc;
 		}else{
