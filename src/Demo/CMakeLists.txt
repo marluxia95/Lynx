@@ -18,6 +18,8 @@ target_include_directories(Demo PRIVATE $(ENGINE))
 target_include_directories(Demo PRIVATE ${LIBS}/imgui)
 target_include_directories(Demo PRIVATE ${LIBS})
 
+target_link_directories(Demo PRIVATE ${DEPS_INSTALL_DIR}/lib )
+
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 

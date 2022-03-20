@@ -24,8 +24,6 @@ namespace Lynx {
 
             }
 
-
-
             void Load() {
                 if(!(m_handle = dlopen(m_path.c_str(), RTLD_NOW))) {
                     log_error("Couldn't open module %s ! %s", m_path.c_str(), dlerror());
