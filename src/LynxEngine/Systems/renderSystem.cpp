@@ -79,7 +79,7 @@ namespace Lynx {
             const auto& mTransform = scene->GetComponent<Transform>(entity);
             const auto& mRenderComponent = scene->GetComponent<MeshRenderer>(entity);
 
-            if(mRenderComponent->meshes.size() <= 0){log_error("Render component not bind to a mesh"); continue;}
+            if(!mRenderComponent->mesh){log_error("Render component not bind to a mesh"); continue;}
 
             mRenderComponent->shader->Use();
             
@@ -92,7 +92,7 @@ namespace Lynx {
             mRenderComponent->shader->SetUniform("viewPos", mCameraTransform->position);
 
 #ifdef LYNX_RENDER_DEBUG
-            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n--------------------------", 
+            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n --------------------------", 
                 cameraEntity,glm::to_string(mCameraComponent->projection).c_str(),glm::to_string(mCameraComponent->view).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity);
 #endif
             
@@ -155,10 +155,9 @@ namespace Lynx {
                 mRenderComponent->texture->Use();
             }   
 
-            for(auto& mesh : mRenderComponent->meshes) {
-                mesh->VAO->Bind();
-                mesh->Render();
-            }
+            mRenderComponent->mesh->VAO->Bind();
+            mRenderComponent->mesh->Render();
+            
 
             if(m_cubemap)
                 m_cubemap->Use(mCameraComponent->projection, mCameraComponent->view);

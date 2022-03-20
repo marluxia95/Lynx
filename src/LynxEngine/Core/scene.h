@@ -17,10 +17,10 @@ namespace Lynx {
 
         public:
             Scene();
-            Scene(std::shared_ptr<ECS::ComponentManager> componentManager);
 
             EntityID CreateEntity(const char* name);
             EntityID CreateEntity();
+
             void DestroyEntity(EntityID entity);
 
             virtual void Init() {}
@@ -47,6 +47,11 @@ namespace Lynx {
                 auto signature = m_entityManager->GetSignature(entity);
                 signature.set(m_componentManager->GetComponentType<T>(), false);
                 updateSignature(entity, signature);
+            }
+
+            template<typename T>
+            bool HasComponent(EntityID entity) {
+                return m_componentManager->HasComponent<T>(entity);
             }
 
             template<typename T>

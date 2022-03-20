@@ -9,6 +9,7 @@
 #include <GL/glew.h> 
 #include "Core/resource.h"
 #include "lynx_common.h"
+#include "debug.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
@@ -50,6 +51,17 @@ namespace Lynx {
             bool compile(ShaderObj obj);
             void parse(const char* raw_source);
             void loadShaderFromFile(const char* file);
+            
+            inline void checkerror(const char* s=__PRETTY_FUNCTION__) {
+                if(!success)
+                    return;
+                int err = gl_checkerror(NULL, NULL, 1);
+
+                if(err) {
+                    log_error("Error in shader object %ld ( %s ) : %s", m_resID, s,  gl_translate_error(err));
+                    success = false;
+                }
+            }
         public:
             Shader(std::string vertexPath, std::string fragmentPath);
             Shader();
@@ -64,9 +76,9 @@ namespace Lynx {
             void SetUniform(const char* name, T value);
             
             bool Reload();
-            char* GetError() { return errorlog; };
+            char* GetError() { return errorlog; }
 
-            bool success = true;
+            int success = true;
         private:
             size_t shaderSize;
             char* errorlog;
@@ -81,4 +93,5 @@ namespace Lynx {
     }
 
 }
+
 #endif

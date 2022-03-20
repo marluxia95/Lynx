@@ -51,8 +51,7 @@ namespace Lynx::Graphics {
 			char* error;
 	};
 
-	//void meshToText(Mesh* mesh);
-	//void meshToTextPretty(Mesh* mesh);
+	
 }
 
 #endif

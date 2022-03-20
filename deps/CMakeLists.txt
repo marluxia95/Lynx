@@ -5,16 +5,13 @@ file(GLOB libs "lib/win32")
 file(COPY bin DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${libs} DESTINATION ${CMAKE_BINARY_DIR})
-elseif(UNIX)
-file(GLOB libs "lib/linux")
-file(COPY bin DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY include DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY ${libs} DESTINATION ${CMAKE_BINARY_DIR})
 endif()
 
 option(PREBUILT_DEPENDENCIES "Do not download and build dependencies, just use prebuilt ones" OFF)
 
-if(NOT PREBUILT_DEPENDENCIES)
+if(PREBUILT_DEPENDENCIES)
+return()
+endif()
 
 if(UNIX)
     externalproject_add(lua_ext
@@ -82,12 +79,12 @@ ExternalProject_Add(
 ExternalProject_Add(
   assimp_ext
   PREFIX ${DEPS_INCLUDE_DIR}/assimp
-  CMAKE_ARGS  -DGLFW_BUILD_TESTS=OFF
-              -DGLFW_BUILD_EXAMPLES=OFF
-              -DGLFW_BUILD_DOCS=OFF
-              -DGLFW_INSTALL=ON
-              -DBUILD_SHARED_LIBS=ON
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON
               -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+              -DASSIMP_NO_EXPORT=ON
+              -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
+              -DASSIMP_BUILD_TESTS=OFF
+              -DASSIMP_INSTALL_PDB=OFF
   UPDATE_COMMAND ""
   UPDATE_DISCONNECTED 1
   URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
@@ -102,8 +99,6 @@ ExternalProject_Add(
   INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
                         <SOURCE_DIR> ${DEPS_INSTALL_DIR}/include/stb
 )
-
-endif()
 
 if(WIN32)
 
@@ -125,11 +120,11 @@ add_library(lua SHARED IMPORTED GLOBAL)
 set_target_properties(lua PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/liblua.a")
 
 add_library(glfw SHARED IMPORTED GLOBAL)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libglfw${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set_target_properties(glfw PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libglfw.so")
 
 find_package(GLEW REQUIRED)
 
 add_library(assimp SHARED IMPORTED GLOBAL)
-set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libassimp${CMAKE_SHARED_LIBRARY_SUFFIX}")
+set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libassimp.so")
 
 endif()

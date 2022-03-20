@@ -19,8 +19,8 @@ Lynx::GameApplication* applicationInstance;
 
 int Update(const Lynx::Event& ev)
 {
-	//snprintf(title,40 ,"Engine demo FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
-	//glfwSetWindowTitle(applicationInstance->GetWindow(), title);
+	snprintf(title,40 ,"Engine demo FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
+	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
 	mouse_input();
 	movement();
 	
@@ -43,6 +43,9 @@ int main(int argc, char** argv)
 	
 	applicationInstance->LoadDefaultComponents();
 	applicationInstance->LoadDefaultSystems();
+
+	auto module = Lynx::ModuleManager::LoadEngineModule("LynxPhysics");
+	module->Init();
 
 	applicationInstance->Init("Example", 1920, 1080, false);
 

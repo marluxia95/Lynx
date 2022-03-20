@@ -6,6 +6,8 @@
 namespace Lynx {
 
     struct PhysicsObject {
+        PhysicsObject(float mass) : Mass(mass) {}
+
         glm::vec3*  Position;
         glm::vec3   Velocity;
         glm::vec3   Force;

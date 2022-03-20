@@ -54,6 +54,8 @@ namespace Lynx::Graphics {
 			glGetProgramInfoLog(id, MAX_ERR_BUFSIZE, NULL, error_log);
 			log_error("Error while linking shaders! : %s", error_log);
 		}
+		glValidateProgram(id);
+		glCheckError();
         log_debug("[GL] Linked shader program with ID %d; Success : %d", id, success);
 		return (bool)success;
     }
@@ -114,13 +116,13 @@ namespace Lynx::Graphics {
 		obj.shader = glCreateShader(obj.type);
 		glShaderSource(obj.shader, 1, &obj.source, NULL);
 
-		log_debug("Compiling shader object");
 		glCompileShader(obj.shader);
-		glGetShaderiv(obj.shader, GL_COMPILE_STATUS, (GLint*)&success);
+		glGetShaderiv(obj.shader, GL_COMPILE_STATUS, &success);
+		log_debug("Compiled shader object %d", success);
 		if(!success){
 			errorlog = (char*)malloc(512);
 			glGetShaderInfoLog(obj.shader, 512, NULL, errorlog); 
-			log_error("Error while linking shader %s! :\n\t%s", obj.path, errorlog);
+			log_error("Error while compiling shader %s! :\n\t%s", obj.path, errorlog);
 			free(errorlog);
 			return false;
 		}
@@ -162,17 +164,17 @@ namespace Lynx::Graphics {
 	 * 
 	 */
 	void Shader::Use(){
-		if(!success) return;
+		if(!success|!program) return;
 		
 		program->Use();
-		glCheckError();
+		checkerror();
 	}
 
 	int Shader::getUniformLocation(const char* uniformName)
 	{
 		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
 			int loc = glGetUniformLocation(program->GetID(), uniformName);
-			glCheckError();
+			checkerror();
 			uniform_cache_map.insert({uniformName, loc});
 			return loc;
 		}else{

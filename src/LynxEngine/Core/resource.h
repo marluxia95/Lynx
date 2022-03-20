@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "logger.h"
 
 namespace Lynx {
 
@@ -15,7 +16,7 @@ namespace Lynx {
 
         friend class ResourceManager;
     private:
-        static long int PushID() { total_ids++; }
+        static long int PushID() { return total_ids++; }
         static long int total_ids;
 	protected:
 		long int m_resID;

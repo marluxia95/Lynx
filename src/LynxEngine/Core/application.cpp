@@ -17,7 +17,6 @@
 #include "Graphics/mesh.h"
 
 #include "Systems/lightingSystem.h"
-#include "Systems/parentingSystem.h"
 #include "Systems/cameraSystem.h"
 #include "Systems/renderSystem.h"
 
@@ -242,7 +241,7 @@ namespace Lynx {
         RegisterComponent<Generic>();
         RegisterComponent<MeshRenderer>();
         RegisterComponent<Camera>();
-        RegisterComponent<Parent>();
+        RegisterComponent<Children>();
         RegisterComponent<PointLight>();
         RegisterComponent<DirectionalLight>();
         RegisterComponent<LuaScript>();

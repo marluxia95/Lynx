@@ -23,7 +23,7 @@ namespace Lynx
             EntityID cameraEntity;
             EntityID directionalLight;
         private:
-            Graphics::Cubemap* m_cubemap;
+            Graphics::Cubemap* m_cubemap = nullptr;
     };
 
 }

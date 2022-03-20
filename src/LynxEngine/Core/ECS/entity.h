@@ -7,6 +7,7 @@
 #define ENTITY_H
 
 #include <glm/glm.hpp>
+#include <memory>
 #include <vector>
 #include "Core/scene.h"
 #include "common.h"
@@ -20,8 +21,11 @@ namespace Lynx {
     */
     class LYNXENGINE_API Entity {
     public:
-        Entity() {}
+        Entity() : m_id(-1) {}
+        Entity(const EntityID& id);
         Entity(Scene* scene, EntityID id);
+
+        operator EntityID() const { return m_id; }
 
         template<class T>
         T* GetComponent()
@@ -41,13 +45,23 @@ namespace Lynx {
             m_scene->AddComponent(m_id, component);
         }
 
-        std::vector<Entity> GetChildren();
+        template<class T>
+        bool HasComponent()
+        {
+            return m_scene->HasComponent<T>(m_id);
+        }
+
+        void AddChild(Entity ent);
+
+        bool IsValid() { return m_id > 0; }
+
+        std::vector<EntityID> GetChildren();
 
         glm::vec3 GetLocalPosition();
         glm::vec3 GetWorldPosition();
 
     private:
-        Scene* m_scene;
+        std::shared_ptr<Scene> m_scene;
         EntityID m_id;
         EntityID m_parentEnt;
     };

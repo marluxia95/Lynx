@@ -14,6 +14,15 @@ target_include_directories(TestModule PRIVATE ${SOURCE_DIR}/LynxEngine)
 target_include_directories(TestModule PRIVATE ${LIBS}/imgui)
 target_include_directories(TestModule PRIVATE ${LIBS})
 
+target_link_directories(TestModule PRIVATE ${DEPS_INSTALL_DIR}/lib )
+
+include_directories( 
+    TestModule
+
+    ${CMAKE_BINARY_DIR}/include
+    ${DEPS_INCLUDE_DIR}
+    ${SOURCE_DIR}/LynxEngine
+)
 
 target_link_libraries(
 	TestModule

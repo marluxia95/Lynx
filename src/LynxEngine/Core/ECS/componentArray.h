@@ -56,15 +56,21 @@ namespace Lynx::ECS {
 
 			size--;
 		}
+
 		T* GetData(EntityID entity)
 		{
 			if(entityToIndexMap.find(entity) == entityToIndexMap.end()) {
-				log_error("Unable to find component %s", typeid(T).name());
-				return nullptr;
+				log_fatal("ComponentArray : Unable to find component %s in entity %ld", typeid(T).name(), entity);
+				exit(0);
 			}
-			
+
 			return &components[entityToIndexMap[entity]];
 		}
+
+		bool HasData(EntityID entity) {
+			return entityToIndexMap.find(entity) != entityToIndexMap.end();
+		}
+
 		void EntityDestroyed(EntityID entity) override
 		{
 			log_debug("Destroying all components related to entity %d", entity);

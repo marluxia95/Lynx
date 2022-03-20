@@ -21,7 +21,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 link_directories( ${CMAKE_BINARY_DIR} )
 
-file(COPY res DESTINATION ${CMAKE_BINARY_DIR})
+INSTALL(CODE "execute_process( \
+    COMMAND ${CMAKE_COMMAND} -E create_symlink \
+    ${BASE_DIR}/res   \
+    ${DEPS_INSTALL_DIR}/res \
+    )"
+)
 
 add_subdirectory(deps)
 add_subdirectory(src)

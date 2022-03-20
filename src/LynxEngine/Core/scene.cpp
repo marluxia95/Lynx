@@ -6,12 +6,6 @@
 
 namespace Lynx {
 
-    Scene::Scene(std::shared_ptr<ECS::ComponentManager> componentManager) : m_componentManager(componentManager)
-    {
-        log_debug("Created scene");
-        m_entityManager = std::make_unique<ECS::EntityManager>();
-    }
-
     Scene::Scene() : m_componentManager(Application::GetInstance()->GetComponentManager())
     {
         log_debug("Created scene");
@@ -21,11 +15,13 @@ namespace Lynx {
     EntityID Scene::CreateEntity(const char* name) {
         EntityID ent = m_entityManager->CreateEntity();
         m_componentManager->AddComponent(ent, Generic{name});
+        log_debug("Scene : Created entity %ld", ent);
         return ent;
     }
 
     EntityID Scene::CreateEntity() {
         EntityID ent = m_entityManager->CreateEntity();
+        log_debug("Scene : Created entity %ld", ent);
         return ent;
     }
 
