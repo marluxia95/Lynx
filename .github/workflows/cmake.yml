@@ -20,6 +20,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Update package list
+      run: sudo apt-get update
+    
     - name: Install dependencies
       run: sudo apt-get install libglfw3-dev libassimp-dev libglew-dev xorg-dev
 
