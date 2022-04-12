@@ -46,6 +46,7 @@ if(UNIX)
 		lua
 		glfw
 		assimp
+		zlib
 		${OPENGL_LIBRARIES}
 		${GLEW}
 		${ASSIMP_LIBRARY}
@@ -59,6 +60,7 @@ elseif(WIN32)
 		glew
 		glfw
 		assimp
+		zlib
 		${OPENGL_LIBRARIES}
 		${ASSIMP_LIBRARY}
 	)

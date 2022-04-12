@@ -14,7 +14,7 @@ return()
 endif()
 
 if(UNIX)
-    externalproject_add(lua_ext
+  externalproject_add(lua_ext
 	SOURCE_DIR ${DEPS_INCLUDE_DIR}/lua
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/liblua.a ${DEPS_INSTALL_DIR}/lib/liblua.a
 	COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/src <SOURCE_DIR>
@@ -37,6 +37,18 @@ elseif(WIN32)
         URL https://www.lua.org/ftp/lua-5.4.3.tar.gz
     )
 endif()
+
+ExternalProject_Add(
+  zlib_ext
+  PREFIX ${DEPS_INCLUDE_DIR}/zlib
+  CMAKE_ARGS  -DBUILD_SHARED_LIBS=ON
+              -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory
+                  <SOURCE_DIR> ${DEPS_INSTALL_DIR}/include/zlib
+  UPDATE_DISCONNECTED 1
+  URL https://codeload.github.com/madler/zlib/zip/refs/heads/master
+)
 
 ExternalProject_Add(
   gli_ext
@@ -85,6 +97,7 @@ ExternalProject_Add(
               -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
               -DASSIMP_BUILD_TESTS=OFF
               -DASSIMP_INSTALL_PDB=OFF
+              -DASSIMP_BUILD_ZLIB=ON
   UPDATE_COMMAND ""
   UPDATE_DISCONNECTED 1
   URL https://github.com/assimp/assimp/archive/refs/tags/v5.0.1.zip
@@ -127,4 +140,10 @@ find_package(GLEW REQUIRED)
 add_library(assimp SHARED IMPORTED GLOBAL)
 set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libassimp.so")
 
+add_library(zlib SHARED IMPORTED GLOBAL)
+set_target_properties(zlib PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libzlibstatic.a")
+
 endif()
+
+
+

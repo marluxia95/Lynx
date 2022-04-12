@@ -30,7 +30,7 @@ namespace Lynx::Graphics {
 
     }
 
-    Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT)
+    Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
     {
         LoadFromFile(path);
     }

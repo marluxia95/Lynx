@@ -61,6 +61,28 @@ class DemoScene : public Lynx::Scene {
                 //AddComponent(cube, Lynx::PhysicsObject(1.0f));
             }
 
+            Lynx::Entity floor2 = loader.LoadModel("res/models/plane.fbx");
+            log_debug("Loaded model 1");
+
+            for(Lynx::EntityID child : floor2.GetChildren()){
+                if(!HasComponent<Lynx::MeshRenderer>(child))
+                    continue;
+                
+                Lynx::MeshRenderer* meshRenderer = GetComponent<Lynx::MeshRenderer>(child);
+                Lynx::Transform* mTransform = GetComponent<Lynx::Transform>(child);
+                mTransform->position = glm::vec3(0,20,0);
+                mTransform->rotation = glm::vec3(-90,0,0);
+                mTransform->scale = glm::vec3(30.0);
+
+                meshRenderer->shader = shader;
+                meshRenderer->ambient = glm::vec3(0.1f);
+                meshRenderer->diffuse = glm::vec3(0.5f);
+                meshRenderer->specular = glm::vec3(0.5f);
+                meshRenderer->shininess = 24.0f;
+                meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
+            }
+            
+
             Lynx::EntityID lightEnt = CreateEntity("Light");
             AddComponent(lightEnt, Lynx::Transform{ glm::vec3(2,1,0), glm::vec3(0), glm::vec3(1) });
             AddComponent(lightEnt, Lynx::PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });

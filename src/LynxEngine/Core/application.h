@@ -25,6 +25,8 @@
 // Enable if you want to debug rendering process
 //#define LYNX_RENDER_DEBUG
 
+//#define JOYSTICK_SUPPORT
+
 namespace Lynx {
 
 	enum State{

@@ -77,15 +77,17 @@ namespace Lynx {
 
     void Input::Init()
     {
+#ifdef JOYSTICK_SUPPORT
         glfwSetJoystickCallback(joystick_callback);
-        EventManager::AddListener(KeyPressed, UpdateKeys);
-        EventManager::AddListener(MousePosCallback, mouse_callback);
-
+        
         for(int j = 0; j < GLFW_JOYSTICK_LAST; j++){
             if(glfwJoystickPresent(j)){
                 addJoystick(j);
             }
         }
+#endif
+        EventManager::AddListener(KeyPressed, UpdateKeys);
+        EventManager::AddListener(MousePosCallback, mouse_callback);
 
         log_debug("Input manager intialized");
     }
@@ -105,6 +107,7 @@ namespace Lynx {
         glfwGetJoystickHats(id, &connectedJoysticks[id]->hatCount);
         connectedJoysticks[id]->ptr = glfwGetJoystickUserPointer(id);
         EventManager::SendEvent(JoystickConnectedEvent(connectedJoysticks[id]));
+        log_info("Joystick %d %s connected", id, connectedJoysticks[id]->name);
     }
 
     void Input::joystick_callback(int id, int ev)
