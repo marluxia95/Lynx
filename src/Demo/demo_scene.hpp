@@ -21,48 +21,28 @@ class DemoScene : public Lynx::Scene {
             
             Lynx::ModelLoader loader(this);
 
-            Lynx::Entity floor = loader.LoadModel("res/models/plane.fbx");
-            log_debug("Loaded model 1");
-
-            for(Lynx::EntityID child : floor.GetChildren()){
-                if(!HasComponent<Lynx::MeshRenderer>(child))
-                    continue;
-                
-                Lynx::MeshRenderer* meshRenderer = GetComponent<Lynx::MeshRenderer>(child);
-                Lynx::Transform* mTransform = GetComponent<Lynx::Transform>(child);
-                mTransform->rotation = glm::vec3(-90,0,0);
-                mTransform->scale = glm::vec3(30.0);
-
-                meshRenderer->shader = shader;
-                meshRenderer->ambient = glm::vec3(0.1f);
-                meshRenderer->diffuse = glm::vec3(0.5f);
-                meshRenderer->specular = glm::vec3(0.5f);
-                meshRenderer->shininess = 24.0f;
-                meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
-            }
-            
             Lynx::Entity cube = loader.LoadModel("res/models/cube.fbx");
-            log_debug("Loaded model 2");
+
             for(Lynx::EntityID child : cube.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))
                     continue;
                 
                 Lynx::MeshRenderer* cube_meshRenderer = GetComponent<Lynx::MeshRenderer>(child);
                 Lynx::Transform* mTransform = GetComponent<Lynx::Transform>(child);
-                mTransform->position = glm::vec3(0, 0.0f, 0);
+                mTransform->position = glm::vec3(0, 10.0f, 0);
+                mTransform->scale = glm::vec3(1.0f);
 
                 cube_meshRenderer->shader = shader;
                 cube_meshRenderer->ambient = glm::vec3(1.1f);
                 cube_meshRenderer->diffuse = glm::vec3(0.5f);
                 cube_meshRenderer->specular = glm::vec3(0.5f);
                 cube_meshRenderer->shininess = 24.0f;
-                //cube_meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
+                cube_meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
 
                 //AddComponent(cube, Lynx::PhysicsObject(1.0f));
             }
 
             Lynx::Entity floor2 = loader.LoadModel("res/models/plane.fbx");
-            log_debug("Loaded model 1");
 
             for(Lynx::EntityID child : floor2.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))
@@ -70,7 +50,7 @@ class DemoScene : public Lynx::Scene {
                 
                 Lynx::MeshRenderer* meshRenderer = GetComponent<Lynx::MeshRenderer>(child);
                 Lynx::Transform* mTransform = GetComponent<Lynx::Transform>(child);
-                mTransform->position = glm::vec3(0,20,0);
+                mTransform->position = glm::vec3(0,0,0);
                 mTransform->rotation = glm::vec3(-90,0,0);
                 mTransform->scale = glm::vec3(30.0);
 

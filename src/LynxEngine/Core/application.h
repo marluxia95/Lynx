@@ -93,7 +93,7 @@ namespace Lynx {
     private:
         static Application* s_applicationInstance;
     protected:
-        float delta_time, last_FrameTime;
+        float delta_time, last_FrameTime = 0.0f;
 		State applicationState;
         std::thread::id thread_id;
         std::shared_ptr<ECS::ComponentManager> m_componentManager; 

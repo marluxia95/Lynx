@@ -49,8 +49,8 @@ namespace Lynx {
 
             int getUniformLocation(const char* name);
             bool compile(ShaderObj obj);
-            void parse(const char* raw_source);
             void loadShaderFromFile(const char* file);
+            char* readShaderFile(const char* file);
             
             inline void checkerror(const char* s=__PRETTY_FUNCTION__) {
                 if(!success)

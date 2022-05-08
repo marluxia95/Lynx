@@ -18,6 +18,7 @@
 #include "shader.h"
 #include "Core/logger.h"
 #include "Core/assert.h"
+#include "Utils/path.hpp"
 #include "debug.h"
 
 namespace Lynx::Graphics {
@@ -74,37 +75,12 @@ namespace Lynx::Graphics {
 
 	void Shader::PushSource(std::string shaderPath, GLuint type)
 	{
-		FILE *shader_file;
-		log_debug("Loading shader %s", shaderPath.c_str());
+		const char* shader_path_str = shaderPath.c_str();
+		char* shader_source = readShaderFile(shader_path_str);
+		ShaderObj obj = ShaderObj(shader_path_str, shader_source, type);
 
-		const char* source_file = shaderPath.c_str();
-
-		shader_file = fopen(source_file,"r");
-		if(!shader_file){log_error("Unable to open shader %s", source_file); return;}
-
-		fseek(shader_file, 0, SEEK_END);
-		size_t total_shader_size = ftell(shader_file);
-		shaderSize = total_shader_size;
-
-		rewind( shader_file );
-
-		char* shader_source = (char*)malloc(total_shader_size+1); // Prevent buffering errors
-
-		int lpos = fread(shader_source, sizeof(char), total_shader_size, shader_file);
-
-		fclose(shader_file);
-
-		if(lpos != 0 | shader_source != NULL) {
-			shader_source[lpos] = '\0';
-		}else{
-			log_error("Failed to read shader %s", source_file);
-			free(shader_source);
-			success = false;
-			return;
-		}
-
-		log_debug("Compiling shader %s", source_file);
-		compile(ShaderObj(source_file, shader_source, type));
+		log_debug("Compiling shader %s", shader_path_str);
+		compile(obj);
 	}
 
 	bool Shader::compile(ShaderObj obj)
@@ -131,6 +107,70 @@ namespace Lynx::Graphics {
 		shader_objs.push_back(obj);
 
 		return success;
+	}
+
+	/*
+	std::string Shader::parse(ShaderObj obj) {
+		std::istringstream input(obj.source);
+		std::string result;
+		std::string line;
+		
+		while ( std::getline(input, line) ) {
+			int ismacro = EOF;
+			char macrostr[64];
+			char macrocontents[64];
+
+			ismacro = sscanf(line.c_str(), "#%s %s", &macrostr, &macrocontents);
+
+			if(ismacro == EOF){
+				result.append(line + '\n');
+				continue;
+			}
+
+			if(macrostr == "include") {
+				std::string shader_path = Utils::GetAbsolutePath(obj.path, macrocontents);
+				printf("%s", shader_path.c_str());
+				std::string included_source = std::string(readShaderFile(shader_path.c_str()));
+				result.append(included_source);
+			}
+
+			
+		}
+		puts(result.c_str());
+		return result;
+	}*/
+
+	char* Shader::readShaderFile(const char* path) {
+		FILE *shader_file;
+		log_debug("Loading shader %s", path);
+
+		shader_file = fopen(path,"r");
+		if(!shader_file){
+			log_error("Unable to open shader %s", path); 
+			return "";
+		}
+
+		fseek(shader_file, 0, SEEK_END);
+		size_t total_shader_size = ftell(shader_file);
+		shaderSize = total_shader_size;
+
+		rewind( shader_file );
+
+		char* shader_source = (char*)malloc(total_shader_size+1); // Prevent buffering errors
+
+		int lpos = fread(shader_source, sizeof(char), total_shader_size, shader_file);
+
+		fclose(shader_file);
+
+		if(lpos != 0 | shader_source != NULL) {
+			shader_source[lpos] = '\0';
+		}else{
+			log_error("Failed to read shader %s", path);
+			free(shader_source);
+			success = false;
+			return "";
+		}
+		return shader_source;
 	}
 
 	bool Shader::Link()
