@@ -6,10 +6,10 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
-#include <GL/glew.h> 
 #include "Core/resource.h"
 #include "lynx_common.h"
 #include "debug.h"
+#include "rendererAPI.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
@@ -22,15 +22,15 @@ namespace Lynx {
     // Abstract base class for shader program
     class ShaderProgram {
         public:
-            ShaderProgram();
-            ~ShaderProgram();
+            ShaderProgram() = default;
+            ~ShaderProgram() = default;
             unsigned int GetID() { return id; };
             char* GetErrorLog() { return error_log; };
-            void Use();
-            void AttachShader(unsigned int shaderID);
-            bool Link();
+            virtual void Use() = 0;
+            virtual void AttachShader(unsigned int shaderID) = 0;
+            virtual bool Link() = 0;
 
-            static ShaderProgram* Create();
+            static std::unique_ptr<ShaderProgram> Create();
         protected:
             unsigned int id;
             char error_log[MAX_ERR_BUFSIZE];
@@ -40,33 +40,23 @@ namespace Lynx {
         private:
             class ShaderObj {
             public:
-                ShaderObj(const char* path, const char* source, GLenum type) : path(path), source(source), type(type) { }
+                ShaderObj(const char* path, const char* source, ShaderType type) : path(path), source(source), type(type) { }
                 const char* path;
                 const char* source;
-                GLenum type;
-                GLuint shader;
+                ShaderType type;
+                unsigned int shader;
             };  
 
             int getUniformLocation(const char* name);
             bool compile(ShaderObj obj);
             void loadShaderFromFile(const char* file);
             char* readShaderFile(const char* file);
-            
-            inline void checkerror(const char* s=__PRETTY_FUNCTION__) {
-                if(!success)
-                    return;
-                int err = gl_checkerror(NULL, NULL, 1);
 
-                if(err) {
-                    log_error("Error in shader object %ld ( %s ) : %s", m_resID, s,  gl_translate_error(err));
-                    success = false;
-                }
-            }
         public:
             Shader(std::string vertexPath, std::string fragmentPath);
             Shader();
 
-            void PushSource(std::string shaderPath, GLenum type);
+            void PushSource(std::string shaderPath, ShaderType type);
 
             void Use();
 

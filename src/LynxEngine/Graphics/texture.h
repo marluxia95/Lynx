@@ -5,13 +5,9 @@
 #include <stdio.h>
 #include "lynx_common.h"
 #include "Core/resource.h"
+#include "rendererAPI.h"
 
 namespace Lynx::Graphics {
-
-	enum TextureType {
-		TEXTURE_DEFAULT,
-		TEXTURE_CUBEMAP
-	};
 	
 	class TextureBase;
 

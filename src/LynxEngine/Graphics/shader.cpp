@@ -21,8 +21,11 @@
 #include "Utils/path.hpp"
 #include "debug.h"
 
+#include "Platform/OpenGL/GLShader.h"
+
 namespace Lynx::Graphics {
 
+	/*
 	ShaderProgram::ShaderProgram()
     {
         id = glCreateProgram(); 
@@ -59,7 +62,15 @@ namespace Lynx::Graphics {
 		glCheckError();
         log_debug("[GL] Linked shader program with ID %d; Success : %d", id, success);
 		return (bool)success;
-    }
+    }*/
+
+	std::unique_ptr<ShaderProgram> ShaderProgram::Create()
+	{
+		switch ( IRendererAPI::GetAPI() ) {
+			case API_OPENGL: return std::make_unique<OpenGL::GLShaderProgram>();
+			default : return nullptr;
+		}
+	}
 
 	Shader::Shader() : ResourceBase()
 	{
@@ -68,12 +79,12 @@ namespace Lynx::Graphics {
 
 	Shader::Shader(std::string vertexPath, std::string fragmentPath) : ResourceBase()
 	{
-		PushSource(vertexPath, GL_VERTEX_SHADER);
-		PushSource(fragmentPath, GL_FRAGMENT_SHADER);
+		PushSource(vertexPath, SHADER_VERTEX);
+		PushSource(fragmentPath, SHADER_FRAGMENT);
 		Link();
 	}
 
-	void Shader::PushSource(std::string shaderPath, GLuint type)
+	void Shader::PushSource(std::string shaderPath, ShaderType type)
 	{
 		const char* shader_path_str = shaderPath.c_str();
 		char* shader_source = readShaderFile(shader_path_str);
@@ -89,7 +100,7 @@ namespace Lynx::Graphics {
 			return false;
 
 		log_debug("Creating shader object");
-		obj.shader = glCreateShader(obj.type);
+		/*obj.shader = glCreateShader(obj.type);
 		glShaderSource(obj.shader, 1, &obj.source, NULL);
 
 		glCompileShader(obj.shader);
@@ -103,7 +114,9 @@ namespace Lynx::Graphics {
 			return false;
 		}
 
-		log_debug("Pushing shader object");
+		log_debug("Pushing shader object");*/
+
+		obj.shader = RendererAPI::CompileShader(obj.source, obj.type);
 		shader_objs.push_back(obj);
 
 		return success;
@@ -147,7 +160,8 @@ namespace Lynx::Graphics {
 		shader_file = fopen(path,"r");
 		if(!shader_file){
 			log_error("Unable to open shader %s", path); 
-			return "";
+			success = false;
+			return NULL;
 		}
 
 		fseek(shader_file, 0, SEEK_END);
@@ -168,14 +182,14 @@ namespace Lynx::Graphics {
 			log_error("Failed to read shader %s", path);
 			free(shader_source);
 			success = false;
-			return "";
+			return NULL;
 		}
 		return shader_source;
 	}
 
 	bool Shader::Link()
 	{
-		program = std::make_unique<ShaderProgram>();
+		program = ShaderProgram::Create();
 
 		for( auto& shobj : shader_objs ) {
 			program->AttachShader(shobj.shader);
@@ -207,14 +221,12 @@ namespace Lynx::Graphics {
 		if(!success|!program) return;
 		
 		program->Use();
-		checkerror();
 	}
 
 	int Shader::getUniformLocation(const char* uniformName)
 	{
 		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
 			int loc = glGetUniformLocation(program->GetID(), uniformName);
-			checkerror();
 			uniform_cache_map.insert({uniformName, loc});
 			return loc;
 		}else{

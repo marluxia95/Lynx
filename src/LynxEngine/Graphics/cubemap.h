@@ -28,8 +28,8 @@ namespace Lynx::Graphics {
 		public:
 			Cubemap();
 			~Cubemap();
-			void Load(std::vector<const char*>* textures);
-			void Use(glm::mat4 projection, glm::mat4 view);
+			void Load(std::vector<const char*>* textures) {}
+			void Use(glm::mat4 projection, glm::mat4 view) {}
 			
 		private:
 			std::shared_ptr<TextureBase> texture;

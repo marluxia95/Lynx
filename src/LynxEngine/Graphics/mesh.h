@@ -42,9 +42,9 @@ namespace Lynx::Graphics {
 			std::vector<Vertex>* vertices;
 			std::vector<unsigned int>* indices;
 
-			VertexArray* VAO;
-			VertexBuffer* VBO;
-			ElementBuffer* EBO;
+			std::unique_ptr<VertexArray> VAO;
+			std::unique_ptr<VertexBuffer> VBO;
+			std::unique_ptr<ElementBuffer> EBO;
 			MeshType type;
 			bool success = true;
 		protected:

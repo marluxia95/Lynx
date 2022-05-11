@@ -11,6 +11,8 @@
 #include "Core/logger.h"
 #include "Utils/path.hpp"
 
+#define TEXTURE_DEFAULT TEXTURE_2D
+
 namespace Lynx::Graphics {
 
 	int TextureBase::total_textures = 0;
@@ -37,32 +39,27 @@ namespace Lynx::Graphics {
 
     void Texture::Generate()
     {
-        glGenTextures(1,&texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
 
-        // Wrapping / Filtering settings
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        texture = RendererAPI::GenTexture();
 
-        if(data.data){
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, data.width, data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            printf("Texture 1 loaded successfully\n");
-        }else{
+        if(!data.data){
             printf("Unable to load texture\n");
+            stbi_image_free(data.data);
+            return;
         }
-
+        
+        RendererAPI::LoadTexture(TEXTURE_2D, data.data, data.width, data.height);
         id = TextureBase::PushTextureID();
-
+        printf("Texture %d loaded successfully\n", id);
         stbi_image_free(data.data);
     }
 
     void Texture::Use()
     {
-        glActiveTexture(GL_TEXTURE0 + id);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        RendererAPI::BindTexture(texture);
+        RendererAPI::UseTexture(id);
+        //glActiveTexture(GL_TEXTURE0 + id);
+        //glBindTexture(GL_TEXTURE_2D, texture);
     }
 
     void Texture::LoadFromFile(std::string path)
@@ -84,6 +81,7 @@ namespace Lynx::Graphics {
     }
 
     // From GLI examples
+    // NOT MINE
     void Texture::loadDDSTex(std::string path)
     {
         gli::texture Tex = gli::load(path);

@@ -8,6 +8,8 @@
 #include "Core/logger.h"
 #include "debug.h"
 
+#include "rendererAPI.h"
+
 using namespace glm;
 
 namespace Lynx::Graphics {
@@ -16,17 +18,17 @@ namespace Lynx::Graphics {
 		: vertices(vertices), indices(indices), type(type), ResourceBase(name)
 	{
 		
-		VBO = new VertexBuffer(vertices);
+		VBO = VertexBuffer::Create(vertices);
 
 		log_debug("Mesh type : %d", type);
 		log_debug("Generated vertex buffer. Loaded %d vertices. Total VBO size : %d", vertices->size(), vertices->size() * sizeof(Vertex));
 
-		VAO = new VertexArray();
+		VAO = VertexArray::Create();
 		VAO->Bind();
 		
 		VBO->Configure(type);
 
-		EBO = new ElementBuffer(indices);
+		EBO = ElementBuffer::Create(indices);
 
 		VAO->Unbind();
 		log_debug("Generated EBO with %d indices. Total EBO size : %d", indices->size(), indices->size() * sizeof(unsigned int));
@@ -44,9 +46,6 @@ namespace Lynx::Graphics {
 	{
 		delete vertices;
 		delete indices;
-		delete VAO; 
-		delete VBO;
-		delete EBO;
 		vertices->push_back(Vertex{});
 	}
 

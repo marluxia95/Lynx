@@ -6,6 +6,8 @@
 
 namespace Lynx::Graphics {
 
+	// WIP
+
 	float cubemapVertices[] {
 		-1.0f,  1.0f, -1.0f,
 	    -1.0f, -1.0f, -1.0f,
@@ -103,7 +105,7 @@ namespace Lynx::Graphics {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 				break;
 		}
-	}*/
+	}
 
 	Cubemap::Cubemap()
 	{
@@ -154,6 +156,6 @@ namespace Lynx::Graphics {
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS);
-	}
+	}*/
 
 }

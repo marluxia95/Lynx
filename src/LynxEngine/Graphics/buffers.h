@@ -24,31 +24,35 @@ namespace Lynx::Graphics {
 
 	class LYNXENGINE_API VertexBuffer{
 	public:
-		VertexBuffer();
-		VertexBuffer(const void* data, unsigned int size);
-        VertexBuffer(std::vector<Vertex>* vertices);
-        VertexBuffer(std::vector<Vertex>* vertices, MeshType type);
-        VertexBuffer(unsigned int size);
-		~VertexBuffer();
-		void SetData(const void* data, unsigned int size);
-		void AddData(const void* data, unsigned int size);
-		void Bind();
-		void Unbind();
-		void Configure(MeshType type);
-		GLuint VBO_ID;
+		VertexBuffer() = default;
+		~VertexBuffer() = default;
+		virtual void SetData(const void* data, unsigned int size) = 0;
+		virtual void AddData(const void* data, unsigned int size) = 0;
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
+		virtual void Configure(MeshType type) = 0;
+		unsigned int VBO_ID;
+
+		static std::unique_ptr<VertexBuffer> Create();
+		static std::unique_ptr<VertexBuffer> Create(const void* data, unsigned int size);
+		static std::unique_ptr<VertexBuffer> Create(unsigned int size);
+		static std::unique_ptr<VertexBuffer> Create(std::vector<Vertex>* vertices);
+		static std::unique_ptr<VertexBuffer> Create(std::vector<Vertex>* vertices, MeshType type);
 	};
 
 	class LYNXENGINE_API ElementBuffer {
     public:
-		ElementBuffer(const void* indices, unsigned int indexNumber);
-        ElementBuffer(std::vector<unsigned int>* indices);
-        ElementBuffer(unsigned int size);
-        ElementBuffer();
-		~ElementBuffer();
-        void AddData(const void* data, unsigned int size);
-        void Bind();
-        void Unbind();
-        GLuint ID;
+		ElementBuffer() = default;
+		~ElementBuffer() = default;
+        virtual void AddData(const void* data, unsigned int size) = 0;
+        virtual void Bind() = 0;
+        virtual void Unbind() = 0;
+        unsigned int ID;
+
+		static std::unique_ptr<ElementBuffer> Create();
+		static std::unique_ptr<ElementBuffer> Create(unsigned int size);
+		static std::unique_ptr<ElementBuffer> Create(const void* indices, unsigned int indexNumber);
+        static std::unique_ptr<ElementBuffer> Create(std::vector<GLuint>* indices);
     };
 
 }

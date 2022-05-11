@@ -8,11 +8,13 @@ namespace Lynx::Graphics {
 
 	class LYNXENGINE_API VertexArray {
 	public:
-		VertexArray();
-		~VertexArray();
-		void Bind();
-		void Unbind();
-		GLuint VAO_ID;
+		VertexArray() = default;
+		~VertexArray() = default;
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
+		unsigned int VAO_ID;
+
+		static std::unique_ptr<VertexArray> Create();
 	};
 
 }
