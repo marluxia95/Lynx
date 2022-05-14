@@ -50,6 +50,7 @@ namespace Lynx::Graphics::OpenGL {
 #ifdef API_DEBUG
         log_debug("[GL] Linked shader program with ID %d; Success : %d", id, success);
 #endif
+        glCheckError();
 		return (bool)success;
     }
 }

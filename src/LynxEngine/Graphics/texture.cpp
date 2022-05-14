@@ -5,6 +5,7 @@
 #include <stb/stb_image.h>
 
 #include <gli/gli.hpp>
+#include "Platform/OpenGL/GLRendererAPI.h"
 
 #include <chrono>
 #include "texture.h"
@@ -26,6 +27,7 @@ namespace Lynx::Graphics {
 	{ 
 		log_debug("Creating new texture with path %s", path);
 	}
+    
 
 	Texture::Texture() : TextureBase(TEXTURE_DEFAULT)
     {
@@ -33,6 +35,16 @@ namespace Lynx::Graphics {
     }
 
     Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
+    {
+        LoadFromFile(path);
+    }
+
+    Texture::Texture(TextureType type) : TextureBase(type)
+    {
+
+    }
+
+    Texture::Texture(std::string path, TextureType type) : TextureBase(type, path.c_str())
     {
         LoadFromFile(path);
     }
@@ -56,7 +68,7 @@ namespace Lynx::Graphics {
 
     void Texture::Use()
     {
-        RendererAPI::BindTexture(texture);
+        RendererAPI::BindTexture(type, texture);
         RendererAPI::UseTexture(id);
         //glActiveTexture(GL_TEXTURE0 + id);
         //glBindTexture(GL_TEXTURE_2D, texture);
@@ -71,6 +83,8 @@ namespace Lynx::Graphics {
         }else{
             loadSTBTex(path);
         }
+
+
     }
 
     void Texture::loadSTBTex(std::string path)
@@ -100,10 +114,12 @@ namespace Lynx::Graphics {
         glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(Tex.levels() - 1));
         glTexParameteriv(Target, GL_TEXTURE_SWIZZLE_RGBA, &Format.Swizzles[0]);
+   
+        API_CheckErrors();
 
         glm::tvec3<GLsizei> const Extent(Tex.extent());
 	    GLsizei const FaceTotal = static_cast<GLsizei>(Tex.layers() * Tex.faces());
-        
+
         switch(Tex.target())
         {
         case gli::TARGET_1D:
@@ -115,7 +131,7 @@ namespace Lynx::Graphics {
         case gli::TARGET_CUBE:
             glTexStorage2D(
                 Target, static_cast<GLint>(Tex.levels()), Format.Internal,
-                Extent.x, Tex.target() == gli::TARGET_2D ? Extent.y : FaceTotal);
+                Extent.x, Extent.y );
             break;
         case gli::TARGET_2D_ARRAY:
         case gli::TARGET_3D:
@@ -130,14 +146,17 @@ namespace Lynx::Graphics {
             break;
         }
 
+        API_CheckErrors();
+
         for(std::size_t Layer = 0; Layer < Tex.layers(); ++Layer)
         for(std::size_t Face = 0; Face < Tex.faces(); ++Face)
         for(std::size_t Level = 0; Level < Tex.levels(); ++Level)
         {
             GLsizei const LayerGL = static_cast<GLsizei>(Layer);
             glm::tvec3<GLsizei> Extent(Tex.extent(Level));
+            log_debug("IsCubeMap? %s", gli::is_target_cube(Tex.target()) ? "yes" : "no");
             Target = gli::is_target_cube(Tex.target())
-                ? static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face)
+                ? GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face
                 : Target;
 
             switch(Tex.target())
@@ -197,6 +216,8 @@ namespace Lynx::Graphics {
             default: assert(0); break;
             }
         }
+
+        API_CheckErrors();
 
         id = TextureBase::PushTextureID();
     }

@@ -12,6 +12,7 @@
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/cubemap.h"
+#include "Graphics/rendererAPI.h"
 #include "ECS/entity.h"
 #include "resource.h"
 #include "lynx_common.h"
@@ -35,9 +36,7 @@ namespace Lynx {
 
 			std::shared_ptr<Graphics::Shader> LoadShader(const char* vpath, const char* fpath);
 
-			std::shared_ptr<Graphics::TextureBase> LoadTexture(const char* path);
-
-			std::shared_ptr<Graphics::TextureBase> LoadCubemapTexture(std::vector<const char*>* textures);
+			std::shared_ptr<Graphics::TextureBase> LoadTexture(const char* path, Graphics::TextureType type=Graphics::TEXTURE_2D);
 
 			std::shared_ptr<Graphics::Mesh> LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, std::vector<unsigned int>* indices, Graphics::MeshType type);
 			

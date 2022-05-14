@@ -99,6 +99,8 @@ namespace Lynx::Graphics {
 		if(!obj.source)
 			return false;
 
+		
+
 		log_debug("Creating shader object");
 		/*obj.shader = glCreateShader(obj.type);
 		glShaderSource(obj.shader, 1, &obj.source, NULL);
@@ -116,6 +118,7 @@ namespace Lynx::Graphics {
 
 		log_debug("Pushing shader object");*/
 
+		log_debug("SHADER DUMP \n Shader type %d \n Shader source : \n%s", obj.type, obj.source);
 		obj.shader = RendererAPI::CompileShader(obj.source, obj.type);
 		shader_objs.push_back(obj);
 

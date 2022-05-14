@@ -73,6 +73,17 @@ class DemoScene : public Lynx::Scene {
             directionalLight->diffuse = glm::vec3(1.0f, 1.0f, 1.0f);
             directionalLight->specular = glm::vec3(1.0f, 1.0f, 1.0f);
             directionalLight->intensity = 1.0f;
+
+            {
+                auto cubemapTexture = resourceManager->LoadTexture("res/textures/cubemap.dds", Lynx::Graphics::TEXTURE_CUBE_MAP);
+
+                std::shared_ptr<Lynx::Graphics::Cubemap> cubemap = std::make_shared<Lynx::Graphics::Cubemap>(cubemapTexture);
+                auto renderSystem = applicationInstance->GetSystem<Lynx::RenderSystem>();
+                renderSystem->SetCubemap(cubemap);
+                //auto shader = resourceManager->LoadShader("res/shaders/standard/cubemap.vert","res/shaders/standard/cubemap.frag");
+            }
+
+
         }
 
         void Destroy() override {

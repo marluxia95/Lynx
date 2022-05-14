@@ -19,11 +19,11 @@ namespace Lynx
             void Update();
             void OnEntityAdded(EntityID ent) {}
             void OnEntityRemoved(EntityID ent) {}
-            void SetCubemap(Graphics::Cubemap* cubemap);
+            void SetCubemap(std::shared_ptr<Graphics::Cubemap> cubemap);
             EntityID cameraEntity;
             EntityID directionalLight;
         private:
-            Graphics::Cubemap* m_cubemap = nullptr;
+            std::shared_ptr<Graphics::Cubemap> m_cubemap;
     };
 
 }

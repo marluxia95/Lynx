@@ -49,18 +49,20 @@ namespace Lynx::Graphics {
     public:
         Texture();
         Texture(std::string path);
+		Texture(TextureType type);
+        Texture(std::string path, TextureType type);
         void Generate();
         void Use();
         void LoadFromFile(std::string path);
     };
 
-    class CubemapTexture : public Lynx::Graphics::TextureBase {
+	/*
+    class CubemapTexture : public Lynx::Graphics::Texture {
     public:
         CubemapTexture();
         CubemapTexture(std::string basepath);
-        void Use();
-        void LoadFromFile(std::string path);
-    };
+        void Use() override;
+    };*/
 }
 
 #endif

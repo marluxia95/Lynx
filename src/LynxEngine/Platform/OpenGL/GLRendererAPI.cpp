@@ -114,11 +114,13 @@ namespace Lynx::Graphics::OpenGL {
     void GLRendererAPI::BindTexture(unsigned int tex)
     {
         glBindTexture(GL_TEXTURE_2D, tex);
+        glCheckError();
     }
 
     void GLRendererAPI::BindTexture(TextureType type, unsigned int tex)
     {
         glBindTexture(texture_type_map[type], tex);
+        glCheckError();
     }
 
     void GLRendererAPI::DrawIndexed(int n)
@@ -140,6 +142,7 @@ namespace Lynx::Graphics::OpenGL {
 
     unsigned int GLRendererAPI::CompileShader(const char* shaderSource, ShaderType type)
     {
+        glCheckError();
         unsigned int shaderID = glCreateShader(shader_type_map[type]);
         glShaderSource(shaderID, 1, &shaderSource, NULL);
         glCompileShader(shaderID);
