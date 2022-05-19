@@ -14,7 +14,7 @@
 #include "eventManager.h"
 #include "Events/event.h"
 
-#include "Graphics/mesh.h"
+#include "Graphics/rendererAPI.h"
 
 #include "Systems/lightingSystem.h"
 #include "Systems/cameraSystem.h"
@@ -142,18 +142,7 @@ namespace Lynx {
         else
             m_windowManager->Init(title, width, height, false);
 
-        LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
-
-        LYNX_ASSERT(GLEW_VERSION_2_1, "Unsupported OpenGL version");
-
-        glEnable(GL_DEPTH_TEST);
-
-        // Enable face culling
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);  
-        glFrontFace(GL_CW);  
-
-        log_info("%s", glGetString(GL_VERSION));
+        Graphics::RendererAPI::Init();
 
         Input::Init();
 

@@ -34,10 +34,10 @@ void movement()
     else
     	camera_Speed_Multiplier = 3.0f;
 
-	if(Lynx::Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
-		transformComponent->position += cameraSpeed * transformComponent->rotation * Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 4);
-		transformComponent->position += cameraSpeed * transformComponent->rotation * Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 3);
-	}
+	//if(Lynx::Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+	//	transformComponent->position += cameraSpeed * transformComponent->rotation * Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 4);
+	//	transformComponent->position += cameraSpeed * transformComponent->rotation * Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 3);
+	//}
 }
 
 void mouse_input()
@@ -49,10 +49,10 @@ void mouse_input()
 
 	float xpos;
 	float ypos;
-	if(Lynx::Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
-		mYaw += Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 0);
-		mPitch += Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 1);
-	}else{
+	//if(Lynx::Input::IsJoystickConnected(GLFW_JOYSTICK_1)){
+	//	mYaw += Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 0);
+	//	mPitch += Lynx::Input::GetJoyAxis(GLFW_JOYSTICK_1, 1);
+	//}else{
 		if(!mouseActive){
 			firstMouse = true;
 			return;
@@ -77,7 +77,7 @@ void mouse_input()
 
 		mPitch += yoffset;
 		mYaw += xoffset;
-	}
+	//}
 
 	
 

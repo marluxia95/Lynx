@@ -68,6 +68,17 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "csignal": "cpp",
+        "strstream": "cpp",
+        "cfenv": "cpp",
+        "codecvt": "cpp",
+        "complex": "cpp",
+        "future": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "shared_mutex": "cpp",
+        "valarray": "cpp",
+        "span": "cpp"
     }
 }

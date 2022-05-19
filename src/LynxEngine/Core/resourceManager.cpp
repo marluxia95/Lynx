@@ -71,18 +71,21 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
 	return n_shader;
 }
 
-std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path)
+std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path, Graphics::TextureType type)
 {
 	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
 	if( texture ) {
+		log_debug("Found texture in cache");
 		if( texture->IsValid() )
 			return texture;
 	}
 
+	log_debug("Didn't find a valid texture in cache, loading");
+
 	std::string name = std::string(path);
 
 	log_debug("Calling constructor of texture object");
-	auto n_tex = std::make_shared<Graphics::Texture>(path);
+	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
 	log_debug("New texture resource id : %ld", n_tex->GetResourceID());
 	
 #ifdef LYNX_MULTITHREAD
@@ -108,38 +111,6 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	return n_tex;
 }
 
-std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadCubemapTexture(std::vector<const char*>* textures)
-{/*
-	std::shared_ptr<Graphics::TextureBase> ctex = Graphics::TextureBase::CreateTexture("");
-	for(int x = 0; x < textures->size(); x++) {
-		auto path = textures->at(x);
-
-#ifdef LYNX_MULTITHREAD
-		log_debug("Adding cubemap texture %s to queue", path);
-
-		thpool->PushJob([this](void* data){
-			Graphics::TextureData* tdata = (Graphics::TextureData*)data;
-
-			log_debug("Processing cubemap texture %s", tdata->GetPath());
-			
-
-			tdata->linkedTexture->Load();
-			{
-				std::unique_lock<std::mutex> lock(queue_mutex);
-				texdata_queue.push(tdata->linkedTexture);
-			}
-			free(tdata);
-			log_debug("Added cubemap texture %s to GPU queue", tdata->GetPath());
-		}, ctex.GetData());
-#else
-		ctex->Load(path);
-		ctex->Generate();
-		resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(ctex);
-#endif
-	}
-	return ctex;*/
-}
-
 std::shared_ptr<Graphics::Mesh> 
 ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, 
 	std::vector<unsigned int>* indices, 
@@ -159,6 +130,7 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(std::string path)
 {
 	for(auto const& [k,v] : resource_map) {
+		log_debug("checking %ld from %s", k, v->GetResourcePath().c_str());
 		if(v->GetResourcePath() == path) {
 			log_debug("Found matching resource in cache : %d", v->GetResourceID());
 			return v;

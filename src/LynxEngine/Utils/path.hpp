@@ -37,6 +37,13 @@ namespace Lynx::Utils {
         return lpath + lname + ".dll";
     }
 
+    inline std::string GetAbsolutePath(std::string path, std::string input) {
+        if(input.rfind(".", 0) == 0)
+            return path + input.substr(1);
+        
+        return input;
+    }
+
 }
 
 #endif // LYNX_UTILS_PATH_H

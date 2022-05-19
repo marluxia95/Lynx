@@ -5,11 +5,14 @@
 #include <stb/stb_image.h>
 
 #include <gli/gli.hpp>
+#include "Platform/OpenGL/GLRendererAPI.h"
 
 #include <chrono>
 #include "texture.h"
 #include "Core/logger.h"
 #include "Utils/path.hpp"
+
+#define TEXTURE_DEFAULT TEXTURE_2D
 
 namespace Lynx::Graphics {
 
@@ -24,45 +27,51 @@ namespace Lynx::Graphics {
 	{ 
 		log_debug("Creating new texture with path %s", path);
 	}
+    
 
 	Texture::Texture() : TextureBase(TEXTURE_DEFAULT)
     {
 
     }
 
-    Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT)
+    Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
+    {
+        LoadFromFile(path);
+    }
+
+    Texture::Texture(TextureType type) : TextureBase(type)
+    {
+
+    }
+
+    Texture::Texture(std::string path, TextureType type) : TextureBase(type, path.c_str())
     {
         LoadFromFile(path);
     }
 
     void Texture::Generate()
     {
-        glGenTextures(1,&texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
 
-        // Wrapping / Filtering settings
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        texture = RendererAPI::GenTexture();
 
-        if(data.data){
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, data.width, data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            printf("Texture 1 loaded successfully\n");
-        }else{
+        if(!data.data){
             printf("Unable to load texture\n");
+            stbi_image_free(data.data);
+            return;
         }
-
+        
+        RendererAPI::LoadTexture(TEXTURE_2D, data.data, data.width, data.height);
         id = TextureBase::PushTextureID();
-
+        printf("Texture %d loaded successfully\n", id);
         stbi_image_free(data.data);
     }
 
     void Texture::Use()
     {
-        glActiveTexture(GL_TEXTURE0 + id);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        RendererAPI::BindTexture(type, texture);
+        RendererAPI::UseTexture(id);
+        //glActiveTexture(GL_TEXTURE0 + id);
+        //glBindTexture(GL_TEXTURE_2D, texture);
     }
 
     void Texture::LoadFromFile(std::string path)
@@ -74,6 +83,8 @@ namespace Lynx::Graphics {
         }else{
             loadSTBTex(path);
         }
+
+
     }
 
     void Texture::loadSTBTex(std::string path)
@@ -84,6 +95,7 @@ namespace Lynx::Graphics {
     }
 
     // From GLI examples
+    // NOT MINE
     void Texture::loadDDSTex(std::string path)
     {
         gli::texture Tex = gli::load(path);
@@ -102,10 +114,12 @@ namespace Lynx::Graphics {
         glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(Tex.levels() - 1));
         glTexParameteriv(Target, GL_TEXTURE_SWIZZLE_RGBA, &Format.Swizzles[0]);
+   
+        API_CheckErrors();
 
         glm::tvec3<GLsizei> const Extent(Tex.extent());
 	    GLsizei const FaceTotal = static_cast<GLsizei>(Tex.layers() * Tex.faces());
-        
+
         switch(Tex.target())
         {
         case gli::TARGET_1D:
@@ -117,7 +131,7 @@ namespace Lynx::Graphics {
         case gli::TARGET_CUBE:
             glTexStorage2D(
                 Target, static_cast<GLint>(Tex.levels()), Format.Internal,
-                Extent.x, Tex.target() == gli::TARGET_2D ? Extent.y : FaceTotal);
+                Extent.x, Extent.y );
             break;
         case gli::TARGET_2D_ARRAY:
         case gli::TARGET_3D:
@@ -132,14 +146,17 @@ namespace Lynx::Graphics {
             break;
         }
 
+        API_CheckErrors();
+
         for(std::size_t Layer = 0; Layer < Tex.layers(); ++Layer)
         for(std::size_t Face = 0; Face < Tex.faces(); ++Face)
         for(std::size_t Level = 0; Level < Tex.levels(); ++Level)
         {
             GLsizei const LayerGL = static_cast<GLsizei>(Layer);
             glm::tvec3<GLsizei> Extent(Tex.extent(Level));
+            log_debug("IsCubeMap? %s", gli::is_target_cube(Tex.target()) ? "yes" : "no");
             Target = gli::is_target_cube(Tex.target())
-                ? static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face)
+                ? GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face
                 : Target;
 
             switch(Tex.target())
@@ -199,6 +216,8 @@ namespace Lynx::Graphics {
             default: assert(0); break;
             }
         }
+
+        API_CheckErrors();
 
         id = TextureBase::PushTextureID();
     }
