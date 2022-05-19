@@ -60,6 +60,8 @@ namespace Lynx::Graphics::OpenGL {
         glCullFace(GL_FRONT);  
         glFrontFace(GL_CW);  
 
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
         log_info("GLRendererAPI: Loaded API ( %s )", glGetString(GL_VERSION));
         glCheckError();
     }
