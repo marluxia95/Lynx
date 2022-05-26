@@ -1,15 +1,15 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <memory>
 #include <stdio.h>
+#include <memory>
+#include <queue>
+#include <gli/gli.hpp>
 #include "lynx_common.h"
 #include "Core/resource.h"
 #include "rendererAPI.h"
 
 namespace Lynx::Graphics {
-	
-	class TextureBase;
 
 	class TextureBase : public ResourceBase {
 		protected:
@@ -20,7 +20,7 @@ namespace Lynx::Graphics {
 		public:
 			TextureBase(TextureType type);
 			TextureBase(TextureType type, const char* path);
-			
+				
 			virtual void Generate() = 0;
 			virtual void Use() = 0;
 			virtual void LoadFromFile(std::string path) = 0;
@@ -43,26 +43,30 @@ namespace Lynx::Graphics {
 	};
 
 	class Texture : public Lynx::Graphics::TextureBase {
-    private:
-        void loadDDSTex(std::string path);
+	private:
+		void genDDSTex();
 		void loadSTBTex(std::string path);
-    public:
-        Texture();
-        Texture(std::string path);
+
+		gli::texture tex;
+		bool using_gli = false; // need to change this
+	public:
+		Texture();
+		Texture(std::string path);
 		Texture(TextureType type);
-        Texture(std::string path, TextureType type);
-        void Generate();
-        void Use();
-        void LoadFromFile(std::string path);
-    };
+		Texture(std::string path, TextureType type);
+		void Generate();
+		void Use();
+		void LoadFromFile(std::string path);
+	};
 
 	/*
-    class CubemapTexture : public Lynx::Graphics::Texture {
-    public:
-        CubemapTexture();
-        CubemapTexture(std::string basepath);
-        void Use() override;
-    };*/
+	class CubemapTexture : public Lynx::Graphics::Texture {
+	public:
+		CubemapTexture();
+		CubemapTexture(std::string basepath);
+		void Use() override;
+	};*/
+
 }
 
 #endif

@@ -14,7 +14,7 @@ namespace Lynx {
     enum EventType {
         None = 0,
         WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed, JoystickConnected, JoystickDisconnected,
-        FirstTick, LastTick, UpdateTick, EngineInit, SignatureChanged, EntityDestroyed, Render
+        FirstTick, LastTick, UpdateTick, EngineInit, SignatureChanged, EntityDestroyed, Render, AsyncTextureLoad
     };
 
     extern std::map<std::string, EventType> StringToEventMap;
