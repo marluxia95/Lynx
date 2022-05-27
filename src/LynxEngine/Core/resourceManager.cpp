@@ -90,13 +90,14 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	
 #ifdef LYNX_MULTITHREAD
 	auto n_tex = std::make_shared<Graphics::Texture>(type);
-	TexObj obj = {n_tex.get(), path};
-	log_debug("Starting to load texture %s in async mode", n_tex->GetResourcePath());
+	TexObj* obj = new TexObj();
+	*obj = {n_tex, path};
+	log_debug("Starting to load texture %s in async mode", path);
 	thpool->PushJob([this](void* data){
 		TexObj* tdata = (TexObj*)data;
-		Graphics::TextureBase* tex = tdata->tex;
+		std::shared_ptr<Graphics::TextureBase> tex = tdata->tex;
 
-		log_debug("Processing texture %s", tex->GetResourcePath());
+		log_debug("Processing texture %s", tdata->path);
 
 		tex->LoadFromFile(tdata->path);
 
@@ -106,7 +107,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 		}
 		log_debug("Added texture %s to GPU queue", tex->GetResourcePath());
 		return;
-	}, &obj);
+	}, obj);
 #else 
 	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
 	n_tex->Generate();

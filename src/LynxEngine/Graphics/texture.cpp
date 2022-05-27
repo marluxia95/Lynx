@@ -86,6 +86,8 @@ namespace Lynx::Graphics {
             tex = gli::load(path);
             using_gli = true;
 
+            log_debug("Loaded texture %s into memory", path.c_str());
+
             if(tex.empty()) {
                 log_error("Unable to open texture %s", path.c_str());
                 return;

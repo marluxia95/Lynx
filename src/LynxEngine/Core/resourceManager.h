@@ -29,7 +29,7 @@ namespace Lynx {
 	class LYNXENGINE_API ResourceManager{
 		private:
 			typedef struct {
-				Graphics::TextureBase* tex;
+				std::shared_ptr<Graphics::TextureBase> tex;
 				std::string path;
 			} TexObj;
 		public:
