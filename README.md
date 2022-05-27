@@ -7,18 +7,16 @@ Link model is from here `https://www.models-resource.com/nintendo_64/`
 NOTE: Current version in this repository is unstable and will probably not compile properly, please download the latest stable release from the `Releases` tab. 
 ## Features
 
-- Model Loading
-- Cross-platform ( different API support, for now there's only OpenGL )
+- Model Loading ( assimp )
+- Scalable API design
 - ECS
-- Lighting 
-- Custom shader parsing
+- Simple lighting 
 - Skyboxes
-- Pretty organized input system with joystick support 
+- Input system with joystick support ( glfw )
 - Logging and debug features
 - Fully event-driven
 - Fully documented ( Via doxygen )
-- LUA Scripting ( API isnt finsihed )
-- Multithreading ( Optional. for now )
+- Pretty basic LUA Scripting 
 
 ## TODO
 
@@ -27,6 +25,7 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Sound system
 - Batch rendering ( with dynamic VBOs )
 - Better resource loading
+- Multithreading
 
 ## Dependencies
 This project requires the following libraries :
@@ -34,10 +33,11 @@ This project requires the following libraries :
 GLFW3
 GLEW
 GLM
+GLi
 Assimp
 ```
 
-However, it is not necessary to install them, since it will download and build them automatically.
+However, it is not necessary to manually install them, since it will download and build them automatically.
 
 ## Building
 
@@ -48,4 +48,4 @@ NOTE : `make install` won't install the program into your system, it will just c
 
 ### Windows
 
-To build this project on Windows, you should have `visual studio 2019` and `cmake` installed. Then follow the same steps above except that you should run the visual studio project file.
+To build this project on Windows, you need to have `visual studio 2019` and `cmake` installed. Then follow the same steps above except you should compile it using the visual studio project file.
