@@ -20,7 +20,7 @@
 #include "lynx_common.h"
 
 // Only enable if you want to use multithread features. This is still in development
-#define LYNX_MULTITHREAD
+//#define LYNX_MULTITHREAD
 
 // Enable if you want to debug rendering process
 //#define LYNX_RENDER_DEBUG
