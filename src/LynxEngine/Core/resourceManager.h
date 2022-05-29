@@ -27,6 +27,11 @@ namespace Lynx {
 	};
 
 	class LYNXENGINE_API ResourceManager{
+		private:
+			typedef struct {
+				std::shared_ptr<Graphics::TextureBase> tex;
+				std::string path;
+			} TexObj;
 		public:
 			ResourceManager(ThreadPool* pool);
 			~ResourceManager();

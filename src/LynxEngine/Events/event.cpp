@@ -17,7 +17,8 @@ namespace Lynx {
         {"EngineInit",              EngineInit},
         {"SignatureChanged",        SignatureChanged},
         {"EntityDestroyed",         EntityDestroyed},
-        {"Render",                  Render}
+        {"Render",                  Render},
+        {"AsyncTextureLoad",        AsyncTextureLoad}
     };
 
     const char* GetEventString(EventType type)

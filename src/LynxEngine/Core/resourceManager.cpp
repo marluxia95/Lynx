@@ -4,13 +4,17 @@
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/model.h"
+#include "Events/async.h"
 #include "application.h"
 
 namespace Lynx {
 
 ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
 {
-	
+	EventManager::AddListener(AsyncTextureLoad, [this](const Event& ev){
+		const AsyncTextureLoadEvent& event = static_cast<const AsyncTextureLoadEvent&>(ev);
+		event.Tex->Generate();
+    });
 }
 
 ResourceManager::~ResourceManager() 
@@ -34,7 +38,7 @@ void ResourceManager::Update(float dt)
 			tex = texdata_queue.front();
 		}
 
-		log_debug("Uploading texture %s to GPU", tex->GetPath());
+		log_debug("Uploading texture %s to GPU", tex->GetResourcePath());
 
 		tex->Generate();
 		
@@ -83,29 +87,33 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	log_debug("Didn't find a valid texture in cache, loading");
 
 	std::string name = std::string(path);
-
-	log_debug("Calling constructor of texture object");
-	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
-	log_debug("New texture resource id : %ld", n_tex->GetResourceID());
 	
 #ifdef LYNX_MULTITHREAD
-	log_debug("Starting to load texture %s in async mode", n_texture.GetPath());
+	auto n_tex = std::make_shared<Graphics::Texture>(type);
+	TexObj* obj = new TexObj();
+	*obj = {n_tex, path};
+	log_debug("Starting to load texture %s in async mode", path);
 	thpool->PushJob([this](void* data){
-		Graphics::TextureData* tdata = (Graphics::TextureData*)data;
+		TexObj* tdata = (TexObj*)data;
+		std::shared_ptr<Graphics::TextureBase> tex = tdata->tex;
 
-		log_debug("Processing texture %s", tdata->GetPath());
+		log_debug("Processing texture %s", tdata->path);
 
-		tdata->linkedTexture->Load();
+		tex->LoadFromFile(tdata->path);
 
 		{
 			std::unique_lock<std::mutex> lock(queue_mutex);
-			texdata_queue.push(tdata->linkedTexture);
+			EventManager::SendEvent(AsyncTextureLoadEvent(tex));
 		}
-		log_debug("Added texture %s to GPU queue", tdata->GetPath());
+		log_debug("Added texture %s to GPU queue", tex->GetResourcePath());
 		return;
-	}, n_texture.GetData());
+	}, obj);
+#else 
+	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
+	n_tex->Generate();
 #endif
 	
+	log_debug("New texture resource id : %ld", n_tex->GetResourceID());
 	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_tex);
 	
 	return n_tex;
