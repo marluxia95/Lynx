@@ -23,6 +23,13 @@ class DemoScene : public Lynx::Scene {
 
             Lynx::Entity cube = loader.LoadModel("res/models/cube.fbx");
 
+            Lynx::Graphics::Material mat(shader);
+            mat.ambient = glm::vec3(0.1f);
+            mat.diffuse = glm::vec3(0.5f);
+            mat.specular = glm::vec3(0.5f);
+            mat.shininess = 50.0f;
+            mat.texture = mat.texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
+
             for(Lynx::EntityID child : cube.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))
                     continue;
@@ -32,19 +39,21 @@ class DemoScene : public Lynx::Scene {
                 mTransform->position = glm::vec3(0, 10.0f, 0);
                 mTransform->scale = glm::vec3(1.0f);
 
-                cube_meshRenderer->shader = shader;
-                cube_meshRenderer->ambient = glm::vec3(1.1f);
-                cube_meshRenderer->diffuse = glm::vec3(0.5f);
-                cube_meshRenderer->specular = glm::vec3(0.5f);
-                cube_meshRenderer->shininess = 24.0f;
-                cube_meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
+                cube_meshRenderer->mat = mat;
 
                 //AddComponent(cube, Lynx::PhysicsObject(1.0f));
             }
 
-            Lynx::Entity floor2 = loader.LoadModel("res/models/plane.fbx");
+            Lynx::Entity floor = loader.LoadModel("res/models/plane.fbx");
 
-            for(Lynx::EntityID child : floor2.GetChildren()){
+            Lynx::Graphics::Material floor_mat(shader);
+            floor_mat.ambient = glm::vec3(0.1f);
+            floor_mat.diffuse = glm::vec3(0.5f);
+            floor_mat.specular = glm::vec3(0.5f);
+            floor_mat.shininess = 24.0f;
+            floor_mat.texture = floor_mat.texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
+
+            for(Lynx::EntityID child : floor.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))
                     continue;
                 
@@ -54,18 +63,17 @@ class DemoScene : public Lynx::Scene {
                 mTransform->rotation = glm::vec3(-90,0,0);
                 mTransform->scale = glm::vec3(30.0);
 
-                meshRenderer->shader = shader;
-                meshRenderer->ambient = glm::vec3(0.1f);
-                meshRenderer->diffuse = glm::vec3(0.5f);
-                meshRenderer->specular = glm::vec3(0.5f);
-                meshRenderer->shininess = 24.0f;
-                meshRenderer->texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
+                log_debug("%f", floor_mat.ambient.x);
+
+                meshRenderer->mat = floor_mat;
+
+                log_debug("%f", meshRenderer->mat.ambient.x);
             }
             
 
             Lynx::EntityID lightEnt = CreateEntity("Light");
             AddComponent(lightEnt, Lynx::Transform{ glm::vec3(2,1,0), glm::vec3(0), glm::vec3(1) });
-            AddComponent(lightEnt, Lynx::PointLight{ glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f });
+            AddComponent(lightEnt, Lynx::PointLight( glm::vec3(0.4f, 0.7f , 0.4f ), glm::vec3(1.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f ));
 
             auto directionalLight = GetComponent<Lynx::DirectionalLight>(applicationInstance->GetSystem<Lynx::RenderSystem>()->directionalLight);
             directionalLight->direction = glm::vec3(-1.0f, -1.0f, 0.0f);

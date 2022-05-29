@@ -37,14 +37,11 @@ namespace Lynx::Lua {
         log_error("%s", lua_tostring(L,-1));
     }
 
-    void LuaRuntime::OnEntityAdded(EntityID ent)
+    void LuaRuntime::Load(char* path)
     {
-        auto lua_component = scene->GetComponent<LuaScript>(ent);
-        const char* file_path = lua_component->path;
-        
         int success;
 
-        success = luaL_loadfile(state, file_path);
+        success = luaL_loadfile(state, path);
 
         if(success != LUA_OK) {
             LuaError(state);
@@ -58,11 +55,5 @@ namespace Lynx::Lua {
             return;
         }
     }
-
-    void LuaRuntime::OnEntityRemoved(EntityID ent)
-    {
-
-    }
-
     
 }

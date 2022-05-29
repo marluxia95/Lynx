@@ -74,7 +74,7 @@ void main() {
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
 
     // ambient
-    vec3 ambient = light.ambient;
+    vec3 ambient = light.ambient * material.ambient;
   	
     // diffuse 
     vec3 lightDir = normalize(light.position - fragPos);
@@ -88,7 +88,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     
     // specular
     vec3 reflectDir = reflect(-lightDir, normal);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular;
     if(specular_map)
         specular = spec * light.specular * vec3(texture(material.specular_tex, TexCoords));  
@@ -98,8 +98,11 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     
     float distance = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic*distance*distance);
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
 
-    return (ambient + diffuse + specular) * attenuation;
+    return (ambient + diffuse + specular);
 }
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)

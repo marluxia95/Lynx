@@ -14,8 +14,7 @@ namespace Lynx::Lua {
             ~LuaRuntime();
             void Init();
             void Update();
-            void OnEntityAdded(EntityID ent);
-            void OnEntityRemoved(EntityID ent);
+            void Load(char* script);
         private:
             lua_State* state;
     };

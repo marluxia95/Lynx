@@ -58,11 +58,6 @@ int main(int argc, char** argv)
     }
 
     applicationInstance->RegisterSystem<Lynx::Lua::LuaRuntime>();
-    {
-    	Lynx::Signature signature;
-        signature.set(applicationInstance->GetComponentType<Lynx::LuaScript>());
-        applicationInstance->SetSystemSignature<Lynx::Lua::LuaRuntime>(signature);
-    }
 
 	log_debug("Adding initial events...");
 	Lynx::EventManager::AddListener(Lynx::UpdateTick, Update);

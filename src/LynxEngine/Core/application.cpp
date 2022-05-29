@@ -233,7 +233,6 @@ namespace Lynx {
         RegisterComponent<Children>();
         RegisterComponent<PointLight>();
         RegisterComponent<DirectionalLight>();
-        RegisterComponent<LuaScript>();
     }
 
 }

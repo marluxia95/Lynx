@@ -26,9 +26,9 @@ void movement()
     if (Lynx::Input::IsKeyDown(GLFW_KEY_S))
         transformComponent->position -= cameraSpeed * transformComponent->rotation;
     if (Lynx::Input::IsKeyDown(GLFW_KEY_A))
-        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
+        transformComponent->position -= glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->Up))* cameraSpeed;
     if (Lynx::Input::IsKeyDown(GLFW_KEY_D))
-        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->up))* cameraSpeed;
+        transformComponent->position += glm::normalize(glm::cross(transformComponent->rotation, cameraComponent->Up))* cameraSpeed;
     if (Lynx::Input::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
     	camera_Speed_Multiplier = 5.0f;
     else

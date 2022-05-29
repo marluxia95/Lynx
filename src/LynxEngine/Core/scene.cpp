@@ -14,7 +14,7 @@ namespace Lynx {
 
     EntityID Scene::CreateEntity(const char* name) {
         EntityID ent = m_entityManager->CreateEntity();
-        m_componentManager->AddComponent(ent, Generic{name});
+        m_componentManager->AddComponent(ent, Generic(name));
         log_debug("Scene : Created entity %ld", ent);
         return ent;
     }

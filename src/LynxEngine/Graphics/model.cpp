@@ -33,7 +33,7 @@ Entity ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_s
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
-		rootEnt.AddComponent(MeshRenderer{ProcessMesh(path, mesh)} ); // Component does not exist, wtf	
+		rootEnt.AddComponent(MeshRenderer(ProcessMesh(path, mesh)) );
 		log_debug("Added mesh renderer");
 		break;
 	}
