@@ -71,10 +71,8 @@ namespace Lynx::Graphics {
 
     void Texture::Use()
     {
+        log_debug("Using %s %d %d", m_resPath.c_str(), id, texture);
         RendererAPI::BindTexture(type, texture);
-        RendererAPI::UseTexture(id);
-        //glActiveTexture(GL_TEXTURE0 + id);
-        //glBindTexture(GL_TEXTURE_2D, texture);
     }
 
     void Texture::LoadFromFile(std::string path)

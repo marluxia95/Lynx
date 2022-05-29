@@ -28,7 +28,7 @@ class DemoScene : public Lynx::Scene {
             mat.diffuse = glm::vec3(0.5f);
             mat.specular = glm::vec3(0.5f);
             mat.shininess = 50.0f;
-            mat.texture = mat.texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
+            mat.texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
 
             for(Lynx::EntityID child : cube.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))
@@ -51,7 +51,7 @@ class DemoScene : public Lynx::Scene {
             floor_mat.diffuse = glm::vec3(0.5f);
             floor_mat.specular = glm::vec3(0.5f);
             floor_mat.shininess = 24.0f;
-            floor_mat.texture = floor_mat.texture_diffuse = resourceManager->LoadTexture("res/textures/wood.dds");
+            floor_mat.texture_diffuse = resourceManager->LoadTexture("res/textures/box.dds");
 
             for(Lynx::EntityID child : floor.GetChildren()){
                 if(!HasComponent<Lynx::MeshRenderer>(child))

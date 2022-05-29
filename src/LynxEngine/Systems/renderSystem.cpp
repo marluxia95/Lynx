@@ -79,9 +79,9 @@ namespace Lynx {
             mMaterial.shader->SetUniform("viewPos", mCameraTransform->position);
 
 #ifdef LYNX_RENDER_DEBUG
-            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n Has texture ? %d\n Has diffuse mapping ? %d\n Has specular mapping ? %d\n  --------------------------", 
+            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n Texture ? %s\n Diffuse map %s\n Specular map ? %s\n  --------------------------", 
                 cameraEntity,glm::to_string(mCameraComponent->Projection).c_str(),glm::to_string(mCameraComponent->View).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity,
-                mMaterial.texture ? 1 : 0, mMaterial.texture_diffuse ? 1 : 0, mMaterial.texture_specular ? 1 : 0);
+                "no", mMaterial.texture_diffuse->GetResourcePath().c_str(), "no");
 #endif
             
 			if(mRenderComponent->lighting | mLightingSystem->entities.size()){
@@ -145,11 +145,13 @@ namespace Lynx {
 
             mRenderComponent->mesh->VAO->Bind();
             mRenderComponent->mesh->Render();
-            
 
-            if(m_cubemap)
-                m_cubemap->Use(mCameraComponent->Projection, mCameraComponent->View);
+            
         }
+
+
+        if(m_cubemap)
+            m_cubemap->Use(mCameraComponent->Projection, mCameraComponent->View);
 
     }
 
