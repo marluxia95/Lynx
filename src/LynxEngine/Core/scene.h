@@ -33,6 +33,7 @@ namespace Lynx {
 
             template<typename T>
             void AddComponent(EntityID entity, T component){
+                log_debug("Adding component %s", typeid(T).name());
                 m_componentManager->AddComponent(entity, component);
 
                 auto signature = m_entityManager->GetSignature(entity);

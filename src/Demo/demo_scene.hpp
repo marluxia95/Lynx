@@ -38,10 +38,7 @@ class DemoScene : public Lynx::Scene {
                 Lynx::Transform* mTransform = GetComponent<Lynx::Transform>(child);
                 mTransform->position = glm::vec3(0, 10.0f, 0);
                 mTransform->scale = glm::vec3(1.0f);
-
                 cube_meshRenderer->mat = mat;
-
-                //AddComponent(cube, Lynx::PhysicsObject(1.0f));
             }
 
             Lynx::Entity floor = loader.LoadModel("res/models/plane.fbx");
@@ -63,11 +60,7 @@ class DemoScene : public Lynx::Scene {
                 mTransform->rotation = glm::vec3(-90,0,0);
                 mTransform->scale = glm::vec3(30.0);
 
-                log_debug("%f", floor_mat.ambient.x);
-
                 meshRenderer->mat = floor_mat;
-
-                log_debug("%f", meshRenderer->mat.ambient.x);
             }
             
 

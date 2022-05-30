@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 #include "Core/ECS/system.h"
 #include "physicsObject.h"
-#include "physicsWorld.h"
 
 namespace Lynx {
 
@@ -22,11 +21,8 @@ namespace Lynx {
             void OnEntityRemoved(EntityID ent);
 
         private:
-            Physics::World* phys_world;
+            glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
     };
 }
-
-
-
 
 #endif // LYNX_PHYSICS_SYSTEM_H

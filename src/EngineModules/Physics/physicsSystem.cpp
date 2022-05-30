@@ -5,17 +5,27 @@ namespace Lynx {
 
     void PhysicsSystem::Init()
     {
-        phys_world = new Physics::World();
+
     }
 
     void PhysicsSystem::Update()
     {
-        phys_world->Step(GameApplication::GetInstance()->GetDeltaTime());
+        float dt = GameApplication::GetInstance()->GetDeltaTime();
+        for(Lynx::EntityID ent : entities ) {
+            PhysicsObject* phys_obj = scene->GetComponent<PhysicsObject>(ent);
+            Transform* transform = scene->GetComponent<Transform>(ent);
+
+            phys_obj->Force += phys_obj->Mass * gravity;
+
+            phys_obj->Velocity += phys_obj->Force / phys_obj->Mass * dt;
+            transform->position += phys_obj->Velocity * dt;
+            
+            phys_obj->Force = glm::vec3(0.0f);
+        }
     }
 
     void PhysicsSystem::OnEntityAdded(EntityID ent)
     {
-        phys_world->AddObject(scene->GetComponent<PhysicsObject>(ent));
         
     }
 

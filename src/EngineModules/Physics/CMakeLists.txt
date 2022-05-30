@@ -15,6 +15,7 @@ add_library(
 target_include_directories(LynxPhysics PRIVATE ${SOURCE_DIR}/LynxEngine)
 target_include_directories(LynxPhysics PRIVATE ${LIBS}/imgui)
 target_include_directories(LynxPhysics PRIVATE ${LIBS})
+target_include_directories(LynxPhysics PRIVATE ${ENGINE})
 
 target_link_directories(LynxPhysics PRIVATE ${DEPS_INSTALL_DIR}/lib )
 

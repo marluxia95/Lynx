@@ -29,6 +29,7 @@ namespace Lynx::ECS {
 
 		void InsertData(EntityID entity, T component)
 		{
+			log_debug("Inserting component %s", typeid(T).name());
 			LYNX_ASSERT(entityToIndexMap.find(entity) == entityToIndexMap.end(), "Component added to same entity more than once.");
 
 			size_t index = size;
