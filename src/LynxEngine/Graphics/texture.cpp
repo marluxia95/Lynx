@@ -17,12 +17,12 @@ namespace Lynx::Graphics {
 
 	int TextureBase::total_textures = 0;
 
-	TextureBase::TextureBase(TextureType type) : id(-1), type(type), ResourceBase()
+	TextureBase::TextureBase(TextureType type) : id(-1), type(type), ResourceBase(), data()
 	{ 
 		log_debug("Created new texture");
 	}
 
-	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type), ResourceBase(path)
+	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type), ResourceBase(path), data()
 	{ 
 		log_debug("Creating new texture with path %s", path);
 	}
@@ -33,7 +33,7 @@ namespace Lynx::Graphics {
 
     }
 
-    Texture::Texture(std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
+    Texture::Texture(const std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
     {
         LoadFromFile(path);
     }
@@ -43,7 +43,7 @@ namespace Lynx::Graphics {
 
     }
 
-    Texture::Texture(std::string path, TextureType type) : TextureBase(type, path.c_str())
+    Texture::Texture(const std::string path, TextureType type) : TextureBase(type, path.c_str())
     {
         LoadFromFile(path);
     }
@@ -74,7 +74,7 @@ namespace Lynx::Graphics {
         RendererAPI::BindTexture(type, texture);
     }
 
-    void Texture::LoadFromFile(std::string path)
+    void Texture::LoadFromFile(const std::string path)
     {
         std::string extension = Utils::GetFileExtension(path);
         m_resPath = path;
@@ -96,7 +96,7 @@ namespace Lynx::Graphics {
 
     }
 
-    void Texture::loadSTBTex(std::string path)
+    void Texture::loadSTBTex(const std::string path)
     {
         stbi_set_flip_vertically_on_load(true);  
 	    data.data = stbi_load(path.c_str(), &data.width, &data.height, &data.channels, 0);

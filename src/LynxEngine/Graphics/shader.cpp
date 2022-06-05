@@ -77,7 +77,7 @@ namespace Lynx::Graphics {
 		
 	}
 
-	Shader::Shader(std::string vertexPath, std::string fragmentPath) : ResourceBase()
+	Shader::Shader(const std::string vertexPath, const std::string fragmentPath) : ResourceBase()
 	{
 		PushSource(vertexPath, SHADER_VERTEX);
 		PushSource(fragmentPath, SHADER_FRAGMENT);
@@ -180,7 +180,7 @@ namespace Lynx::Graphics {
 
 		fclose(shader_file);
 
-		if(lpos != 0 | shader_source != NULL) {
+		if(lpos != 0) {
 			shader_source[lpos] = '\0';
 		}else{
 			log_error("Failed to read shader %s", path);

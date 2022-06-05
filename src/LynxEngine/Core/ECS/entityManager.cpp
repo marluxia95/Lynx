@@ -18,7 +18,7 @@ void EntityManager::DestroyEntity(EntityID ent) {
 	delete &ent;
 }
 
-void EntityManager::SetSignature(EntityID ent, Signature signature) {
+void EntityManager::SetSignature(EntityID ent, const Signature signature) {
 	LYNX_ASSERT(ent < livingEntityCount, "Entity out of range.");
 	Signatures[ent] = signature;
 }

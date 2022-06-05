@@ -135,7 +135,7 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 	return n_shader;
 }
 
-std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(std::string path)
+std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(const std::string path)
 {
 	for(auto const& [k,v] : resource_map) {
 		log_debug("checking %ld from %s", k, v->GetResourcePath().c_str());

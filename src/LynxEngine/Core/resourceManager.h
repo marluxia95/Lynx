@@ -46,12 +46,12 @@ namespace Lynx {
 			std::shared_ptr<Graphics::Mesh> LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, std::vector<unsigned int>* indices, Graphics::MeshType type);
 			
 			template<typename T>
-			std::shared_ptr<T> GetResource(std::string path)
+			std::shared_ptr<T> GetResource(const std::string path)
 			{
 				return std::static_pointer_cast<T>(FindResourceByPath(path));
 			}
 
-			std::shared_ptr<ResourceBase> FindResourceByPath(std::string path);
+			std::shared_ptr<ResourceBase> FindResourceByPath(const std::string path);
 
 		private:
 			int lastId;

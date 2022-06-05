@@ -19,7 +19,7 @@ namespace Lynx {
             ModuleLoader(const std::string& path, 
                         const std::string& alloc_sym = "alloc", 
                         const std::string& dealloc_sym = "dealloc") : 
-                        m_path(Utils::GetPosixLibraryPath(path)), m_allocSymbol(alloc_sym), m_deallocSymbol(dealloc_sym) {
+                        m_path(Utils::GetPosixLibraryPath(path)), m_allocSymbol(alloc_sym), m_deallocSymbol(dealloc_sym), m_handle(nullptr) {
                 
 
             }

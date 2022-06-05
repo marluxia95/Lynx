@@ -35,7 +35,7 @@ namespace Lynx {
     Application* Application::s_applicationInstance = nullptr;
     GameApplication* GameApplication::gameApplicationInstance = nullptr;
 
-    Application::Application()
+    Application::Application() : m_componentManager(std::make_unique<ECS::ComponentManager>()), m_systemManager(std::make_unique<ECS::SystemManager>())
     {
         log_debug("Initializing subsystems");
 
@@ -45,8 +45,6 @@ namespace Lynx {
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");
         m_threadPool = std::make_shared<ThreadPool>(3);
 #endif
-        //m_systemManager = std::allocate_shared<ECS::SystemManager>(MemoryAllocator<ECS::SystemManager>());
-        m_systemManager = std::make_shared<ECS::SystemManager>();
 
         s_applicationInstance = this;
 
@@ -106,11 +104,8 @@ namespace Lynx {
         EventManager::SendEvent(LastTickEvent());
     }
 
-    GameApplication::GameApplication() : Application()
+    GameApplication::GameApplication() : Application(), m_resourceManager(std::make_shared<ResourceManager>(m_threadPool.get()))
     {
-        m_resourceManager = std::make_shared<ResourceManager>(m_threadPool.get());
-        m_componentManager = std::make_unique<ECS::ComponentManager>();
-        m_systemManager = std::make_unique<ECS::SystemManager>();
         gameApplicationInstance = this;
     }
 

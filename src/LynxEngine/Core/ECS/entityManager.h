@@ -20,7 +20,7 @@ namespace Lynx::ECS {
 			
 			void DestroyEntity(EntityID ent);
 			
-			void SetSignature(EntityID ent, Signature signature);
+			void SetSignature(EntityID ent, const Signature signature);
 			
 			Signature GetSignature(EntityID ent);
 			
