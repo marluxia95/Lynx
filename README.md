@@ -1,8 +1,8 @@
-# LynxEngine 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/43d567336363474da3830f0cd6d01728)](https://www.codacy.com/gh/marluxia95/SimpleGameEngine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marluxia95/SimpleGameEngine&amp;utm_campaign=Badge_Grade)\
+# LynxEngine [![Codacy Badge](https://app.codacy.com/project/badge/Grade/43d567336363474da3830f0cd6d01728)](https://www.codacy.com/gh/marluxia95/SimpleGameEngine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marluxia95/SimpleGameEngine&amp;utm_campaign=Badge_Grade)
+
 Just a simple game engine made in C++ and OpenGL. 
 
-Link model is from here `https://www.models-resource.com/nintendo_64/`
+Link model is taken from here `https://www.models-resource.com/nintendo_64/`
 
 NOTE: Current version in this repository is unstable and will probably not compile properly, please download the latest stable release from the `Releases` tab. 
 ## Features
@@ -13,9 +13,9 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Simple lighting 
 - Skyboxes
 - Input system with joystick support ( glfw )
-- Logging and debug features
-- Fully event-driven
-- Fully documented ( Via doxygen )
+- Logging and some debug features
+- Event-driven
+- Documented via doxygen 
 - Pretty basic LUA Scripting 
 
 ## TODO
@@ -23,12 +23,13 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Terrain rendering 
 - Physics engine
 - Sound system
-- Batch rendering ( with dynamic VBOs )
 - Better resource loading
 - Multithreading
+- Finish the LUA API
 
 ## Dependencies
 This project requires the following libraries :
+
 ```
 GLFW3
 GLEW
