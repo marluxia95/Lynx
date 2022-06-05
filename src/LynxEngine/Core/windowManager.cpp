@@ -59,8 +59,13 @@ namespace Lynx {
             EventManager::SendEvent(MouseButtonEvent(button, action));
         });
 
-        log_debug("Fully initialized GLFW ( Ver. %s )", glfwGetVersionString());
+        log_debug("Initialized GLFW ( Ver. %s )", glfwGetVersionString());
+        log_debug("%s", window != NULL ? "Window is created" : "Window is not created");
+    }
 
+    void WindowManager::SetTitle(const char* title)
+    {
+        glfwSetWindowTitle(window, title);
     }
 
     void WindowManager::Update()
@@ -71,12 +76,8 @@ namespace Lynx {
 
     void WindowManager::Destroy()
     {
+        log_debug("Terminating %d", window == NULL);
         glfwTerminate();
-    }
-
-    std::unique_ptr<WindowManager> WindowManager::Create()
-    {
-        return std::make_unique<WindowManager>();
     }
 
 }

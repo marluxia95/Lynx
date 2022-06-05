@@ -121,6 +121,7 @@ namespace Lynx::Graphics {
 		log_debug("SHADER DUMP \n Shader type %d \n Shader source : \n%s", obj.type, obj.source);
 		obj.shader = RendererAPI::CompileShader(obj.source, obj.type);
 		shader_objs.push_back(obj);
+		free(obj.source);
 
 		return success;
 	}

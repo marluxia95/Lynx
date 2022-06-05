@@ -69,7 +69,7 @@ namespace Lynx {
 #endif
     }
 
-    void Application::Init(const char* title, unsigned int width, unsigned int height, int flags)
+    void Application::Init(int flags)
     {
         log_debug("Sending event init");
         EventManager::SendEvent(InitEvent());
@@ -134,13 +134,8 @@ namespace Lynx {
      * @param height Window height
      * @param flags Window flags
      */
-    void GameApplication::Init(const char* title, unsigned int width, unsigned int height, int flags)
+    void GameApplication::Init(int flags)
     {
-        m_windowManager = WindowManager::Create();
-        if(flags & APPLICATION_FULLSCREEN)
-            m_windowManager->Init(title, width, height, true);
-        else
-            m_windowManager->Init(title, width, height, false);
 
         Graphics::RendererAPI::Init();
 

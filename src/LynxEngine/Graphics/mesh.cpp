@@ -46,7 +46,6 @@ namespace Lynx::Graphics {
 	{
 		delete vertices;
 		delete indices;
-		vertices->push_back(Vertex{});
 	}
 
 }

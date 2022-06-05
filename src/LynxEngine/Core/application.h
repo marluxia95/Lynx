@@ -48,7 +48,7 @@ namespace Lynx {
         Application();
 		~Application();
 
-        virtual void Init(const char* title, unsigned int width, unsigned int height, int flags);
+        virtual void Init(int flags);
 		virtual void Run();
         
         float GetDeltaTime() { return delta_time; }
@@ -106,7 +106,7 @@ namespace Lynx {
         GameApplication();
         ~GameApplication();
 
-        virtual void Init(const char* title, unsigned int width, unsigned int height, int flags)  override;
+        virtual void Init(int flags)  override;
 		virtual void Run() override;
 
         GLFWwindow* GetWindow() { return m_windowManager->window; }
@@ -129,6 +129,8 @@ namespace Lynx {
         void SetScene(std::shared_ptr<Scene> scene);
         std::shared_ptr<Scene> GetScene() { return scene; }
 
+        std::shared_ptr<WindowManager> GetWindowManager() { return m_windowManager; }
+
         unsigned int GetResolutionWidth();
         unsigned int GetResolutionHeight();
 
@@ -136,7 +138,7 @@ namespace Lynx {
     private:
         static GameApplication* gameApplicationInstance;
     protected:
-		std::unique_ptr<WindowManager> m_windowManager;
+		std::shared_ptr<WindowManager> m_windowManager;
         std::shared_ptr<ResourceManager> m_resourceManager;
         std::shared_ptr<Scene> scene;
         EventListener scene_listener;

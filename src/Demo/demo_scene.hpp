@@ -5,8 +5,6 @@
 #include "lynx.h"
 #include "Physics/physicsObject.h"
 
-extern Lynx::GameApplication* applicationInstance;
-
 class DemoScene : public Lynx::Scene {
     public:
         DemoScene() {
@@ -14,6 +12,7 @@ class DemoScene : public Lynx::Scene {
         }
 
         void Init() override {
+            Lynx::GameApplication* applicationInstance = Lynx::GameApplication::GetGameInstance();
             auto resourceManager = applicationInstance->GetResourceManager();
 
             log_info("Adding scene objects");
@@ -84,6 +83,7 @@ class DemoScene : public Lynx::Scene {
                 //auto shader = resourceManager->LoadShader("res/shaders/standard/cubemap.vert","res/shaders/standard/cubemap.frag");
             }
 
+            log_debug("Scene initialized");
 
         }
 

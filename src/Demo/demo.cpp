@@ -4,30 +4,19 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-
 #include "lynx.h"
+
+#include "Core/windowManager.h"
 #include "Systems/renderSystem.h"
 #include "Scripting/luaRuntime.h"
-#include "Graphics/cubemap.h"
 
+#include "demo.h"
 #include "demo_scene.hpp"
-#include "input.hpp"
 
-char title[40];
+char Demo::title[40] = "";
+Input Demo::input = Input();
 
-Lynx::GameApplication* applicationInstance;
-
-int Update(const Lynx::Event& ev)
-{
-	snprintf(title,40 ,"Engine demo FPS : %d Errors : %d", (int)round(1/applicationInstance->GetDeltaTime()), log_geterrorcount());
-	glfwSetWindowTitle(applicationInstance->GetWindow(), title);
-	mouse_input();
-	movement();
-	
-	return 1;
-}
-
-int main(int argc, char** argv)
+Demo::Demo(int argc, char** argv)
 {
 	// Enables the application's debug mode
 	for (int i = 1; i < argc; ++i) {
@@ -35,42 +24,48 @@ int main(int argc, char** argv)
 			log_set_level(LOG_DEBUG);
 	}
 
-	applicationInstance = new Lynx::GameApplication();
+	LoadDefaultComponents();
+	LoadDefaultSystems();
 
 	log_info("Initializing window");
+	m_windowManager = std::make_shared<Lynx::WindowManager>();
+	m_windowManager->Init();
+	Init(NULL);
 
-	// Initialize window in windowed mode
-	
-	applicationInstance->LoadDefaultComponents();
-	applicationInstance->LoadDefaultSystems();
-
-	auto module = Lynx::ModuleManager::LoadEngineModule("LynxPhysics");
-	module->Init();
-
-	applicationInstance->Init("Example", 1920, 1080, false);
-
-	applicationInstance->RegisterSystem<Lynx::RenderSystem>();
+	RegisterSystem<Lynx::RenderSystem>();
     {
         Lynx::Signature signature;
-        signature.set(applicationInstance->GetComponentType<Lynx::Transform>());
-        signature.set(applicationInstance->GetComponentType<Lynx::MeshRenderer>());
-        applicationInstance->SetSystemSignature<Lynx::RenderSystem>(signature);
+        signature.set(GetComponentType<Lynx::Transform>());
+        signature.set(GetComponentType<Lynx::MeshRenderer>());
+        SetSystemSignature<Lynx::RenderSystem>(signature);
     }
 
-    applicationInstance->RegisterSystem<Lynx::Lua::LuaRuntime>();
+	Lynx::EventManager::AddListener(Lynx::UpdateTick, OnUpdate);
+	Lynx::EventManager::AddListener(Lynx::MouseKeyPressed, input.mouse_button_input);
+	Lynx::EventManager::AddListener(Lynx::JoystickConnected, input.joystick_connected);
+	Lynx::EventManager::AddListener(Lynx::JoystickDisconnected, input.joystick_disconnected);
 
-	log_debug("Adding initial events...");
-	Lynx::EventManager::AddListener(Lynx::UpdateTick, Update);
-	Lynx::EventManager::AddListener(Lynx::MouseKeyPressed, mouse_button_input);
-	Lynx::EventManager::AddListener(Lynx::JoystickConnected, joystick_connected);
-	Lynx::EventManager::AddListener(Lynx::JoystickDisconnected, joystick_disconnected);
+	RegisterSystem<Lynx::Lua::LuaRuntime>();
 
 	log_info("Adding scene");
-	applicationInstance->SetScene(std::make_shared<DemoScene>());
+	SetScene(std::make_shared<DemoScene>());
+	
+	SetApplicationState(Lynx::STATE_ACTIVE);
+	Run();
+}
 
-	// Runs the application
-	applicationInstance->SetApplicationState(Lynx::STATE_ACTIVE);
-	applicationInstance->Run();
+Demo::~Demo()
+{
 
-	return 0;
+}
+
+int Demo::OnUpdate(const Lynx::Event& ev)
+{
+	Lynx::GameApplication* instance = Lynx::GameApplication::GetGameInstance();
+	snprintf(title,40 ,"Engine demo FPS : %d Errors : %d", (int)round(1/instance->GetDeltaTime()), log_geterrorcount());
+	instance->GetWindowManager()->SetTitle(title);
+	input.mouse_input();
+	input.movement();
+	
+	return 1;
 }

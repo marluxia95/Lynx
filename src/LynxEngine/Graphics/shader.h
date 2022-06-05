@@ -40,9 +40,9 @@ namespace Lynx {
         private:
             class ShaderObj {
             public:
-                ShaderObj(const char* path, const char* source, ShaderType type) : path(path), source(source), type(type) { }
+                ShaderObj(const char* path, char* source, ShaderType type) : path(path), source(source), type(type) { }
                 const char* path;
-                const char* source;
+                char* source;
                 ShaderType type;
                 unsigned int shader;
             };  
