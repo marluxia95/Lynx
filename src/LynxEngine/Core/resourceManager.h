@@ -26,6 +26,10 @@ namespace Lynx {
 		RES_MODEL
 	};
 
+	/**
+	 * @brief This class is meant to be used to manage, load and cache all resources in the game
+	 * 
+	 */
 	class LYNXENGINE_API ResourceManager{
 		private:
 			typedef struct {

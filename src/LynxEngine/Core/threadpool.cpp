@@ -58,13 +58,13 @@ namespace Lynx {
     ThreadPool::ThreadPool(int n_threads) : n_threads(n_threads)
     {
         for(int i = 0; i < n_threads; i++) {
+            log_debug("Creating thread %d\n", i);
             Worker* worker = new Worker();
             worker->id = i;
             worker->pool = this;
             worker->thread = std::thread(thread_work, worker);
             workers.push_back(worker);
             thread_id_map[worker->thread.get_id()] = i;
-            log_debug("Created thread %d\n", i);
         }
 
         log_debug("Alive thread count : %d\n", alive_threads);

@@ -4,14 +4,16 @@
 #include <stdarg.h>
 #include <time.h>
 #include <string>
-#include "threadpool.h"
-#include "application.h"
-#include "logger.h"
 #ifdef _WIN64
 #include <stdbool.h>
 #endif
+
+#include "threadpool.h"
+#include "application.h"
+#include "logger.h"
 #include "Utils/colour.h"
 
+static std::mutex out_mutex;
 
 static struct {
 	LogLevel level;
@@ -49,6 +51,8 @@ void log_print(log_Event* ev)
 		return;
 	char buf[16];
 	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+
+	std::unique_lock<std::mutex> lock(out_mutex);
 
 	if(Lynx::Application::GetInstance() != nullptr) {
 		if(Lynx::Application::GetInstance()->GetThread() == ev->th_id){

@@ -17,6 +17,10 @@ namespace Lynx::Lua {
         lua_close(state);
     }
 
+    /**
+     * @brief Initializes the Lua runtime
+     * 
+     */
     void LuaRuntime::Init()
     {
         state = luaL_newstate();
@@ -32,11 +36,17 @@ namespace Lynx::Lua {
 
 
     }
+
     void LuaError(lua_State* L)
     {
         log_error("%s", lua_tostring(L,-1));
     }
 
+    /**
+     * @brief Loads a script file
+     * 
+     * @param path 
+     */
     void LuaRuntime::Load(char* path)
     {
         int success;

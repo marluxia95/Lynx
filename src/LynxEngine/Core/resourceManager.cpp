@@ -11,10 +11,16 @@ namespace Lynx {
 
 ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
 {
+#ifdef LYNX_MULTITHREAD
 	EventManager::AddListener(AsyncTextureLoad, [this](const Event& ev){
 		const AsyncTextureLoadEvent& event = static_cast<const AsyncTextureLoadEvent&>(ev);
+		log_debug("b");
+		LYNX_ASSERT(event.Tex, "Fuck");
+		event.Tex->GetResourceID();
+		log_debug("a");
 		event.Tex->Generate();
     });
+#endif
 }
 
 ResourceManager::~ResourceManager() 
@@ -22,32 +28,41 @@ ResourceManager::~ResourceManager()
 	Clear();
 }
 
-
+/**
+ * @brief Clear all resources ( UNUSED )
+ * 
+ */
 void ResourceManager::Clear() 
 {
 	log_debug("Cleaning resources");
 }
 
+/**
+ * @brief Updates the resource queue ( UNUSED )
+ * 
+ */
 void ResourceManager::Update(float dt)
-{
+{/*
 #ifdef LYNX_MULTITHREAD
-	if(!texdata_queue.empty()) {
-		Graphics::TextureBase* tex;
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			tex = texdata_queue.front();
-		}
+	if(texdata_queue.empty()) 
+		return;
 
-		log_debug("Uploading texture %s to GPU", tex->GetResourcePath());
-
-		tex->Generate();
-		
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			texdata_queue.pop();
-		}
+	Graphics::TextureBase* tex;
+	{
+		std::unique_lock<std::mutex> lock(queue_mutex);
+		tex = texdata_queue.front();
 	}
-#endif
+
+	log_debug("Uploading texture %s to GPU", tex->GetResourcePath());
+
+	tex->Generate();
+		
+	{
+		std::unique_lock<std::mutex> lock(queue_mutex);
+		texdata_queue.pop();
+	}
+	
+#endif*/
 }
 
 const char* ResourceManager::getFileName(const char* path)
@@ -62,6 +77,13 @@ const char* ResourceManager::getFileName(const char* path)
 	return "";
 }
 
+/**
+ * @brief Loads a shader resource
+ * 
+ * @param vpath Vertex shader path
+ * @param fpath Fragment shader path
+ * @return std::shared_ptr<Graphics::Shader> 
+ */
 std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
 {
 	std::string name = std::string(vpath);
@@ -75,6 +97,13 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
 	return n_shader;
 }
 
+/**
+ * @brief Loads a texture
+ * 
+ * @param path Texture path
+ * @param type Texture type
+ * @return std::shared_ptr<Graphics::TextureBase> 
+ */
 std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path, Graphics::TextureType type)
 {
 	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
@@ -90,22 +119,24 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	
 #ifdef LYNX_MULTITHREAD
 	auto n_tex = std::make_shared<Graphics::Texture>(type);
-	TexObj* obj = new TexObj();
-	*obj = {n_tex, path};
+	TexObj* obj = new TexObj{n_tex, path};
+
+	log_debug("Texture %s", obj->path.c_str());
+
 	log_debug("Starting to load texture %s in async mode", path);
 	thpool->PushJob([this](void* data){
 		TexObj* tdata = (TexObj*)data;
 		std::shared_ptr<Graphics::TextureBase> tex = tdata->tex;
 
-		log_debug("Processing texture %s", tdata->path);
+		log_debug("Processing texture %s", tdata->path.c_str());
 
 		tex->LoadFromFile(tdata->path);
 
-		{
-			std::unique_lock<std::mutex> lock(queue_mutex);
-			EventManager::SendEvent(AsyncTextureLoadEvent(tex));
-		}
-		log_debug("Added texture %s to GPU queue", tex->GetResourcePath());
+		EventManager::SendEvent(AsyncTextureLoadEvent(tex));
+
+		log_debug("Added texture %s to GPU queue", tex->GetResourcePath().c_str());
+		free(tdata);
+		LYNX_ASSERT(tex, "Fuck");
 		return;
 	}, obj);
 #else 
@@ -119,6 +150,15 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	return n_tex;
 }
 
+/**
+ * @brief Loads a mesh
+ * 
+ * @param name 
+ * @param vertices 
+ * @param indices 
+ * @param type 
+ * @return std::shared_ptr<Graphics::Mesh> 
+ */
 std::shared_ptr<Graphics::Mesh> 
 ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, 
 	std::vector<unsigned int>* indices, 
@@ -135,6 +175,12 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 	return n_shader;
 }
 
+/**
+ * @brief Finds a resource by its path
+ * 
+ * @param path 
+ * @return std::shared_ptr<ResourceBase> 
+ */
 std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(const std::string path)
 {
 	for(auto const& [k,v] : resource_map) {

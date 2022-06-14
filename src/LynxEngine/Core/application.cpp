@@ -67,6 +67,11 @@ namespace Lynx {
 #endif
     }
 
+    /**
+     * @brief Initializes the application instance
+     * 
+     * @param flags Not used
+     */
     void Application::Init(int flags)
     {
         log_debug("Sending event init");
@@ -78,6 +83,10 @@ namespace Lynx {
         log_debug("Successfully initialized application");
     }
 
+    /**
+     * @brief Calculates the frametime
+     * 
+     */
     void Application::CalculateFrameTime()
     {
         float current_FrameTime = glfwGetTime();
@@ -85,13 +94,18 @@ namespace Lynx {
         last_FrameTime = current_FrameTime;
     }
 
-    // Main Loop
-
+    /**
+     * @brief Runs the main loop
+     * 
+     */
     void Application::Run()
     {
         do
         {
             CalculateFrameTime();
+#ifdef LYNX_MULTITHREAD
+            EventManager::UpdateListeners();
+#endif
             if(applicationState == STATE_ACTIVE) {
                 EventManager::SendEvent(UpdateTickEvent());
 
@@ -147,6 +161,10 @@ namespace Lynx {
         log_debug("Successfully initialized application");
     }
 
+    /**
+     * @brief Loads the game's default systems
+     * 
+     */
     void GameApplication::LoadDefaultSystems()
     {
         log_debug("Loading default systems");
@@ -167,22 +185,40 @@ namespace Lynx {
         }
     }
 
+    /**
+     * @brief Returns the window's resulution width
+     * 
+     * @return unsigned int 
+     */
     unsigned int GameApplication::GetResolutionWidth()
     {
         return m_windowManager->window_width;
     }
 
+    /**
+     * @brief Returns the window's resuliotn height
+     * 
+     * @return unsigned int 
+     */
     unsigned int GameApplication::GetResolutionHeight()
     {
         return m_windowManager->window_height;
     }
 
+    /**
+     * @brief Runs the game's main loop
+     * 
+     */
     void GameApplication::Run()
     {
         EventManager::SendEvent(FirstTickEvent());
         do
         {
             CalculateFrameTime();
+
+#ifdef LYNX_MULTITHREAD
+            EventManager::UpdateListeners();
+#endif
             
             if(applicationState == STATE_ACTIVE) {
                 EventManager::SendEvent(UpdateTickEvent());
@@ -202,6 +238,11 @@ namespace Lynx {
         ModuleManager::UnloadAllModules();
     }
 
+    /**
+     * @brief Sets the game's current scene
+     * 
+     * @param n_scene 
+     */
     void GameApplication::SetScene(std::shared_ptr<Scene> n_scene)
     {
         if(scene_listener.GetID())
@@ -213,6 +254,10 @@ namespace Lynx {
         n_scene->Init();
     }
 
+    /**
+     * @brief Loads the default components
+     * 
+     */
     void GameApplication::LoadDefaultComponents()
     {
         log_debug("Loading default components");

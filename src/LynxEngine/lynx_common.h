@@ -15,3 +15,10 @@
 #define LYNX_VERSION_RELEASE 3
 #define LYNX_VERSION LYNX_VERSION_MAJOR.LYNX_VERSION_MINOR.LYNX_VERSION_RELEASE
 
+// Only enable if you want to use multithread features. This is still in development
+//#define LYNX_MULTITHREAD
+
+// Enable if you want to debug rendering process
+//#define LYNX_RENDER_DEBUG
+
+//#define JOYSTICK_SUPPORT

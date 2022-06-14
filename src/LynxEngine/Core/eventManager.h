@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <map>
 #include <functional>
+#include <queue>
 #include "Events/event.h"
 #include "lynx_common.h"
 
@@ -53,6 +54,13 @@ namespace Lynx {
             static void RemoveListener(const EventType& type, EventListener listener);
 
         private:
+            friend class Application;
+            friend class GameApplication;
+#ifdef LYNX_MULTITHREAD
+            static void UpdateListeners();
+            static std::queue<Event> event_queue;
+            static std::mutex queue_mutex;
+#endif
             static std::map<EventType, std::vector<EventListener>> listeners;
             static unsigned int last_ev_id;
     };
