@@ -1,3 +1,11 @@
+/**
+ * @file eventManager.h
+ * @author marlxx (marlxx@protonmail.com)
+ * @brief This file contains all the event handling. 
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef EVENTMANAGER_H
 #define EVENTMANAGER_H
 

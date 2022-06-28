@@ -1,3 +1,11 @@
+/**
+ * @file inputManager.h
+ * @author marlxx (marlxx@protonmail.com)
+ * @brief This file contains all the input handling, including gamepads.
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 

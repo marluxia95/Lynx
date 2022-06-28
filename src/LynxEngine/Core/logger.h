@@ -1,3 +1,11 @@
+/**
+ * @file logger.h
+ * @author marlxx (marlxx@protonmail.com)
+ * @brief This includes all the log handling 
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef LOGGER_H
 #define LOGGER_H
 

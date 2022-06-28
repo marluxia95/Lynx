@@ -46,6 +46,7 @@ Demo::Demo(int argc, char** argv)
 	Lynx::EventManager::AddListener(Lynx::JoystickDisconnected, input.joystick_disconnected);
 
 	RegisterSystem<Lynx::Lua::LuaRuntime>();
+	Lynx::ModuleManager::LoadEngineModule("LynxPhysics");
 
 	log_info("Adding scene");
 	SetScene(std::make_shared<DemoScene>());

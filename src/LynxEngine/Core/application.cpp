@@ -19,6 +19,7 @@
 #include "Systems/lightingSystem.h"
 #include "Systems/cameraSystem.h"
 #include "Systems/renderSystem.h"
+#include "Systems/transformSystem.h"
 
 #include "ECS/systemManager.h"
 #include "ECS/components.h"
@@ -125,12 +126,6 @@ namespace Lynx {
 
     GameApplication::~GameApplication()
     {
-        ModuleManager::UnloadAllModules();
-
-#ifdef LYNX_MULTITHREAD
-        m_threadPool->Wait();
-#endif
-
         if(m_windowManager != nullptr)
             m_windowManager->Destroy();
     }
@@ -168,6 +163,13 @@ namespace Lynx {
     void GameApplication::LoadDefaultSystems()
     {
         log_debug("Loading default systems");
+        RegisterSystem<TransformSystem>();
+        {
+            Signature signature;
+            signature.set(GetComponentType<Transform>());
+            SetSystemSignature<TransformSystem>(signature);
+        }
+
         RegisterSystem<CameraSystem>();
         {
             Signature signature;
@@ -235,7 +237,6 @@ namespace Lynx {
             m_windowManager->Update();
         } while(( !glfwWindowShouldClose(m_windowManager->window) ) | applicationState == STATE_CLOSED);
         EventManager::SendEvent(LastTickEvent());
-        ModuleManager::UnloadAllModules();
     }
 
     /**
@@ -263,6 +264,7 @@ namespace Lynx {
         log_debug("Loading default components");
         RegisterComponent<Transform>();
         RegisterComponent<Generic>();
+        RegisterComponent<Parent>();
         RegisterComponent<MeshRenderer>();
         RegisterComponent<Camera>();
         RegisterComponent<Children>();

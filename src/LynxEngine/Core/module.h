@@ -1,3 +1,14 @@
+/**
+ * @file module.h
+ * @author marlxx (marlxx@protonmail.com)
+ * @brief Modules are external parts of the engine that are optional to use. They are basically external shared libraries that are loaded in runtime and used 
+ * for things such as physics, etc. This file contains all the necesary code to load, initialize and unload modules, for per-system implementations, please go to
+ * impl/
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef LYNX_MODULE_H
 #define LYNX_MODULE_H
 
@@ -36,6 +47,10 @@ namespace Lynx {
 
     };
 
+    /**
+     * @brief Class to handle module managing
+     * 
+     */
     class LYNXENGINE_API ModuleManager {
 
         public:

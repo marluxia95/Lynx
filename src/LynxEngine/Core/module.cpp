@@ -14,12 +14,19 @@ namespace Lynx {
     
     std::map<std::string, IModuleLoader<IModule>*> ModuleManager::loaded_modules = std::map<std::string, IModuleLoader<IModule>*>();
 
+    /**
+     * @brief Loads an engine module, then initializes it
+     * 
+     * @param path 
+     * @return std::shared_ptr<IModule> 
+     */
     std::shared_ptr<IModule> ModuleManager::LoadEngineModule(std::string path)
     {
         std::string module_name = Utils::GetFileName(path);
 
         loaded_modules[module_name] = new ModuleLoader<IModule>(module_name);
         loaded_modules[module_name]->Load();
+        loaded_modules[module_name]->GetInstance()->Init();
 
         return loaded_modules[module_name]->GetInstance();
     }
@@ -28,6 +35,7 @@ namespace Lynx {
     {
         log_debug("Unloading modules...");
         for(auto const& [n,i] : loaded_modules) {
+            log_debug("Unloading %s", typeid(i).name());
             i->Unload();
             delete i;
         }

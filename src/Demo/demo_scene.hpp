@@ -40,6 +40,8 @@ class DemoScene : public Lynx::Scene {
                 cube_meshRenderer->mat = mat;
             }
 
+            //AddComponent<Lynx::PhysicsObject>(cube, Lynx::PhysicsObject(10.0f));
+
             Lynx::Entity floor = loader.LoadModel("res/models/plane.fbx");
 
             Lynx::Graphics::Material floor_mat(shader);
@@ -84,7 +86,6 @@ class DemoScene : public Lynx::Scene {
             }
 
             log_debug("Scene initialized");
-
         }
 
         void Destroy() override {

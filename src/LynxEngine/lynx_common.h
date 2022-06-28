@@ -19,6 +19,6 @@
 //#define LYNX_MULTITHREAD
 
 // Enable if you want to debug rendering process
-//#define LYNX_RENDER_DEBUG
+#define LYNX_RENDER_DEBUG
 
 //#define JOYSTICK_SUPPORT

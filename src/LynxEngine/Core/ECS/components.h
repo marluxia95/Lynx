@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+#include "Core/application.h"
 #include "Graphics/shader.h"
 #include "Graphics/mesh.h"
 #include "Graphics/texture.h"
@@ -15,19 +16,21 @@ using namespace glm;
 
 namespace Lynx {
 
-	class ComponentBase {};
+	class ComponentBase {
+	};
 
 	class Transform : public ComponentBase {
 	public:
 		Transform() : position(vec3(0)), rotation(vec3(0)), scale(vec3(0)) {}
 		Transform(vec3 pos, vec3 rot, vec3 scale) : position(pos), rotation(rot), scale(scale) {}
 		vec3 position;
-		vec3 rotation;
+		vec3 rotation; // Euler rotation
 		vec3 scale;
+		mat4 model;
 
-		mat4 GetModel()
+		inline mat4 CalculateModelMatrix()
 		{
-			mat4 model = mat4(1.0f);
+			mat4 modelMatrix = mat4(1.0f);
 
 			mat4 positionMatrix = glm::translate(model, position);
 			mat4 scaleMatrix = glm::scale(model, scale);
@@ -35,7 +38,7 @@ namespace Lynx {
 			mat4 rotationMatrix_y = glm::rotate(model, glm::radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
 			mat4 rotationMatrix_z = glm::rotate(model, glm::radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 			mat4 rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-			model = positionMatrix * scaleMatrix * rotationMatrix;
+			modelMatrix = positionMatrix * scaleMatrix * rotationMatrix;
 
 			return model;	
 		}

@@ -1,3 +1,12 @@
+/**
+ * @file application.h
+ * @author marlxx (marlxx@protonmail.com)
+ * @brief This contains all the main application logic, loops, etc. 
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef APPLICATION_H
 #define APPLICATION_H
 

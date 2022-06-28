@@ -74,14 +74,14 @@ namespace Lynx {
 
             mMaterial.shader->SetUniform("projection", mCameraComponent->Projection);
             mMaterial.shader->SetUniform("view", mCameraComponent->View);
-            mMaterial.shader->SetUniform("model", mTransform->GetModel());
+            mMaterial.shader->SetUniform("model", mTransform->model);
             mMaterial.shader->SetUniform("color", mRenderComponent->ambient);
             mMaterial.shader->SetUniform("viewPos", mCameraTransform->position);
 
 #ifdef LYNX_RENDER_DEBUG
-            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n Texture ? %s\n Diffuse map %s\n Specular map ? %s\n  --------------------------", 
+            log_debug("\n--------------------------\n Render3D() :\nCamera nº%d \n Camera projection : %s\n Camera view : %s\n Camera position : %s\n Render Object : %d\n Texture ? %s\n Diffuse map %s\n Specular map ? %s\n Model matrix %s \n --------------------------", 
                 cameraEntity,glm::to_string(mCameraComponent->Projection).c_str(),glm::to_string(mCameraComponent->View).c_str(),glm::to_string(mCameraTransform->position).c_str(), entity,
-                "no", mMaterial.texture_diffuse->GetResourcePath().c_str(), "no");
+                "no", mMaterial.texture_diffuse->GetResourcePath().c_str(), "no", glm::to_string(mTransform->model).c_str());
 #endif
             
 			if(mRenderComponent->lighting | mLightingSystem->entities.size()){

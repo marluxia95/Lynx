@@ -9,12 +9,10 @@ namespace Lynx {
 
     Entity::Entity(const EntityID& id) : m_id(id), m_scene(GameApplication::GetGameInstance()->GetScene()), m_parentEnt(NULL)
     {   
-        AddComponent(Children{});
     }
 
     Entity::Entity(Scene* scene, EntityID id) : m_id(id), m_scene(scene), m_parentEnt(NULL)
     {
-        AddComponent(Children{});
     }
 
     void Entity::AddChild(Entity ent) 
