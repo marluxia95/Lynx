@@ -15,8 +15,6 @@ namespace Lynx {
         {"LastTick",                LastTick},
         {"UpdateTick",              UpdateTick},
         {"EngineInit",              EngineInit},
-        {"SignatureChanged",        SignatureChanged},
-        {"EntityDestroyed",         EntityDestroyed},
         {"Render",                  Render},
         {"AsyncTextureLoad",        AsyncTextureLoad}
     };

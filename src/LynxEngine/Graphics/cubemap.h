@@ -5,9 +5,9 @@
 #include <vector>
 #include <memory>
 #include "shader.h"
-#include "vertexArray.h"
+#include "vertex_array.h"
+#include "buffers.h"
 #include "texture.h"
-#include "lynx_common.h"
 
 namespace Lynx::Graphics {
 

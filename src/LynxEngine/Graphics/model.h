@@ -21,8 +21,6 @@
 #include "mesh.h"
 
 #include "Core/scene.h"
-#include "Core/ECS/components.h"
-#include "Core/ECS/common.h"
 
 #include "lynx_common.h"
 
@@ -34,9 +32,8 @@ namespace Lynx {
 
 		public:
 			ModelLoader(Scene* scene) : scene(scene) {}
-			Entity LoadModel(const char* path);
-			Entity LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
-			std::shared_ptr<Graphics::Mesh> ProcessMesh( const char* path, aiMesh* mesh);
+			// TODO
+			//std::shared_ptr<Graphics::Mesh> ProcessMesh( const char* path, aiMesh* mesh);
 		
 	};
 

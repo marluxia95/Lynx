@@ -11,7 +11,7 @@
 #include "threadpool.h"
 #include "application.h"
 #include "logger.h"
-#include "Utils/colour.h"
+#include "Utils/term.h"
 
 static std::mutex out_mutex;
 
@@ -54,19 +54,8 @@ void log_print(log_Event* ev)
 
 	std::unique_lock<std::mutex> lock(out_mutex);
 
-	if(Lynx::Application::GetInstance() != nullptr) {
-		if(Lynx::Application::GetInstance()->GetThread() == ev->th_id){
-			std::cout << std::string(buf)  << Utils::GetColourString(Utils::FG_ORANGE) << " MAIN " << Utils::GetColourString(Utils::FG_WHITE) 
-				<< getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
-						" ";
-		}else{
-			std::cout << std::string(buf) << " WORKER " << Lynx::GameApplication::GetGameInstance()->GetThreadPool()->GetWorkerID(ev->th_id) << " " 
-			<< getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE);
-		}
-	}else{
-		std::cout << std::string(buf) << getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
+	std::cout << std::string(buf) << getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
 					" ";
-	}
 	
 	vprintf(ev->format, ev->ap);
 	std::cout << Utils::GetColourString(Utils::FG_WHITE) << std::endl;

@@ -7,7 +7,7 @@
 #include <gli/gli.hpp>
 #include "lynx_common.h"
 #include "Core/resource.h"
-#include "rendererAPI.h"
+#include "graphics_api.h"
 
 namespace Lynx::Graphics {
 

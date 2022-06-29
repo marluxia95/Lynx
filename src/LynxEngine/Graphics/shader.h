@@ -7,9 +7,7 @@
 #include <map>
 #include <vector>
 #include "Core/resource.h"
-#include "lynx_common.h"
-#include "debug.h"
-#include "rendererAPI.h"
+#include "graphics_api.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048

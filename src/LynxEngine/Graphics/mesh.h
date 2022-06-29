@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <GL/glew.h> 
 #include <glm/glm.hpp>
-#include "vertexArray.h"
+
+#include "Core/resource.h"
+#include "vertex_array.h"
 #include "buffers.h"
 #include "lynx_common.h"
-#include "Core/resource.h"
 
 using namespace glm;
 

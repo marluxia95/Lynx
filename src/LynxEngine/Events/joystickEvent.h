@@ -1,7 +1,7 @@
 #ifndef JOYSTICK_EVENT_H
 #define JOYSTICK_EVENT_H
 
-#include "Core/inputManager.h"
+#include "Core/input.h"
 #include "event.h"
 
 namespace Lynx {

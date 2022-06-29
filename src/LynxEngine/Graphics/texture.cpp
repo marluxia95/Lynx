@@ -1,10 +1,9 @@
 #include <stdio.h>
-#include <GL/glew.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-#include "Platform/OpenGL/GLRendererAPI.h"
+#include "Platform/OpenGL/gl_graphics_api.h"
 
 #include <chrono>
 #include "texture.h"

@@ -1,6 +1,6 @@
-#pragma once
+#ifndef RESOURCE_H
+#define RESOURCE_H
 #include <string>
-#include "logger.h"
 
 namespace Lynx {
 
@@ -24,3 +24,4 @@ namespace Lynx {
 	};
 
 }
+#endif

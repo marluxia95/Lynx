@@ -2,6 +2,6 @@
 
 int main(int argc, char** argv) 
 {
-    Demo demo(argc, argv);
+    Demo demo(int argc, char** argv);
     return 0;
 }

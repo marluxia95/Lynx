@@ -11,7 +11,7 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g" )
 endif()
 
 add_executable( 
-    Demo main.cpp demo.cpp input.cpp
+    Demo main.cpp demo.cpp
 )
 
 target_include_directories(Demo PRIVATE $(ENGINE))

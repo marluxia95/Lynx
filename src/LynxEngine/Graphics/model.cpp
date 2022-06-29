@@ -3,7 +3,7 @@
 
 namespace Lynx {
 
-
+/*		TODO
 
 Entity ModelLoader::LoadModel(const char* path)
 {
@@ -96,5 +96,5 @@ std::shared_ptr<Graphics::Mesh> ModelLoader::ProcessMesh(const char* path, aiMes
 	log_debug("ModelLoader : Indices processed");
 	return Lynx::GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL);
 }
-
+*/
 }

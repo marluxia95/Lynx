@@ -4,9 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-#include <GL/glew.h>
 #include "mesh.h"
-#include "lynx_common.h"
 
 using namespace glm;
 
@@ -20,7 +18,7 @@ namespace Lynx::Graphics {
 		vec2 TextureCoords;
 	};
 
-	void debugVBO(std::vector<Vertex>* vertices, std::vector<GLuint>* indices);
+	void debugVBO(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices);
 
 	class LYNXENGINE_API VertexBuffer{
 	public:
@@ -52,7 +50,7 @@ namespace Lynx::Graphics {
 		static std::unique_ptr<ElementBuffer> Create();
 		static std::unique_ptr<ElementBuffer> Create(unsigned int size);
 		static std::unique_ptr<ElementBuffer> Create(const void* indices, unsigned int indexNumber);
-        static std::unique_ptr<ElementBuffer> Create(std::vector<GLuint>* indices);
+        static std::unique_ptr<ElementBuffer> Create(std::vector<unsigned int>* indices);
     };
 
 }

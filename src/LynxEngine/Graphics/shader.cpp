@@ -19,9 +19,8 @@
 #include "Core/logger.h"
 #include "Core/assert.h"
 #include "Utils/path.hpp"
-#include "debug.h"
 
-#include "Platform/OpenGL/GLShader.h"
+#include "Platform/OpenGL/gl_shader.h"
 
 namespace Lynx::Graphics {
 
@@ -129,7 +128,7 @@ namespace Lynx::Graphics {
 		success = program->Link();
 
 		for( auto& shobj : shader_objs ) {
-			glDeleteShader(shobj.shader);
+			Graphics::RendererAPI::DestroyShader(shobj.shader);
 		}
 	}
 
@@ -157,7 +156,7 @@ namespace Lynx::Graphics {
 	int Shader::getUniformLocation(const char* uniformName)
 	{
 		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
-			int loc = glGetUniformLocation(program->GetID(), uniformName);
+			int loc = Graphics::RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
 			uniform_cache_map.insert({uniformName, loc});
 			return loc;
 		}else{
@@ -165,12 +164,14 @@ namespace Lynx::Graphics {
 		}
 	}
 
+	// FIXME : Improve these templates please its giving me a headache
+
 	template <>
 	void Shader::SetUniform(const char* name, bool value)
     {
 		if(!success) return;
 
-        glUniform1i(getUniformLocation(name), value);
+		Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -178,7 +179,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniform1i(getUniformLocation(name), value);
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -186,7 +187,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniform1f(getUniformLocation(name), value);
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -194,7 +195,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniform2fv(getUniformLocation(name), 1, &value[0]);
+		Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -202,7 +203,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniform3fv(getUniformLocation(name), 1, &value[0]);
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -210,7 +211,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniform4fv(getUniformLocation(name), 1, &value[0]);
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -218,7 +219,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -226,7 +227,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 	template <>
@@ -234,7 +235,7 @@ namespace Lynx::Graphics {
     {
 		if(!success) return;
 		
-        glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
     }
 
 

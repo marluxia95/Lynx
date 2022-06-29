@@ -1,9 +1,7 @@
-#include <glm/glm.hpp>
-#include "Core/logger.h"
+/*
+#include <GL/glew.h>
 #include "cubemap.h"
-#include "texture.h"
 #include "Core/application.h"
-#include "rendererAPI.h"
 
 namespace Lynx::Graphics {
 
@@ -55,11 +53,11 @@ namespace Lynx::Graphics {
 
 	Cubemap::Cubemap(std::shared_ptr<TextureBase> texture) : texture(texture)
 	{
-		Lynx::GameApplication* applicationInstance = GameApplication::GetGameInstance();
+		Lynx::Application* application = Application::GetSingleton();
         log_debug("Creating cubemap ...");
 
 		log_debug("Loading cubemap shader...");
-	    shader = applicationInstance->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.vert", "res/shaders/standard/cubemap.frag");
+	    shader = application->GetResourceManager()->LoadShader("res/shaders/standard/cubemap.vert", "res/shaders/standard/cubemap.frag");
 
 		//glGenTextures(1, &texture->texture);
 		//glBindTexture(GL_TEXTURE_CUBE_MAP, texture->texture);
@@ -71,9 +69,6 @@ namespace Lynx::Graphics {
 		glEnableVertexAttribArray(0);
 	    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		//VBO->Configure(MESH_3D);
-		/*glBindBuffer(GL_ARRAY_BUFFER, VBO);  
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cubemapVertices), &cubemapVertices, GL_STATIC_DRAW);
-		*/
 	}
 
 	Cubemap::~Cubemap()
@@ -97,3 +92,4 @@ namespace Lynx::Graphics {
 	}
 
 }
+*/
