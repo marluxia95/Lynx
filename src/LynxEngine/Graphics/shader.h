@@ -34,7 +34,7 @@ namespace Lynx {
             char error_log[MAX_ERR_BUFSIZE];
     };
 
-    class LYNXENGINE_API Shader : public ResourceBase {
+    class LYNXENGINE_API Shader : public Resource {
         private:
             class ShaderObj {
             public:

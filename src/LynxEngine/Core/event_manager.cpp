@@ -14,13 +14,6 @@ std::queue<Event> EventManager::event_queue;
 std::map<EventType, std::vector<EventListener>> EventManager::listeners = std::map<EventType, std::vector<EventListener>>();
 unsigned int EventManager::last_ev_id = 0;
 
-/**
- * @brief Adds a listener
- * 
- * @param type Listener type
- * @param func Callback function
- * @return EventListener 
- */
 EventListener EventManager::AddListener(const EventType& type, EventCallbackFunc&& func)
 {
     EventListener n_listener = EventListener(func, last_ev_id++);
@@ -28,12 +21,6 @@ EventListener EventManager::AddListener(const EventType& type, EventCallbackFunc
     return n_listener;
 }
 
-/**
- * @brief Removes a listener
- * 
- * @param type Listener type
- * @param listener Listener
- */
 void EventManager::RemoveListener(const EventType& type, EventListener listener)
 {
     auto p = std::find(listeners[type].begin(), listeners[type].end(), listener);
@@ -44,11 +31,6 @@ void EventManager::RemoveListener(const EventType& type, EventListener listener)
     listeners[type].erase(p);
 }
 
-/**
- * @brief Sends an event signal
- * 
- * @param event 
- */
 void EventManager::SendEvent(const Event& event)
 {
 #ifdef LYNX_MULTITHREAD
@@ -69,10 +51,6 @@ void EventManager::SendEvent(const Event& event)
 }
 
 #ifdef LYNX_MULTITHREAD
-/**
- * @brief Updates the event_queue
- * 
- */
 void EventManager::UpdateListeners() 
 {
     std::unique_lock<std::mutex> lock(queue_mutex);

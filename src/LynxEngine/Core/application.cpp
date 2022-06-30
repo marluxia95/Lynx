@@ -38,10 +38,15 @@ namespace Lynx {
 
 #ifdef LYNX_MULTITHREAD
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");
-        m_threadPool = std::make_shared<ThreadPool>(3);
+        m_threadPool.reset(new ThreadPool(4));
 #endif
 
         s_applicationInstance = this;
+
+        m_resourceManager.reset(new ResourceManager());
+        m_windowManager.reset(new WindowManager());
+        
+
     }
 
     Application::~Application()
@@ -62,9 +67,22 @@ namespace Lynx {
         log_debug("Sending event init");
         EventManager::SendEvent(InitEvent());
 
-        log_debug("Initializing systems");
+        log_debug("Initializing subsystems");
+        m_windowManager->Init();
+        Input::Init();
 
         log_debug("Successfully initialized application");
+    }
+
+    void Application::SetRenderer(std::shared_ptr<Graphics::Renderer> renderer)
+    {
+        if(m_renderer && m_renderer != renderer) 
+        {
+            m_renderer->Shutdown();
+        }
+
+        m_renderer = renderer;
+        m_renderer->Initialise();
     }
 
     /**
@@ -84,21 +102,34 @@ namespace Lynx {
      */
     void Application::Run()
     {
+        
+        EventManager::SendEvent(FirstTickEvent());
         do
         {
+            
             CalculateFrameTime();
 #ifdef LYNX_MULTITHREAD
             EventManager::UpdateListeners();
 #endif
-            if(applicationState == STATE_ACTIVE) {
-                EventManager::SendEvent(UpdateTickEvent());
 
-                // Update logic
-                EventManager::SendEvent(RenderEvent());
-            }
+            // Update logic
+            EventManager::SendEvent(RenderEvent());
+            EventManager::SendEvent(UpdateTickEvent());
 
-        } while(applicationState != STATE_CLOSED);
+           m_windowManager->Update();
+        } while(!m_windowManager->ShouldClose());
         EventManager::SendEvent(LastTickEvent());
+        m_windowManager->Destroy();
+    }
+
+    uint Application::GetResolutionHeight()
+    {
+        return m_windowManager->GetHeight();
+    }
+
+    uint Application::GetResolutionWidth()
+    {
+        return m_windowManager->GetWidth();
     }
 
 }

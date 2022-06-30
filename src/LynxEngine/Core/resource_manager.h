@@ -37,6 +37,7 @@ namespace Lynx {
 				std::string path;
 			} TexObj;
 		public:
+			ResourceManager();
 			ResourceManager(ThreadPool* pool);
 			~ResourceManager();
 			void Clear();
@@ -55,18 +56,19 @@ namespace Lynx {
 				return std::static_pointer_cast<T>(FindResourceByPath(path));
 			}
 
-			std::shared_ptr<ResourceBase> FindResourceByPath(const std::string path);
+			std::shared_ptr<Resource> FindResourceByPath(const std::string path);
 
 		private:
 			int lastId;
 			
-			std::map<long int, std::shared_ptr<ResourceBase>> resource_map = {};
+			std::map<long int, std::shared_ptr<Resource>> resource_map = {};
 
 			std::queue<Graphics::TextureBase*> texdata_queue;
 			std::mutex queue_mutex;
 
 			//static void async_loadCubemapTexData(void* data);
 			const char* getFileName(const char* path);
+
 
 			ThreadPool* thpool;
 	

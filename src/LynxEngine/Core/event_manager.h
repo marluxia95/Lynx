@@ -48,23 +48,38 @@ namespace Lynx {
 
         public:
 
-            /*
-                Adds a listener to an event
-            */
+            /**
+             * @brief Adds a listener
+             * 
+             * @param type Listener type
+             * @param func Callback function
+             * @return EventListener 
+             */
             static EventListener AddListener(const EventType& type, EventCallbackFunc&& func);
 
-            /*
-                Sends an event signal
-            */
+            /**
+             * @brief Sends an event signal
+             * 
+             * @param event 
+             */
             static void SendEvent(const Event& event);
 
-
+            /**
+             * @brief Removes a listener
+             * 
+             * @param type Listener type
+             * @param listener Listener
+             */
             static void RemoveListener(const EventType& type, EventListener listener);
 
         private:
             friend class Application;
             friend class GameApplication;
 #ifdef LYNX_MULTITHREAD
+            /**
+             * @brief Updates the event_queue, ONLY FOR MULTITHREAD
+             * 
+             */
             static void UpdateListeners();
             static std::queue<Event> event_queue;
             static std::mutex queue_mutex;

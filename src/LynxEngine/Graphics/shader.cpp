@@ -32,12 +32,12 @@ namespace Lynx::Graphics {
 		}
 	}
 
-	Shader::Shader() : ResourceBase()
+	Shader::Shader() : Resource()
 	{
 		
 	}
 
-	Shader::Shader(const std::string vertexPath, const std::string fragmentPath) : ResourceBase()
+	Shader::Shader(const std::string vertexPath, const std::string fragmentPath) : Resource()
 	{
 		PushSource(vertexPath, SHADER_VERTEX);
 		PushSource(fragmentPath, SHADER_FRAGMENT);

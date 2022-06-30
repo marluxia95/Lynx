@@ -26,6 +26,8 @@ namespace Lynx {
                 return e.first.c_str();
             }
         }
+
+        return "Unknown";
     }
 
 }

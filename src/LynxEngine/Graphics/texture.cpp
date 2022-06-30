@@ -16,12 +16,12 @@ namespace Lynx::Graphics {
 
 	int TextureBase::total_textures = 0;
 
-	TextureBase::TextureBase(TextureType type) : id(-1), type(type), ResourceBase(), data()
+	TextureBase::TextureBase(TextureType type) : id(-1), type(type), Resource(), data()
 	{ 
 		log_debug("Created new texture");
 	}
 
-	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type), ResourceBase(path), data()
+	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type), Resource(path), data()
 	{ 
 		log_debug("Creating new texture with path %s", path);
 	}

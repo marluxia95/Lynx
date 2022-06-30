@@ -11,7 +11,7 @@
 
 namespace Lynx::Graphics {
 
-	class TextureBase : public ResourceBase {
+	class TextureBase : public Resource {
 		protected:
 			typedef struct TextureData {
 				unsigned char* data;

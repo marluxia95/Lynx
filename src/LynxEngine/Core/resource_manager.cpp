@@ -9,9 +9,10 @@
 
 namespace Lynx {
 
+
 ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
 {
-#ifdef LYNX_MULTITHREAD
+	#ifdef LYNX_MULTITHREAD
 	EventManager::AddListener(AsyncTextureLoad, [this](const Event& ev){
 		const AsyncTextureLoadEvent& event = static_cast<const AsyncTextureLoadEvent&>(ev);
 		log_debug("b");
@@ -20,7 +21,12 @@ ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
 		log_debug("a");
 		event.Tex->Generate();
     });
-#endif
+	#endif
+}
+
+ResourceManager::ResourceManager()
+{
+
 }
 
 ResourceManager::~ResourceManager() 
@@ -92,7 +98,7 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
 		return shader_found;
 
 	auto n_shader = std::make_shared<Graphics::Shader>(vpath, fpath);
-	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_shader);
+	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_shader);
 	
 	return n_shader;
 }
@@ -145,7 +151,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 #endif
 	
 	log_debug("New texture resource id : %ld", n_tex->GetResourceID());
-	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_tex);
+	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_tex);
 	
 	return n_tex;
 }
@@ -170,7 +176,7 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 		return found;
 
 	auto n_shader = std::make_shared<Graphics::Mesh>(name, vertices, indices, type);
-	resource_map[ResourceBase::GetLastID()] = std::static_pointer_cast<ResourceBase>(n_shader);
+	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_shader);
 	
 	return n_shader;
 }
@@ -179,9 +185,9 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
  * @brief Finds a resource by its path
  * 
  * @param path 
- * @return std::shared_ptr<ResourceBase> 
+ * @return std::shared_ptr<Resource> 
  */
-std::shared_ptr<ResourceBase> ResourceManager::FindResourceByPath(const std::string path)
+std::shared_ptr<Resource> ResourceManager::FindResourceByPath(const std::string path)
 {
 	for(auto const& [k,v] : resource_map) {
 		log_debug("checking %ld from %s", k, v->GetResourcePath().c_str());

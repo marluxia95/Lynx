@@ -8,13 +8,16 @@
 #include "Events/mouseEvent.h"
 #include <GLFW/glfw3.h>
 
-GLFWwindow* window;
-
 namespace Lynx {
+
+    GLFWwindow* window;
 
     // Creates a window instance
     void WindowManager::Init(const char* title, unsigned int width, unsigned int height, bool fullScreen)
     {
+        if(window)
+            glfwTerminate();
+
         glfwInit();
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -67,19 +70,36 @@ namespace Lynx {
 
     void WindowManager::SetTitle(const char* title)
     {
+        if(!window)
+            return;
+        
         glfwSetWindowTitle(window, title);
     }
 
     void WindowManager::Update()
     {
+        if(!window)
+            return;
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     void WindowManager::Destroy()
     {
+        if(!window)
+            return;
+        
         log_debug("Terminating %d", window == NULL);
         glfwTerminate();
+    }
+
+    bool WindowManager::ShouldClose()
+    {
+        if(!window)     // Break the loop if the window does not exist
+            return true;
+        
+        return glfwWindowShouldClose(window);
     }
 
 }

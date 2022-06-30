@@ -16,6 +16,7 @@
 #include "scene.h"
 #include "window_manager.h"
 #include "resource_manager.h"
+#include "Graphics/renderer.h"
 #include "threadpool.h"
 
 namespace Lynx {
@@ -51,6 +52,11 @@ namespace Lynx {
 
         std::thread::id GetThread() { return thread_id; };
 
+        void SetRenderer(std::shared_ptr<Graphics::Renderer> renderer);
+
+        uint GetResolutionHeight();
+        uint GetResolutionWidth();
+
         static Application* GetSingleton() { return s_applicationInstance; }
     protected:
         void CalculateFrameTime();
@@ -66,6 +72,7 @@ namespace Lynx {
         std::unique_ptr<ThreadPool> m_threadPool;	
         std::unique_ptr<WindowManager> m_windowManager;
         std::shared_ptr<ResourceManager> m_resourceManager;
+        std::shared_ptr<Graphics::Renderer> m_renderer; 
         
 	};
 

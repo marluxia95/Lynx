@@ -7,7 +7,7 @@
 
 namespace Lynx::Graphics {
 
-    class Material : ResourceBase {
+    class Material : public Resource {
     public:
         Material() : ambient(glm::vec3(1.0f)), diffuse(glm::vec3(1.0f)), specular(glm::vec3(1.0f)) {}
         Material(std::shared_ptr<Graphics::Shader> shader) : ambient(glm::vec3(1.0f)), diffuse(glm::vec3(1.0f)), specular(glm::vec3(1.0f)), shader(shader) {}

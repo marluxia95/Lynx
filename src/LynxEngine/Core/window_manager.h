@@ -12,9 +12,15 @@ namespace Lynx {
             void Update();
 
 			void SetTitle(const char* title);
-			
+
             void Destroy();
 
+			bool ShouldClose();
+
+			uint GetWidth() { return window_width; }
+
+			uint GetHeight() { return window_height; }
+		private:
 			unsigned int window_width = 1280;
 			unsigned int window_height = 720;
 	};
