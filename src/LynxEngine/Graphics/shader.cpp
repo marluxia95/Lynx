@@ -130,6 +130,8 @@ namespace Lynx::Graphics {
 		for( auto& shobj : shader_objs ) {
 			Graphics::RendererAPI::DestroyShader(shobj.shader);
 		}
+
+		return success;
 	}
 
 	/**

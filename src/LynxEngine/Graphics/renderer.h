@@ -27,17 +27,18 @@ namespace Graphics {
          * 
          */
         Renderable() {}
-        Renderable(Material mat) {}
-        Renderable(std::vector<MeshHndlPtr> meshes, Material mat) : 
-            m_meshes(meshes), m_material(mat) {}
+        Renderable(Material mat) : m_material(mat) {}
+        Renderable(MeshHndlPtr mesh, Material mat) : 
+            m_mesh(mesh), m_material(mat) {}
         
         /**
          * @brief Adds a mesh to the renderable object
          * 
          * @param mesh 
          */
-        void AddMesh(MeshHndlPtr mesh) { m_meshes.push_back(mesh); }
-
+        void SetMesh(MeshHndlPtr mesh) { m_mesh = mesh; }
+           
+        MeshHndlPtr GetMesh() { return m_mesh; }
         /**
          * @brief Sets the Material
          * 
@@ -48,7 +49,7 @@ namespace Graphics {
         Material GetMaterial() { return m_material; }
 
     protected:  
-        std::vector<MeshHndlPtr> m_meshes;
+        MeshHndlPtr m_mesh;
         Material m_material;
     };
 
@@ -69,7 +70,7 @@ namespace Graphics {
         std::vector<render_queue_obj> m_renderQueue;
         Camera* m_camera;
     public:
-        Renderer();
+        Renderer() = default;
         
         virtual ~Renderer() = default;
         

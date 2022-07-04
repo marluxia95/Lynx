@@ -56,6 +56,10 @@ namespace Lynx {
 
         void MakeRenderable(bool renderable);
 
+        std::vector<std::shared_ptr<Entity>>* GetChildren();
+
+        void AddChild(std::shared_ptr<Entity> child);
+
         /**
          * @brief Sets the Renderable object
          * 
@@ -71,6 +75,9 @@ namespace Lynx {
 
         const char* m_name;    
         Graphics::RenderHndlPtr m_renderable;
+        
+        std::shared_ptr<Entity> m_parent;
+        std::vector<std::shared_ptr<Entity>> m_children;
     };
 
     typedef std::shared_ptr<Entity> EntityHandlePtr;

@@ -34,12 +34,12 @@ namespace Lynx::Graphics {
 
     void ForwardRenderer::PushRender(Entity ent)
     {
-
+        PushRender(ent.GetRenderHndl(), ent.GetModelMatrix());
     }
     
     void ForwardRenderer::PushRender(RenderHndlPtr renderable, glm::mat4 modelMatrix)
     {
-
+        m_renderQueue.push_back(render_queue_obj{ renderable->GetMaterial(), renderable->GetMesh(), modelMatrix });
     }
 
     void ForwardRenderer::renderSky()
@@ -52,11 +52,13 @@ namespace Lynx::Graphics {
         for(auto& obj : m_renderQueue) {
             
         }
+        m_renderQueue.clear();
     }   
 
     void ForwardRenderer::Render()
     {
-
+        renderSky();
+        renderObjects();
     }
 
 

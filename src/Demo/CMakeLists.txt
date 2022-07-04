@@ -20,7 +20,7 @@ target_include_directories(Demo PRIVATE ${LIBS})
 
 target_link_directories(Demo PRIVATE ${DEPS_INSTALL_DIR}/lib )
 
-find_package(GLEW REQUIRED)
+find_library(GLEW PATHS ${DEPS_MAIN_DIR})
 include_directories(${GLEW_INCLUDE_DIRS})
 
 include_directories( 

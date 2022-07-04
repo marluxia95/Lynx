@@ -1,18 +1,16 @@
 #include "Core/application.h"
 #include "model.h"
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
-/*		TODO
 
-Entity ModelLoader::LoadModel(const char* path)
+EntityHandlePtr ModelLoader::LoadModel(const char* path)
 {
-	Assimp::Importer importer;
-	const aiScene *ai_scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+	const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 
 	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode) 
 	{
-		log_error("ModelLoader : Error while loading model ! %s \n", importer.GetErrorString());
+		log_error("ModelLoader : Error while loading model ! %s \n", m_importer.GetErrorString());
 		return NULL;
 	}
 
@@ -21,21 +19,20 @@ Entity ModelLoader::LoadModel(const char* path)
 	return LoadNode(path, ai_scene->mRootNode, ai_scene);
 }
 
-Entity ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_scene)
+EntityHandlePtr ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_scene)
 {
-	Application* applicationInstance = Lynx::Application::GetInstance();
+	Application* applicationInstance = Lynx::Application::GetSingleton();
 
-	Entity rootEnt = scene->CreateEntity();
-	rootEnt.AddComponent(Transform{});
-
+	EntityHandlePtr rootEnt;
+	
 	if(ai_scene->HasMeshes() != true) {log_error("ModelLoader : File has no meshes !"); return rootEnt;}
 
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
-		rootEnt.AddComponent(MeshRenderer(ProcessMesh(path, mesh)) );
+		rootEnt->SetRenderObj(ProcessMesh(path, mesh));
 		log_debug("Added mesh renderer");
-		break;
+		break; 
 	}
 	
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -43,16 +40,16 @@ Entity ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_s
 		if(node->mChildren[i]->mNumMeshes < 1) 
 			continue;
 		
-		rootEnt.AddChild(LoadNode(path, node->mChildren[i], ai_scene));
+		rootEnt->AddChild(LoadNode(path, node->mChildren[i], ai_scene));
 		log_debug("Added child entity");
 	}
 
 	log_debug("ModelLoader : Processed node");
 }
 
-std::shared_ptr<Graphics::Mesh> ModelLoader::ProcessMesh(const char* path, aiMesh* mesh)
+RenderHndlPtr ModelLoader::ProcessMesh(const char* path, aiMesh* mesh)
 {
-	Application* applicationInstance = Lynx::Application::GetInstance();
+	Application* applicationInstance = Lynx::Application::GetSingleton();
 	std::vector<Graphics::Vertex>* vertices = new std::vector<Graphics::Vertex>();
 	std::vector<unsigned int>* indices = new std::vector<unsigned int>();
 	log_debug("ModelLoader : Starting to process mesh");
@@ -94,7 +91,10 @@ std::shared_ptr<Graphics::Mesh> ModelLoader::ProcessMesh(const char* path, aiMes
 		}
 	}  
 	log_debug("ModelLoader : Indices processed");
-	return Lynx::GameApplication::GetGameInstance()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL);
+
+	// Dirty af
+	return std::make_shared<Renderable>();
+	//return std::make_shared<Renderable>( Lynx::Application::GetSingleton()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL) );
 }
-*/
+
 }

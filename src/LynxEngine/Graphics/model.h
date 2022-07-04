@@ -14,26 +14,20 @@
 #include <assimp/scene.h>
 
 #include "Core/logger.h"
-
-#include "buffers.h"
-#include "texture.h"
-#include "shader.h"
-#include "mesh.h"
-
 #include "Core/scene.h"
 
-#include "lynx_common.h"
+#include "mesh.h"
 
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	class LYNXENGINE_API ModelLoader {
-		private:
-			Scene* scene;
-
-		public:
-			ModelLoader(Scene* scene) : scene(scene) {}
-			// TODO
-			//std::shared_ptr<Graphics::Mesh> ProcessMesh( const char* path, aiMesh* mesh);
+	public:
+		ModelLoader() {}
+		EntityHandlePtr LoadModel(const char* path);
+		EntityHandlePtr LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
+		RenderHndlPtr ProcessMesh(const char* path, aiMesh* mesh);
+	private:
+		Assimp::Importer m_importer;
 		
 	};
 

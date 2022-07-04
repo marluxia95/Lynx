@@ -76,4 +76,15 @@ namespace Lynx {
         m_renderable = render_obj;
     }
 
+    std::vector<std::shared_ptr<Entity>>* Entity::GetChildren()
+    {
+        return &m_children;
+    }
+
+    void Entity::AddChild(std::shared_ptr<Entity> child)
+    {
+        child->m_parent.reset(this);
+        m_children.push_back(child);
+    }
+
 }
