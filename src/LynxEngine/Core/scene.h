@@ -16,13 +16,13 @@ namespace Lynx {
         Scene();
         ~Scene();
 
-        EntityHandlePtr CreateEntity();
-        EntityHandlePtr CreateEntity(const char* name);
+        Entity* CreateEntity();
+        Entity* CreateEntity(const char* name);
 
     private:
         friend class Renderer;
     protected:
-        std::vector<EntityHandlePtr> entities;
+        std::vector<Entity*> m_entities;
     };
 
 }

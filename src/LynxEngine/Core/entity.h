@@ -44,7 +44,7 @@ namespace Lynx {
          * 
          * @return RenderHndlPtr
          */
-        Graphics::RenderHndlPtr GetRenderHndl() const;
+        Graphics::Renderable *GetRenderHndl() const;
 
         /**
          * @brief Checks if the object is renderable
@@ -56,16 +56,16 @@ namespace Lynx {
 
         void MakeRenderable(bool renderable);
 
-        std::vector<std::shared_ptr<Entity>>* GetChildren();
+        std::vector<Entity*>* GetChildren();
 
-        void AddChild(std::shared_ptr<Entity> child);
+        void AddChild(Entity* child);
 
         /**
          * @brief Sets the Renderable object
          * 
          * @param render_obj 
          */
-        void SetRenderObj(Graphics::RenderHndlPtr render_obj);
+        void SetRenderObj(Graphics::Renderable* render_obj);
 
     protected:
         glm::vec3 m_position, m_scale;
@@ -74,13 +74,12 @@ namespace Lynx {
         bool m_isRenderable;
 
         const char* m_name;    
-        Graphics::RenderHndlPtr m_renderable;
+        Graphics::Renderable* m_renderable;
         
-        std::shared_ptr<Entity> m_parent;
-        std::vector<std::shared_ptr<Entity>> m_children;
+        Entity* m_parent;
+        std::vector<Entity*> m_children;
     };
 
-    typedef std::shared_ptr<Entity> EntityHandlePtr;
 
 }
 

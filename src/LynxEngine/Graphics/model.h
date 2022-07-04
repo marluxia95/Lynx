@@ -16,17 +16,22 @@
 #include "Core/logger.h"
 #include "Core/scene.h"
 
+#include "material.h"
 #include "mesh.h"
+
 
 namespace Lynx::Graphics {
 
 	class LYNXENGINE_API ModelLoader {
 	public:
-		ModelLoader() {}
-		EntityHandlePtr LoadModel(const char* path);
-		EntityHandlePtr LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
-		RenderHndlPtr ProcessMesh(const char* path, aiMesh* mesh);
+		ModelLoader(Scene* scene) : m_scene(scene) {}
+		Entity* LoadModel(const char* path);
+	protected:
+		Entity* LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
+		Renderable* ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh);
+		Material ParseMaterial(aiMaterial* mat);
 	private:
+		Scene* m_scene;
 		Assimp::Importer m_importer;
 		
 	};

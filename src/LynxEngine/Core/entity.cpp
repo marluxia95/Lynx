@@ -56,7 +56,7 @@ namespace Lynx {
         return model;
     }
 
-    Graphics::RenderHndlPtr Entity::GetRenderHndl() const
+    Graphics::Renderable* Entity::GetRenderHndl() const
     {
         return m_renderable;
     }
@@ -71,19 +71,19 @@ namespace Lynx {
         m_isRenderable = renderable;
     }
 
-    void Entity::SetRenderObj(Graphics::RenderHndlPtr render_obj)
+    void Entity::SetRenderObj(Graphics::Renderable* render_obj)
     {
         m_renderable = render_obj;
     }
 
-    std::vector<std::shared_ptr<Entity>>* Entity::GetChildren()
+    std::vector<Entity*>* Entity::GetChildren()
     {
         return &m_children;
     }
 
-    void Entity::AddChild(std::shared_ptr<Entity> child)
+    void Entity::AddChild(Entity* child)
     {
-        child->m_parent.reset(this);
+        child->m_parent = this;
         m_children.push_back(child);
     }
 

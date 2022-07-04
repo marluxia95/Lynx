@@ -3,8 +3,7 @@
 
 namespace Lynx::Graphics {
 
-
-EntityHandlePtr ModelLoader::LoadModel(const char* path)
+Entity* ModelLoader::LoadModel(const char* path)
 {
 	const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 
@@ -19,18 +18,18 @@ EntityHandlePtr ModelLoader::LoadModel(const char* path)
 	return LoadNode(path, ai_scene->mRootNode, ai_scene);
 }
 
-EntityHandlePtr ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_scene)
+Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_scene)
 {
 	Application* applicationInstance = Lynx::Application::GetSingleton();
 
-	EntityHandlePtr rootEnt;
+	Entity* rootEnt = m_scene->CreateEntity();
 	
 	if(ai_scene->HasMeshes() != true) {log_error("ModelLoader : File has no meshes !"); return rootEnt;}
 
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
-		rootEnt->SetRenderObj(ProcessMesh(path, mesh));
+		rootEnt->SetRenderObj(ParseMesh(path, ai_scene, mesh));
 		log_debug("Added mesh renderer");
 		break; 
 	}
@@ -47,54 +46,63 @@ EntityHandlePtr ModelLoader::LoadNode(const char* path, aiNode* node, const aiSc
 	log_debug("ModelLoader : Processed node");
 }
 
-RenderHndlPtr ModelLoader::ProcessMesh(const char* path, aiMesh* mesh)
+Renderable* ModelLoader::ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh)
 {
 	Application* applicationInstance = Lynx::Application::GetSingleton();
 	std::vector<Graphics::Vertex>* vertices = new std::vector<Graphics::Vertex>();
 	std::vector<unsigned int>* indices = new std::vector<unsigned int>();
 	log_debug("ModelLoader : Starting to process mesh");
 	// Process vertices
-	for(unsigned int i = 0; i < mesh->mNumVertices; i++) 
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		//log_debug("Creating vertex %d", i);
 		Graphics::Vertex vertex;
-		glm::vec3 vector; 
+		glm::vec3 vector;
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z; 
+		vector.z = mesh->mVertices[i].z;
 		//log_debug("Vertex Pos %f %f %f", mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 		vertex.Position = vector;
 		vector.x = mesh->mNormals[i].x;
 		vector.y = mesh->mNormals[i].y;
 		vector.z = mesh->mNormals[i].z;
 		//log_debug("Vertex Normal %f %f %f", mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-		vertex.Normal = vector; 
-		if(mesh->mTextureCoords[0]){
+		vertex.Normal = vector;
+		if (mesh->mTextureCoords[0]) {
 			glm::vec2 texCoord;
 			texCoord.x = mesh->mTextureCoords[0][i].x;
 			texCoord.y = mesh->mTextureCoords[0][i].y;
 			//log_debug("Texture pos %f %f", mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 			vertex.TextureCoords = texCoord;
-		}else{
+		}
+		else {
 			vertex.TextureCoords = glm::vec2(0.0f);
 		}
-		
+
 		vertices->push_back(vertex);
 	}
 	log_debug("ModelLoader : Vertices processed");
 	// Process indices
-	for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
-		for(unsigned int j = 0; j < face.mNumIndices; j++){
+		for (unsigned int j = 0; j < face.mNumIndices; j++) {
 			indices->push_back(face.mIndices[j]);
 		}
-	}  
+	}
 	log_debug("ModelLoader : Indices processed");
 
 	// Dirty af
-	return std::make_shared<Renderable>();
-	//return std::make_shared<Renderable>( Lynx::Application::GetSingleton()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL) );
+	Renderable* rndl = new Renderable();
+	rndl->SetMesh( Lynx::Application::GetSingleton()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL) );
+	return rndl;
+}
+
+Material ModelLoader::ParseMaterial(aiMaterial* mat)
+{
+	// WIP
+
+	return Material{};
 }
 
 }

@@ -22,7 +22,7 @@ namespace Lynx::Graphics {
         void Shutdown();
 
         void PushRender(Entity ent);
-        void PushRender(RenderHndlPtr renderable, glm::mat4 modelMatrix);
+        void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
 
         void Render();
     private:

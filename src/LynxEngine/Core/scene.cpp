@@ -12,14 +12,18 @@ namespace Lynx {
 
     }
 
-    EntityHandlePtr Scene::CreateEntity()
+    Entity* Scene::CreateEntity()
     {
-        return std::make_shared<Entity>();
+        Entity* newent = new Entity();
+        m_entities.push_back(newent);
+        return newent;
     }
 
-    EntityHandlePtr Scene::CreateEntity(const char* name)
+    Entity* Scene::CreateEntity(const char* name)
     {
-        return std::make_shared<Entity>(name);
+        Entity* newent = new Entity(name);
+        m_entities.push_back(newent);
+        return newent;
     }
 
 
