@@ -83,8 +83,25 @@ namespace Lynx {
 
     void Entity::AddChild(Entity* child)
     {
+        if (!child)
+            return;
+
         child->m_parent = this;
         m_children.push_back(child);
+    }
+
+
+    uint Entity::GetChildrenCount()
+    {
+        return m_children.size();
+    }
+
+    Entity* Entity::GetChildByIndex(uint index)
+    {
+        if (index > m_children.size())
+            return NULL;
+        
+        return m_children[index];
     }
 
 }

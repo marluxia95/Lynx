@@ -84,7 +84,7 @@ namespace Graphics {
 
         virtual void Shutdown() = 0;
 
-        virtual void PushRender(Entity ent) = 0;
+        virtual void PushRender(Entity* ent) = 0;
         virtual void PushRender(Renderable* renderable, glm::mat4 modelMatrix) = 0;
 
         virtual void Render() = 0;

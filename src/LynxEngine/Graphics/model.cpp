@@ -36,7 +36,7 @@ Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_
 	
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		if(node->mChildren[i]->mNumMeshes < 1) 
+		if(!node->mChildren[i]->mNumMeshes) 
 			continue;
 		
 		rootEnt->AddChild(LoadNode(path, node->mChildren[i], ai_scene));
@@ -44,6 +44,8 @@ Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_
 	}
 
 	log_debug("ModelLoader : Processed node");
+
+	return rootEnt;
 }
 
 Renderable* ModelLoader::ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh)

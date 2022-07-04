@@ -5,7 +5,7 @@
 
 namespace Lynx::Graphics {
     
-    class ForwardRenderer : public Renderer {
+    class LYNXENGINE_API ForwardRenderer : public Renderer {
     public:
         ForwardRenderer();
         
@@ -21,7 +21,7 @@ namespace Lynx::Graphics {
 
         void Shutdown();
 
-        void PushRender(Entity ent);
+        void PushRender(Entity* ent);
         void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
 
         void Render();

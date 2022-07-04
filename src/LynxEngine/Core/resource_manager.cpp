@@ -175,10 +175,10 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 	if(found != NULL)
 		return found;
 
-	auto n_shader = std::make_shared<Graphics::Mesh>(name, vertices, indices, type);
-	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_shader);
+	auto n_mesh = std::make_shared<Graphics::Mesh>(name, vertices, indices, type);
+	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_mesh);
 	
-	return n_shader;
+	return n_mesh;
 }
 
 /**

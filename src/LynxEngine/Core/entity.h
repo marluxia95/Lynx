@@ -60,6 +60,10 @@ namespace Lynx {
 
         void AddChild(Entity* child);
 
+        uint GetChildrenCount();
+
+        Entity* GetChildByIndex(uint index);
+
         /**
          * @brief Sets the Renderable object
          * 

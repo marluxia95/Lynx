@@ -16,7 +16,6 @@ namespace Lynx::Graphics {
 	Mesh::Mesh(std::string name, std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type )
 		: vertices(vertices), indices(indices), type(type), Resource(name)
 	{
-		
 		VBO = VertexBuffer::Create(vertices);
 
 		log_debug("Mesh type : %d", type);
