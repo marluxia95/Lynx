@@ -2,10 +2,15 @@
 #define RENDERER_FORWARD_H
 
 #include "renderer.h"
+#include "shader.h"
 
 namespace Lynx::Graphics {
     
     class LYNXENGINE_API ForwardRenderer : public Renderer {
+    private:
+        void renderSky();
+        void renderObjects();
+
     public:
         ForwardRenderer();
         
@@ -26,8 +31,8 @@ namespace Lynx::Graphics {
 
         void Render();
     private:
-        void renderSky();
-        void renderObjects();
+        std::shared_ptr<Shader> m_objectShader;
+        
 
     };
 

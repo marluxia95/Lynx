@@ -5,7 +5,7 @@
 
 namespace Lynx {
 
-    class Camera {
+    class LYNXENGINE_API Camera {
     private:
         glm::vec3 position = glm::vec3(0,0,0);
         glm::vec3 forward = glm::vec3(0,0,-1);
@@ -20,7 +20,10 @@ namespace Lynx {
         Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up);
         void CalcPerspective(float resX, float resY, float near, float far);
         void CalcOrthographic(float left, float right, float bottom, float top, float near, float far);
-        void UpdateView();
+        glm::mat4 GetProjection();
+        glm::mat4 UpdateView();
+        glm::vec3 GetPosition();
+        void SetPosition(glm::vec3 pos);
     };
 
 }

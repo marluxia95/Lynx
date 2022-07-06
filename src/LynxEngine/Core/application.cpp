@@ -114,6 +114,7 @@ namespace Lynx {
 
             // Update logic
             EventManager::SendEvent(RenderEvent());
+            m_renderer->Render();
             EventManager::SendEvent(UpdateTickEvent());
 
            m_windowManager->Update();

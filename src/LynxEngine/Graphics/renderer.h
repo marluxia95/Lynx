@@ -2,7 +2,7 @@
 #define RENDERER_H
 
 #include <memory>
-#include <vector>
+#include <stack>
 #include <glm/glm.hpp>
 #include "mesh.h"
 #include "material.h"
@@ -67,7 +67,7 @@ namespace Graphics {
             glm::mat4 transform;
         } render_queue_obj;
 
-        std::vector<render_queue_obj> m_renderQueue;
+        std::stack<render_queue_obj> m_renderQueue;
         Camera* m_camera;
     public:
         Renderer() = default;

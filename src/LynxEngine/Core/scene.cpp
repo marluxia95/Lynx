@@ -9,7 +9,9 @@ namespace Lynx {
 
     Scene::~Scene()
     {
-
+        for (auto e : m_entities) {
+            free(e);
+        }
     }
 
     Entity* Scene::CreateEntity()

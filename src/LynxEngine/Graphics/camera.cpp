@@ -22,8 +22,25 @@ namespace Lynx{
         projection = glm::ortho(left, right, bottom, top, near, far);
     }
 
-    void Camera::UpdateView()
+    glm::mat4 Camera::GetProjection()
+    {
+        return projection;
+    }
+
+    glm::mat4 Camera::UpdateView()
     {
         view = glm::lookAt(position, position + forward, up);
+        return view;
+    }
+
+    glm::vec3 Camera::GetPosition()
+    {
+        return position;
+    }
+
+
+    void Camera::SetPosition(glm::vec3 pos)
+    {
+        position = pos;
     }
 }

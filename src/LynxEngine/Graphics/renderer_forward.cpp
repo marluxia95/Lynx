@@ -1,8 +1,6 @@
-#include <stack>
 #include "renderer_forward.h"
 #include "Core/application.h"
 #include "graphics_api.h"
-
 
 namespace Lynx::Graphics {
 
@@ -13,7 +11,7 @@ namespace Lynx::Graphics {
 
     ForwardRenderer::~ForwardRenderer()
     {
-
+        free(m_camera);
     }
 
     void ForwardRenderer::Initialise()
@@ -21,6 +19,9 @@ namespace Lynx::Graphics {
         const auto core_singleton = Application::GetSingleton();
         RendererAPI::Init();
         RendererAPI::SetViewport(core_singleton->GetResolutionWidth(), core_singleton->GetResolutionHeight());
+
+        // Load needed shaders 
+        m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/default.vert", "res/shaders/default.frag");
     }
 
     void ForwardRenderer::Update()
@@ -52,7 +53,7 @@ namespace Lynx::Graphics {
                 ent_stack.pop();
                 continue;
             }
-            
+    
             PushRender(s_ent->GetRenderHndl(), s_ent->GetModelMatrix());
             ent_stack.pop();
         }
@@ -61,7 +62,7 @@ namespace Lynx::Graphics {
     
     void ForwardRenderer::PushRender(Renderable* renderable, glm::mat4 modelMatrix)
     {
-        m_renderQueue.push_back(render_queue_obj{ renderable->GetMaterial(), renderable->GetMesh(), modelMatrix });
+        m_renderQueue.push(render_queue_obj{ renderable->GetMaterial(), renderable->GetMesh(), modelMatrix });
     }
 
     void ForwardRenderer::renderSky()
@@ -71,16 +72,28 @@ namespace Lynx::Graphics {
 
     void ForwardRenderer::renderObjects()
     {
-        for(auto& obj : m_renderQueue) {
+        Application* applicationInstance = Application::GetSingleton();
+        m_objectShader->Use();
+        m_objectShader->SetUniform("projection", m_camera->GetProjection());
+        m_objectShader->SetUniform("view", m_camera->UpdateView());
+        m_objectShader->SetUniform("view_pos", m_camera->GetPosition());
+
+        while (!m_renderQueue.empty()) {
+            auto obj = m_renderQueue.top();
+            m_objectShader->SetUniform("model", obj.transform);
             
+            obj.mesh->VAO->Bind();
+            obj.mesh->Render();
+            m_renderQueue.pop();
         }
-        m_renderQueue.clear();
     }   
 
     void ForwardRenderer::Render()
     {
         renderSky();
         renderObjects();
+
+        RendererAPI::Clear(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
     }
 
 

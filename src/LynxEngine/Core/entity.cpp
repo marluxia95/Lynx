@@ -65,7 +65,7 @@ namespace Lynx {
     {
         return m_isRenderable;
     }
-
+    
     void Entity::MakeRenderable(bool renderable)
     {
         m_isRenderable = renderable;
@@ -73,6 +73,7 @@ namespace Lynx {
 
     void Entity::SetRenderObj(Graphics::Renderable* render_obj)
     {
+        MakeRenderable(true);
         m_renderable = render_obj;
     }
 
