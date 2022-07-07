@@ -101,23 +101,21 @@ namespace Lynx {
      * 
      */
     void Application::Run()
-    {
-        
+    {       
         EventManager::SendEvent(FirstTickEvent());
         do
         {
-            
             CalculateFrameTime();
 #ifdef LYNX_MULTITHREAD
             EventManager::UpdateListeners();
 #endif
-
+            
             // Update logic
             EventManager::SendEvent(RenderEvent());
             m_renderer->Render();
             EventManager::SendEvent(UpdateTickEvent());
 
-           m_windowManager->Update();
+            m_windowManager->Update();
         } while(!m_windowManager->ShouldClose());
         EventManager::SendEvent(LastTickEvent());
         m_windowManager->Destroy();

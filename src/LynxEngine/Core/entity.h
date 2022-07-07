@@ -7,6 +7,10 @@
 namespace Lynx {
 
     class LYNXENGINE_API Entity {
+    protected:
+        glm::mat4 calcLocalModelMatrix() const;
+        void updateModel();
+
     public:
         Entity(bool renderable=false) : m_isRenderable(renderable) {}
         Entity(const char* name, bool renderable=false) : m_name(name) {}
@@ -20,23 +24,34 @@ namespace Lynx {
 
         glm::vec3 GetGlobalPosition() const;
 
-        void SetGlobalPosition(glm::vec3 position);
+        //void SetGlobalPosition(glm::vec3 position);
 
         glm::quat GetGlobalRotation() const;
 
-        void SetGlobalRotation(glm::quat rotation);
+        //void SetGlobalRotation(glm::quat rotation);
 
         glm::vec3 GetGlobalScaling() const;
 
-        void SetGlobalScaling(glm::vec3 scale);
+        //void SetGlobalScaling(glm::vec3 scale);
+
+        glm::vec3 GetLocalPosition() const;
+
+        void SetLocalPosition(glm::vec3 pos);
+
+        glm::quat GetLocalRotation() const;
+
+        void SetLocalRotation(glm::quat rot);
+
+        glm::vec3 GetLocalScaling() const;
+
+        void SetLocalScaling(glm::vec3 scale);
 
         /**
-         * @brief Gets the entity's model matrix, for later shader
-         *        processing
+         * @brief Gets the entity's model matrix
          * 
          * @return glm::mat4 
          */
-        glm::mat4 GetModelMatrix() const;
+        glm::mat4 GetModelMatrix();
 
         /**
          * @brief Gets the Render handler pointer , returns NULL if 
@@ -74,6 +89,7 @@ namespace Lynx {
     protected:
         glm::vec3 m_position, m_scale;
         glm::quat m_rotation;
+        glm::mat4 m_model;
 
         bool m_isRenderable;
 

@@ -11,7 +11,7 @@ namespace Lynx::Graphics {
 		~VertexArray() = default;
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
-		unsigned int VAO_ID;
+		unsigned int VAO_ID = NULL;
 
 		static std::unique_ptr<VertexArray> Create();
 	};

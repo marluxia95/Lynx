@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include "window_manager.h"
 #include "logger.h"
 #include "application.h"
@@ -6,7 +7,6 @@
 #include "Events/windowEvent.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
-#include <GLFW/glfw3.h>
 
 namespace Lynx {
 

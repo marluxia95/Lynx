@@ -29,7 +29,6 @@ Demo::Demo(int argc, char** argv)
 
 
     Entity* model;
-
     {
         Graphics::ModelLoader loader(m_scene);
         model = loader.LoadModel("res/models/cube.fbx");

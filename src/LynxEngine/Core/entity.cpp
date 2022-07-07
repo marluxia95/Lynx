@@ -12,15 +12,43 @@ namespace Lynx {
         m_name = name;
     }
 
-    // FIXME : Add matrices and local position support
-    glm::vec3 Entity::GetGlobalPosition() const 
+    glm::vec3 Entity::GetLocalPosition() const
     {
         return m_position;
     }
 
-    void Entity::SetGlobalPosition(glm::vec3 position)
+    void Entity::SetLocalPosition(glm::vec3 pos)
     {
-        m_position = position;
+        m_position = pos;
+    }
+
+    glm::quat Entity::GetLocalRotation() const
+    {
+        return m_rotation;
+    }
+
+    void Entity::SetLocalRotation(glm::quat rot)
+    {
+        m_rotation = rot;
+    }
+
+    glm::vec3 Entity::GetLocalScaling() const
+    {
+        return m_scale;
+    }
+
+    void Entity::SetLocalScaling(glm::vec3 scale)
+    {
+        m_scale = scale;
+    }
+
+    // FIXME : Add matrices and local position support
+    glm::vec3 Entity::GetGlobalPosition() const 
+    {
+        if (m_parent)
+            return GetLocalPosition() + m_parent->GetLocalPosition();
+
+        return GetLocalPosition();
     }
 
     glm::quat Entity::GetGlobalRotation() const
@@ -28,22 +56,31 @@ namespace Lynx {
         return m_rotation;
     }
 
-    void Entity::SetGlobalRotation(glm::quat rotation)
-    {
-        m_rotation = rotation;
-    }   
-
     glm::vec3 Entity::GetGlobalScaling() const
     {
         return m_scale;
     }
 
-    void Entity::SetGlobalScaling(glm::vec3 scale)
+    glm::mat4 Entity::GetModelMatrix()
     {
-        m_scale = scale;
+        updateModel();
+        return m_model;
     }
 
-    glm::mat4 Entity::GetModelMatrix() const
+    void Entity::updateModel()
+    {
+        if (m_parent)
+            m_model = m_parent->m_model * calcLocalModelMatrix();
+        else
+            m_model = calcLocalModelMatrix();
+
+        for (Entity* child : m_children) 
+        {
+            child->updateModel();
+        }
+    }
+
+    glm::mat4 Entity::calcLocalModelMatrix() const
     {
         glm::mat4 model = glm::mat4(1.0f);
 
@@ -51,9 +88,7 @@ namespace Lynx {
         glm::mat4 scaleMatrix = glm::scale(model, m_scale);
         glm::mat4 rotationMatrix = mat4_cast(m_rotation);
 
-        model = positionMatrix * scaleMatrix * rotationMatrix;
-
-        return model;
+        return positionMatrix * scaleMatrix * rotationMatrix;
     }
 
     Graphics::Renderable* Entity::GetRenderHndl() const
@@ -90,7 +125,6 @@ namespace Lynx {
         child->m_parent = this;
         m_children.push_back(child);
     }
-
 
     uint Entity::GetChildrenCount()
     {
