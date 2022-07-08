@@ -20,7 +20,11 @@ target_include_directories(Demo PRIVATE ${LIBS})
 
 target_link_directories(Demo PRIVATE ${DEPS_INSTALL_DIR}/lib )
 
+if(WIN32)
 find_library(GLEW PATHS ${DEPS_MAIN_DIR})
+elseif(UNIX)
+find_package(GLEW REQUIRED)
+endif()
 include_directories(${GLEW_INCLUDE_DIRS})
 
 include_directories( 
@@ -44,7 +48,6 @@ if(UNIX)
 		LynxEngine
 		glfw
 		assimp
-		${GLEW}
 		${OPENGL_LIBRARIES}
 		${GLEW_LIBRARIES}
 		${ASSIMP_LIBRARY}

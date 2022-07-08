@@ -48,7 +48,6 @@ if(UNIX)
 		assimp
 		zlib
 		${OPENGL_LIBRARIES}
-		${GLEW}
 		${ASSIMP_LIBRARY}
 	)
 	add_dependencies(LynxEngine lua glfw_ext assimp_ext)
@@ -66,4 +65,3 @@ elseif(WIN32)
 	)
 	add_dependencies(LynxEngine lua glfw_ext assimp_ext glew)
 endif()
-
