@@ -7,7 +7,7 @@ namespace Lynx{
         UpdateView();
     }
 
-    Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up) : position(position), forward(forward), up(up)
+    Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up) : position(position), rotation(rotation), up(up)
     {
         UpdateView();
     }
@@ -29,7 +29,7 @@ namespace Lynx{
 
     glm::mat4 Camera::UpdateView()
     {
-        view = glm::lookAt(position, position + forward, up);
+        view = glm::lookAt(position, position + rotation, up);
         return view;
     }
 
@@ -38,9 +38,18 @@ namespace Lynx{
         return position;
     }
 
-
     void Camera::SetPosition(glm::vec3 pos)
     {
         position = pos;
+    }
+
+    glm::vec3 Camera::GetRotation()
+    {
+        return rotation;
+    }
+
+    void Camera::SetRotation(glm::vec3 rot)
+    {
+        rotation = rot;
     }
 }

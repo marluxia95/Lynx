@@ -25,6 +25,7 @@ Demo::Demo(int argc, char** argv)
     Camera* camera = new Camera();
     camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
     camera->SetPosition(glm::vec3(0, 0, -10));
+    
     m_renderer->SetCamera(camera);
 
 
@@ -33,7 +34,6 @@ Demo::Demo(int argc, char** argv)
         Graphics::ModelLoader loader(m_scene);
         model = loader.LoadModel("res/models/cube.fbx");
     }
-
 
     EventManager::AddListener(Render, [this, model](const Event& ev){
         m_renderer->PushRender(model);

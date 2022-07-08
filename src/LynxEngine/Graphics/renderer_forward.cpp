@@ -1,3 +1,4 @@
+#include <glm/gtx/string_cast.hpp>
 #include "renderer_forward.h"
 #include "Core/application.h"
 #include "graphics_api.h"
@@ -55,6 +56,7 @@ namespace Lynx::Graphics {
             }
     
             PushRender(s_ent->GetRenderHndl(), s_ent->GetModelMatrix());
+            log_debug("Pushed mesh with %d indices", s_ent->GetRenderHndl()->GetMesh()->indices->size());
             ent_stack.pop();
         }
 
@@ -78,9 +80,13 @@ namespace Lynx::Graphics {
         m_objectShader->SetUniform("view", m_camera->UpdateView());
         m_objectShader->SetUniform("view_pos", m_camera->GetPosition());
 
+        log_debug("Proj : %s", glm::to_string(m_camera->GetProjection()).c_str());
+        log_debug("View : %s", glm::to_string(m_camera->UpdateView()).c_str());
+
         while (!m_renderQueue.empty()) {
             auto obj = m_renderQueue.top();
             m_objectShader->SetUniform("model", obj.transform);
+            log_debug("Model : %s", glm::to_string(obj.transform).c_str());
             
             obj.mesh->VAO->Bind();
             obj.mesh->Render();

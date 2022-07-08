@@ -22,12 +22,12 @@ namespace Lynx {
         m_position = pos;
     }
 
-    glm::quat Entity::GetLocalRotation() const
+    glm::vec3 Entity::GetLocalRotation() const
     {
         return m_rotation;
     }
 
-    void Entity::SetLocalRotation(glm::quat rot)
+    void Entity::SetLocalRotation(glm::vec3 rot)
     {
         m_rotation = rot;
     }
@@ -86,7 +86,9 @@ namespace Lynx {
 
         glm::mat4 positionMatrix = glm::translate(model, m_position);
         glm::mat4 scaleMatrix = glm::scale(model, m_scale);
-        glm::mat4 rotationMatrix = mat4_cast(m_rotation);
+        glm::mat4 rotationMatrix = glm::rotate(model, glm::radians(m_rotation.x), vec3(1.0f, 0.0f, 0.0f)) *
+            glm::rotate(model, glm::radians(m_rotation.y), vec3(0.0f, 1.0f, 0.0f)) *
+            glm::rotate(model, glm::radians(m_rotation.z), vec3(0.0f, 0.0f, 1.0f));
 
         return positionMatrix * scaleMatrix * rotationMatrix;
     }
