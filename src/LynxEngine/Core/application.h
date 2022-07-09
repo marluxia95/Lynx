@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <memory>
 
-#include "scene.h"
+#include "entity_manager.h"
 #include "window_manager.h"
 #include "resource_manager.h"
 #include "Graphics/renderer.h"
@@ -73,6 +73,7 @@ namespace Lynx {
         std::unique_ptr<WindowManager> m_windowManager;
         std::shared_ptr<ResourceManager> m_resourceManager;
         std::shared_ptr<Graphics::Renderer> m_renderer; 
+        std::shared_ptr<EntityManager> m_entityManager;
         
 	};
 

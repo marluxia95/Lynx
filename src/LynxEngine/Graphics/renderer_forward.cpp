@@ -78,7 +78,7 @@ namespace Lynx::Graphics {
         m_objectShader->Use();
         m_objectShader->SetUniform("projection", m_camera->GetProjection());
         m_objectShader->SetUniform("view", m_camera->UpdateView());
-        m_objectShader->SetUniform("view_pos", m_camera->GetPosition());
+        m_objectShader->SetUniform("view_pos", m_camera->position);
 
         log_debug("Proj : %s", glm::to_string(m_camera->GetProjection()).c_str());
         log_debug("View : %s", glm::to_string(m_camera->UpdateView()).c_str());
@@ -89,17 +89,18 @@ namespace Lynx::Graphics {
             log_debug("Model : %s", glm::to_string(obj.transform).c_str());
             
             obj.mesh->VAO->Bind();
-            obj.mesh->Render();
+            obj.mesh->EBO->Bind();
+		    RendererAPI::DrawIndexed(obj.mesh->indices->size());
             m_renderQueue.pop();
         }
+        log_debug("Rotation : %s", glm::to_string(m_camera->rotation).c_str());
     }   
 
     void ForwardRenderer::Render()
     {
+        RendererAPI::Clear(glm::vec4(0));
         renderSky();
         renderObjects();
-
-        RendererAPI::Clear(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
     }
 
 

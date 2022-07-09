@@ -22,7 +22,7 @@ Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_
 {
 	Application* applicationInstance = Lynx::Application::GetSingleton();
 
-	Entity* rootEnt = m_scene->CreateEntity();
+	Entity* rootEnt = m_entityManager->CreateEntity();
 	
 	if(ai_scene->HasMeshes() != true) {log_error("ModelLoader : File has no meshes !"); return rootEnt;}
 

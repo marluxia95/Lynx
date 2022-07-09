@@ -8,7 +8,6 @@
 #include "Core/resource_manager.h"
 #include "Core/assert.h"
 #include "Core/module.h"
-#include "Core/scene.h"
 
 #include "Events/event.h"
 #include "Events/keyEvent.h"

@@ -45,6 +45,7 @@ namespace Lynx {
 
         m_resourceManager.reset(new ResourceManager());
         m_windowManager.reset(new WindowManager());
+        m_entityManager.reset(new EntityManager());
         
 
     }

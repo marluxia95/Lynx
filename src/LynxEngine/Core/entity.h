@@ -12,8 +12,8 @@ namespace Lynx {
         void updateModel();
 
     public:
-        Entity(bool renderable=false) : m_isRenderable(renderable) {}
-        Entity(const char* name, bool renderable=false) : m_name(name) {}
+        Entity(uint64_t id, bool renderable=false) : m_id(id), m_isRenderable(renderable), m_name("Unnamed") {}
+        Entity(uint64_t id, const char* name, bool renderable=false) : m_id(id), m_name(name) {}
         virtual ~Entity() = default;
 
         const char* GetName();
@@ -86,8 +86,12 @@ namespace Lynx {
          */
         void SetRenderObj(Graphics::Renderable* render_obj);
 
+        // DEBUG
+        void PrintHierarchy();
+
     protected:
-        glm::vec3 m_position, m_scale, m_rotation = glm::vec3(0);
+        glm::vec3 m_position, m_rotation = glm::vec3(0);
+        glm::vec3 m_scale = glm::vec3(1);
         glm::mat4 m_model = glm::mat4(1.0f);
 
         bool m_isRenderable;
@@ -97,6 +101,8 @@ namespace Lynx {
         
         Entity* m_parent;
         std::vector<Entity*> m_children;
+
+        uint64_t m_id;
     };
 
 

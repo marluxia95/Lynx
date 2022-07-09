@@ -11,10 +11,10 @@
 
 namespace Lynx {
 
-    class LYNXENGINE_API Scene {
+    class LYNXENGINE_API EntityManager {
     public: 
-        Scene();
-        ~Scene();
+        EntityManager();
+        ~EntityManager();
 
         Entity* CreateEntity();
         Entity* CreateEntity(const char* name);

@@ -1,4 +1,6 @@
+#include <glm/gtx/string_cast.hpp>
 #include "entity.h"
+#include "logger.h"
 
 namespace Lynx {
 
@@ -84,13 +86,14 @@ namespace Lynx {
     {
         glm::mat4 model = glm::mat4(1.0f);
 
-        glm::mat4 positionMatrix = glm::translate(model, m_position);
+        glm::mat4 positionMatrix = glm::translate(model, GetGlobalPosition());
         glm::mat4 scaleMatrix = glm::scale(model, m_scale);
         glm::mat4 rotationMatrix = glm::rotate(model, glm::radians(m_rotation.x), vec3(1.0f, 0.0f, 0.0f)) *
             glm::rotate(model, glm::radians(m_rotation.y), vec3(0.0f, 1.0f, 0.0f)) *
             glm::rotate(model, glm::radians(m_rotation.z), vec3(0.0f, 0.0f, 1.0f));
+        model = positionMatrix * scaleMatrix * rotationMatrix;
 
-        return positionMatrix * scaleMatrix * rotationMatrix;
+        return model;
     }
 
     Graphics::Renderable* Entity::GetRenderHndl() const
@@ -139,6 +142,23 @@ namespace Lynx {
             return NULL;
         
         return m_children[index];
+    }
+
+    // shitty
+    void Entity::PrintHierarchy()
+    {
+        log_debug("+ E %d %s", m_id, m_name);
+
+        if(!m_children.size())
+            return;
+
+        log_debug("|");
+        
+        for(auto c : m_children) 
+        {
+            c->PrintHierarchy();
+        }
+        
     }
 
 }

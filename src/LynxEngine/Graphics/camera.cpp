@@ -32,24 +32,4 @@ namespace Lynx{
         view = glm::lookAt(position, position + rotation, up);
         return view;
     }
-
-    glm::vec3 Camera::GetPosition()
-    {
-        return position;
-    }
-
-    void Camera::SetPosition(glm::vec3 pos)
-    {
-        position = pos;
-    }
-
-    glm::vec3 Camera::GetRotation()
-    {
-        return rotation;
-    }
-
-    void Camera::SetRotation(glm::vec3 rot)
-    {
-        rotation = rot;
-    }
 }

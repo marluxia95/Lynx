@@ -8,6 +8,8 @@
 
 namespace Lynx {
 
+    extern GLFWwindow* window;
+
     int Input::keysUp[GLFW_KEY_LAST] = {};
     int Input::keysDown[GLFW_KEY_LAST] = {};
     Joystick* Input::connectedJoysticks[GLFW_JOYSTICK_LAST] = {};
@@ -144,6 +146,12 @@ namespace Lynx {
         const MouseCallbackEvent& mouse_event = static_cast<const MouseCallbackEvent&>(ev);
         mouse_pos.x = mouse_event.m_pos.x;
         mouse_pos.y = mouse_event.m_pos.y;
+    }
+
+    void Input::EnableCursor(bool enable)
+    {
+        long int status = enable ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
+        glfwSetInputMode(window, GLFW_CURSOR, status);
     }
 
 

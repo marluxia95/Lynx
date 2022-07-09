@@ -14,7 +14,7 @@
 #include <assimp/scene.h>
 
 #include "Core/logger.h"
-#include "Core/scene.h"
+#include "Core/entity_manager.h"
 
 #include "material.h"
 #include "mesh.h"
@@ -24,14 +24,14 @@ namespace Lynx::Graphics {
 
 	class LYNXENGINE_API ModelLoader {
 	public:
-		ModelLoader(std::shared_ptr<Scene> scene) : m_scene(scene) {}
+		ModelLoader(std::shared_ptr<EntityManager> entityManager) : m_entityManager(entityManager) {}
 		Entity* LoadModel(const char* path);
 	protected:
 		Entity* LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
 		Renderable* ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh);
 		Material ParseMaterial(aiMaterial* mat);
 	private:
-		std::shared_ptr<Scene> m_scene;
+		std::shared_ptr<EntityManager> m_entityManager;
 		Assimp::Importer m_importer;
 		
 	};

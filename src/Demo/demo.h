@@ -2,15 +2,22 @@
 #define DEMO_H
 
 #include "Core/application.h"
-#include "Core/scene.h"
 
 class Demo : public Lynx::Application {
+private:
+    void movement();
 public:
     Demo(int argc, char** argv);
     ~Demo();
 
 private:
-    std::shared_ptr<Lynx::Scene> m_scene;
+    Lynx::Camera* m_camera;
+    float speed_mul;
+    float sensitivity = 0.1f;
+    bool mouse_active;
+    glm::vec2 prev_pos;
+    float pitch;
+    float yaw;
 };
 
 #endif
