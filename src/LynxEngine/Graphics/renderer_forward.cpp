@@ -12,7 +12,7 @@ namespace Lynx::Graphics {
 
     ForwardRenderer::~ForwardRenderer()
     {
-        free(m_camera);
+        
     }
 
     void ForwardRenderer::Initialise()
@@ -22,7 +22,7 @@ namespace Lynx::Graphics {
         RendererAPI::SetViewport(core_singleton->GetResolutionWidth(), core_singleton->GetResolutionHeight());
 
         // Load needed shaders 
-        m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/default.vert", "res/shaders/default.frag");
+        m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/texture.vert", "res/shaders/texture.frag");
     }
 
     void ForwardRenderer::Update()
@@ -56,7 +56,6 @@ namespace Lynx::Graphics {
             }
     
             PushRender(s_ent->GetRenderHndl(), s_ent->GetModelMatrix());
-            log_debug("Pushed mesh with %d indices", s_ent->GetRenderHndl()->GetMesh()->indices->size());
             ent_stack.pop();
         }
 
@@ -80,20 +79,18 @@ namespace Lynx::Graphics {
         m_objectShader->SetUniform("view", m_camera->UpdateView());
         m_objectShader->SetUniform("view_pos", m_camera->position);
 
-        log_debug("Proj : %s", glm::to_string(m_camera->GetProjection()).c_str());
-        log_debug("View : %s", glm::to_string(m_camera->UpdateView()).c_str());
-
         while (!m_renderQueue.empty()) {
             auto obj = m_renderQueue.top();
             m_objectShader->SetUniform("model", obj.transform);
-            log_debug("Model : %s", glm::to_string(obj.transform).c_str());
+
+            if(obj.mat.texture->IsValid())
+                obj.mat.texture->Use();
             
             obj.mesh->VAO->Bind();
             obj.mesh->EBO->Bind();
 		    RendererAPI::DrawIndexed(obj.mesh->indices->size());
             m_renderQueue.pop();
         }
-        log_debug("Rotation : %s", glm::to_string(m_camera->rotation).c_str());
     }   
 
     void ForwardRenderer::Render()

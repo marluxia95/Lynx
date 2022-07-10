@@ -7,7 +7,6 @@
 #include "Graphics/model.h"
 #include "demo.h"
 
-
 using namespace Lynx;
 
 Demo::Demo(int argc, char** argv)
@@ -28,12 +27,16 @@ Demo::Demo(int argc, char** argv)
     
     m_renderer->SetCamera(m_camera);
 
-
     Entity* model;
     {
         Graphics::ModelLoader loader(m_entityManager);
         model = loader.LoadModel("res/models/cube.fbx");
     }
+
+    auto texture = m_resourceManager->LoadTexture("res/textures/box.dds");
+    Graphics::Material material(texture);
+
+    model->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(material);
     model->PrintHierarchy();
 
     EventManager::AddListener(Render, [this, model](const Event& ev){
@@ -70,16 +73,15 @@ void Demo::movement()
     if(forward)
         m_camera->position += speed * m_camera->rotation * forward;
     if(left)
-        m_camera->position += glm::normalize(glm::cross(m_camera->rotation, m_camera->Up()) * speed * left);
+        m_camera->position += speed * glm::normalize(glm::cross(m_camera->rotation, m_camera->Up()) * left);
 
     speed_mul = 3.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 2.0f;
 
-    glm::vec2 pos = Lynx::Input::GetMousePos();
-
     if(!mouse_active) {
-        prev_pos = pos;
+        return;
     }
 
+    glm::vec2 pos = Lynx::Input::GetMousePos();
     glm::vec2 offset = glm::vec2(pos.x - prev_pos.x, prev_pos.y - pos.y);
     prev_pos = pos;
 
@@ -93,6 +95,8 @@ void Demo::movement()
     
     if(pitch < -89.9f)
         pitch = -89.9f;
+
+    //log_debug("%f %f (%f %f) (%f %f)", pitch, yaw, pos.x, pos.y, prev_pos.x, prev_pos.y);
     
     m_camera->rotation = glm::normalize(
         glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), 

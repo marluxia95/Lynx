@@ -23,7 +23,7 @@ namespace Lynx {
         glm::vec3 Up() { return up; }
 
         glm::vec3 position = glm::vec3(0,0,0);
-        glm::vec3 rotation = glm::vec3(0.9,0,0);
+        glm::vec3 rotation = glm::vec3(0,0,0);
     };
 
 }

@@ -16,8 +16,8 @@ private:
     float sensitivity = 0.1f;
     bool mouse_active;
     glm::vec2 prev_pos;
-    float pitch;
-    float yaw;
+    float pitch = 0;
+    float yaw = 0;
 };
 
 #endif
