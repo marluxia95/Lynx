@@ -16,6 +16,8 @@ namespace Lynx {
 
 namespace Graphics {
 
+    class Skybox;
+    
     /**
      * @brief Abstract base class for an object or entity, that is meant to be rendered. 
      * 
@@ -86,6 +88,8 @@ namespace Graphics {
 
         virtual void PushRender(Entity* ent) = 0;
         virtual void PushRender(Renderable* renderable, glm::mat4 modelMatrix) = 0;
+
+        virtual void SetSkybox(std::shared_ptr<Skybox> skybox) = 0;
 
         virtual void Render() = 0;
     };  

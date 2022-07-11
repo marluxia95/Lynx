@@ -5,6 +5,7 @@
 #include "Events/mouseEvent.h"
 #include "Graphics/renderer_forward.h"
 #include "Graphics/model.h"
+#include "Graphics/skybox.h"
 #include "demo.h"
 
 using namespace Lynx;
@@ -33,11 +34,16 @@ Demo::Demo(int argc, char** argv)
         model = loader.LoadModel("res/models/cube.fbx");
     }
 
+    model->SetLocalPosition(glm::vec3(0,10,0));
+
     auto texture = m_resourceManager->LoadTexture("res/textures/box.dds");
     Graphics::Material material(texture);
 
     model->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(material);
     model->PrintHierarchy();
+
+    std::shared_ptr<Graphics::Skybox> sky = std::make_shared<Graphics::Skybox>(m_resourceManager->LoadTexture("res/textures/cubemap.dds", Graphics::TEXTURE_CUBE_MAP));
+    m_renderer->SetSkybox(sky);
 
     EventManager::AddListener(Render, [this, model](const Event& ev){
         m_renderer->PushRender(model);
@@ -83,7 +89,9 @@ void Demo::movement()
 
     glm::vec2 pos = Lynx::Input::GetMousePos();
     glm::vec2 offset = glm::vec2(pos.x - prev_pos.x, prev_pos.y - pos.y);
+    //log_debug("pos %f %f prevpos %f %f offset %f %f", pos.x, pos.y, prev_pos.x, prev_pos.y, offset.x, offset.y);
     prev_pos = pos;
+
 
     offset *= sensitivity;
 

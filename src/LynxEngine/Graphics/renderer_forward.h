@@ -2,9 +2,11 @@
 #define RENDERER_FORWARD_H
 
 #include "renderer.h"
-#include "shader.h"
 
 namespace Lynx::Graphics {
+
+    class Shader;
+    class Skybox;
     
     class LYNXENGINE_API ForwardRenderer : public Renderer {
     private:
@@ -29,10 +31,12 @@ namespace Lynx::Graphics {
         void PushRender(Entity* ent);
         void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
 
+        void SetSkybox(std::shared_ptr<Skybox> skybox);
+
         void Render();
     private:
         std::shared_ptr<Shader> m_objectShader;
-        
+        std::shared_ptr<Skybox> m_skybox;
 
     };
 

@@ -1,7 +1,9 @@
 #include <glm/gtx/string_cast.hpp>
+#include "Platform/OpenGL/gl_graphics_api.h"
 #include "renderer_forward.h"
 #include "Core/application.h"
 #include "graphics_api.h"
+#include "skybox.h"
 
 namespace Lynx::Graphics {
 
@@ -68,7 +70,27 @@ namespace Lynx::Graphics {
 
     void ForwardRenderer::renderSky()
     {
+        if(!m_skybox)
+            return;
 
+        auto cube_shader  = m_skybox->GetShader();
+        auto cube_texture = m_skybox->GetTexture();
+        
+        glDepthFunc(GL_LEQUAL);
+
+        cube_shader->Use();
+        cube_shader->SetUniform("projection", m_camera->GetProjection());
+        cube_shader->SetUniform("view", glm::mat4(glm::mat3(m_camera->UpdateView())) );
+        
+        cube_texture->Use();
+
+        m_skybox->GetMesh()->VAO->Bind();
+        m_skybox->GetMesh()->EBO->Bind();
+
+        glCullFace(GL_BACK);
+		RendererAPI::DrawIndexed(m_skybox->GetMesh()->indices->size());
+        glCullFace(GL_FRONT);
+        glDepthFunc(GL_LESS);
     }
 
     void ForwardRenderer::renderObjects()
@@ -76,7 +98,7 @@ namespace Lynx::Graphics {
         Application* applicationInstance = Application::GetSingleton();
         m_objectShader->Use();
         m_objectShader->SetUniform("projection", m_camera->GetProjection());
-        m_objectShader->SetUniform("view", m_camera->UpdateView());
+        m_objectShader->SetUniform("view", m_camera->UpdateView() );
         m_objectShader->SetUniform("view_pos", m_camera->position);
 
         while (!m_renderQueue.empty()) {
@@ -96,8 +118,15 @@ namespace Lynx::Graphics {
     void ForwardRenderer::Render()
     {
         RendererAPI::Clear(glm::vec4(0));
-        renderSky();
+        
         renderObjects();
+
+        renderSky();
+    }
+
+    void ForwardRenderer::SetSkybox(std::shared_ptr<Skybox> skybox)
+    {
+        m_skybox = skybox;
     }
 
 
