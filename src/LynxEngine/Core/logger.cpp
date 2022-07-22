@@ -16,7 +16,7 @@
 static std::mutex out_mutex;
 
 static struct {
-	LogLevel level;
+	LogLevel level = LOG_INFO;
 	bool quiet;
 	std::string outputFile;
 	int errors, warnings;

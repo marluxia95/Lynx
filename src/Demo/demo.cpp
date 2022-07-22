@@ -18,6 +18,7 @@ Demo::Demo(int argc, char** argv)
 	}
 
     log_debug("test");
+    log_error("Testing");
 
     Initialise(0);
     m_renderer.reset(new Graphics::ForwardRenderer());

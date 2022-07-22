@@ -18,7 +18,7 @@ endif()
 
 link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
 
-add_library( 
+add_library(
     LynxEngine SHARED ${SOURCES} ${HEADERS}
 )
 
@@ -29,14 +29,14 @@ target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
 
-include_directories( 
+include_directories(
     LynxEngine
 
     ${CMAKE_BINARY_DIR}
 	${DEPS_INCLUDE_DIR}
 	${DEPS_MAIN_DIR}
-    ${OPENGL_INCLUDE_DIRS}  
-    ${GLFW_INCLUDE}    
+    ${OPENGL_INCLUDE_DIRS}
+    ${GLFW_INCLUDE}
     ${ASSIMP_INCLUDE}
 )
 
