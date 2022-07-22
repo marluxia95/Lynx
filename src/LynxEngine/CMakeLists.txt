@@ -26,6 +26,7 @@ target_precompile_headers(LynxEngine PRIVATE "lynx.h")
 
 target_include_directories(LynxEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED)
 
 include_directories( 

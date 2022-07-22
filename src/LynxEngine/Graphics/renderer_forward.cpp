@@ -14,7 +14,7 @@ namespace Lynx::Graphics {
 
     ForwardRenderer::~ForwardRenderer()
     {
-        
+
     }
 
     void ForwardRenderer::Initialise()
@@ -23,13 +23,13 @@ namespace Lynx::Graphics {
         RendererAPI::Init();
         RendererAPI::SetViewport(core_singleton->GetResolutionWidth(), core_singleton->GetResolutionHeight());
 
-        // Load needed shaders 
-        m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/texture.vert", "res/shaders/texture.frag");
+        // Load needed shaders
+        m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/lighting.vert", "res/shaders/lighting.frag");
     }
 
     void ForwardRenderer::Update()
     {
-        
+
     }
 
     void ForwardRenderer::Shutdown()
@@ -43,29 +43,39 @@ namespace Lynx::Graphics {
             return;
 
         std::stack<Entity*> ent_stack;
-        
+
         ent_stack.push(ent);
-        
-        for (int i = 0; i < ent->GetChildrenCount(); i++) 
+
+        for (int i = 0; i < ent->GetChildrenCount(); i++)
             ent_stack.push(ent->GetChildByIndex(i));
-        
+
         while (!ent_stack.empty()) {
             Entity* s_ent = ent_stack.top();
-            
+
             if (!s_ent->IsRenderable()) {
                 ent_stack.pop();
                 continue;
             }
-    
+
             PushRender(s_ent->GetRenderHndl(), s_ent->GetModelMatrix());
             ent_stack.pop();
         }
 
     }
-    
+
     void ForwardRenderer::PushRender(Renderable* renderable, glm::mat4 modelMatrix)
     {
         m_renderQueue.push(render_queue_obj{ renderable->GetMaterial(), renderable->GetMesh(), modelMatrix });
+    }
+
+    void ForwardRenderer::PushLight(PointLight* light)
+    {
+        m_pointLights.push(light);
+    }
+
+    void ForwardRenderer::SetDirectionalLight(DirectionalLight* light)
+    {
+        m_directionalLight = light;
     }
 
     void ForwardRenderer::renderSky()
@@ -75,13 +85,13 @@ namespace Lynx::Graphics {
 
         auto cube_shader  = m_skybox->GetShader();
         auto cube_texture = m_skybox->GetTexture();
-        
+
         glDepthFunc(GL_LEQUAL);
 
         cube_shader->Use();
         cube_shader->SetUniform("projection", m_camera->GetProjection());
         cube_shader->SetUniform("view", glm::mat4(glm::mat3(m_camera->UpdateView())) );
-        
+
         cube_texture->Use();
 
         m_skybox->GetMesh()->VAO->Bind();
@@ -93,6 +103,21 @@ namespace Lynx::Graphics {
         glDepthFunc(GL_LESS);
     }
 
+    // Setup the point light array uniform values
+    void ForwardRenderer::processLighting(render_queue_obj renderObj)
+    {
+        for(int l = 0; l < m_pointLights.size(); l++) {
+            auto pointLight = m_pointLights.top();
+
+            m_objectShader->SetUniformf("pointLights[%d].position", pointLight->Position, l);
+            m_objectShader->SetUniformf("pointLights[%d].constant", pointLight->Constant, l);
+            m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight->Linear,   l);
+            m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight->Quadratic,l);
+            m_objectShader->SetUniformf("pointLights[%d].ambient",  pointLight->Ambient,  l);
+        }
+    }
+
+    // Object rendering process
     void ForwardRenderer::renderObjects()
     {
         Application* applicationInstance = Application::GetSingleton();
@@ -102,23 +127,42 @@ namespace Lynx::Graphics {
         m_objectShader->SetUniform("view_pos", m_camera->position);
 
         while (!m_renderQueue.empty()) {
-            auto obj = m_renderQueue.top();
+            render_queue_obj obj = m_renderQueue.top();
+            Material mat = obj.mat;
+
             m_objectShader->SetUniform("model", obj.transform);
 
-            if(obj.mat.texture->IsValid())
-                obj.mat.texture->Use();
-            
+            processLighting(obj);
+
+            m_objectShader->SetUniform("material.ambient",      mat.ambient);
+            m_objectShader->SetUniform("material.diffuse",      mat.diffuse);
+            m_objectShader->SetUniform("material.specular",     mat.specular);
+            m_objectShader->SetUniform("material.shininess",    mat.shininess);
+
+            if(mat.texture_diffuse){
+                m_objectShader->SetUniform("diffuse_map", true);
+                m_objectShader->SetUniform("material.diffuse_tex",  0);
+            }
+
+            if(mat.texture_specular){
+                m_objectShader->SetUniform("specular_map", true);
+                m_objectShader->SetUniform("material.specular_tex", 0);
+            }
+
+            if(mat.texture->IsValid())
+                mat.texture->Use();
+
             obj.mesh->VAO->Bind();
             obj.mesh->EBO->Bind();
 		    RendererAPI::DrawIndexed(obj.mesh->indices->size());
             m_renderQueue.pop();
         }
-    }   
+    }
 
     void ForwardRenderer::Render()
     {
         RendererAPI::Clear(glm::vec4(0));
-        
+
         renderObjects();
 
         renderSky();
@@ -128,6 +172,5 @@ namespace Lynx::Graphics {
     {
         m_skybox = skybox;
     }
-
 
 }

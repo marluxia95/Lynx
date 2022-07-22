@@ -12,7 +12,8 @@ namespace Lynx::Graphics {
     private:
         void renderSky();
         void renderObjects();
-
+        
+        void processLighting(render_queue_obj renderObj);
     public:
         ForwardRenderer();
         
@@ -30,6 +31,9 @@ namespace Lynx::Graphics {
 
         void PushRender(Entity* ent);
         void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
+
+        void PushLight(PointLight* light);
+        void SetDirectionalLight(DirectionalLight* light);
 
         void SetSkybox(std::shared_ptr<Skybox> skybox);
 

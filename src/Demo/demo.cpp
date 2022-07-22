@@ -25,7 +25,7 @@ Demo::Demo(int argc, char** argv)
 
     m_camera = new Camera();
     m_camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
-    
+
     m_renderer->SetCamera(m_camera);
 
     Entity* model;
@@ -55,19 +55,19 @@ Demo::Demo(int argc, char** argv)
             mouse_active = button_event.m_action;
             Input::EnableCursor(mouse_active);
         }
-        
+
     });
 
     EventManager::AddListener(UpdateTick, [this](const Event& ev){
         movement();
     });
-    
+
     Run();
 }
 
 Demo::~Demo()
 {
-    
+
 }
 
 void Demo::movement()
@@ -100,14 +100,14 @@ void Demo::movement()
 
     if(pitch > 89.9f)
         pitch = 89.9f;
-    
+
     if(pitch < -89.9f)
         pitch = -89.9f;
 
     //log_debug("%f %f (%f %f) (%f %f)", pitch, yaw, pos.x, pos.y, prev_pos.x, prev_pos.y);
-    
+
     m_camera->rotation = glm::normalize(
-        glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), 
-        sin(glm::radians(pitch)), 
+        glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+        sin(glm::radians(pitch)),
         sin(glm::radians(yaw)) * cos(glm::radians(pitch) )));
 }
