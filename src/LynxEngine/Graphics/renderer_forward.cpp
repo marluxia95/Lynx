@@ -68,12 +68,12 @@ namespace Lynx::Graphics {
         m_renderQueue.push(render_queue_obj{ renderable->GetMaterial(), renderable->GetMesh(), modelMatrix });
     }
 
-    void ForwardRenderer::PushLight(PointLight* light)
+    void ForwardRenderer::PushLight(PointLight& light)
     {
         m_pointLights.push(light);
     }
 
-    void ForwardRenderer::SetDirectionalLight(DirectionalLight* light)
+    void ForwardRenderer::SetDirectionalLight(DirectionalLight& light)
     {
         m_directionalLight = light;
     }
@@ -104,17 +104,27 @@ namespace Lynx::Graphics {
     }
 
     // Setup the point light array uniform values
-    void ForwardRenderer::processLighting(render_queue_obj renderObj)
+    void ForwardRenderer::processLighting()
     {
+        //log_debug("Lighting debug init");
         for(int l = 0; l < m_pointLights.size(); l++) {
             auto pointLight = m_pointLights.top();
+            //log_debug("PointLight : Pos(%f %f %f)\n   Constant %f\n   Linear %f\n   Quadratic %f\n   Ambient %f", pointLight.Position.x, pointLight.Position.y, pointLight.Position.z, pointLight.Constant, pointLight.Linear, pointLight.Quadratic, pointLight.Quadratic, pointLight.Ambient);
+            m_objectShader->SetUniformf("pointLights[%d].position", pointLight.Position, l);
+            m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
+            m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
+            m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight.Quadratic,l);
+            m_objectShader->SetUniformf("pointLights[%d].ambient",  pointLight.Ambient,  l);
 
-            m_objectShader->SetUniformf("pointLights[%d].position", pointLight->Position, l);
-            m_objectShader->SetUniformf("pointLights[%d].constant", pointLight->Constant, l);
-            m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight->Linear,   l);
-            m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight->Quadratic,l);
-            m_objectShader->SetUniformf("pointLights[%d].ambient",  pointLight->Ambient,  l);
+            m_pointLights.pop();
         }
+
+        //log_debug("DirectionalLight : Direction(%f %f %f)\n   Ambient(%f %f %f)", m_directionalLight.Direction.x, m_directionalLight.Direction.y, m_directionalLight.Direction.z, m_directionalLight.Ambient.x, m_directionalLight.Ambient.y, m_directionalLight.Ambient.z);
+        m_objectShader->SetUniform("directionalLight.direction",    m_directionalLight.Direction);
+        m_objectShader->SetUniform("directionalLight.ambient",      m_directionalLight.Ambient);
+        m_objectShader->SetUniform("directionalLight.diffuse",      m_directionalLight.Diffuse);
+        m_objectShader->SetUniform("directionalLight.specular",     m_directionalLight.Specular);
+        m_objectShader->SetUniform("direcitonalLight.intensity",    m_directionalLight.Intensity);
     }
 
     // Object rendering process
@@ -124,16 +134,13 @@ namespace Lynx::Graphics {
         m_objectShader->Use();
         m_objectShader->SetUniform("projection", m_camera->GetProjection());
         m_objectShader->SetUniform("view", m_camera->UpdateView() );
-        m_objectShader->SetUniform("view_pos", m_camera->position);
+        m_objectShader->SetUniform("viewPos", m_camera->position);
 
         while (!m_renderQueue.empty()) {
             render_queue_obj obj = m_renderQueue.top();
             Material mat = obj.mat;
 
             m_objectShader->SetUniform("model", obj.transform);
-
-            processLighting(obj);
-
             m_objectShader->SetUniform("material.ambient",      mat.ambient);
             m_objectShader->SetUniform("material.diffuse",      mat.diffuse);
             m_objectShader->SetUniform("material.specular",     mat.specular);
@@ -142,14 +149,18 @@ namespace Lynx::Graphics {
             if(mat.texture_diffuse){
                 m_objectShader->SetUniform("diffuse_map", true);
                 m_objectShader->SetUniform("material.diffuse_tex",  0);
+                mat.texture_diffuse->Use();
             }
 
             if(mat.texture_specular){
                 m_objectShader->SetUniform("specular_map", true);
                 m_objectShader->SetUniform("material.specular_tex", 0);
+                mat.texture_specular->Use();
             }
 
-            if(mat.texture->IsValid())
+            processLighting();
+
+            if(mat.texture)
                 mat.texture->Use();
 
             obj.mesh->VAO->Bind();

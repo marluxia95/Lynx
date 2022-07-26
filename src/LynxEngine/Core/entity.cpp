@@ -14,6 +14,11 @@ namespace Lynx {
         m_name = name;
     }
 
+    uint64_t Entity::GetId()
+    {
+        return m_id;
+    }
+
     glm::vec3 Entity::GetLocalPosition() const
     {
         return m_position;
@@ -44,8 +49,7 @@ namespace Lynx {
         m_scale = scale;
     }
 
-    // FIXME : Add matrices and local position support
-    glm::vec3 Entity::GetGlobalPosition() const 
+    glm::vec3 Entity::GetGlobalPosition() const
     {
         if (m_parent)
             return GetLocalPosition() + m_parent->GetLocalPosition();
@@ -76,7 +80,7 @@ namespace Lynx {
         else
             m_model = calcLocalModelMatrix();
 
-        for (Entity* child : m_children) 
+        for (Entity* child : m_children)
         {
             child->updateModel();
         }
@@ -105,7 +109,7 @@ namespace Lynx {
     {
         return m_isRenderable;
     }
-    
+
     void Entity::MakeRenderable(bool renderable)
     {
         m_isRenderable = renderable;
@@ -140,7 +144,7 @@ namespace Lynx {
     {
         if (index > m_children.size())
             return NULL;
-        
+
         return m_children[index];
     }
 
@@ -153,12 +157,12 @@ namespace Lynx {
             return;
 
         log_debug("|");
-        
-        for(auto c : m_children) 
+
+        for(auto c : m_children)
         {
             c->PrintHierarchy();
         }
-        
+
     }
 
 }

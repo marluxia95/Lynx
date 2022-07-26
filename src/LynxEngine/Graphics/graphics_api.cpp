@@ -1,13 +1,13 @@
 /**
  * @file graphics_api.cpp
- * 
- * @author marlxx 
+ *
+ * @author marlxx
  * @brief A renderer API wrapper that lets the user interact with different renderer API's
  * @version 0.0.3
  * @date 2021-09-03
- * 
+ *
  * @copyright Copyright (c) 2021. See LICENSE for more information
- * 
+ *
  */
 
 #include <map>
@@ -19,7 +19,7 @@
 namespace Lynx::Graphics {
 
     /*
-     *  Used for conversion 
+     *  Used for conversion
      */
     const char* API_str[] = {
         "OpenGL"
@@ -49,15 +49,15 @@ namespace Lynx::Graphics {
         {"SHADER_FRAGMENT", SHADER_FRAGMENT},
         {"SHADER_GEOMETRY", SHADER_GEOMETRY},
         {"SHADER_COMPUTE", SHADER_COMPUTE}
-    };  
+    };
 
     API IRendererAPI::m_API = API_OPENGL;
     std::unique_ptr<IRendererAPI> RendererAPI::m_rendererAPI = nullptr;
-    
+
     std::unique_ptr<IRendererAPI> IRendererAPI::Create()
     {
         switch(m_API) {
-            case API_OPENGL : 
+            case API_OPENGL :
                 return std::make_unique<OpenGL::GLRendererAPI>();
         }
     }
@@ -107,9 +107,9 @@ namespace Lynx::Graphics {
         Clears the display
         @param color Color to replace
     */
-    void RendererAPI::Clear(glm::vec4 color) 
-    { 
-        m_rendererAPI->Clear(color); 
+    void RendererAPI::Clear(glm::vec4 color)
+    {
+        m_rendererAPI->Clear(color);
     }
 
     /**
@@ -119,17 +119,17 @@ namespace Lynx::Graphics {
         @param height       Texture's height
         @param useDefaults  Set to 'true' to use default texture values
     */
-    void RendererAPI::LoadTexture(TextureType type, unsigned char* data, int width, int height, bool useDefaults) 
-    { 
-        m_rendererAPI->LoadTexture(type, data, width, height); 
+    void RendererAPI::LoadTexture(TextureType type, unsigned char* data, int width, int height, bool useDefaults)
+    {
+        m_rendererAPI->LoadTexture(type, data, width, height);
     }
 
     /**
         Generates a texture
         @return A texture id
     */
-    unsigned int RendererAPI::GenTexture() 
-    { 
+    unsigned int RendererAPI::GenTexture()
+    {
         return m_rendererAPI->GenTexture();
     }
 
@@ -138,54 +138,54 @@ namespace Lynx::Graphics {
         @param param Parameter to set
         @param value Value to set
     */
-    void RendererAPI::SetTextureParameter(unsigned int param, unsigned int value) 
-    { 
-        m_rendererAPI->SetTextureParameter(param, value); 
+    void RendererAPI::SetTextureParameter(unsigned int param, unsigned int value)
+    {
+        m_rendererAPI->SetTextureParameter(param, value);
     }
 
     /**
         Uses a texture
         @param id Texture's ID
     */
-    void RendererAPI::UseTexture(unsigned int id) 
-    { 
-        m_rendererAPI->UseTexture(id); 
+    void RendererAPI::UseTexture(unsigned int id)
+    {
+        m_rendererAPI->UseTexture(id);
     }
 
     /**
         Binds a texture
         @param tex Texture's ID
     */
-    void RendererAPI::BindTexture(unsigned int tex) 
-    { 
-        m_rendererAPI->BindTexture(tex); 
+    void RendererAPI::BindTexture(unsigned int tex)
+    {
+        m_rendererAPI->BindTexture(tex);
     }
 
     /**
         Binds a texture
         @param tex Texture's ID
     */
-    void RendererAPI::BindTexture(TextureType type, unsigned int tex) 
-    { 
-        m_rendererAPI->BindTexture(type, tex); 
+    void RendererAPI::BindTexture(TextureType type, unsigned int tex)
+    {
+        m_rendererAPI->BindTexture(type, tex);
     }
 
     /**
         Draws in indexed mode
         @param n Number of indices to draw
     */
-    void RendererAPI::DrawIndexed(int n) 
-    { 
-        m_rendererAPI->DrawIndexed(n); 
+    void RendererAPI::DrawIndexed(int n)
+    {
+        m_rendererAPI->DrawIndexed(n);
     }
 
     /**
         Draws in arrays mode
         @param n Number of vertices to draw
     */
-    void RendererAPI::DrawArrays(int n) 
-    { 
-        m_rendererAPI->DrawArrays(n); 
+    void RendererAPI::DrawArrays(int n)
+    {
+        m_rendererAPI->DrawArrays(n);
     }
 
     /**
@@ -206,7 +206,7 @@ namespace Lynx::Graphics {
     }
 
     /**
-        Compiles a shader 
+        Compiles a shader
         @param shaderSource The shader's source code
         @param type The shader's type
         @return A shader ID
@@ -218,7 +218,7 @@ namespace Lynx::Graphics {
 
     /**
      * @brief Gets a shader uniform's location
-     * 
+     *
      * @param programID   Shader program's ID
      * @param uniformName Uniform's name
      * @return The uniform's location
@@ -227,11 +227,11 @@ namespace Lynx::Graphics {
     {
         return m_rendererAPI->GetShaderUniformLocation(programID, uniformName);
     }
-    
+
     template<> void RendererAPI::SetShaderUniform<bool>(int location, bool value)
     {
         return m_rendererAPI->SetShaderUniformBool(location, value);
-    } 
+    }
 
     template<> void RendererAPI::SetShaderUniform<int>(int location, int value)
     {
@@ -283,10 +283,10 @@ namespace Lynx::Graphics {
         m_rendererAPI->DestroyShader(shaderID);
     }
 
-    
+
 }
 
 void check_api_errors(const char* f, int l)
-{ 
+{
     Lynx::Graphics::RendererAPI::CheckErrors(f,l);
 }

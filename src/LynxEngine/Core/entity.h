@@ -20,6 +20,8 @@ namespace Lynx {
 
         void SetName(const char* name);
 
+        uint64_t GetId();
+
         virtual void Think() {}
 
         glm::vec3 GetGlobalPosition() const;
@@ -48,24 +50,24 @@ namespace Lynx {
 
         /**
          * @brief Gets the entity's model matrix
-         * 
-         * @return glm::mat4 
+         *
+         * @return glm::mat4
          */
         glm::mat4 GetModelMatrix();
 
         /**
-         * @brief Gets the Render handler pointer , returns NULL if 
+         * @brief Gets the Render handler pointer , returns NULL if
          *        its not meant to be rendered
-         * 
+         *
          * @return RenderHndlPtr
          */
         Graphics::Renderable *GetRenderHndl() const;
 
         /**
          * @brief Checks if the object is renderable
-         * 
-         * @return true 
-         * @return false 
+         *
+         * @return true
+         * @return false
          */
         bool IsRenderable() const;
 
@@ -81,8 +83,8 @@ namespace Lynx {
 
         /**
          * @brief Sets the Renderable object
-         * 
-         * @param render_obj 
+         *
+         * @param render_obj
          */
         void SetRenderObj(Graphics::Renderable* render_obj);
 
@@ -91,14 +93,14 @@ namespace Lynx {
 
     protected:
         glm::vec3 m_position, m_rotation = glm::vec3(0);
-        glm::vec3 m_scale = glm::vec3(1);
+        glm::vec3 m_scale = glm::vec3(1.0f);
         glm::mat4 m_model = glm::mat4(1.0f);
 
         bool m_isRenderable;
 
-        const char* m_name;    
+        const char* m_name;
         Graphics::Renderable* m_renderable;
-        
+
         Entity* m_parent;
         std::vector<Entity*> m_children;
 

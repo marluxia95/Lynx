@@ -71,9 +71,9 @@ namespace Graphics {
         } render_queue_obj;
 
         std::stack<render_queue_obj> m_renderQueue;
-        std::stack<PointLight*> m_pointLights;
+        std::stack<PointLight> m_pointLights;
         Camera* m_camera;
-        DirectionalLight* m_directionalLight;
+        DirectionalLight m_directionalLight;
 
     public:
         Renderer() = default;
@@ -93,8 +93,8 @@ namespace Graphics {
         virtual void PushRender(Entity* ent) = 0;
         virtual void PushRender(Renderable* renderable, glm::mat4 modelMatrix) = 0;
 
-        virtual void PushLight(PointLight* light) = 0;
-        virtual void SetDirectionalLight(DirectionalLight* light) = 0;
+        virtual void PushLight(PointLight& light) = 0;
+        virtual void SetDirectionalLight(DirectionalLight& light) = 0;
 
         virtual void SetSkybox(std::shared_ptr<Skybox> skybox) = 0;
 

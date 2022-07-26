@@ -7,18 +7,18 @@ namespace Lynx::Graphics {
 
     class Shader;
     class Skybox;
-    
+
     class LYNXENGINE_API ForwardRenderer : public Renderer {
     private:
         void renderSky();
         void renderObjects();
-        
-        void processLighting(render_queue_obj renderObj);
+
+        void processLighting();
     public:
         ForwardRenderer();
-        
+
         ~ForwardRenderer();
-        
+
         void Initialise();
 
         void SetCamera(Camera* camera) { m_camera = camera; }
@@ -32,8 +32,8 @@ namespace Lynx::Graphics {
         void PushRender(Entity* ent);
         void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
 
-        void PushLight(PointLight* light);
-        void SetDirectionalLight(DirectionalLight* light);
+        void PushLight(PointLight& light);
+        void SetDirectionalLight(DirectionalLight& light);
 
         void SetSkybox(std::shared_ptr<Skybox> skybox);
 
