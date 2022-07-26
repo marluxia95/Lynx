@@ -1,8 +1,21 @@
-#include <glm/gtx/string_cast.hpp>
 #include "entity.h"
 #include "logger.h"
 
 namespace Lynx {
+
+    Entity::Entity(uint64_t id, bool renderable) : m_id(id), m_isRenderable(renderable)
+    {
+    }
+
+    Entity::Entity(uint64_t id, const char* name, bool renderable) : m_id(id), m_name(name)
+    {
+    }
+
+    Entity::~Entity()
+    {
+        if(m_isRenderable)
+            delete m_renderable;
+    }
 
     const char* Entity::GetName()
     {
@@ -51,13 +64,10 @@ namespace Lynx {
 
     glm::vec3 Entity::GetGlobalPosition() const
     {
-        if (m_parent)
-            return GetLocalPosition() + m_parent->GetLocalPosition();
-
         return GetLocalPosition();
     }
 
-    glm::quat Entity::GetGlobalRotation() const
+    glm::vec3 Entity::GetGlobalRotation() const
     {
         return m_rotation;
     }
@@ -76,9 +86,10 @@ namespace Lynx {
     void Entity::updateModel()
     {
         if (m_parent)
-            m_model = m_parent->m_model * calcLocalModelMatrix();
+            m_model = m_parent->calcLocalModelMatrix() * calcLocalModelMatrix(); // FIXME: This needs a better design approach ... ouch
         else
             m_model = calcLocalModelMatrix();
+
 
         for (Entity* child : m_children)
         {
@@ -90,12 +101,13 @@ namespace Lynx {
     {
         glm::mat4 model = glm::mat4(1.0f);
 
-        glm::mat4 positionMatrix = glm::translate(model, GetGlobalPosition());
+        glm::mat4 positionMatrix = glm::translate(model, m_position);
         glm::mat4 scaleMatrix = glm::scale(model, m_scale);
         glm::mat4 rotationMatrix = glm::rotate(model, glm::radians(m_rotation.x), vec3(1.0f, 0.0f, 0.0f)) *
             glm::rotate(model, glm::radians(m_rotation.y), vec3(0.0f, 1.0f, 0.0f)) *
             glm::rotate(model, glm::radians(m_rotation.z), vec3(0.0f, 0.0f, 1.0f));
         model = positionMatrix * scaleMatrix * rotationMatrix;
+
 
         return model;
     }
