@@ -9,13 +9,11 @@ NOTE: Current version in this repository is unstable and will probably not compi
 
 - Model Loading ( assimp )
 - Scalable API design
-- ECS
 - Simple lighting 
-- Skyboxes
+- Skybox
 - Input system with joystick support ( glfw )
 - Logging and some debug features
 - Event-driven
-- Documented via doxygen 
 - Pretty basic LUA Scripting 
 
 ## TODO
