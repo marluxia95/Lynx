@@ -7,7 +7,7 @@ Entity* ModelLoader::LoadModel(const char* path)
 {
 	const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 
-	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode) 
+	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode)
 	{
 		log_error("ModelLoader : Error while loading model ! %s \n", m_importer.GetErrorString());
 		return NULL;
@@ -28,15 +28,15 @@ Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_
 
 	for(unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
-		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]]; 
+		aiMesh *mesh = ai_scene->mMeshes[node->mMeshes[i]];
 		rootEnt->SetRenderObj(ParseMesh(path, ai_scene, mesh));
 		log_debug("Added mesh renderer");
-		break; 
+		break;
 	}
 	
 	for(unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		if(!node->mChildren[i]->mNumMeshes) 
+		if(!node->mChildren[i]->mNumMeshes)
 			continue;
 		
 		rootEnt->AddChild(LoadNode(path, node->mChildren[i], ai_scene));

@@ -1,3 +1,4 @@
+#include <glm/gtx/string_cast.hpp>
 #include "Core/entity_manager.h"
 #include "Core/input.h"
 #include "Core/event_manager.h"
@@ -29,28 +30,43 @@ Demo::Demo(int argc, char** argv)
     auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
     m_renderer->SetDirectionalLight(directional_light);
 
-    Entity* model;
+    Graphics::ModelLoader loader(m_entityManager);
+
+    Entity* cube;
     {
-        Graphics::ModelLoader loader(m_entityManager);
-        model = loader.LoadModel("res/models/cube.fbx");
+        cube = loader.LoadModel("res/models/cube.fbx");
+
+        cube->SetLocalPosition(glm::vec3(0,10,0));
+
+        Graphics::Material cube_material;
+        cube_material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/box.dds");
+        cube_material.ambient = glm::vec3(0.5f);
+        cube_material.diffuse = cube_material.specular = glm::vec3(0.5f);
+        cube_material.shininess = 50.0f;
+        cube->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(cube_material);
     }
 
-    model->SetLocalPosition(glm::vec3(0,10,0));
+    Entity* plane;
+    {
+        plane = loader.LoadModel("res/models/plane.fbx");
+        plane->SetLocalScaling(glm::vec3(10.0f));
+        plane->SetLocalRotation(glm::vec3(-90,0,0));
+        Graphics::Material plane_material;
+        plane_material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/wood.dds");
+        plane_material.ambient = glm::vec3(0.5f);
+        plane_material.diffuse = plane_material.specular = glm::vec3(0.5f);
 
-    Graphics::Material material;
-    material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/box.dds");
-    material.ambient = glm::vec3(0.5f);
-    material.diffuse = material.specular = glm::vec3(0.5f);
-    material.shininess = 50.0f;
-
-    model->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(material);
-    model->PrintHierarchy();
+        plane->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(plane_material);
+        log_debug("%s %s %s", glm::to_string(plane->GetGlobalPosition()).c_str(), glm::to_string(plane->GetGlobalRotation()).c_str(),
+                glm::to_string(plane->GetGlobalScaling()).c_str());
+    }
 
     std::shared_ptr<Graphics::Skybox> sky = std::make_shared<Graphics::Skybox>(m_resourceManager->LoadTexture("res/textures/cubemap.dds", Graphics::TEXTURE_CUBE_MAP));
     m_renderer->SetSkybox(sky);
 
-    EventManager::AddListener(Render, [this, model](const Event& ev){
-        m_renderer->PushRender(model);
+    EventManager::AddListener(Render, [this, cube, plane](const Event& ev){
+        m_renderer->PushRender(cube);
+        m_renderer->PushRender(plane);
     });
 
     EventManager::AddListener(MouseKeyPressed, [this](const Event& ev){
@@ -85,7 +101,7 @@ void Demo::movement()
     if(left)
         m_camera->position += speed * glm::normalize(glm::cross(m_camera->rotation, m_camera->Up()) * left);
 
-    speed_mul = 3.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 2.0f;
+    speed_mul = 3.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 7.0f;
 
     if(!mouse_active) {
         return;

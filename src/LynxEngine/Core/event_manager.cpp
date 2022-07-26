@@ -27,7 +27,7 @@ void EventManager::RemoveListener(const EventType& type, EventListener listener)
 
     if(p == listeners[type].end())
         return;
-    
+
     listeners[type].erase(p);
 }
 
@@ -38,7 +38,7 @@ void EventManager::SendEvent(const Event& event)
     event_queue.push(event);
 #else
     EventType type = event.GetType();
-                
+
     if(listeners.find(type) == listeners.end())
         return;
 
@@ -51,17 +51,17 @@ void EventManager::SendEvent(const Event& event)
 }
 
 #ifdef LYNX_MULTITHREAD
-void EventManager::UpdateListeners() 
+void EventManager::UpdateListeners()
 {
     std::unique_lock<std::mutex> lock(queue_mutex);
 
-    if(event_queue.empty()) 
+    if(event_queue.empty())
         return;
-    
+
 
     Event event = event_queue.back();
     EventType type = event.GetType();
-                
+
     if(listeners.find(type) == listeners.end())
         return;
 

@@ -9,8 +9,8 @@ namespace Lynx {
 
     EntityManager::~EntityManager()
     {
-        for (auto e : m_entities) {
-            free(e);
+        for (auto ent : m_entities) {
+            delete ent;
         }
     }
 

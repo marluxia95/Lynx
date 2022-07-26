@@ -12,9 +12,9 @@ namespace Lynx {
         void updateModel();
 
     public:
-        Entity(uint64_t id, bool renderable=false) : m_id(id), m_isRenderable(renderable), m_name("Unnamed") {}
-        Entity(uint64_t id, const char* name, bool renderable=false) : m_id(id), m_name(name) {}
-        virtual ~Entity() = default;
+        Entity(uint64_t id, bool renderable=false);
+        Entity(uint64_t id, const char* name, bool renderable=false);
+        ~Entity();
 
         const char* GetName();
 
@@ -28,7 +28,7 @@ namespace Lynx {
 
         //void SetGlobalPosition(glm::vec3 position);
 
-        glm::quat GetGlobalRotation() const;
+        glm::vec3 GetGlobalRotation() const;
 
         //void SetGlobalRotation(glm::quat rotation);
 
@@ -92,19 +92,21 @@ namespace Lynx {
         void PrintHierarchy();
 
     protected:
-        glm::vec3 m_position, m_rotation = glm::vec3(0);
-        glm::vec3 m_scale = glm::vec3(1.0f);
+        // FIXME : These values don't really get intialized ... huh
+        glm::vec3 m_position = glm::vec3(0);
+        glm::vec3 m_rotation;// = glm::vec3(0);
+        glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };// = glm::vec3(1.0f);
         glm::mat4 m_model = glm::mat4(1.0f);
 
-        bool m_isRenderable;
+        bool m_isRenderable = false;
 
-        const char* m_name;
+        const char* m_name = "Unnamed";
         Graphics::Renderable* m_renderable;
 
         Entity* m_parent;
         std::vector<Entity*> m_children;
 
-        uint64_t m_id;
+        uint64_t m_id = 0;
     };
 
 
