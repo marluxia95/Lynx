@@ -1,7 +1,6 @@
 #ifndef KEYEVENT_H
 #define KEYEVENT_H
 
-#include <GLFW/glfw3.h>
 #include "event.h"
 
 using KeyCode = uint16_t;

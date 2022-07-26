@@ -14,29 +14,25 @@
 #include <assimp/scene.h>
 
 #include "Core/logger.h"
+#include "Core/entity_manager.h"
 
-#include "buffers.h"
-#include "texture.h"
-#include "shader.h"
+#include "material.h"
 #include "mesh.h"
 
-#include "Core/scene.h"
-#include "Core/ECS/components.h"
-#include "Core/ECS/common.h"
 
-#include "lynx_common.h"
-
-namespace Lynx {
+namespace Lynx::Graphics {
 
 	class LYNXENGINE_API ModelLoader {
-		private:
-			Scene* scene;
-
-		public:
-			ModelLoader(Scene* scene) : scene(scene) {}
-			Entity LoadModel(const char* path);
-			Entity LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
-			std::shared_ptr<Graphics::Mesh> ProcessMesh( const char* path, aiMesh* mesh);
+	public:
+		ModelLoader(std::shared_ptr<EntityManager> entityManager) : m_entityManager(entityManager) {}
+		Entity* LoadModel(const char* path);
+	protected:
+		Entity* LoadNode(const char* path, aiNode* node, const aiScene* ai_scene);
+		Renderable* ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh);
+		Material ParseMaterial(aiMaterial* mat);
+	private:
+		std::shared_ptr<EntityManager> m_entityManager;
+		Assimp::Importer m_importer;
 		
 	};
 

@@ -1,14 +1,14 @@
-#pragma once
+#ifndef RESOURCE_H
+#define RESOURCE_H
 #include <string>
-#include "logger.h"
 
 namespace Lynx {
-
-    class ResourceBase {
+    
+    class Resource {
 	public:
-		ResourceBase(std::string path) : m_resID(PushID()), m_resPath(path) { }
-        ResourceBase() : m_resID(PushID()), m_resPath("unknown") { }
-        ~ResourceBase() = default;
+		Resource(std::string path) : m_resID(PushID()), m_resPath(path) { }
+        Resource() : m_resID(PushID()), m_resPath("unknown") { }
+        ~Resource() = default;
 		long int GetResourceID() { return m_resID; }
 		std::string GetResourcePath() { return m_resPath; }
 
@@ -24,3 +24,4 @@ namespace Lynx {
 	};
 
 }
+#endif

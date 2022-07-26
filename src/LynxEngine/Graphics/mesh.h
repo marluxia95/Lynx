@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <GL/glew.h> 
 #include <glm/glm.hpp>
-#include "vertexArray.h"
+
+#include "Core/resource.h"
+#include "vertex_array.h"
 #include "buffers.h"
 #include "lynx_common.h"
-#include "Core/resource.h"
 
 using namespace glm;
 
@@ -32,11 +32,11 @@ namespace Lynx::Graphics {
 		RENDER_INDEXED
 	};
 
-	class LYNXENGINE_API Mesh : public ResourceBase {
+	class LYNXENGINE_API Mesh : public Resource {
 		public:
 			Mesh(std::string name, std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, MeshType type); // Element buffer mode
-			Mesh(std::string name) : ResourceBase(name) { };
-			Mesh() : ResourceBase() { };
+			Mesh(std::string name) : Resource(name) { };
+			Mesh() : Resource() { };
 			~Mesh();
 			virtual void Render();
 			std::vector<Vertex>* vertices;
@@ -51,7 +51,9 @@ namespace Lynx::Graphics {
 			char* error;
 	};
 
-	
+	typedef std::shared_ptr<Mesh> MeshHndlPtr;
+
 }
+
 
 #endif

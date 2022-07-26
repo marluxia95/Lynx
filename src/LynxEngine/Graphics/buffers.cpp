@@ -1,15 +1,13 @@
-#include <GL/glew.h> 	
 #include <iostream>
 #include <vector>
 #include "buffers.h"
 #include "Core/logger.h"
-
-#include "rendererAPI.h"
-#include "Platform/OpenGL/GLBuffers.h"
+#include "graphics_api.h"
+#include "Platform/OpenGL/gl_buffers.h"
 
 namespace Lynx::Graphics {
 
-	void debugVBO(std::vector<Vertex>* vertices, std::vector<GLuint>* indices)
+	void debugVBO(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices)
 	{
 		for ( int i = 0; i < indices->size(); i++ ){
 			log_debug("Index Number %d Vertex pos: %f %f %f Texture Coord pos %f %f Normal pos %f %f %f\n", i, vertices->at(indices->at(i)).Position.x, 
@@ -87,7 +85,7 @@ namespace Lynx::Graphics {
 		}
 	}
 
-    std::unique_ptr<ElementBuffer> ElementBuffer::Create(std::vector<GLuint>* indices)
+    std::unique_ptr<ElementBuffer> ElementBuffer::Create(std::vector<unsigned int>* indices)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
 			case API_OPENGL: return std::make_unique<OpenGL::GLElementBuffer>(indices);

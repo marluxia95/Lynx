@@ -6,10 +6,9 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
+#include <stdarg.h>
 #include "Core/resource.h"
-#include "lynx_common.h"
-#include "debug.h"
-#include "rendererAPI.h"
+#include "graphics_api.h"
 
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
@@ -36,7 +35,7 @@ namespace Lynx {
             char error_log[MAX_ERR_BUFSIZE];
     };
 
-    class LYNXENGINE_API Shader : public ResourceBase {
+    class LYNXENGINE_API Shader : public Resource {
         private:
             class ShaderObj {
             public:
@@ -65,6 +64,17 @@ namespace Lynx {
             template<typename T>
             void SetUniform(const char* name, T value);
             
+            template<typename T>
+            void SetUniformf(const char* format, T value, ...)
+            {
+                char* buf;
+                va_list ap;
+                va_start(ap, format);
+                vsprintf(buf, format, ap);
+                SetUniform(format, value);
+                va_end(ap);
+            }
+
             bool Reload();
             char* GetError() { return errorlog; }
 

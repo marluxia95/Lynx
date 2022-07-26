@@ -1,19 +1,24 @@
-#ifndef DEMO_HPP
-#define DEMO_HPP
+#ifndef DEMO_H
+#define DEMO_H
 
 #include "Core/application.h"
-#include "input.h"
 
-class Demo : public Lynx::GameApplication {
+class Demo : public Lynx::Application {
+private:
+    void movement();
 public:
     Demo(int argc, char** argv);
     ~Demo();
 
-    
 private:
-    static int OnUpdate(const Lynx::Event& ev); // Event listener for updating the application's title
-    static char title[40];
-    static Input input;
+    Lynx::Camera* m_camera;
+    float speed_mul;
+    float sensitivity = 0.1f;
+    bool mouse_active = false;
+    bool mouse_start = false;
+    glm::vec2 prev_pos = glm::vec2(0.0f);
+    float pitch = 0;
+    float yaw = 0;
 };
 
 #endif

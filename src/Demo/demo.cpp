@@ -1,58 +1,72 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h> 
-#include <iostream>
-#include <vector>
-#include <glm/glm.hpp>
-#include "lynx.h"
-
-#include "Core/windowManager.h"
-#include "Systems/renderSystem.h"
-#include "Scripting/luaRuntime.h"
-
+#include "Core/entity_manager.h"
+#include "Core/input.h"
+#include "Core/event_manager.h"
+#include "Events/keyEvent.h"
+#include "Events/mouseEvent.h"
+#include "Graphics/renderer_forward.h"
+#include "Graphics/model.h"
+#include "Graphics/skybox.h"
 #include "demo.h"
-#include "demo_scene.hpp"
 
-char Demo::title[40] = "";
-Input Demo::input = Input();
+using namespace Lynx;
 
 Demo::Demo(int argc, char** argv)
 {
-	// Enables the application's debug mode
-	for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i) {
 		if(std::string(argv[i]) == "--debug")
 			log_set_level(LOG_DEBUG);
 	}
 
-	LoadDefaultComponents();
-	LoadDefaultSystems();
+    Initialise(0);
 
-	log_info("Initializing window");
-	m_windowManager = std::make_shared<Lynx::WindowManager>();
-	m_windowManager->Init();
-	Init(NULL);
+    m_renderer.reset(new Graphics::ForwardRenderer());
+    m_renderer->Initialise();
 
-	RegisterSystem<Lynx::RenderSystem>();
+    m_camera = new Camera();
+    m_camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
+
+    m_renderer->SetCamera(m_camera);
+    auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
+    m_renderer->SetDirectionalLight(directional_light);
+
+    Entity* model;
     {
-        Lynx::Signature signature;
-        signature.set(GetComponentType<Lynx::Transform>());
-        signature.set(GetComponentType<Lynx::MeshRenderer>());
-        SetSystemSignature<Lynx::RenderSystem>(signature);
+        Graphics::ModelLoader loader(m_entityManager);
+        model = loader.LoadModel("res/models/cube.fbx");
     }
 
-	Lynx::EventManager::AddListener(Lynx::UpdateTick, OnUpdate);
-	Lynx::EventManager::AddListener(Lynx::MouseKeyPressed, input.mouse_button_input);
-	Lynx::EventManager::AddListener(Lynx::JoystickConnected, input.joystick_connected);
-	Lynx::EventManager::AddListener(Lynx::JoystickDisconnected, input.joystick_disconnected);
+    model->SetLocalPosition(glm::vec3(0,10,0));
 
-	RegisterSystem<Lynx::Lua::LuaRuntime>();
-	Lynx::ModuleManager::LoadEngineModule("LynxPhysics");
+    Graphics::Material material;
+    material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/box.dds");
+    material.ambient = glm::vec3(0.5f);
+    material.diffuse = material.specular = glm::vec3(0.5f);
+    material.shininess = 50.0f;
 
-	log_info("Adding scene");
-	SetScene(std::make_shared<DemoScene>());
-	
-	SetApplicationState(Lynx::STATE_ACTIVE);
-	Run();
+    model->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(material);
+    model->PrintHierarchy();
+
+    std::shared_ptr<Graphics::Skybox> sky = std::make_shared<Graphics::Skybox>(m_resourceManager->LoadTexture("res/textures/cubemap.dds", Graphics::TEXTURE_CUBE_MAP));
+    m_renderer->SetSkybox(sky);
+
+    EventManager::AddListener(Render, [this, model](const Event& ev){
+        m_renderer->PushRender(model);
+    });
+
+    EventManager::AddListener(MouseKeyPressed, [this](const Event& ev){
+        const MouseButtonEvent& button_event = static_cast<const MouseButtonEvent&>(ev);
+        if(button_event.m_keyCode == MOUSE_BUTTON_2){
+            mouse_active = button_event.m_action;
+            Input::EnableCursor(mouse_active);
+        }
+
+    });
+
+    EventManager::AddListener(UpdateTick, [this](const Event& ev){
+        movement();
+    });
+
+    Run();
 }
 
 Demo::~Demo()
@@ -60,13 +74,44 @@ Demo::~Demo()
 
 }
 
-int Demo::OnUpdate(const Lynx::Event& ev)
+void Demo::movement()
 {
-	Lynx::GameApplication* instance = Lynx::GameApplication::GetGameInstance();
-	snprintf(title,40 ,"Engine demo FPS : %d Errors : %d", (int)round(1/instance->GetDeltaTime()), log_geterrorcount());
-	instance->GetWindowManager()->SetTitle(title);
-	input.mouse_input();
-	input.movement();
-	
-	return 1;
+    float speed = GetDeltaTime() * speed_mul;
+    float forward = Input::IsKeyDown(KEY_W) - Input::IsKeyDown(KEY_S);
+    float left = Input::IsKeyDown(KEY_D) - Input::IsKeyDown(KEY_A);
+
+    if(forward)
+        m_camera->position += speed * m_camera->rotation * forward;
+    if(left)
+        m_camera->position += speed * glm::normalize(glm::cross(m_camera->rotation, m_camera->Up()) * left);
+
+    speed_mul = 3.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 2.0f;
+
+    if(!mouse_active) {
+        return;
+    }
+
+    glm::vec2 pos = Lynx::Input::GetMousePos();
+    glm::vec2 offset = glm::vec2(pos.x - prev_pos.x, prev_pos.y - pos.y);
+    //log_debug("pos %f %f prevpos %f %f offset %f %f", pos.x, pos.y, prev_pos.x, prev_pos.y, offset.x, offset.y);
+    prev_pos = pos;
+
+
+    offset *= sensitivity;
+
+    pitch += offset.y;
+    yaw += offset.x;
+
+    if(pitch > 89.9f)
+        pitch = 89.9f;
+
+    if(pitch < -89.9f)
+        pitch = -89.9f;
+
+    //log_debug("%f %f (%f %f) (%f %f)", pitch, yaw, pos.x, pos.y, prev_pos.x, prev_pos.y);
+
+    m_camera->rotation = glm::normalize(
+        glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+        sin(glm::radians(pitch)),
+        sin(glm::radians(yaw)) * cos(glm::radians(pitch) )));
 }

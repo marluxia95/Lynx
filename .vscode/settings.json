@@ -79,6 +79,8 @@
         "semaphore": "cpp",
         "shared_mutex": "cpp",
         "valarray": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "charconv": "cpp",
+        "source_location": "cpp"
     }
 }

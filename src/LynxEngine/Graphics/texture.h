@@ -7,11 +7,11 @@
 #include <gli/gli.hpp>
 #include "lynx_common.h"
 #include "Core/resource.h"
-#include "rendererAPI.h"
+#include "graphics_api.h"
 
 namespace Lynx::Graphics {
 
-	class TextureBase : public ResourceBase {
+	class TextureBase : public Resource {
 		protected:
 			typedef struct TextureData {
 				unsigned char* data;
