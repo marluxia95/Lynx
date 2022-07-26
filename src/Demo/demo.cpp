@@ -26,7 +26,7 @@ Demo::Demo(int argc, char** argv)
     m_camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
 
     m_renderer->SetCamera(m_camera);
-    auto directional_light = Graphics::DirectionalLight{glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f)};
+    auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
     m_renderer->SetDirectionalLight(directional_light);
 
     Entity* model;
@@ -39,7 +39,7 @@ Demo::Demo(int argc, char** argv)
 
     Graphics::Material material;
     material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/box.dds");
-    material.ambient = glm::vec3(1.0f);
+    material.ambient = glm::vec3(0.5f);
     material.diffuse = material.specular = glm::vec3(0.5f);
     material.shininess = 50.0f;
 
