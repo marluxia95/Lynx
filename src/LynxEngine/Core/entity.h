@@ -6,21 +6,27 @@
 
 namespace Lynx {
 
+    typedef uint64_t EntityID;
+
+    class EntityManager;
+
     class LYNXENGINE_API Entity {
     protected:
         glm::mat4 calcLocalModelMatrix() const;
         void updateModel();
 
     public:
-        Entity(uint64_t id, bool renderable=false);
-        Entity(uint64_t id, const char* name, bool renderable=false);
+        Entity(EntityManager* entity_manager, EntityID id, bool renderable=false);
+        Entity(EntityManager* entity_manager, EntityID id, const char* name, bool renderable=false);
         ~Entity();
 
         const char* GetName();
 
         void SetName(const char* name);
 
-        uint64_t GetId();
+        EntityID GetId();
+
+        void Delete();
 
         virtual void Think() {}
 
@@ -92,10 +98,9 @@ namespace Lynx {
         void PrintHierarchy();
 
     protected:
-        // FIXME : These values don't really get intialized ... huh
         glm::vec3 m_position = glm::vec3(0);
-        glm::vec3 m_rotation;// = glm::vec3(0);
-        glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };// = glm::vec3(1.0f);
+        glm::vec3 m_rotation;
+        glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };
         glm::mat4 m_model = glm::mat4(1.0f);
 
         bool m_isRenderable = false;
@@ -106,7 +111,8 @@ namespace Lynx {
         Entity* m_parent;
         std::vector<Entity*> m_children;
 
-        uint64_t m_id = 0;
+        EntityManager* m_entityManager = nullptr;
+        EntityID m_id = 0;
     };
 
 

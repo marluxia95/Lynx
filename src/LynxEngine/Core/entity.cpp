@@ -3,11 +3,11 @@
 
 namespace Lynx {
 
-    Entity::Entity(uint64_t id, bool renderable) : m_id(id), m_isRenderable(renderable)
+    Entity::Entity(EntityManager* entityManager, EntityID id, bool renderable) : m_entityManager(entityManager), m_id(id), m_isRenderable(renderable)
     {
     }
 
-    Entity::Entity(uint64_t id, const char* name, bool renderable) : m_id(id), m_name(name)
+    Entity::Entity(EntityManager* entityManager, EntityID id, const char* name, bool renderable) : m_entityManager(entityManager), m_id(id), m_name(name)
     {
     }
 
@@ -25,6 +25,14 @@ namespace Lynx {
     void Entity::SetName(const char* name)
     {
         m_name = name;
+    }
+
+    void Entity::Delete()
+    {
+        m_entityManager->deleteEntity(m_id);
+        for(auto child : m_children)
+            child->Delete();
+        delete this;
     }
 
     uint64_t Entity::GetId()

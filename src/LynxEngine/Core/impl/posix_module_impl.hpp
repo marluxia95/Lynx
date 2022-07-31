@@ -13,14 +13,14 @@
 
 namespace Lynx {
 
-    template<class T> 
+    template<class T>
     class ModuleLoader : public IModuleLoader<T> {
         public:
-            ModuleLoader(const std::string& path, 
-                        const std::string& alloc_sym = "alloc", 
-                        const std::string& dealloc_sym = "dealloc") : 
+            ModuleLoader(const std::string& path,
+                        const std::string& alloc_sym = "alloc",
+                        const std::string& dealloc_sym = "dealloc") :
                         m_path(Utils::GetPosixLibraryPath(path)), m_allocSymbol(alloc_sym), m_deallocSymbol(dealloc_sym), m_handle(nullptr) {
-                
+
 
             }
 
@@ -32,7 +32,7 @@ namespace Lynx {
 
                 log_debug("Successfully loaded module %s", m_path.c_str());
             }
-            
+
             void Unload() {
                 m_moduleInstance->Last();
                 if(dlclose(m_handle) != 0) {
@@ -66,7 +66,7 @@ namespace Lynx {
             std::shared_ptr<T> m_moduleInstance;
 
     };
-    
+
 }
 
 #endif // __linux__

@@ -4,7 +4,7 @@ option(BUILD_DEBUG "Enable build debugging (-g)" OFF)
 
 if(BUILD_EXAMPLES)
 add_subdirectory(LynxEngine)
-
+add_subdirectory(LynxPhysics)
 add_subdirectory(Demo)
 endif()
 

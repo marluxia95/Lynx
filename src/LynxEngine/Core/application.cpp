@@ -29,7 +29,7 @@ namespace Lynx {
 
     Application* Application::s_applicationInstance = nullptr;
 
-    Application::Application() 
+    Application::Application()
     {
         log_debug("Initializing subsystems");
 
@@ -46,7 +46,7 @@ namespace Lynx {
         m_resourceManager.reset(new ResourceManager());
         m_windowManager.reset(new WindowManager());
         m_entityManager.reset(new EntityManager());
-        
+
 
     }
 
@@ -60,7 +60,7 @@ namespace Lynx {
 
     /**
      * @brief Initializes the application instance
-     * 
+     *
      * @param flags Not used
      */
     void Application::Initialise(int flags)
@@ -77,7 +77,7 @@ namespace Lynx {
 
     void Application::SetRenderer(std::shared_ptr<Graphics::Renderer> renderer)
     {
-        if(m_renderer && m_renderer != renderer) 
+        if(m_renderer && m_renderer != renderer)
         {
             m_renderer->Shutdown();
         }
@@ -88,7 +88,7 @@ namespace Lynx {
 
     /**
      * @brief Calculates the frametime
-     * 
+     *
      */
     void Application::CalculateFrameTime()
     {
@@ -99,10 +99,10 @@ namespace Lynx {
 
     /**
      * @brief Runs the main loop
-     * 
+     *
      */
     void Application::Run()
-    {       
+    {
         EventManager::SendEvent(FirstTickEvent());
         do
         {
@@ -110,7 +110,7 @@ namespace Lynx {
 #ifdef LYNX_MULTITHREAD
             EventManager::UpdateListeners();
 #endif
-            
+
             // Update logic
             EventManager::SendEvent(RenderEvent());
             m_renderer->Render();

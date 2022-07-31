@@ -2,6 +2,7 @@
 #include "Core/entity_manager.h"
 #include "Core/input.h"
 #include "Core/event_manager.h"
+#include "Core/module.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 #include "Graphics/renderer_forward.h"
@@ -19,6 +20,8 @@ Demo::Demo(int argc, char** argv)
 	}
 
     Initialise(0);
+
+    ModuleManager::LoadEngineModule("LynxPhysics");
 
     m_renderer.reset(new Graphics::ForwardRenderer());
     m_renderer->Initialise();

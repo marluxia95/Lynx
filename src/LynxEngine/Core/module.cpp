@@ -11,14 +11,14 @@
 #endif
 
 namespace Lynx {
-    
+
     std::map<std::string, IModuleLoader<IModule>*> ModuleManager::loaded_modules = std::map<std::string, IModuleLoader<IModule>*>();
 
     /**
      * @brief Loads an engine module, then initializes it
-     * 
-     * @param path 
-     * @return std::shared_ptr<IModule> 
+     *
+     * @param path
+     * @return std::shared_ptr<IModule>
      */
     std::shared_ptr<IModule> ModuleManager::LoadEngineModule(std::string path)
     {
@@ -35,11 +35,15 @@ namespace Lynx {
     {
         log_debug("Unloading modules...");
         for(auto const& [n,i] : loaded_modules) {
-            log_debug("Unloading %s", typeid(i).name());
+            if(i->GetInstance()->GetName())
+                log_debug("Unloading %s", i->GetInstance()->GetName());
+            else
+                log_debug("Unloading %s", typeid(i).name());
+
             i->Unload();
             delete i;
         }
-
+        loaded_modules.clear();
     }
 
     std::shared_ptr<IModule> ModuleManager::GetModule(std::string path)
