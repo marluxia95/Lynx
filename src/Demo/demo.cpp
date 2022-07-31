@@ -1,4 +1,5 @@
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtx/compatibility.hpp>
 #include "Core/entity_manager.h"
 #include "Core/input.h"
 #include "Core/event_manager.h"
@@ -98,13 +99,12 @@ void Demo::movement()
     float speed = GetDeltaTime() * speed_mul;
     float forward = Input::IsKeyDown(KEY_W) - Input::IsKeyDown(KEY_S);
     float left = Input::IsKeyDown(KEY_D) - Input::IsKeyDown(KEY_A);
+    if(forward || left)
+        desired_position = m_camera->position + speed * (m_camera->rotation * forward + glm::normalize(glm::cross(m_camera->rotation, m_camera->Up())) * left );
 
-    if(forward)
-        m_camera->position += speed * m_camera->rotation * forward;
-    if(left)
-        m_camera->position += speed * glm::normalize(glm::cross(m_camera->rotation, m_camera->Up()) * left);
-
-    speed_mul = 3.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 7.0f;
+    glm::vec3 rate(0.1f);
+    m_camera->position = glm::lerp(m_camera->position, desired_position, rate);
+    speed_mul = 30.0f + Input::IsKeyDown(KEY_LEFT_SHIFT) * 30.0f;
 
     if(!mouse_active) {
         return;
@@ -112,7 +112,6 @@ void Demo::movement()
 
     glm::vec2 pos = Lynx::Input::GetMousePos();
     glm::vec2 offset = glm::vec2(pos.x - prev_pos.x, prev_pos.y - pos.y);
-    //log_debug("pos %f %f prevpos %f %f offset %f %f", pos.x, pos.y, prev_pos.x, prev_pos.y, offset.x, offset.y);
     prev_pos = pos;
 
 
@@ -127,10 +126,13 @@ void Demo::movement()
     if(pitch < -89.9f)
         pitch = -89.9f;
 
-    //log_debug("%f %f (%f %f) (%f %f)", pitch, yaw, pos.x, pos.y, prev_pos.x, prev_pos.y);
+    //log_debug("p%f y%f pos(%f %f) ppos(%f %f)", pitch, yaw, pos.x, pos.y, prev_pos.x, prev_pos.y);
 
-    m_camera->rotation = glm::normalize(
+    desired_rotation = glm::normalize(
         glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
         sin(glm::radians(pitch)),
         sin(glm::radians(yaw)) * cos(glm::radians(pitch) )));
+
+    rate = glm::vec3(0.5f);
+    m_camera->rotation = glm::lerp(m_camera->rotation, desired_rotation, rate);
 }

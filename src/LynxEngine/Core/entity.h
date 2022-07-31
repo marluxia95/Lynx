@@ -99,7 +99,7 @@ namespace Lynx {
 
     protected:
         glm::vec3 m_position = glm::vec3(0);
-        glm::vec3 m_rotation;
+        glm::vec3 m_rotation = glm::vec3(0);
         glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };
         glm::mat4 m_model = glm::mat4(1.0f);
 
