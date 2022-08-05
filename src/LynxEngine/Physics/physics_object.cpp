@@ -25,7 +25,7 @@ namespace Lynx::Physics {
             return;
 
         m_linearvel += m_force / m_mass * deltatime;
-        m_force;
+        m_force = glm::vec3(0);
     }
 
     void PhysicsObject::SetPosition(glm::vec3 pos)
