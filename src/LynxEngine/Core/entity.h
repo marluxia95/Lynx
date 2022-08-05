@@ -3,12 +3,15 @@
 
 #include <glm/glm.hpp>
 #include "Graphics/renderer.h"
+#include "Physics/physics_object.h"
 
 namespace Lynx {
 
     typedef uint64_t EntityID;
 
     class EntityManager;
+
+    // TODO : Make the entity class derived from a Transform class to keep all things tidied up
 
     class LYNXENGINE_API Entity {
     protected:
@@ -94,9 +97,13 @@ namespace Lynx {
          */
         void SetRenderObj(Graphics::Renderable* render_obj);
 
+        void SetPhysicsObj(Physics::PhysicsObject* phys_obj);
+        virtual void UpdatePhysics();
+
         // DEBUG
         void PrintHierarchy();
-
+    protected:
+        friend class EntityManager;
     protected:
         glm::vec3 m_position = glm::vec3(0);
         glm::vec3 m_rotation = glm::vec3(0);
@@ -106,9 +113,11 @@ namespace Lynx {
         bool m_isRenderable = false;
 
         const char* m_name = "Unnamed";
-        Graphics::Renderable* m_renderable;
 
-        Entity* m_parent;
+        Graphics::Renderable* m_renderable = NULL;
+        Physics::PhysicsObject* m_physicsObject = NULL;
+
+        Entity* m_parent = NULL;
         std::vector<Entity*> m_children;
 
         EntityManager* m_entityManager = nullptr;

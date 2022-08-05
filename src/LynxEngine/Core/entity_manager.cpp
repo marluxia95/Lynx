@@ -1,10 +1,14 @@
 #include "entity_manager.h"
+#include "event_manager.h"
+#include "application.h"
 
 namespace Lynx {
 
     EntityManager::EntityManager()
     {
-
+        EventManager::AddListener(UpdateTick, [this](const Event& ev){
+                Update();
+        });
     }
 
     EntityManager::~EntityManager()
@@ -17,12 +21,7 @@ namespace Lynx {
 
     Entity* EntityManager::CreateEntity()
     {
-        if(!m_id_stack.empty()){
-            EntityID id = m_id_stack.top();
-            m_id_stack.pop();
-            return m_entities[id] = new Entity(this, id);
-        }
-        Entity* newent = new Entity(this, m_entities.size());
+        Entity* newent = new Entity(this, m_entities.size()+1);
         m_entities.push_back(newent);
         return newent;
     }
@@ -36,12 +35,53 @@ namespace Lynx {
 
     bool EntityManager::EntityExists(EntityID entity)
     {
+        if(entity > m_entities.size())
+            return false;
+
         return m_entities[entity] != nullptr;
+    }
+
+    void EntityManager::RegisterEntity(Entity* entity)
+    {
+        // Reuse unused slots from deleted entities
+        if(!m_id_stack.empty()){
+            EntityID id = getCachedId();
+            entity->m_id = id;
+            m_entities[id] = entity;
+            return;
+        }
+
+        entity->m_id = m_entities.size()+1;
+        m_entities.push_back(entity);
+    }
+
+    void EntityManager::UnregisterEntity(Entity* entity)
+    {
+        deleteEntity(entity->m_id);
     }
 
     void EntityManager::deleteEntity(EntityID entity_id)
     {
         m_id_stack.push(entity_id);
         m_entities[entity_id] = nullptr;
+    }
+
+    void EntityManager::Update()
+    {
+        for(auto ent : m_entities) {
+            if(ent == nullptr)
+                continue;
+
+            ent->UpdatePhysics();
+            ent->Think();
+            Application::GetSingleton()->GetRenderer()->PushRender(ent);
+        }
+    }
+
+    EntityID EntityManager::getCachedId()
+    {
+        EntityID id = m_id_stack.top();
+        m_id_stack.pop();
+        return id;
     }
 }

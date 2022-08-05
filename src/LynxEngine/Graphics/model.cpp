@@ -5,7 +5,17 @@ namespace Lynx::Graphics {
 
 Entity* ModelLoader::LoadModel(const char* path)
 {
-	const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+    auto cached_mesh = Lynx::Application::GetSingleton()->GetResourceManager()->GetResource<Graphics::Mesh>(path);
+    if(cached_mesh)
+	{
+        Entity* ent = m_entityManager->CreateEntity();
+        Renderable* rndl = new Renderable();
+        rndl->SetMesh(cached_mesh);
+        ent->SetRenderObj(rndl);
+        return ent;
+    }
+
+    const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 
 	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode)
 	{
@@ -14,6 +24,8 @@ Entity* ModelLoader::LoadModel(const char* path)
 	}
 
 	log_debug("ModelLoader : Number of children nodes %d", ai_scene->mRootNode->mNumChildren);
+
+    // FIXME : Change this shitty model loader lol 
 
 	return LoadNode(path, ai_scene->mRootNode, ai_scene);
 }

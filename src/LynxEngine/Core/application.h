@@ -54,6 +54,7 @@ namespace Lynx {
 
         void SetRenderer(std::shared_ptr<Graphics::Renderer> renderer);
 
+        std::shared_ptr<Graphics::Renderer> GetRenderer() { return m_renderer; }
         uint GetResolutionHeight();
         uint GetResolutionWidth();
 

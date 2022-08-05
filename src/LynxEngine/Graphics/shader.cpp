@@ -4,9 +4,9 @@
  * @brief A shader class wrapper that parses, compiles and manages a shader
  * @version 0.0.3
  * @date 2021-09-03
- * 
+ *
  * @copyright Copyright (c) 2021. See LICENSE for more information
- * 
+ *
  */
 
 #include <stdio.h>
@@ -46,9 +46,9 @@ namespace Lynx::Graphics {
 
 	/**
 	 * @brief Pushes a shader source to be compiled
-	 * 
-	 * @param shaderPath 
-	 * @param type 
+	 *
+	 * @param shaderPath
+	 * @param type
 	 */
 	void Shader::PushSource(std::string shaderPath, ShaderType type)
 	{
@@ -65,11 +65,7 @@ namespace Lynx::Graphics {
 		if(!obj.source)
 			return false;
 
-		
 
-		log_debug("Creating shader object");
-
-		log_debug("SHADER DUMP \n Shader type %d \n Shader source : \n%s", obj.type, obj.source);
 		obj.shader = RendererAPI::CompileShader(obj.source, obj.type);
 		shader_objs.push_back(obj);
 		free(obj.source);
@@ -83,7 +79,7 @@ namespace Lynx::Graphics {
 
 		shader_file = fopen(path,"r");
 		if(!shader_file){
-			log_error("Unable to open shader %s", path); 
+			log_error("Unable to open shader %s", path);
 			success = false;
 			return NULL;
 		}
@@ -113,9 +109,9 @@ namespace Lynx::Graphics {
 
 	/**
 	 * @brief Links the shader program
-	 * 
-	 * @return true 
-	 * @return false 
+	 *
+	 * @return true
+	 * @return false
 	 */
 	bool Shader::Link()
 	{
@@ -136,7 +132,7 @@ namespace Lynx::Graphics {
 
 	/**
 	 * @brief Reloads the shader
-	 * 
+	 *
 	 * @return bool True if shader was compiled successfully, false if there was an error while compiling the shader
 	 */
 	bool Shader::Reload(){
@@ -147,7 +143,7 @@ namespace Lynx::Graphics {
 
 	/**
 	 * @brief Uses the shader's program
-	 * 
+	 *
 	 */
 	void Shader::Use(){
 		if(!success|!program) return;

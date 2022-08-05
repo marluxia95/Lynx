@@ -29,28 +29,28 @@ ResourceManager::ResourceManager()
 
 }
 
-ResourceManager::~ResourceManager() 
+ResourceManager::~ResourceManager()
 {
 	Clear();
 }
 
 /**
  * @brief Clear all resources ( UNUSED )
- * 
+ *
  */
-void ResourceManager::Clear() 
+void ResourceManager::Clear()
 {
 	log_debug("Cleaning resources");
 }
 
 /**
  * @brief Updates the resource queue ( UNUSED )
- * 
+ *
  */
 void ResourceManager::Update(float dt)
 {/*
 #ifdef LYNX_MULTITHREAD
-	if(texdata_queue.empty()) 
+	if(texdata_queue.empty())
 		return;
 
 	Graphics::TextureBase* tex;
@@ -85,10 +85,10 @@ const char* ResourceManager::getFileName(const char* path)
 
 /**
  * @brief Loads a shader resource
- * 
+ *
  * @param vpath Vertex shader path
  * @param fpath Fragment shader path
- * @return std::shared_ptr<Graphics::Shader> 
+ * @return std::shared_ptr<Graphics::Shader>
  */
 std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
 {
@@ -105,10 +105,10 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
 
 /**
  * @brief Loads a texture
- * 
+ *
  * @param path Texture path
  * @param type Texture type
- * @return std::shared_ptr<Graphics::TextureBase> 
+ * @return std::shared_ptr<Graphics::TextureBase>
  */
 std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path, Graphics::TextureType type)
 {
@@ -145,7 +145,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 		LYNX_ASSERT(tex, "Fuck");
 		return;
 	}, obj);
-#else 
+#else
 	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
 	n_tex->Generate();
 #endif
@@ -158,16 +158,16 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 
 /**
  * @brief Loads a mesh
- * 
- * @param name 
- * @param vertices 
- * @param indices 
- * @param type 
- * @return std::shared_ptr<Graphics::Mesh> 
+ *
+ * @param name
+ * @param vertices
+ * @param indices
+ * @param type
+ * @return std::shared_ptr<Graphics::Mesh>
  */
-std::shared_ptr<Graphics::Mesh> 
-ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices, 
-	std::vector<unsigned int>* indices, 
+std::shared_ptr<Graphics::Mesh>
+ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices,
+	std::vector<unsigned int>* indices,
 	Graphics::MeshType type)
 {
 	std::string res_name = name;
@@ -183,9 +183,9 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 
 /**
  * @brief Finds a resource by its path
- * 
- * @param path 
- * @return std::shared_ptr<Resource> 
+ *
+ * @param path
+ * @return std::shared_ptr<Resource>
  */
 std::shared_ptr<Resource> ResourceManager::FindResourceByPath(const std::string path)
 {

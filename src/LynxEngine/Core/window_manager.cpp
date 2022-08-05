@@ -30,7 +30,7 @@ namespace Lynx {
 #endif
 
         log_debug("Creating window object");
-        
+
         if(fullScreen){
             window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), NULL);
         }
@@ -45,12 +45,12 @@ namespace Lynx {
         }
 
         glfwMakeContextCurrent(window);
-        glfwSwapInterval(1); 
-        
+        glfwSwapInterval(1);
+
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height){
             glViewport(0,0, width, height);
             EventManager::SendEvent(WindowResizeEvent(width, height));
-        });  
+        });
 
         glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos){
             EventManager::SendEvent(MouseCallbackEvent(xpos, ypos));
@@ -72,7 +72,7 @@ namespace Lynx {
     {
         if(!window)
             return;
-        
+
         glfwSetWindowTitle(window, title);
     }
 
@@ -80,7 +80,7 @@ namespace Lynx {
     {
         if(!window)
             return;
-        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -89,7 +89,7 @@ namespace Lynx {
     {
         if(!window)
             return;
-        
+
         log_debug("Terminating %d", window == NULL);
         glfwTerminate();
     }
@@ -98,7 +98,7 @@ namespace Lynx {
     {
         if(!window)     // Break the loop if the window does not exist
             return true;
-        
+
         return glfwWindowShouldClose(window);
     }
 

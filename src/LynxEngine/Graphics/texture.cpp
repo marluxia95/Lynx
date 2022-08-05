@@ -17,15 +17,15 @@ namespace Lynx::Graphics {
 	int TextureBase::total_textures = 0;
 
 	TextureBase::TextureBase(TextureType type) : id(-1), type(type), Resource(), data()
-	{ 
+	{
 		log_debug("Created new texture");
 	}
 
 	TextureBase::TextureBase(TextureType type, const char* path) : id(-1), type(type), Resource(path), data()
-	{ 
+	{
 		log_debug("Creating new texture with path %s", path);
 	}
-    
+
 
 	Texture::Texture() : TextureBase(TEXTURE_DEFAULT)
     {
@@ -61,7 +61,7 @@ namespace Lynx::Graphics {
             stbi_image_free(data.data);
             return;
         }
-        
+
         RendererAPI::LoadTexture(TEXTURE_2D, data.data, data.width, data.height);
         id = TextureBase::PushTextureID();
         printf("Texture %d loaded successfully\n", id);
@@ -97,7 +97,7 @@ namespace Lynx::Graphics {
 
     void Texture::loadSTBTex(const std::string path)
     {
-        stbi_set_flip_vertically_on_load(true);  
+        stbi_set_flip_vertically_on_load(true);
 	    data.data = stbi_load(path.c_str(), &data.width, &data.height, &data.channels, 0);
     }
 
@@ -108,9 +108,9 @@ namespace Lynx::Graphics {
             log_error("Invalid texture");
             return;
         }
-        
+
         log_debug("Loading texture with format %d", tex.format());
-        
+
         gli::gl GL(gli::gl::PROFILE_GL33);
         gli::gl::format const Format = GL.translate(tex.format(), tex.swizzles());
         GLenum Target = GL.translate(tex.target());
@@ -120,7 +120,7 @@ namespace Lynx::Graphics {
         glTexParameteri(Target, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(Target, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(tex.levels() - 1));
         glTexParameteriv(Target, GL_TEXTURE_SWIZZLE_RGBA, &Format.Swizzles[0]);
-   
+
         API_CheckErrors();
 
         glm::tvec3<GLsizei> const Extent(tex.extent());
@@ -160,7 +160,6 @@ namespace Lynx::Graphics {
         {
             GLsizei const LayerGL = static_cast<GLsizei>(Layer);
             glm::tvec3<GLsizei> Extent(tex.extent(Level));
-            log_debug("IsCubeMap? %s", gli::is_target_cube(tex.target()) ? "yes" : "no");
             Target = gli::is_target_cube(tex.target())
                 ? GL_TEXTURE_CUBE_MAP_POSITIVE_X + Face
                 : Target;

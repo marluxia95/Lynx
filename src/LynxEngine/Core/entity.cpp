@@ -15,6 +15,9 @@ namespace Lynx {
     {
         if(m_isRenderable)
             delete m_renderable;
+
+        if(m_physicsObject)
+            delete m_physicsObject;
     }
 
     const char* Entity::GetName()
@@ -162,10 +165,24 @@ namespace Lynx {
 
     Entity* Entity::GetChildByIndex(uint index)
     {
-        if (index > m_children.size())
-            return NULL;
+        if (m_children.size() == 0 | index > m_children.size())
+            return this;
 
         return m_children[index];
+    }
+
+    void Entity::SetPhysicsObj(Physics::PhysicsObject* phys_obj)
+    {
+        m_physicsObject = phys_obj;
+    }
+
+    void Entity::UpdatePhysics()
+    {
+        if(!m_physicsObject)
+            return;
+
+        m_physicsObject->Update();
+        m_position = m_physicsObject->GetPosition();
     }
 
     // shitty

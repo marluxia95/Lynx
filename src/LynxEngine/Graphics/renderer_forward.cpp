@@ -9,7 +9,7 @@ namespace Lynx::Graphics {
 
     ForwardRenderer::ForwardRenderer() : Renderer()
     {
-
+        
     }
 
     ForwardRenderer::~ForwardRenderer()
