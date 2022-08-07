@@ -2,22 +2,24 @@
  * @file input.h
  * @author marlxx (marlxx@protonmail.com)
  * @brief This file contains all the input handling, including gamepads.
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
 #include <stdbool.h>
 #include <map>
-#include "event_manager.h"
+#include <glm/glm.hpp>
 #include "lynx_common.h"
 #include "keys.h"
 
 #define JOYSTICK_LAST 15
 
 namespace Lynx {
+
+    class Event;
 
     typedef struct gamepadstate
     {
@@ -48,7 +50,7 @@ namespace Lynx {
             static bool IsKeyUp(int keycode);
             static glm::dvec2 GetMousePos();
             static void EnableCursor(bool enable);
-            
+
             friend class Application;
         private:
             static void Init();
@@ -61,7 +63,7 @@ namespace Lynx {
 
             static void addJoystick(int id);
             static Joystick* connectedJoysticks[JOYSTICK_LAST];
-            
+
             static glm::dvec2 mouse_pos;
     };
 

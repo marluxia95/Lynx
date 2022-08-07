@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "buffers.h"
+#include "mesh.h"
 #include "Core/logger.h"
 #include "graphics_api.h"
 #include "Platform/OpenGL/gl_buffers.h"

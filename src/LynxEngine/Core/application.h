@@ -1,10 +1,10 @@
 /**
  * @file application.h
  * @author marlxx (marlxx@protonmail.com)
- * @brief This contains all the main application logic, loops, etc. 
- * 
+ * @brief This contains all the main application logic, loops, etc.
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 
 #ifndef APPLICATION_H
@@ -12,14 +12,18 @@
 
 #include <stdio.h>
 #include <memory>
-
-#include "entity_manager.h"
-#include "window_manager.h"
-#include "resource_manager.h"
-#include "Graphics/renderer.h"
-#include "threadpool.h"
+#include <thread>
+#include "lynx_common.h"
 
 namespace Lynx {
+    namespace Graphics {
+        class Renderer;
+    }
+
+    class ThreadPool;
+    class WindowManager;
+    class ResourceManager;
+    class EntityManager;
 
 	enum State{
 		STATE_ACTIVE,
@@ -43,7 +47,7 @@ namespace Lynx {
         virtual void Initialise(int flags);
 
 		virtual void Run();
-        
+
         float GetDeltaTime() { return delta_time; }
 
         void SetApplicationState(State state) { applicationState = state; }
@@ -55,8 +59,8 @@ namespace Lynx {
         void SetRenderer(std::shared_ptr<Graphics::Renderer> renderer);
 
         std::shared_ptr<Graphics::Renderer> GetRenderer() { return m_renderer; }
-        uint GetResolutionHeight();
-        uint GetResolutionWidth();
+        unsigned int GetResolutionHeight();
+        unsigned int GetResolutionWidth();
 
         static Application* GetSingleton() { return s_applicationInstance; }
     protected:
@@ -73,9 +77,9 @@ namespace Lynx {
         std::unique_ptr<ThreadPool> m_threadPool;	
         std::unique_ptr<WindowManager> m_windowManager;
         std::shared_ptr<ResourceManager> m_resourceManager;
-        std::shared_ptr<Graphics::Renderer> m_renderer; 
+        std::shared_ptr<Graphics::Renderer> m_renderer;
         std::shared_ptr<EntityManager> m_entityManager;
-        
+
 	};
 
 }

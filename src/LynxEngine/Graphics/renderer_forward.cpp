@@ -2,6 +2,7 @@
 #include "Platform/OpenGL/gl_graphics_api.h"
 #include "renderer_forward.h"
 #include "Core/application.h"
+#include "Core/entity.h"
 #include "graphics_api.h"
 #include "skybox.h"
 

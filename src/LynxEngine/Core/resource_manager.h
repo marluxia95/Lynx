@@ -7,17 +7,23 @@
 #include <mutex>
 #include "logger.h"
 #include "threadpool.h"
-
 #include "Graphics/graphics_api.h"
-#include "Graphics/mesh.h"
-#include "Graphics/buffers.h"
-#include "Graphics/shader.h"
-#include "Graphics/texture.h"
-
-#include "resource.h"
 #include "lynx_common.h"
 
+namespace Lynx::Graphics {
+
+    class Mesh;
+    enum MeshType : unsigned int;
+    class Vertex;
+    class Shader;
+    class TextureBase;
+
+}
+
 namespace Lynx {
+
+    class ThreadPool;
+    class Resource;
 
 	enum ResourceType {
 		RES_SHADER,

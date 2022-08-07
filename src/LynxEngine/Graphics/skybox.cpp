@@ -1,5 +1,7 @@
-#include "skybox.h"
+#include "shader.h"
+#include "texture.h"
 #include "cube.h"
+#include "skybox.h"
 
 using namespace Lynx::Graphics;
 

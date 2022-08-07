@@ -2,10 +2,11 @@
 #define PHYSICS_OBJECT_H
 
 #include <glm/glm.hpp>
+#include "lynx_common.h"
 
 namespace Lynx::Physics {
 
-    class PhysicsObject {
+    class LYNXENGINE_API PhysicsObject {
     public:
         PhysicsObject();
         ~PhysicsObject();

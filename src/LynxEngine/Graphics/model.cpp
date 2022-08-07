@@ -1,4 +1,9 @@
 #include "Core/application.h"
+#include "Core/entity_manager.h"
+#include "Core/logger.h"
+#include "renderer.h"
+#include "mesh.h"
+#include "material.h"
 #include "model.h"
 
 namespace Lynx::Graphics {
@@ -20,7 +25,7 @@ Entity* ModelLoader::LoadModel(const char* path)
 	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode)
 	{
 		log_error("ModelLoader : Error while loading model ! %s \n", m_importer.GetErrorString());
-		return NULL;
+		LYNX_ASSERT(false, "Error while loading assets");
 	}
 
 	log_debug("ModelLoader : Number of children nodes %d", ai_scene->mRootNode->mNumChildren);

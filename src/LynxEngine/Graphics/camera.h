@@ -1,7 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "Core/entity.h"
+#include <glm/glm.hpp>
+#include "lynx_common.h"
 
 namespace Lynx {
 

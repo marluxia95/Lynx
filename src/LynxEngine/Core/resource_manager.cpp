@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include "resource_manager.h"
 #include "logger.h"
+#include "Graphics/mesh.h"
 #include "Graphics/shader.h"
 #include "Graphics/texture.h"
 #include "Graphics/model.h"
 #include "Events/async.h"
+#include "threadpool.h"
 #include "application.h"
 
 namespace Lynx {

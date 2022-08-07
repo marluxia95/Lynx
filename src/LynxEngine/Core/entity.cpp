@@ -1,3 +1,6 @@
+#include "entity_manager.h"
+#include "Graphics/renderer.h"
+#include "Physics/physics_object.h"
 #include "entity.h"
 #include "logger.h"
 

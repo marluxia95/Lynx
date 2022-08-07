@@ -2,6 +2,7 @@
 #define DEMO_H
 
 #include "Core/application.h"
+#include "Graphics/camera.h"
 
 class Demo : public Lynx::Application {
 private:

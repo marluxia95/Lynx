@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "Core/logger.h"
 #include "Utils/path.hpp"
+#include "graphics_api.h"
 
 #define TEXTURE_DEFAULT TEXTURE_2D
 

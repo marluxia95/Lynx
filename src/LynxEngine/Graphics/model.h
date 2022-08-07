@@ -5,7 +5,6 @@
 #include <string.h>
 #include <vector>
 
-
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/glm.hpp>
 
@@ -13,16 +12,13 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
-#include "Core/logger.h"
-#include "Core/entity_manager.h"
-
-#include "material.h"
-#include "mesh.h"
-
+#include "Core/entity.h"
 
 namespace Lynx::Graphics {
 
-	class LYNXENGINE_API ModelLoader {
+    class Material;
+
+    class LYNXENGINE_API ModelLoader {
 	public:
 		ModelLoader(std::shared_ptr<EntityManager> entityManager) : m_entityManager(entityManager) {}
 		Entity* LoadModel(const char* path);

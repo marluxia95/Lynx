@@ -5,11 +5,12 @@
 #include <memory>
 #include <queue>
 #include <gli/gli.hpp>
-#include "lynx_common.h"
 #include "Core/resource.h"
-#include "graphics_api.h"
+#include "lynx_common.h"
 
 namespace Lynx::Graphics {
+
+    enum TextureType : unsigned int;
 
 	class TextureBase : public Resource {
 		protected:

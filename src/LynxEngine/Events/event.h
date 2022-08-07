@@ -10,7 +10,7 @@
 
 namespace Lynx {
 
-    enum EventType {
+    enum EventType : unsigned int {
         None = 0,
         WindowClose, WindowResize, KeyPressed, MousePosCallback, MouseKeyPressed, JoystickConnected, JoystickDisconnected,
         FirstTick, LastTick, UpdateTick, EngineInit, Render, AsyncTextureLoad

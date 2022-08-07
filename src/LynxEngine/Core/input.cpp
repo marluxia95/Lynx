@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include "logger.h"
 #include "input.h"
+#include "event_manager.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 #include "Events/joystickEvent.h"

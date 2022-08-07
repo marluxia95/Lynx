@@ -2,10 +2,16 @@
 #define ENTITY_H
 
 #include <glm/glm.hpp>
-#include "Graphics/renderer.h"
-#include "Physics/physics_object.h"
 
 namespace Lynx {
+
+    namespace Physics {
+        class PhysicsObject;
+    }
+
+    namespace Graphics {
+        class Renderable;
+    }
 
     typedef uint64_t EntityID;
 

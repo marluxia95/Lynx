@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-
 #include "Core/resource.h"
 #include "vertex_array.h"
 #include "buffers.h"
@@ -17,7 +16,8 @@ namespace Lynx::Graphics {
 
 	class VertexBuffer;
 	class ElementBuffer;
-	struct Vertex;
+
+    struct Vertex;
 
 	enum MeshType : unsigned int {
 		MESH_2D_SPRITE,

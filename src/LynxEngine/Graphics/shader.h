@@ -13,9 +13,7 @@
 //#define SHADER_DEBUG
 #define MAX_ERR_BUFSIZE 2048
 
-namespace Lynx {
-
-    namespace Graphics {  
+namespace Lynx::Graphics {  
 
 
     // Abstract base class for shader program
@@ -89,8 +87,6 @@ namespace Lynx {
 
             std::vector<ShaderObj> shader_objs;
     };
-
-    }
 
 }
 

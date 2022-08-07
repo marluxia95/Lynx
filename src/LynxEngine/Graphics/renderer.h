@@ -5,15 +5,15 @@
 #include <stack>
 #include <glm/glm.hpp>
 #include "mesh.h"
-#include "material.h"
 #include "camera.h"
 #include "lighting.h"
+#include "material.h"
 #include "lynx_common.h"
 
 namespace Lynx {
 
-    class Entity;
-    class Scene;
+class Entity;
+class Scene;
 
 namespace Graphics {
 
@@ -102,7 +102,7 @@ namespace Graphics {
     };
 
 }
-}
 
+}
 
 #endif // RENDERER_H

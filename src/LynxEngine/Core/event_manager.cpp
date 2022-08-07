@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include "event.h"
 #include "event_manager.h"
 #include "Core/logger.h"
 

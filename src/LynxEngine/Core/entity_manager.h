@@ -5,12 +5,14 @@
 #include <memory>
 #include <vector>
 #include <stack>
-#include "entity.h"
 #include "lynx_common.h"
 #include "logger.h"
+#include "entity.h"
 // TODO
 
 namespace Lynx {
+
+    class Entity;
 
     class LYNXENGINE_API EntityManager {
     public:

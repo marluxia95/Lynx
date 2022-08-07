@@ -9,6 +9,7 @@
 #include "Graphics/renderer_forward.h"
 #include "Graphics/model.h"
 #include "Graphics/skybox.h"
+#include "Physics/physics_object.h"
 #include "demo.h"
 
 using namespace Lynx;
@@ -45,6 +46,7 @@ Demo::Demo(int argc, char** argv)
         plane_material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/wood.dds");
         plane_material.ambient = glm::vec3(0.5f);
         plane_material.diffuse = plane_material.specular = glm::vec3(0.5f);
+        plane_material.shininess = 20.0f;
 
         plane->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(plane_material);
         log_debug("%s %s %s", glm::to_string(plane->GetGlobalPosition()).c_str(), glm::to_string(plane->GetGlobalRotation()).c_str(),

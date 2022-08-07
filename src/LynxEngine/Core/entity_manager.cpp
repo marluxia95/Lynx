@@ -1,5 +1,7 @@
 #include "entity_manager.h"
+#include "entity.h"
 #include "event_manager.h"
+#include "Graphics/renderer.h"
 #include "application.h"
 
 namespace Lynx {

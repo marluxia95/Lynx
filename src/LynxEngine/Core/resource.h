@@ -1,10 +1,13 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
+
 #include <string>
+#include "resource_manager.h"
+#include "lynx_common.h"
 
 namespace Lynx {
-    
-    class Resource {
+
+    class LYNXENGINE_API Resource {
 	public:
 		Resource(std::string path) : m_resID(PushID()), m_resPath(path) { }
         Resource() : m_resID(PushID()), m_resPath("unknown") { }

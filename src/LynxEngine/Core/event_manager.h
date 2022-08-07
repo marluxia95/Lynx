@@ -14,10 +14,12 @@
 #include <map>
 #include <functional>
 #include <queue>
-#include "Events/event.h"
 #include "lynx_common.h"
 
 namespace Lynx {
+
+    class Event;
+    enum EventType : unsigned int;
 
     using EventCallbackFunc = std::function<void(const Event&)>;
 

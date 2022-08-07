@@ -4,11 +4,13 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
-#include "mesh.h"
 
 using namespace glm;
 
 namespace Lynx::Graphics {
+
+    class VertexBuffer;
+    class ElementBuffer;
 
 	enum MeshType : unsigned int;
 

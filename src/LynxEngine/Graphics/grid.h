@@ -1,11 +1,12 @@
 #ifndef LYNX_GRID_H
 #define LYNX_GRID_H
 
-#include "mesh.h"
-#include "shader.h"
 #include "lynx_common.h"
 
 namespace Lynx::Graphics {
+
+    class Mesh;
+    class Shader;
 
     class Grid {
     public:

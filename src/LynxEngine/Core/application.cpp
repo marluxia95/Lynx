@@ -10,9 +10,10 @@
 #include "application.h"
 
 #include "window_manager.h"
+#include "entity_manager.h"
+#include "Graphics/renderer.h"
 #include "input.h"
 
-#include "event_manager.h"
 #include "Events/event.h"
 
 #include "module.h"

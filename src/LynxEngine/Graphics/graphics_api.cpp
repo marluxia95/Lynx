@@ -60,6 +60,7 @@ namespace Lynx::Graphics {
             case API_OPENGL :
                 return std::make_unique<OpenGL::GLRendererAPI>();
         }
+        return NULL;
     }
 
     /**
