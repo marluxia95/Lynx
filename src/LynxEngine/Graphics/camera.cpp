@@ -7,7 +7,7 @@ namespace Lynx{
         UpdateView();
     }
 
-    Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up) : position(position), rotation(rotation), up(up)
+    Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up) : position(position), up(up)
     {
         UpdateView();
     }

@@ -50,10 +50,10 @@ namespace Lynx::Graphics {
             char* readShaderFile(const char* file);
 
         public:
-            Shader(const std::string vertexPath, const std::string fragmentPath);
+            Shader(const std::string& vertexPath, const std::string& fragmentPath);
             Shader();
 
-            void PushSource(std::string shaderPath, ShaderType type);
+            void PushSource(const std::string& shaderPath, ShaderType type);
 
             void Use();
 

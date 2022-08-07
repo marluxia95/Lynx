@@ -21,13 +21,14 @@ namespace Lynx {
 
     class Event;
 
-    typedef struct gamepadstate
+    struct gamepadstate
     {
         unsigned char buttons[15];
         float axes[6];
     };
 
-    typedef struct {
+    struct Joystick
+    {
         int id;
         const char* name;
         int axisCount;
@@ -36,7 +37,7 @@ namespace Lynx {
         bool isGamePad;
         gamepadstate gpadstate;
         void* ptr;
-    } Joystick;
+    };
 
     class Application;
 

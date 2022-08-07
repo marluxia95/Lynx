@@ -12,7 +12,7 @@
 namespace Lynx {
 
 
-ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool)
+ResourceManager::ResourceManager(ThreadPool* pool) : thpool(pool), lastId(0)
 {
 	#ifdef LYNX_MULTITHREAD
 	EventManager::AddListener(AsyncTextureLoad, [this](const Event& ev){
@@ -189,7 +189,7 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
  * @param path
  * @return std::shared_ptr<Resource>
  */
-std::shared_ptr<Resource> ResourceManager::FindResourceByPath(const std::string path)
+std::shared_ptr<Resource> ResourceManager::FindResourceByPath(const std::string& path)
 {
 	for(auto const& [k,v] : resource_map) {
 		log_debug("checking %ld from %s", k, v->GetResourcePath().c_str());

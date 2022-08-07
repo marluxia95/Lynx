@@ -33,7 +33,7 @@ namespace Lynx::Graphics {
 
     }
 
-    Texture::Texture(const std::string path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
+    Texture::Texture(const std::string& path) : TextureBase(TEXTURE_DEFAULT, path.c_str())
     {
         LoadFromFile(path);
     }
@@ -43,7 +43,7 @@ namespace Lynx::Graphics {
 
     }
 
-    Texture::Texture(const std::string path, TextureType type) : TextureBase(type, path.c_str())
+    Texture::Texture(const std::string& path, TextureType type) : TextureBase(type, path.c_str())
     {
         LoadFromFile(path);
     }
@@ -74,7 +74,7 @@ namespace Lynx::Graphics {
         RendererAPI::BindTexture(type, texture);
     }
 
-    void Texture::LoadFromFile(const std::string path)
+    void Texture::LoadFromFile(const std::string& path)
     {
         std::string extension = Utils::GetFileExtension(path);
         m_resPath = path;

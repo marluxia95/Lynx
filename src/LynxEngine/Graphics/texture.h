@@ -24,7 +24,7 @@ namespace Lynx::Graphics {
 				
 			virtual void Generate() = 0;
 			virtual void Use() = 0;
-			virtual void LoadFromFile(const std::string path) = 0;
+			virtual void LoadFromFile(const std::string& path) = 0;
 
 			bool IsValid() { return id != -1; }
 			unsigned int GetTextureID() { return texture; }
@@ -52,12 +52,12 @@ namespace Lynx::Graphics {
 		bool using_gli = false; // need to change this
 	public:
 		Texture();
-		Texture(const std::string path);
+		Texture(const std::string& path);
 		Texture(TextureType type);
-		Texture(const std::string path, TextureType type);
+		Texture(const std::string& path, TextureType type);
 		void Generate();
 		void Use();
-		void LoadFromFile(const std::string path);
+		void LoadFromFile(const std::string& path);
 	};
 
 	/*

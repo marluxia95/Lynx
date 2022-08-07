@@ -37,7 +37,7 @@ namespace Lynx::Graphics {
 		
 	}
 
-	Shader::Shader(const std::string vertexPath, const std::string fragmentPath) : Resource()
+	Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) : Resource(), shaderSize(0)
 	{
 		PushSource(vertexPath, SHADER_VERTEX);
 		PushSource(fragmentPath, SHADER_FRAGMENT);
@@ -50,7 +50,7 @@ namespace Lynx::Graphics {
 	 * @param shaderPath
 	 * @param type
 	 */
-	void Shader::PushSource(std::string shaderPath, ShaderType type)
+	void Shader::PushSource(const std::string& shaderPath, ShaderType type)
 	{
 		const char* shader_path_str = shaderPath.c_str();
 		char* shader_source = readShaderFile(shader_path_str);
