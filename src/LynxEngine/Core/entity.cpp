@@ -104,7 +104,6 @@ namespace Lynx {
         else
             m_model = calcLocalModelMatrix();
 
-
         for (Entity* child : m_children)
         {
             child->updateModel();
@@ -121,7 +120,6 @@ namespace Lynx {
             glm::rotate(model, glm::radians(m_rotation.y), vec3(0.0f, 1.0f, 0.0f)) *
             glm::rotate(model, glm::radians(m_rotation.z), vec3(0.0f, 0.0f, 1.0f));
         model = positionMatrix * scaleMatrix * rotationMatrix;
-
 
         return model;
     }

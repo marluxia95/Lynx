@@ -130,7 +130,6 @@ namespace Lynx {
         EntityID m_id = 0;
     };
 
-
 }
 
 #endif // ENTITY_H

@@ -61,16 +61,32 @@ namespace Lynx::Graphics {
 
             template<typename T>
             void SetUniform(const char* name, T value);
-            
+
             template<typename T>
             void SetUniformf(const char* format, T value, ...)
             {
-                char* buf;
+                char buf[256];
+                char* str;
+                int l;
+
                 va_list ap;
+
                 va_start(ap, format);
-                vsprintf(buf, format, ap);
-                SetUniform(format, value);
+
+                l = vsnprintf(buf, sizeof(buf), format, ap);
                 va_end(ap);
+
+                if((unsigned)l < sizeof(buf))
+                    str = strdup(buf);
+                else if ((unsigned)l >= sizeof(buf)){
+                    str = (char*)malloc(l + 1);
+                    va_start(ap, format);
+                    l = vsnprintf(str, l + 1, format, ap);
+                    va_end(ap);
+                }
+
+                SetUniform(str, value);
+                free(str);
             }
 
             bool Reload();

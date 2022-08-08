@@ -34,6 +34,8 @@ Demo::Demo(int argc, char** argv)
     m_renderer->SetCamera(m_camera);
     auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
     m_renderer->SetDirectionalLight(directional_light);
+    auto point_light = Graphics::PointLight(glm::vec3(0.0f), 1.0f, 0.35, 0.44);
+    m_renderer->PushLight(point_light);
 
     Graphics::ModelLoader loader(m_entityManager);
 
