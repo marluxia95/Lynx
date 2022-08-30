@@ -54,8 +54,8 @@ void log_print(log_Event* ev)
 
 	std::unique_lock<std::mutex> lock(out_mutex);
 
-	std::cout << std::string(buf) << getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
-					" ";
+	std::cout << "[" <<std::string(buf) << getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
+					"] ";
 	
 	vprintf(ev->format, ev->ap);
 	std::cout << Utils::GetColourString(Utils::FG_WHITE) << std::endl;

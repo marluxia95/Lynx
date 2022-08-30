@@ -4,6 +4,8 @@
 #include "Core/input.h"
 #include "Core/event_manager.h"
 #include "Core/module.h"
+#include "Core/package.h"
+#include "Core/assert.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
 #include "Graphics/renderer_forward.h"
