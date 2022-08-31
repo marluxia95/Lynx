@@ -71,7 +71,7 @@ namespace Lynx::Graphics {
 
     void ForwardRenderer::PushLight(PointLight& light)
     {
-        m_pointLights.push(light);
+        m_pointLights.push_back(light);
     }
 
     void ForwardRenderer::SetDirectionalLight(DirectionalLight& light)
@@ -109,15 +109,13 @@ namespace Lynx::Graphics {
     {
         //log_debug("Lighting debug init");
         for(int l = 0; l < m_pointLights.size(); l++) {
-            auto pointLight = m_pointLights.top();
+            auto pointLight = m_pointLights[l];
             //log_debug("PointLight : Pos(%f %f %f)\n   Constant %f\n   Linear %f\n   Quadratic %f\n   Ambient %f", pointLight.Position.x, pointLight.Position.y, pointLight.Position.z, pointLight.Constant, pointLight.Linear, pointLight.Quadratic, pointLight.Quadratic, pointLight.Ambient);
             m_objectShader->SetUniformf("pointLights[%d].position", pointLight.Position, l);
-            m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
-            m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
-            m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight.Quadratic,l);
+            //m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
+            //m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
+            //m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight.Quadratic,l);
             m_objectShader->SetUniformf("pointLights[%d].ambient",  pointLight.Ambient,  l);
-
-            m_pointLights.pop();
         }
 
         //log_debug("DirectionalLight : Direction(%f %f %f)\n   Ambient(%f %f %f)", m_directionalLight.Direction.x, m_directionalLight.Direction.y, m_directionalLight.Direction.z, m_directionalLight.Ambient.x, m_directionalLight.Ambient.y, m_directionalLight.Ambient.z);

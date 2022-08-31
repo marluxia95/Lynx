@@ -116,12 +116,9 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 {
 	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
 	if( texture ) {
-		log_debug("Found texture in cache");
 		if( texture->IsValid() )
 			return texture;
 	}
-
-	log_debug("Didn't find a valid texture in cache, loading");
 
 	std::string name = std::string(path);
 	
@@ -192,9 +189,7 @@ ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* verti
 std::shared_ptr<Resource> ResourceManager::FindResourceByPath(const std::string& path)
 {
 	for(auto const& [k,v] : resource_map) {
-		log_debug("checking %ld from %s", k, v->GetResourcePath().c_str());
 		if(v->GetResourcePath() == path) {
-			log_debug("Found matching resource in cache : %d", v->GetResourceID());
 			return v;
 		}
 	}

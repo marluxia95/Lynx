@@ -71,7 +71,7 @@ namespace Graphics {
         } render_queue_obj;
 
         std::stack<render_queue_obj> m_renderQueue;
-        std::stack<PointLight> m_pointLights;
+        std::vector<PointLight> m_pointLights;
         Camera* m_camera;
         DirectionalLight m_directionalLight;
 

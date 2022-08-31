@@ -6,8 +6,8 @@
 
 namespace Utils {
 
-    enum ColourType {
-        // Foreground colours
+    enum ColorType {
+        // Foreground colors
         FG_BLACK,
         FG_RED,
         FG_GREEN,
@@ -18,7 +18,7 @@ namespace Utils {
         FG_LIGHT_GRAY,
         FG_WHITE,
         
-        // Background Colours
+        // Background Colors
         BG_BLACK,
         BG_RED,
         BG_GREEN,
@@ -34,6 +34,6 @@ namespace Utils {
 
     };
 
-    std::string GetColourString(ColourType colour);
+    std::string GetColorString(ColorType colour);
 
 }

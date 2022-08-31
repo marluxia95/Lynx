@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <stack>
+#include <mutex>
 #include "lynx_common.h"
 #include "logger.h"
 #include "entity.h"

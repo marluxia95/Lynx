@@ -3,7 +3,7 @@
 namespace Utils {
 
 #ifndef _WIN32 
-const std::map<ColourType, std::string> colour_strings = {
+const std::map<ColorType, std::string> color_strings = {
                 {FG_BLACK,      "\033[30m"},
                 {FG_RED,        "\033[31m"},
                 {FG_GREEN,      "\033[32m"},
@@ -27,17 +27,17 @@ const std::map<ColourType, std::string> colour_strings = {
                 {FG_LIGHT_RED,  "\033[1;31"}
 };
 
-std::string GetColourString(ColourType colour) 
+std::string GetColorString(ColorType color) 
 {
-	auto p = colour_strings.find(colour);
-	if(p == colour_strings.end())
+	auto p = color_strings.find(color);
+	if(p == color_strings.end())
 		return "";
 	else
 		return p->second;
 } 
 #else
 
-std::string GetColourString(ColourType colour) 
+std::string GetColorString(ColorType color) 
 {
     return "";
 } 

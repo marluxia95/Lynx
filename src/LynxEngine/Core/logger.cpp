@@ -13,99 +13,89 @@
 #include "logger.h"
 #include "Utils/term.h"
 
-static std::mutex out_mutex;
+namespace Lynx {
 
-static struct {
-	LogLevel level = LOG_INFO;
-	bool quiet;
-	std::string outputFile;
-	int errors, warnings;
-} Logger;
+Logger logger;
 
-static std::string levelStrings[] = {
-	"FATAL  ", "ERROR  ", "WARNING", "INFO   ", "DEBUG  "
-};
-
-static std::map<LogLevel, Utils::ColourType> log_colours = {
-	{LOG_DEBUG,   Utils::FG_BLUE},
-	{LOG_INFO,    Utils::FG_WHITE},
-	{LOG_WARN,    Utils::FG_ORANGE},
-	{LOG_ERROR,   Utils::FG_RED},
-	{LOG_FATAL,   Utils::FG_RED}
-};
-
-static void event_init(log_Event* ev) 
+void Logger::SetLevel(LogLevel level)
 {
-	time_t t = time(NULL);
-	ev->time = localtime(&t);
+    m_level = level;
 }
 
-std::string getLevelColour(LogLevel lvl)
+void Logger::Quiet(bool enable)
 {
-	return Utils::GetColourString(log_colours[lvl]);
+    quiet = enable;
 }
 
-void log_print(log_Event* ev) 
+void Logger::Log(LogLevel level, const std::string &text)
 {
-	if(ev == nullptr | ev->format == nullptr | ev->ap == NULL)
-		return;
-	char buf[16];
-	buf[strftime(buf, sizeof(buf), "%H:%M:%S", ev->time)] = '\0';
+    char buf[16];
+    time_t t = time(NULL);
+    buf[strftime(buf, sizeof(buf), "%H:%M:%S", localtime(&t))] = '\0';
 
-	std::unique_lock<std::mutex> lock(out_mutex);
+    std::unique_lock<std::mutex> lock(out_mutex);
 
-	std::cout << "[" <<std::string(buf) << getLevelColour(ev->level) << " " << levelStrings[ev->level] << Utils::GetColourString(Utils::FG_WHITE) <<
-					"] ";
-	
-	vprintf(ev->format, ev->ap);
-	std::cout << Utils::GetColourString(Utils::FG_WHITE) << std::endl;
+    std::cout << "[" << std::string(buf) << getLevelColor(level) << " " << levelToString(level) << Utils::GetColorString(Utils::FG_GREEN) << getThreadName(std::this_thread::get_id()) << Utils::GetColorString(Utils::FG_WHITE) << "] " << text << std::endl;
 }
 
-std::string log_level_to_string(LogLevel level) 
+void Logger::Log(LogLevel level, const char* fmt, ...)
 {
-	return levelStrings[level];
+    va_list va;
+    char buf[512];
+    va_start(va, fmt);
+
+    vsnprintf(buf, 512, fmt, va);
+    Log(level, std::string(buf));
+
+    va_end(va);
 }
 
-void log_set_level(LogLevel level) 
+void Logger::RegisterThread(std::thread::id t_id, const std::string &name)
 {
-	Logger.level = level;
+    thread_name_map.insert({t_id, name});
 }
 
-void log_quiet(bool enable) 
+std::string Logger::levelToString(LogLevel level)
 {
-	Logger.quiet = enable;
+    switch(level){
+        case LOG_DEBUG:
+            return "DEBUG   ";
+        case LOG_INFO:
+            return "INFO    ";
+        case LOG_WARN:
+            return "WARNING ";
+        case LOG_ERROR:
+            return "ERROR   ";
+        case LOG_FATAL:
+            return "FATAL   ";
+    }
 }
 
-int log_geterrorcount()
+std::string Logger::getThreadName(std::thread::id t_id)
 {
-	return Logger.errors;
+    if(thread_name_map.find(t_id) != thread_name_map.end())
+        return thread_name_map[t_id];
+
+    return "";
 }
 
-int log_getwarningcount()
+std::string Logger::getLevelColor(LogLevel level)
 {
-	return Logger.warnings;
+    Utils::ColorType color;
+    switch(level){
+        case LOG_DEBUG:
+            color = Utils::FG_BLUE;
+            break;
+        case LOG_INFO:
+            color = Utils::FG_WHITE;
+            break;
+        case LOG_WARN:
+            color = Utils::FG_ORANGE;
+            break;
+        default:
+            color = Utils::FG_RED;
+    }
+    return GetColorString(color);
 }
 
-
-void log_log(std::thread::id th_id, LogLevel level, const char* format, ...) 
-{
-	log_Event ev;
-	ev.format = format;
-	ev.level = level;
-	ev.th_id = th_id;
-
-	if (!Logger.quiet && level <= Logger.level | level == LOG_FATAL) {
-		if(level == LOG_ERROR | level == LOG_FATAL)
-			Logger.errors++;
-
-		if(level == LOG_WARN)
-			Logger.warnings++;
-
-		event_init(&ev);
-		va_start(ev.ap, format);
-		log_print(&ev);
-		va_end(ev.ap);
-	}
 }
-
-

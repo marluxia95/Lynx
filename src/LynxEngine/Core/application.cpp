@@ -30,12 +30,10 @@ namespace Lynx {
 
     Application* Application::s_applicationInstance = nullptr;
 
-    Application::Application()
+    Application::Application() : thread_id(std::this_thread::get_id())
     {
+        logger.RegisterThread(std::this_thread::get_id(), "MAIN");
         log_debug("Initializing subsystems");
-
-
-        thread_id = std::this_thread::get_id();
 
 #ifdef LYNX_MULTITHREAD
         log_warn("Multithreading is enabled ! Keep in mind that this is still in progress and the application might not work as intended !");

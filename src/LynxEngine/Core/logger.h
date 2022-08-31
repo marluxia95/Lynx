@@ -15,7 +15,11 @@
 #include <stdbool.h>
 #include <string>
 #include <thread>
+#include <mutex>
+#include <map>
 #include "lynx_common.h"
+
+namespace Lynx {
 
 typedef enum {
 	LOG_FATAL,
@@ -25,25 +29,37 @@ typedef enum {
 	LOG_DEBUG
 } LogLevel;
 
-typedef struct {
-	va_list ap;
-	const char* format;
-	struct tm* time;
-	std::thread::id th_id;
-	LogLevel level;
-} log_Event;
+// TODO : Add log to file feature
+class LYNXENGINE_API Logger {
+public:
+    void SetLevel(LogLevel level);
+    void Quiet(bool enable);
+    void Log(LogLevel level, const char* fmt, ...);
+    void Log(LogLevel level, const std::string &text);
+    void RegisterThread(std::thread::id t_id, const std::string &name);
 
-LYNXENGINE_API std::string log_level_to_string(LogLevel level);
-LYNXENGINE_API void log_set_level(LogLevel level);
-LYNXENGINE_API void log_quiet(bool enable);
-LYNXENGINE_API void log_log(std::thread::id th_id, LogLevel level, const char* format, ...);
-LYNXENGINE_API int log_geterrorcount();
-LYNXENGINE_API int log_getwarningcount();
+private:
+    std::string levelToString(LogLevel level);
+    std::string getThreadName(std::thread::id t_id);
+    std::string getLevelColor(LogLevel level);
 
-#define log_debug(...) log_log(std::this_thread::get_id(), LOG_DEBUG, __VA_ARGS__)
-#define log_info(...)  log_log(std::this_thread::get_id(), LOG_INFO, __VA_ARGS__)
-#define log_warn(...)  log_log(std::this_thread::get_id(), LOG_WARN, __VA_ARGS__)
-#define log_error(...) log_log(std::this_thread::get_id(), LOG_ERROR, __VA_ARGS__)
-#define log_fatal(...) log_log(std::this_thread::get_id(), LOG_FATAL, __VA_ARGS__)
-#define log_pref(level, preffix, ...) log_log(std::this_thread::get_id(), level, __VA_ARGS__, preffix)
+    std::mutex out_mutex;
+
+    std::map<std::thread::id, std::string> thread_name_map;
+    LogLevel m_level = LOG_INFO;
+    bool quiet = false;
+};
+
+extern Logger logger;
+
+// TODO : Add log streams
+
+}
+
+#define log_debug(...) Lynx::logger.Log(Lynx::LOG_DEBUG, __VA_ARGS__)
+#define log_info(...)  Lynx::logger.Log(Lynx::LOG_INFO,  __VA_ARGS__)
+#define log_warn(...)  Lynx::logger.Log(Lynx::LOG_WARN,  __VA_ARGS__)
+#define log_error(...) Lynx::logger.Log(Lynx::LOG_ERROR, __VA_ARGS__)
+#define log_fatal(...) Lynx::logger.Log(Lynx::LOG_FATAL, __VA_ARGS__)
+
 #endif
