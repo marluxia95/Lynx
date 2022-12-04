@@ -10,9 +10,9 @@ set(DEPS_INCLUDE_DIR ${CMAKE_BINARY_DIR}/include)
 set(DEPS_MAIN_DIR ${CMAKE_CURRENT_LIST_DIR}/deps)
 
 if(UNIX)
-set(CMAKE_CXX_FLAGS "-lglfw -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
+	set(CMAKE_CXX_FLAGS "-lglfw3 -lGL -lGLEW -lX11 -lpthread -lXrandr -ldl -lassimp")
 elseif(WIN32)
-cmake_policy(SET CMP0111 NEW)
+	cmake_policy(SET CMP0111 NEW)
 endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -29,4 +29,5 @@ INSTALL(CODE "execute_process( \
 )
 
 add_subdirectory(deps)
+
 add_subdirectory(src)
