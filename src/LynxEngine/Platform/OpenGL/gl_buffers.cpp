@@ -51,7 +51,12 @@ namespace Lynx::Graphics::OpenGL {
 	void GLVertexBuffer::SetData(const void* data, unsigned int size)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
-		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	}
+
+	void GLVertexBuffer::DynamicDraw(bool dynamic_draw)
+	{
+		dynamic = dynamic_draw;
 	}
 
 	void GLVertexBuffer::AddData(const void* data, unsigned int size)
@@ -76,7 +81,7 @@ namespace Lynx::Graphics::OpenGL {
 
 			case MESH_2D_SPRITE:
 				// Vertex attribute
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0); 
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float),  (void*)0); 
 	    		glEnableVertexAttribArray(0);
 				break;
 			case MESH_3D:
@@ -143,6 +148,17 @@ namespace Lynx::Graphics::OpenGL {
     GLElementBuffer::~GLElementBuffer(){
         glDeleteBuffers(1, &ID);
     }
+
+	void GLElementBuffer::DynamicDraw(bool dynamic_draw)
+	{
+		dynamic = dynamic_draw;
+	}
+
+	void GLElementBuffer::SetData(const void* data, unsigned int size)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	}
 
     void GLElementBuffer::AddData(const void* data, unsigned int size)
     {

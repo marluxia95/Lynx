@@ -30,6 +30,7 @@ typedef enum {
 } LogLevel;
 
 // TODO : Add log to file feature
+// TODO : Add buffer to print to the in-game console
 class LYNXENGINE_API Logger {
 public:
     void SetLevel(LogLevel level);

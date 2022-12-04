@@ -12,6 +12,7 @@
 #include "window_manager.h"
 #include "entity_manager.h"
 #include "Graphics/renderer.h"
+#include "Graphics/font.h"
 #include "input.h"
 
 #include "Events/event.h"
@@ -46,7 +47,6 @@ namespace Lynx {
         m_windowManager.reset(new WindowManager());
         m_entityManager.reset(new EntityManager());
 
-
     }
 
     Application::~Application()
@@ -62,14 +62,13 @@ namespace Lynx {
      *
      * @param flags Not used
      */
-    void Application::Initialise(int flags)
+    void Application::Initialize(int flags)
     {
         log_debug("Sending event init");
         EventManager::SendEvent(InitEvent());
 
-        log_debug("Initializing subsystems");
         m_windowManager->Init();
-        Input::Init();
+		Input::Init();
 
         log_debug("Successfully initialized application");
     }
@@ -83,6 +82,7 @@ namespace Lynx {
 
         m_renderer = renderer;
         m_renderer->Initialise();
+		m_fontManager.reset(new Graphics::FontManager()); // Font manager must be reinitialized after renderer change
     }
 
     /**

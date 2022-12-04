@@ -43,7 +43,8 @@ include_directories(
 if(UNIX)
 	target_link_libraries(
 		LynxEngine
-
+		
+		freetype
 		zlib
 		lua
 		assimp

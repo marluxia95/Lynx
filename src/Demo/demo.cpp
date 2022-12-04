@@ -11,10 +11,13 @@
 #include "Graphics/renderer_forward.h"
 #include "Graphics/model.h"
 #include "Graphics/skybox.h"
+#include "Graphics/font.h"
 #include "Physics/physics_object.h"
 #include "demo.h"
 
 using namespace Lynx;
+
+char fps_text[16];
 
 Demo::Demo(int argc, char** argv)
 {
@@ -23,10 +26,9 @@ Demo::Demo(int argc, char** argv)
 			logger.SetLevel(LOG_DEBUG);
 	}
 
-    Initialise(0);
+    Initialize(0);
 
-    m_renderer.reset(new Graphics::ForwardRenderer());
-    m_renderer->Initialise();
+    SetRenderer(std::make_shared<Graphics::ForwardRenderer>());
 
     m_camera = new Camera();
     m_camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
@@ -77,6 +79,9 @@ Demo::Demo(int argc, char** argv)
         }else{
             keystate = 0;
         }
+		snprintf(fps_text, 16, "FPS: %f", 1/delta_time);
+		GetFontManager()->GetDefaultFont()->render(fps_text, 0.0f, (float)GetResolutionHeight()-20, 1.0f, glm::vec3(0.0f),
+				glm::ortho(0.0f, (float)GetResolutionWidth(), 0.0f, (float)GetResolutionHeight())); 
     });
 
     desired_position = m_camera->position;

@@ -119,11 +119,21 @@ ExternalProject_Add(
                         <SOURCE_DIR> ${DEPS_INSTALL_DIR}/include/stb
 )
 
-add_library(lua    STATIC IMPORTED GLOBAL)
-add_library(glfw   STATIC IMPORTED GLOBAL)
-add_library(glew   STATIC IMPORTED GLOBAL)
-add_library(assimp STATIC IMPORTED GLOBAL)
-add_library(zlib   STATIC IMPORTED GLOBAL)
+ExternalProject_Add(
+	freetype_ext
+	PREFIX ${DEPS_INCLUDE_DIR}/freetype
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEPS_INSTALL_DIR}
+	UPDATE_COMMAND ""
+	UPDATE_DISCONNECTED 1
+	URL https://github.com/freetype/freetype/archive/refs/heads/master.zip
+)
+
+add_library(lua      STATIC IMPORTED GLOBAL)
+add_library(glfw     STATIC IMPORTED GLOBAL)
+add_library(glew     STATIC IMPORTED GLOBAL)
+add_library(assimp   STATIC IMPORTED GLOBAL)
+add_library(zlib     STATIC IMPORTED GLOBAL)
+add_library(freetype STATIC IMPORTED GLOBAL)
 
 if(WIN32)
 	set_target_properties(lua    PROPERTIES IMPORTED_IMPLIB "${DEPS_INSTALL_DIR}/lib/lua.lib")
@@ -136,4 +146,5 @@ elseif(UNIX)
 	find_package(GLEW REQUIRED)
 	set_target_properties(assimp PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libassimp.a")
 	set_target_properties(zlib   PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib/libz.a")
+	set_target_properties(freetype PROPERTIES IMPORTED_LOCATION "${DEPS_INSTALL_DIR}/lib64/libfreetype.a")
 endif()

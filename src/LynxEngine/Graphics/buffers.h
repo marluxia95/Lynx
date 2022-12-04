@@ -7,6 +7,9 @@
 
 using namespace glm;
 
+// Wrappers, just in case I wanted to add support for 
+// another API, which is odd.
+
 namespace Lynx::Graphics {
 
     class VertexBuffer;
@@ -28,6 +31,7 @@ namespace Lynx::Graphics {
 		~VertexBuffer() = default;
 		virtual void SetData(const void* data, unsigned int size) = 0;
 		virtual void AddData(const void* data, unsigned int size) = 0;
+		virtual void DynamicDraw(bool dynamic_draw) = 0;
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 		virtual void Configure(MeshType type) = 0;
@@ -44,7 +48,9 @@ namespace Lynx::Graphics {
     public:
 		ElementBuffer() = default;
 		~ElementBuffer() = default;
+		virtual void SetData(const void* data, unsigned int size) = 0;
         virtual void AddData(const void* data, unsigned int size) = 0;
+		virtual void DynamicDraw(bool dynamic_draw) = 0;
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
         unsigned int ID;

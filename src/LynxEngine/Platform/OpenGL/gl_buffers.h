@@ -19,10 +19,13 @@ namespace Lynx::Graphics::OpenGL {
             ~GLVertexBuffer();
             void SetData(const void* data, unsigned int size);
             void AddData(const void* data, unsigned int size);
-            void Bind();
+            void DynamicDraw(bool dynamic_draw);
+			void Bind();
             void Unbind();
             void Configure(MeshType type);
             unsigned int VBO_ID;
+		private:
+			bool dynamic; // GL_DYNAMIC_DRAW
     };
 
     class GLElementBuffer : public Lynx::Graphics::ElementBuffer {
@@ -32,10 +35,14 @@ namespace Lynx::Graphics::OpenGL {
             GLElementBuffer(unsigned int size);
             GLElementBuffer();
             ~GLElementBuffer();
+			void SetData(const void* data, unsigned int size);
             void AddData(const void* data, unsigned int size);
-            void Bind();
+			void DynamicDraw(bool dynamic_draw);
+			void Bind();
             void Unbind();
             unsigned int ID;
+		private:
+			bool dynamic;
     };
 
 }

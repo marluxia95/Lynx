@@ -18,6 +18,7 @@
 namespace Lynx {
     namespace Graphics {
         class Renderer;
+		class FontManager;
     }
 
     class ThreadPool;
@@ -44,7 +45,7 @@ namespace Lynx {
         Application();
 		~Application();
 
-        virtual void Initialise(int flags);
+        virtual void Initialize(int flags);
 
 		virtual void Run();
 
@@ -57,8 +58,9 @@ namespace Lynx {
         std::thread::id GetThread() { return thread_id; };
 
         void SetRenderer(std::shared_ptr<Graphics::Renderer> renderer);
-
         std::shared_ptr<Graphics::Renderer> GetRenderer() { return m_renderer; }
+
+		std::shared_ptr<Graphics::FontManager> GetFontManager() { return m_fontManager; }
         unsigned int GetResolutionHeight();
         unsigned int GetResolutionWidth();
 
@@ -76,7 +78,8 @@ namespace Lynx {
         std::thread::id thread_id;
         std::unique_ptr<ThreadPool> m_threadPool;	
         std::unique_ptr<WindowManager> m_windowManager;
-        std::shared_ptr<ResourceManager> m_resourceManager;
+		std::shared_ptr<Graphics::FontManager> m_fontManager;
+		std::shared_ptr<ResourceManager> m_resourceManager;
         std::shared_ptr<Graphics::Renderer> m_renderer;
         std::shared_ptr<EntityManager> m_entityManager;
 

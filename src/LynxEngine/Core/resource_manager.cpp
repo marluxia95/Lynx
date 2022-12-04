@@ -42,7 +42,6 @@ ResourceManager::~ResourceManager()
  */
 void ResourceManager::Clear()
 {
-	log_debug("Cleaning resources");
 }
 
 /**
