@@ -14,7 +14,7 @@ target_include_directories(Demo PRIVATE $(ENGINE))
 target_include_directories(Demo PRIVATE ${LIBS}/imgui)
 target_include_directories(Demo PRIVATE ${LIBS})
 
-target_link_directories(Demo PRIVATE ${DEPS_INSTALL_DIR}/lib ${DEPS_INSTALL_DIR}/lib64)
+target_link_directories(Demo PRIVATE ${DEPS_DIR}/lib)
 
 if(WIN32)
 	find_library(GLEW PATHS ${DEPS_MAIN_DIR})

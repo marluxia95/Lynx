@@ -16,7 +16,7 @@ if(BUILD_DEBUG)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g" )
 endif()
 
-link_directories( ${DEPS_INSTALL_DIR} ${DEPS_INSTALL_DIR}/bin ${DEPS_INSTALL_DIR}/lib )
+link_directories( ${DEPS_DIR}/lib )
 
 add_library(
     LynxEngine ${SOURCES} ${HEADERS}
