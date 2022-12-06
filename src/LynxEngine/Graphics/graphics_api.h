@@ -6,6 +6,7 @@
 #include <memory>
 #include <stdint.h>
 #include <glm/glm.hpp>
+#include "lynx_common.h"
 
 #define MAX_LOG_SIZE 2048
 

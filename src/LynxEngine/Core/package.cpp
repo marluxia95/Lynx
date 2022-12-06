@@ -1,4 +1,6 @@
 #include <errno.h>
+#include <stdint.h>
+#include <string.h>
 #include "package.h"
 #include "logger.h"
 

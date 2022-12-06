@@ -9,7 +9,6 @@
 #include "lynx_common.h"
 #include "logger.h"
 #include "entity.h"
-// TODO
 
 namespace Lynx {
 

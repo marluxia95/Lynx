@@ -1,4 +1,4 @@
-# LynxEngine [![Codacy Badge](https://app.codacy.com/project/badge/Grade/43d567336363474da3830f0cd6d01728)](https://www.codacy.com/gh/marluxia95/SimpleGameEngine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=marluxia95/SimpleGameEngine&amp;utm_campaign=Badge_Grade)
+# LynxEngine [![Codacy Badge](https://app.codacy.com/project/badge/Grade/43d567336363474da3830f0cd6d01728)](https://www.codacy.com/gh/marluxia95/Lynx/dashboard)
 
 Just a simple game engine made in C++ and OpenGL. 
 
@@ -18,12 +18,9 @@ NOTE: Current version in this repository is unstable and will probably not compi
 
 ## TODO
 
-- Terrain rendering 
-- Physics engine
-- Sound system
-- Better resource loading
+- Physics
+- Sound 
 - Multithreading
-- Finish the LUA API
 
 ## Dependencies
 This project requires the following libraries :
@@ -36,15 +33,14 @@ GLi
 Assimp
 ```
 
-However, it is not necessary to manually install them, since it will download and build them automatically.
-
 ## Building
 
 ### Linux
 
-Create a build folder then run `cmake ..` then run `make install` or `make -j8 install` if you want to use more than 1 thread for building.
-NOTE : `make install` won't install the program into your system, it will just create the necessary folders inside the `build` folder.
+Simply run `make -j4` and it will generate the binaries in the `build/` folder.
+
 
 ### Windows
 
-To build this project on Windows, you need to have `visual studio 2019` and `cmake` installed. Then follow the same steps above except you should compile it using the visual studio project file.
+Needs to be implemented.
+

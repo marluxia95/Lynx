@@ -1,8 +1,9 @@
 #ifndef LYNX_GRID_H
 #define LYNX_GRID_H
 
+#include <vector>
 #include "lynx_common.h"
-
+/* Unimplemented
 namespace Lynx::Graphics {
 
     class Mesh;
@@ -19,5 +20,5 @@ namespace Lynx::Graphics {
         static std::vector<unsigned int> grid_indices;
     };  
 }
-
+*/
 #endif // LYNX_GRID_H

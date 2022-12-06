@@ -1,6 +1,7 @@
 #ifndef LYNX_LUAAPI_EVENTS_H
 #define LYNX_LUAAPI_EVENTS_H 
 
+#include "Core/event_manager.h"
 #include "lua_common.h"
 
 namespace Lynx {

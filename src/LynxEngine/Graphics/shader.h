@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <stdarg.h>
+#include <string.h>
 #include "Core/resource.h"
 #include "graphics_api.h"
 

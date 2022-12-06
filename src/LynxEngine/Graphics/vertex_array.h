@@ -1,6 +1,7 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
+#include <memory>
 #include "lynx_common.h"
 
 namespace Lynx::Graphics {

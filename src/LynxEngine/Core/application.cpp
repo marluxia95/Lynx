@@ -10,6 +10,7 @@
 #include "application.h"
 
 #include "window_manager.h"
+#include "event_manager.h"
 #include "entity_manager.h"
 #include "Graphics/renderer.h"
 #include "Graphics/font.h"

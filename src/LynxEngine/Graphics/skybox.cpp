@@ -1,3 +1,4 @@
+#include "Core/application.h"
 #include "shader.h"
 #include "texture.h"
 #include "cube.h"

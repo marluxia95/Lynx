@@ -17,9 +17,9 @@ namespace Lynx {
 
 			bool ShouldClose();
 
-			uint GetWidth() { return window_width; }
+			unsigned int GetWidth() { return window_width; }
 
-			uint GetHeight() { return window_height; }
+			unsigned int GetHeight() { return window_height; }
 		private:
 			unsigned int window_width = 1280;
 			unsigned int window_height = 720;

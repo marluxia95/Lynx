@@ -1,6 +1,7 @@
 #include "Core/application.h"
 #include "Core/entity_manager.h"
 #include "Core/logger.h"
+#include "Core/assert.h"
 #include "renderer.h"
 #include "mesh.h"
 #include "material.h"
