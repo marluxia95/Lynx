@@ -54,9 +54,11 @@ namespace Lynx::Graphics::OpenGL {
         LYNX_ASSERT(glewInit() == GLEW_OK, "Unable to initialize GLEW");
 
         glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        // Enable face culling
+	
+	glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+    	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	// Enable face culling
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);  
         glFrontFace(GL_CW);  
@@ -157,7 +159,7 @@ namespace Lynx::Graphics::OpenGL {
         if(!success) {
             glGetShaderInfoLog(shaderID, MAX_ERR_BUFSIZE, NULL, error_log);
             log_error("Error while compiling shader! : %s", error_log);
-            return 0;
+            return -1;
         }
         return shaderID;
     }

@@ -42,8 +42,9 @@ uniform bool diffuse_map;
 uniform bool specular_map;
 
 // Maximum number of point lights
-const int numPointLights = 10;
-uniform PointLight pointLights[numPointLights];
+const int maxPointLights = 10;
+uniform PointLight pointLights[maxPointLights];
+uniform int numPointLights;
 
 out vec4 FragColor;
 
@@ -70,7 +71,6 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 {
     // ambient
     vec3 ambient = light.ambient * vec3(texture(material.diffuse_tex, TexCoords));
-
 
     vec3 lightDir = normalize(light.position - fragPos);
 
@@ -100,7 +100,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     diffuse *= attenuation;
     specular *= attenuation;
 
-    return abs(ambient + diffuse + specular);
+    return abs(ambient);// + diffuse + specular);
 }
 
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir)

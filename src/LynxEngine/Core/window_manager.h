@@ -7,7 +7,7 @@ namespace Lynx {
 
     class LYNXENGINE_API WindowManager {
 		public:
-			void Init(const char* title = "Lynx Engine", unsigned int width = 1270, unsigned int height = 720, bool fullScreen = false);
+			void Init(const char* title = "Lynx Engine", unsigned int width = 1920, unsigned int height = 1080, bool fullScreen = false);
 			
             void Update();
 

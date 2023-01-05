@@ -11,7 +11,7 @@
 #include "Graphics/renderer_forward.h"
 #include "Graphics/model.h"
 #include "Graphics/skybox.h"
-#include "Graphics/font.h"
+#include "Graphics/draw.h"
 #include "Physics/physics_object.h"
 #include "demo.h"
 
@@ -21,13 +21,13 @@ char fps_text[16];
 
 Demo::Demo(int argc, char** argv)
 {
+    console.SetLevel(LOG_INFO);
     for (int i = 1; i < argc; ++i) {
 		if(std::string(argv[i]) == "--debug")
-			logger.SetLevel(LOG_DEBUG);
+			console.SetLevel(LOG_DEBUG);
 	}
 
     Initialize(0);
-
     SetRenderer(std::make_shared<Graphics::ForwardRenderer>());
 
     m_camera = new Camera();
@@ -36,12 +36,27 @@ Demo::Demo(int argc, char** argv)
     m_camera->rotation = glm::vec3(0, 90, 0);
 
     m_renderer->SetCamera(m_camera);
-    auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
-    m_renderer->SetDirectionalLight(directional_light);
-    //auto point_light = Graphics::PointLight(glm::vec3(0.0f), 1.0f, 0.35, 0.44);
-    //m_renderer->PushLight(point_light);
+    //auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
+    //m_renderer->SetDirectionalLight(directional_light);
+    auto point_light = Graphics::PointLight();//glm::vec3(10.0f), glm::vec3(0.4f), 1.0f, 0.35, 0.44);
+    point_light.Position = glm::vec3(1.5f);
+    point_light.Ambient = point_light.Diffuse = point_light.Specular = glm::vec3(0.0f, 3.0f, 0.0f);
+    point_light.Constant = 1.0f;
+    point_light.Linear = 0.35f;
+    point_light.Quadratic = 0.44f;
+    m_renderer->PushLight(point_light);
+    point_light = Graphics::PointLight();
+    point_light.Position = glm::vec3(-1.5f);
+    point_light.Ambient = glm::vec3(3.0f, 0.0f, 0.0f);
+    point_light.Diffuse = point_light.Specular = glm::vec3(1.0f);
+    point_light.Constant = 1.0f;
+    point_light.Linear = 0.35f;
+    point_light.Quadratic = 0.44f;
+    m_renderer->PushLight(point_light);
+
 
     Graphics::ModelLoader loader(m_entityManager);
+
 
     Entity* plane;
     {
@@ -58,6 +73,7 @@ Demo::Demo(int argc, char** argv)
         log_debug("%s %s %s", glm::to_string(plane->GetGlobalPosition()).c_str(), glm::to_string(plane->GetGlobalRotation()).c_str(),
                 glm::to_string(plane->GetGlobalScaling()).c_str());
     }
+    spawn_cube();
 
     std::shared_ptr<Graphics::Skybox> sky = std::make_shared<Graphics::Skybox>(m_resourceManager->LoadTexture("res/textures/cubemap.dds", Graphics::TEXTURE_CUBE_MAP));
     m_renderer->SetSkybox(sky);
@@ -74,15 +90,18 @@ Demo::Demo(int argc, char** argv)
     EventManager::AddListener(UpdateTick, [this](const Event& ev){
         movement();
         if(Input::IsKeyDown(KEY_C) && !keystate){
-            spawn_cube();
+            //spawn_cube();
             keystate = 1;
         }else{
             keystate = 0;
         }
 		snprintf(fps_text, 16, "FPS: %f", 1/delta_time);
-		GetFontManager()->GetDefaultFont()->render(fps_text, 0.0f, (float)GetResolutionHeight()-20, 1.0f, glm::vec3(0.0f),
-				glm::ortho(0.0f, (float)GetResolutionWidth(), 0.0f, (float)GetResolutionHeight())); 
-    });
+		//render(fps_text, 0.0f, (float)GetResolutionHeight()-20, 1.0f, glm::vec3(0.0f),
+		//		glm::ortho(0.0f, (float)GetResolutionWidth(), 0.0f, (float)GetResolutionHeight())); 
+		Graphics::DrawInitRender();
+		Graphics::DrawFinishRender();
+	});
+
 
     desired_position = m_camera->position;
     desired_rotation = m_camera->rotation;
@@ -92,7 +111,6 @@ Demo::Demo(int argc, char** argv)
 
 Demo::~Demo()
 {
-
 }
 
 void Demo::spawn_cube()
@@ -110,9 +128,6 @@ void Demo::spawn_cube()
     cube_material.shininess = 50.0f;
     cube->GetChildByIndex(0)->GetRenderHndl()->SetMaterial(cube_material);
 
-    Physics::PhysicsObject* cube_phys = new Physics::PhysicsObject();
-    cube_phys->SetLinearVelocity(glm::vec3(0, 0.5f, 0.5f));
-    cube->SetPhysicsObj(cube_phys);
 }
 
 void Demo::movement()

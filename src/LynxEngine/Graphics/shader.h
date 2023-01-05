@@ -55,47 +55,48 @@ namespace Lynx::Graphics {
             Shader();
 
             void PushSource(const std::string& shaderPath, ShaderType type);
+            void PushRawSource(const char* shaderName, const char* shaderSource, ShaderType type);
 
             void Use();
 
             bool Link();
 
             template<typename T>
-            void SetUniform(const char* name, T value);
+            void SetUniform(const char* name, T value)
+            {
+                if(!success) return;
+
+                auto location = getUniformLocation(name);
+                API_CheckErrors();
+                log_debug("SetUniform '%s' %x", name, location);
+                Graphics::RendererAPI::SetShaderUniform(location, value);
+            }
 
             template<typename T>
             void SetUniformf(const char* format, T value, ...)
             {
-                char buf[256];
-                char* str;
-                int l;
+                if(!success) return;
 
                 va_list ap;
 
                 va_start(ap, format);
 
-                l = vsnprintf(buf, sizeof(buf), format, ap);
+                int l = vsnprintf(uniformBuf, sizeof(uniformBuf), format, ap);
                 va_end(ap);
 
-                if((unsigned)l < sizeof(buf))
-                    str = strdup(buf);
-                else if ((unsigned)l >= sizeof(buf)){
-                    str = (char*)malloc(l + 1);
-                    va_start(ap, format);
-                    l = vsnprintf(str, l + 1, format, ap);
-                    va_end(ap);
-                }
-
-                SetUniform(str, value);
-                free(str);
+                auto location = getUniformLocation(uniformBuf);
+                API_CheckErrors();
+                log_debug("SetUniformf '%s' %x", uniformBuf, location);
+                Graphics::RendererAPI::SetShaderUniform(location, value);
             }
 
             bool Reload();
             char* GetError() { return errorlog; }
 
-            int success = true;
+            bool success = true;
         private:
             size_t shaderSize;
+            char uniformBuf[64];
             char* errorlog;
 
             std::unique_ptr<ShaderProgram> program;

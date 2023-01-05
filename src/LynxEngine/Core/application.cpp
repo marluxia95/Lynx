@@ -13,7 +13,7 @@
 #include "event_manager.h"
 #include "entity_manager.h"
 #include "Graphics/renderer.h"
-#include "Graphics/font.h"
+#include "Graphics/draw.h"
 #include "input.h"
 
 #include "Events/event.h"
@@ -34,7 +34,7 @@ namespace Lynx {
 
     Application::Application() : thread_id(std::this_thread::get_id())
     {
-        logger.RegisterThread(std::this_thread::get_id(), "MAIN");
+	console.Init();
         log_debug("Initializing subsystems");
 
 #ifdef LYNX_MULTITHREAD
@@ -52,10 +52,12 @@ namespace Lynx {
 
     Application::~Application()
     {
+	Graphics::DrawFree();
         ModuleManager::UnloadAllModules();
 #ifdef LYNX_MULTITHREAD
         m_threadPool->Wait();
 #endif
+	console.Shutdown();
     }
 
     /**
@@ -83,7 +85,8 @@ namespace Lynx {
 
         m_renderer = renderer;
         m_renderer->Initialise();
-		m_fontManager.reset(new Graphics::FontManager()); // Font manager must be reinitialized after renderer change
+	m_fontManager.reset(new Graphics::FontManager()); // Font manager must be reinitialized after renderer change
+	Graphics::DrawInit();
     }
 
     /**

@@ -7,7 +7,6 @@ namespace Lynx {
 
     void ThreadPool::thread_work(Worker* worker_s)
     {
-        logger.RegisterThread(std::this_thread::get_id(), "WORKER");
 
         ThreadPool* pool = worker_s->pool;
         Job n_job;

@@ -30,6 +30,9 @@ namespace Lynx::Graphics {
 			unsigned int GetTextureID() { return texture; }
 			int GetID() { return id; }
 			TextureType GetTextureType() { return type; }
+			int GetWidth() { return data.width; }
+			int GetHeight() { return data.height; }
+			int GetChannels() { return data.channels; }
 
 			static int PushTextureID() { return total_textures++; }
 

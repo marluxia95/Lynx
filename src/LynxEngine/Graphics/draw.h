@@ -1,5 +1,5 @@
-#ifndef LYNX_FONT_H
-#define LYNX_FONT_H
+#ifndef LYNX_DRAW_H
+#define LYNX_DRAW_H
 
 #include <stdio.h>
 #include <ft2build.h>
@@ -11,9 +11,10 @@
 #include "shader.h"
 #include "vertex_array.h"
 #include "buffers.h"
+#include "texture.h"
 
 namespace Lynx::Graphics {
-
+	
 	struct Glyph
 	{
 		unsigned int textureID;
@@ -22,36 +23,52 @@ namespace Lynx::Graphics {
 		long int advance;
 	};
 
+	
 	struct Font
 	{
-		Font(FT_Library *ft, std::shared_ptr<Shader> shader, std::string name, int size);
+
+		Font(FT_Library *ft, std::string name, int size);
 
 		FT_Face face;
 		std::map<char, Glyph> glyphs;
 		std::string name;
 		int size;
-		std::shared_ptr<Shader> shader;
-		void render(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4 projection);
 		std::unique_ptr<VertexArray>  VAO;
 		std::unique_ptr<VertexBuffer> VBO;
 	};
 
 	// TODO : Use the resource manager to load fonts instead
+	// TODO : Load hardcoded fonts 
 	class FontManager {
 	public:
 		FontManager();
 		~FontManager();
 
 		Font* GetFont(std::string name, int size);
-		Font* AddFont(std::string name, int size);
+		Font* LoadFont(std::string name, int size);
 		Font* GetDefaultFont() { return defaultFont; }
 	private:
 		std::vector<Font*> loadedFonts;
-		std::shared_ptr<Shader> defaultShader;
 		Font* defaultFont;
 		FT_Library ft;
 	};
 
+	/*
+	 * Initializes shaders for later draw operations
+	 */
+	void DrawInit();
+	void DrawInitRender();
+	void DrawFinishRender();
+	void DrawImg(float x, float y, std::shared_ptr<TextureBase> img, float width, float height, glm::vec4 color);
+	
+	void DrawFill(float x, float y, float width, float height, glm::vec4 color);
+	
+	void DrawString(float x, float y, std::string text, Font* font, float scale, glm::vec3 color, float alpha);
+	
+	/*
+	 * Frees all shaders and data.
+	 */
+	void DrawFree();	
 }
 
 #endif

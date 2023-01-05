@@ -12,8 +12,7 @@
 
 #define LYNX_VERSION_MAJOR   0
 #define LYNX_VERSION_MINOR   0
-#define LYNX_VERSION_RELEASE 3
-#define LYNX_VERSION LYNX_VERSION_MAJOR.LYNX_VERSION_MINOR.LYNX_VERSION_RELEASE
+#define LYNX_VERSION_RELEASE 4
 
 // Only enable if you want to use multithread features. This is still in development
 //#define LYNX_MULTITHREAD

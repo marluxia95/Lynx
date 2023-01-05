@@ -107,15 +107,19 @@ namespace Lynx::Graphics {
     // Setup the point light array uniform values
     void ForwardRenderer::processLighting()
     {
+        m_objectShader->SetUniformf("numPointLights", (int)m_pointLights.size());
         //log_debug("Lighting debug init");
         for(int l = 0; l < m_pointLights.size(); l++) {
             auto pointLight = m_pointLights[l];
-            //log_debug("PointLight : Pos(%f %f %f)\n   Constant %f\n   Linear %f\n   Quadratic %f\n   Ambient %f", pointLight.Position.x, pointLight.Position.y, pointLight.Position.z, pointLight.Constant, pointLight.Linear, pointLight.Quadratic, pointLight.Quadratic, pointLight.Ambient);
+            log_debug("PointLight : Pos(%f %f %f)\n   Constant %f\n   Linear %f\n   Quadratic %f\n   Ambient (%f %f %f)\n Diffuse (%f %f %f)\n Specular (%f %f %f)\n", pointLight.Position.x, pointLight.Position.y, pointLight.Position.z, pointLight.Constant, pointLight.Linear, pointLight.Quadratic, pointLight.Quadratic, pointLight.Ambient.x, pointLight.Ambient.y, pointLight.Ambient.z, pointLight.Diffuse.x,
+		    pointLight.Diffuse.y, pointLight.Diffuse.z, pointLight.Specular.x, pointLight.Specular.y, pointLight.Specular.z);
             m_objectShader->SetUniformf("pointLights[%d].position", pointLight.Position, l);
-            //m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
-            //m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
-            //m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight.Quadratic,l);
+            m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
+            m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
+            m_objectShader->SetUniformf("pointLights[%d].quadratic",pointLight.Quadratic,l);
             m_objectShader->SetUniformf("pointLights[%d].ambient",  pointLight.Ambient,  l);
+            m_objectShader->SetUniformf("pointLights[%d].diffuse",  pointLight.Diffuse,  l);
+            m_objectShader->SetUniformf("pointLights[%d].specular", pointLight.Specular, l);
         }
 
         //log_debug("DirectionalLight : Direction(%f %f %f)\n   Ambient(%f %f %f)", m_directionalLight.Direction.x, m_directionalLight.Direction.y, m_directionalLight.Direction.z, m_directionalLight.Ambient.x, m_directionalLight.Ambient.y, m_directionalLight.Ambient.z);
@@ -124,6 +128,7 @@ namespace Lynx::Graphics {
         m_objectShader->SetUniform("directionalLight.diffuse",      m_directionalLight.Diffuse);
         m_objectShader->SetUniform("directionalLight.specular",     m_directionalLight.Specular);
         m_objectShader->SetUniform("direcitonalLight.intensity",    m_directionalLight.Intensity);
+	API_CheckErrors();
     }
 
     // Object rendering process

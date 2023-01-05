@@ -8,7 +8,7 @@
 #include "Graphics/graphics_api.h"
 #include "Core/logger.h"
 
-//#define API_DEBUG
+#define API_DEBUG
 
 GLenum checkerror_(const char* f, int l);
 #ifdef __linux__

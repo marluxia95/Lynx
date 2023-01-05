@@ -34,7 +34,6 @@ namespace Lynx::Graphics {
 
 	Shader::Shader() : Resource()
 	{
-		
 	}
 
 	Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath) : Resource(), shaderSize(0)
@@ -55,9 +54,26 @@ namespace Lynx::Graphics {
 		const char* shader_path_str = shaderPath.c_str();
 		char* shader_source = readShaderFile(shader_path_str);
 		ShaderObj obj = ShaderObj(shader_path_str, shader_source, type);
+		if(!success)
+			return;
 
 		log_debug("Compiling shader %s", shader_path_str);
 		compile(obj);
+	}
+
+	void Shader::PushRawSource(const char* shaderName, const char* shaderSource, ShaderType type)
+	{
+		ShaderObj obj = ShaderObj(shaderName, NULL, type);
+		if(!success)
+			return;
+
+		log_debug("Compiling shader %s", shaderName);
+		//compile(obj);
+		obj.shader = RendererAPI::CompileShader(shaderSource, type);
+		shader_objs.push_back(obj);
+
+		if(obj.shader<0)
+			success = 0;
 	}
 
 	bool Shader::compile(ShaderObj obj)
@@ -70,16 +86,19 @@ namespace Lynx::Graphics {
 		shader_objs.push_back(obj);
 		free(obj.source);
 
+		if(obj.shader<0)
+			success = 0;
+
 		return success;
 	}
 
 	char* Shader::readShaderFile(const char* path) {
 		FILE *shader_file;
-		log_debug("Loading shader %s", path);
+		//log_debug("Loading shader %s", path);
 
 		shader_file = fopen(path,"r");
 		if(!shader_file){
-			log_error("Unable to open shader %s", path);
+			log_error("Unable to open shader %s, bailing out!", path);
 			success = false;
 			return NULL;
 		}
@@ -99,7 +118,7 @@ namespace Lynx::Graphics {
 		if(lpos != 0) {
 			shader_source[lpos] = '\0';
 		}else{
-			log_error("Failed to read shader %s", path);
+			log_error("Failed to read shader %s, bailing out!", path);
 			free(shader_source);
 			success = false;
 			return NULL;
@@ -115,6 +134,8 @@ namespace Lynx::Graphics {
 	 */
 	bool Shader::Link()
 	{
+		if(!success) return 0;
+
 		program = ShaderProgram::Create();
 
 		for( auto& shobj : shader_objs ) {
@@ -151,90 +172,23 @@ namespace Lynx::Graphics {
 		program->Use();
 	}
 
+    // FIXME : Fix uniform caching for formatted uniform names 
 	int Shader::getUniformLocation(const char* uniformName)
 	{
-		if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
-			int loc = Graphics::RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
-			uniform_cache_map.insert({uniformName, loc});
-			return loc;
-		}else{
-			return uniform_cache_map[uniformName];
-		}
+		if(!success) return NULL;
+        int loc;
+
+        if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
+			loc = Graphics::RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
+			//uniform_cache_map.insert({uniformName, loc});
+            log_debug("getUniformLocation() : Caching location");
+		//}else{
+		//	loc = uniform_cache_map[uniformName];
+        //  log_debug("getUniformLocation() : Found in cache");
+        }
+
+        //if(loc<0) log_error("getUniformLocation() : Invalid uniform %s", uniformName);
+        return loc;
 	}
-
-	// FIXME : Improve these templates please its giving me a headache
-
-	template <>
-	void Shader::SetUniform(const char* name, bool value)
-    {
-		if(!success) return;
-
-		Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, int value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, float value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::vec2 value)
-    {
-		if(!success) return;
-		
-		Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::vec3 value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::vec4 value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::mat2 value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::mat3 value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
-	template <>
-    void Shader::SetUniform(const char* name, glm::mat4 value)
-    {
-		if(!success) return;
-		
-        Graphics::RendererAPI::SetShaderUniform(getUniformLocation(name), value);
-    }
-
 
 }
