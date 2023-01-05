@@ -24,7 +24,7 @@ jobs:
       run: sudo apt-get update
     
     - name: Install dependencies
-      run: sudo apt-get install libglfw3-dev libassimp-dev libglew-dev xorg-dev
+      run: sudo apt-get install libglfw3-dev libassimp-dev libglew-dev libfreetype-dev xorg-dev
 
     - name: Build
       run: make
