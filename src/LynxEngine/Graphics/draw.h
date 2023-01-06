@@ -27,7 +27,7 @@ namespace Lynx::Graphics {
 	struct Font
 	{
 
-		Font(FT_Library *ft, std::string name, int size);
+		Font(FT_Library *ft, const std::string name, int size);
 
 		FT_Face face;
 		std::map<char, Glyph> glyphs;

@@ -108,11 +108,8 @@ namespace Lynx::Graphics {
     void ForwardRenderer::processLighting()
     {
         m_objectShader->SetUniformf("numPointLights", (int)m_pointLights.size());
-        //log_debug("Lighting debug init");
         for(int l = 0; l < m_pointLights.size(); l++) {
             auto pointLight = m_pointLights[l];
-            log_debug("PointLight : Pos(%f %f %f)\n   Constant %f\n   Linear %f\n   Quadratic %f\n   Ambient (%f %f %f)\n Diffuse (%f %f %f)\n Specular (%f %f %f)\n", pointLight.Position.x, pointLight.Position.y, pointLight.Position.z, pointLight.Constant, pointLight.Linear, pointLight.Quadratic, pointLight.Quadratic, pointLight.Ambient.x, pointLight.Ambient.y, pointLight.Ambient.z, pointLight.Diffuse.x,
-		    pointLight.Diffuse.y, pointLight.Diffuse.z, pointLight.Specular.x, pointLight.Specular.y, pointLight.Specular.z);
             m_objectShader->SetUniformf("pointLights[%d].position", pointLight.Position, l);
             m_objectShader->SetUniformf("pointLights[%d].constant", pointLight.Constant, l);
             m_objectShader->SetUniformf("pointLights[%d].linear",   pointLight.Linear,   l);
@@ -122,13 +119,12 @@ namespace Lynx::Graphics {
             m_objectShader->SetUniformf("pointLights[%d].specular", pointLight.Specular, l);
         }
 
-        //log_debug("DirectionalLight : Direction(%f %f %f)\n   Ambient(%f %f %f)", m_directionalLight.Direction.x, m_directionalLight.Direction.y, m_directionalLight.Direction.z, m_directionalLight.Ambient.x, m_directionalLight.Ambient.y, m_directionalLight.Ambient.z);
         m_objectShader->SetUniform("directionalLight.direction",    m_directionalLight.Direction);
         m_objectShader->SetUniform("directionalLight.ambient",      m_directionalLight.Ambient);
         m_objectShader->SetUniform("directionalLight.diffuse",      m_directionalLight.Diffuse);
         m_objectShader->SetUniform("directionalLight.specular",     m_directionalLight.Specular);
         m_objectShader->SetUniform("direcitonalLight.intensity",    m_directionalLight.Intensity);
-	API_CheckErrors();
+        API_CheckErrors();
     }
 
     // Object rendering process

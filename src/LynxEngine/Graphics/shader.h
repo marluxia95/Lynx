@@ -68,7 +68,6 @@ namespace Lynx::Graphics {
 
                 auto location = getUniformLocation(name);
                 API_CheckErrors();
-                log_debug("SetUniform '%s' %x", name, location);
                 Graphics::RendererAPI::SetShaderUniform(location, value);
             }
 
@@ -86,7 +85,6 @@ namespace Lynx::Graphics {
 
                 auto location = getUniformLocation(uniformBuf);
                 API_CheckErrors();
-                log_debug("SetUniformf '%s' %x", uniformBuf, location);
                 Graphics::RendererAPI::SetShaderUniform(location, value);
             }
 

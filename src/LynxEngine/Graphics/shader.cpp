@@ -180,11 +180,6 @@ namespace Lynx::Graphics {
 
         if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
 			loc = Graphics::RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
-			//uniform_cache_map.insert({uniformName, loc});
-            log_debug("getUniformLocation() : Caching location");
-		//}else{
-		//	loc = uniform_cache_map[uniformName];
-        //  log_debug("getUniformLocation() : Found in cache");
         }
 
         //if(loc<0) log_error("getUniformLocation() : Invalid uniform %s", uniformName);

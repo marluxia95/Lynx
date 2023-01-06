@@ -34,10 +34,8 @@ Demo::Demo(int argc, char** argv)
     m_camera->CalcPerspective(GetResolutionWidth(), GetResolutionHeight(), 0.1f, 1000.0f);
     m_camera->position = glm::vec3(-15, 15, 0);
     m_camera->rotation = glm::vec3(0, 90, 0);
-
     m_renderer->SetCamera(m_camera);
-    //auto directional_light = Graphics::DirectionalLight{glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.4f), glm::vec3(1.0f)};
-    //m_renderer->SetDirectionalLight(directional_light);
+
     auto point_light = Graphics::PointLight();//glm::vec3(10.0f), glm::vec3(0.4f), 1.0f, 0.35, 0.44);
     point_light.Position = glm::vec3(1.5f);
     point_light.Ambient = point_light.Diffuse = point_light.Specular = glm::vec3(0.0f, 3.0f, 0.0f);
@@ -45,6 +43,7 @@ Demo::Demo(int argc, char** argv)
     point_light.Linear = 0.35f;
     point_light.Quadratic = 0.44f;
     m_renderer->PushLight(point_light);
+
     point_light = Graphics::PointLight();
     point_light.Position = glm::vec3(-1.5f);
     point_light.Ambient = glm::vec3(3.0f, 0.0f, 0.0f);
@@ -54,9 +53,7 @@ Demo::Demo(int argc, char** argv)
     point_light.Quadratic = 0.44f;
     m_renderer->PushLight(point_light);
 
-
     Graphics::ModelLoader loader(m_entityManager);
-
 
     Entity* plane;
     {
@@ -95,9 +92,6 @@ Demo::Demo(int argc, char** argv)
         }else{
             keystate = 0;
         }
-		snprintf(fps_text, 16, "FPS: %f", 1/delta_time);
-		//render(fps_text, 0.0f, (float)GetResolutionHeight()-20, 1.0f, glm::vec3(0.0f),
-		//		glm::ortho(0.0f, (float)GetResolutionWidth(), 0.0f, (float)GetResolutionHeight())); 
 		Graphics::DrawInitRender();
 		Graphics::DrawFinishRender();
 	});
@@ -119,7 +113,7 @@ void Demo::spawn_cube()
     Entity* cube;
     cube = loader.LoadModel("res/models/cube.fbx");
 
-    cube->SetLocalPosition(glm::vec3(0,10,0));
+    cube->SetLocalPosition(glm::vec3(0,3,0));
 
     Graphics::Material cube_material;
     cube_material.texture_diffuse = m_resourceManager->LoadTexture("res/textures/box.dds");

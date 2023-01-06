@@ -80,21 +80,21 @@ char* Console::BytesLeft(int len)
     char *first = getLine(buffer.firstline)->start;
     char *tail = getTail()->start + getTail()->len;
     if(first < tail) {
-	// Place the string at the last line
-	if(len <= buffer.text + CONSOLE_BUFSIZE - tail){
-	    return tail;
-	// Place the string at the beggining of the buffer
-	}else if(len <= tail - buffer.text){
-	    return buffer.text;
-	}else{
-	    return NULL; // No space left
-	}
+        // Place the string at the last line
+        if(len <= buffer.text + CONSOLE_BUFSIZE - tail){
+            return tail;
+            // Place the string at the beggining of the buffer
+        }else if(len <= tail - buffer.text){
+            return buffer.text;
+        }else{
+            return NULL; // No space left
+        }
     }else{ // The last line is behind the first line 
-	if(len <= first - tail){ // There is enough space
-	    return tail;
-	}else{
-	    return NULL;
-	}
+        if(len <= first - tail){ // There is enough space
+            return tail;
+        }else{
+            return NULL;
+        }
     }
 }
 
@@ -108,21 +108,19 @@ void Console::PushLine(LogLevel level, const char* str)
     int bufpos = 0;
 
     for(; *str; str++) {
-	switch(*str) {
-	case 0:
-	    break;
-	case '\n':
-	    break;
-	default:
-	    buf[bufpos++] = *str;
-	    if(bufpos >= CONSOLE_INPUTSIZE) {
+        switch(*str) {
+        case 0:
             break;
-	    }
-	}
+        case '\n':
+            break;
+        default:
+            buf[bufpos++] = *str;
+            if(bufpos >= CONSOLE_INPUTSIZE) {
+                break;
+            }
+        }
     }
-    
     putpos = BytesLeft(bufpos+1);
-    
     if(!putpos || buffer.linecount >= CONSOLE_MAXLINES)
         DeleteFirst();
 
@@ -147,8 +145,6 @@ void Console::Log(LogLevel level, const char* fmt, ...)
 
     vsnprintf(buf, CONSOLE_INPUTSIZE, fmt, va);
 
-    //PushLine(level, buf);
-    
     if(level > LOG_ERROR){
         fprintf(stdout, getLevelStr(level));
         fprintf(stdout, " "); // Shitty way

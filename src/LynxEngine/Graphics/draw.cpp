@@ -20,7 +20,7 @@ namespace Lynx::Graphics {
 
 	prev_drawstate last_state;
 
-	Font::Font(FT_Library *ft, std::string name, int size) :
+	Font::Font(FT_Library *ft, const std::string name, int size) :
 		name(name), size(size)
 	{
 		if(FT_New_Face(*ft, name.c_str(), 0, &face))

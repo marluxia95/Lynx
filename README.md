@@ -14,13 +14,14 @@ NOTE: Current version in this repository is unstable and will probably not compi
 - Input system with joystick support ( glfw )
 - Logging and some debug features
 - Event-driven
-- Pretty basic LUA Scripting 
+- Pretty basic LUA Scripting (WIP) 
 
 ## TODO
 
 - Physics
 - Sound 
 - Multithreading
+- World structuring/rendering
 
 ## Dependencies
 This project requires the following libraries :
@@ -31,13 +32,14 @@ GLEW
 GLM
 GLi
 Assimp
+Freetype
 ```
 
 ## Building
 
 ### Linux
 
-Simply run `make -j4` and it will generate the binaries in the `build/` folder.
+Simply run `make` and it will generate the binaries in the `build/` folder.
 
 
 ### Windows
