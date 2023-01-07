@@ -9,6 +9,7 @@
 
 #include "application.h"
 
+#include "octree.h"
 #include "window_manager.h"
 #include "event_manager.h"
 #include "entity_manager.h"
@@ -52,12 +53,13 @@ namespace Lynx {
 
     Application::~Application()
     {
-	Graphics::DrawFree();
+        octree_free(world_root);
+        Graphics::DrawFree();
         ModuleManager::UnloadAllModules();
 #ifdef LYNX_MULTITHREAD
         m_threadPool->Wait();
 #endif
-	console.Shutdown();
+        console.Shutdown();
     }
 
     /**

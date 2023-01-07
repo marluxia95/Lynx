@@ -26,6 +26,7 @@ namespace Lynx::Graphics {
 
         // Load needed shaders
         m_objectShader = core_singleton->GetResourceManager()->LoadShader("res/shaders/lighting.vert", "res/shaders/lighting.frag");
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     }
 
     void ForwardRenderer::Update()
@@ -91,7 +92,7 @@ namespace Lynx::Graphics {
 
         cube_shader->Use();
         cube_shader->SetUniform("projection", m_camera->GetProjection());
-        cube_shader->SetUniform("view", glm::mat4(glm::mat3(m_camera->UpdateView())) );
+        cube_shader->SetUniform("view", glm::mat4(glm::mat3(m_camera->UpdateView())));
 
         cube_texture->Use();
 

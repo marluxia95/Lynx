@@ -5,6 +5,7 @@
 #include "Core/event_manager.h"
 #include "Core/module.h"
 #include "Core/package.h"
+#include "Core/octree.h"
 #include "Core/assert.h"
 #include "Events/keyEvent.h"
 #include "Events/mouseEvent.h"
@@ -35,6 +36,7 @@ Demo::Demo(int argc, char** argv)
     m_camera->position = glm::vec3(-15, 15, 0);
     m_camera->rotation = glm::vec3(0, 90, 0);
     m_renderer->SetCamera(m_camera);
+    octree_subdivide(world_root);
 
     auto point_light = Graphics::PointLight();//glm::vec3(10.0f), glm::vec3(0.4f), 1.0f, 0.35, 0.44);
     point_light.Position = glm::vec3(1.5f);
@@ -105,6 +107,7 @@ Demo::Demo(int argc, char** argv)
 
 Demo::~Demo()
 {
+    delete m_camera;
 }
 
 void Demo::spawn_cube()
