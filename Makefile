@@ -1,45 +1,53 @@
-TARGET_EXEC := demo
-TARGET_ENGINE := libLynxEngine.a
-BUILD_DIR := ./build
-LIBS_DIR := ./deps/lib
+BUILD_DIR = ./build
 
-ENGINE_SRC_DIR := src/LynxEngine
-ENGINE_INC := src/LynxEngine deps/include
-ENGINE_PCH := src/LynxEngine/lynx.h
-ENGINE_PCH_OBJ := build/src/LynxEngine/lynx.gch
-ENGINE_SRCS := $(shell find $(ENGINE_SRC_DIR) -name '*.cpp')
-ENGINE_OBJS := $(ENGINE_SRCS:%=$(BUILD_DIR)/$(subst $(ENGINE_SRC_DIR),,%).o)
-ENGINE_INC_FLAGS := $(addprefix -I,$(ENGINE_INC))
+CXX=g++
+AR=ar
 
-DEMO_SRC_DIR := src/Demo
-DEMO_INC := $(ENGINE_INC)
-DEMO_SRCS := $(shell find $(DEMO_SRC_DIR) -name '*.cpp')
-DEMO_OBJS := $(DEMO_SRCS:%=$(BUILD_DIR)/$(subst $(DEMO_SRC_DIR),,%).o)
-DEMO_INC_FLAGS := $(addprefix -I,$(ENGINE_INC))
-DEMO_LINK_FLAGS := $(addprefix -L,$(LIBS_DIR)) -L./build -lassimp -lLynxEngine -lglfw3 -lGL -lGLEW -lfreetype -lX11 -lpthread -lXrandr -ldl -lz 
+SRC = $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
+OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(SRC:.cpp=.o)))
+PCH = src/lynx.h
+PCH_OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(PCH)))
 
-CPPFLAGS := $(ENGINE_INC_FLAGS) -MMD -MP
+DEMO_SRC = $(wildcard demo/*.cpp)
+DEMO_OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(DEMO_SRC:.cpp=.o)))
 
-$(BUILD_DIR)/$(TARGET_EXEC) : $(DEMO_OBJS) $(BUILD_DIR)/$(TARGET_ENGINE)
-	$(CXX) -o $@ $(DEMO_OBJS) $(DEMO_LINK_FLAGS)
+CXXFLAGS = -Ideps/include -Isrc -MMD -MP
+LIBFLAGS = -L./build -L./deps/lib -lassimp -lglfw -llynxengine -lGL -lGLEW -lfreetype -lX11 -lpthread -lXrandr -ldl -lz
 
-$(BUILD_DIR)/%.cpp.o : %.cpp
-	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+DYNAMIC_LIB = $(BUILD_DIR)/liblynxengine.so
+STATIC_LIB  = $(BUILD_DIR)/liblynxengine.a
+DEMO_EXE = $(BUILD_DIR)/demo
 
-$(BUILD_DIR)/$(TARGET_ENGINE): $(ENGINE_OBJS)
-	ar rcs $@ $(ENGINE_OBJS)
+DOCXX = $(CXX) $< -c $(CXXFLAGS) -o $@
 
-$(BUILD_DIR)/%.cpp.o: %.cpp $(ENGINE_PCH_OBJ)
-	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+$(DEMO_EXE): $(DEMO_OBJ)
+	$(CXX) -o $@ $(DEMO_OBJ) $(CXXFLAGS) $(LIBFLAGS)
 
-$(ENGINE_PCH_OBJ): $(ENGINE_PCH)
-	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: demo/%.cpp | $(STATIC_LIB)
+	$(DOCXX)
 
-.PHONY: clean engine all
-all: $(BUILD_DIR)/$(TARGET_EXEC)
-engine: $(BUILD_DIR)/$(TARGET_ENGINE)
-clean:
-	rm -r $(BUILD_DIR)
+$(STATIC_LIB): $(OBJ)
+	$(AR) rcs $@ $(OBJ)
+
+$(BUILD_DIR)/%.o: src/%.cpp | build $(PCH_OBJ)
+	$(DOCXX)
+
+$(BUILD_DIR)/%.o: src/*/%.cpp | build $(PCH_OBJ)
+	$(DOCXX)
+
+$(PCH_OBJ): $(PCH)
+	$(DOCXX)
+
+build:
+	mkdir build
+
+.PHONY: clean dist all
+
+all: $(STATIC_LIB) $(DEMO_EXE)
+
+clean: dist 
+	rm $(STATIC_LIB)
+
+dist:
+	rm $(OBJ) build/*.d
+

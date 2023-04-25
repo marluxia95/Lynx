@@ -145,7 +145,8 @@ namespace Lynx::Graphics::OpenGL {
 		log_debug("[GL] Initialized element buffer");
     }
 
-    GLElementBuffer::~GLElementBuffer(){
+    GLElementBuffer::~GLElementBuffer()
+	{
         glDeleteBuffers(1, &ID);
     }
 
