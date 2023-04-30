@@ -3,6 +3,7 @@
 #include "octree.h"
 
 namespace Lynx {
+	// TODO : Move this to the game's code instead of hard-coding it into the engine code.
     Octree* world_root = octree_create();
     int total_nodes = 0;
 

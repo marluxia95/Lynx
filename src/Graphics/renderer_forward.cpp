@@ -1,5 +1,5 @@
 #include <glm/gtx/string_cast.hpp>
-#include "Platform/OpenGL/gl_graphics_api.h"
+#include "gl_graphics_api.h"
 #include "renderer_forward.h"
 #include "Core/application.h"
 #include "Core/entity.h"

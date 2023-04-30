@@ -1,6 +1,6 @@
 #include "vertex_array.h"
 #include "graphics_api.h"
-#include "Platform/OpenGL/gl_vertex_array.h"
+#include "gl_vertex_array.h"
 #include "Core/logger.h"
 
 namespace Lynx::Graphics {

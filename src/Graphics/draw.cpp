@@ -1,7 +1,7 @@
 #include "draw.h"
 #include "Core/logger.h"
 #include "Core/application.h"
-#include "Platform/OpenGL/gl_graphics_api.h"
+#include "gl_graphics_api.h"
 
 
 namespace Lynx::Graphics {

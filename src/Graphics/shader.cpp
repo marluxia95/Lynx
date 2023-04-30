@@ -20,7 +20,7 @@
 #include "Core/assert.h"
 #include "Utils/path.hpp"
 
-#include "Platform/OpenGL/gl_shader.h"
+#include "gl_shader.h"
 
 namespace Lynx::Graphics {
 

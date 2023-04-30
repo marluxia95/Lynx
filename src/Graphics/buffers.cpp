@@ -4,7 +4,7 @@
 #include "mesh.h"
 #include "Core/logger.h"
 #include "graphics_api.h"
-#include "Platform/OpenGL/gl_buffers.h"
+#include "gl_buffers.h"
 
 namespace Lynx::Graphics {
 

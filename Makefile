@@ -12,7 +12,7 @@ DEMO_SRC = $(wildcard demo/*.cpp)
 DEMO_OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(DEMO_SRC:.cpp=.o)))
 
 CXXFLAGS = -Ideps/include -Isrc -MMD -MP
-LIBFLAGS = -L./build -L./deps/lib -lassimp -lglfw -llynxengine -lGL -lGLEW -lfreetype -lX11 -lpthread -lXrandr -ldl -lz
+LIBFLAGS = -L./build -L./deps/lib -lassimp -llynxengine -lglfw3 -lGL -lGLEW -lfreetype -lX11 -lpthread -lXrandr -ldl -lz 
 
 DYNAMIC_LIB = $(BUILD_DIR)/liblynxengine.so
 STATIC_LIB  = $(BUILD_DIR)/liblynxengine.a
