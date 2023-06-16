@@ -1,7 +1,7 @@
 #include "physics_object.h"
 #include "Core/application.h"
 
-namespace Lynx::Physics {
+namespace Lynx {
 
     PhysicsObject::PhysicsObject()
     {

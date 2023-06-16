@@ -1,6 +1,6 @@
 #include "cube.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	Cube::Cube() : Mesh()
 	{

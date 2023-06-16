@@ -3,46 +3,46 @@
 
 #include "renderer.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
-    class Shader;
-    class Skybox;
+	class Shader;
+	class Skybox;
 
-    class LYNXENGINE_API ForwardRenderer : public Renderer {
-    private:
-        void renderSky();
-        void renderObjects();
+	class LYNXENGINE_API ForwardRenderer : public Renderer {
+	private:
+		void renderSky();
+		void renderObjects();
 
-        void processLighting();
-    public:
-        ForwardRenderer();
+		void processLighting();
+	public:
+		ForwardRenderer();
 
-        ~ForwardRenderer();
+		~ForwardRenderer();
 
-        void Initialise();
+		void Initialise();
 
-        void SetCamera(Camera* camera) { m_camera = camera; }
+		void SetCamera(Camera* camera) { m_camera = camera; }
 
-        Camera* GetCamera() { return m_camera; }
+		Camera* GetCamera() { return m_camera; }
 
-        void Update();
+		void Update();
 
-        void Shutdown();
+		void Shutdown();
 
-        void PushRender(Entity* ent);
-        void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
+		void PushRender(Entity* ent);
+		void PushRender(Renderable* renderable, glm::mat4 modelMatrix);
 
-        void PushLight(PointLight& light);
-        void SetDirectionalLight(DirectionalLight& light);
+		void PushLight(PointLight& light);
+		void SetDirectionalLight(DirectionalLight& light);
 
-        void SetSkybox(std::shared_ptr<Skybox> skybox);
+		void SetSkybox(std::shared_ptr<Skybox> skybox);
 
-        void Render();
-    private:
-        std::shared_ptr<Shader> m_objectShader;
-        std::shared_ptr<Skybox> m_skybox;
+		void Render();
+	private:
+		std::shared_ptr<Shader> m_objectShader;
+		std::shared_ptr<Skybox> m_skybox;
 
-    };
+	};
 
 }
 

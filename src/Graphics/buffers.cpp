@@ -4,9 +4,9 @@
 #include "mesh.h"
 #include "Core/logger.h"
 #include "graphics_api.h"
-#include "gl_buffers.h"
+#include "gl_graphics_api.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	void debugVBO(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices)
 	{
@@ -25,7 +25,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<VertexBuffer> VertexBuffer::Create()
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLVertexBuffer>();
+			case API_OPENGL: return std::make_unique<GLVertexBuffer>();
 			default : return nullptr;
 		}
 	}
@@ -33,7 +33,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<VertexBuffer> VertexBuffer::Create(const void* data, unsigned int size)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLVertexBuffer>(data, size);
+			case API_OPENGL: return std::make_unique<GLVertexBuffer>(data, size);
 			default : return nullptr;
 		}
 	}
@@ -41,7 +41,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<VertexBuffer> VertexBuffer::Create(unsigned int size)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLVertexBuffer>(size);
+			case API_OPENGL: return std::make_unique<GLVertexBuffer>(size);
 			default : return nullptr;
 		}
 	}
@@ -49,7 +49,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<VertexBuffer> VertexBuffer::Create(std::vector<Vertex>* vertices)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLVertexBuffer>(vertices);
+			case API_OPENGL: return std::make_unique<GLVertexBuffer>(vertices);
 			default : return nullptr;
 		}
 	}
@@ -57,7 +57,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<VertexBuffer> VertexBuffer::Create(std::vector<Vertex>* vertices, MeshType type)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLVertexBuffer>(vertices, type);
+			case API_OPENGL: return std::make_unique<GLVertexBuffer>(vertices, type);
 			default : return nullptr;
 		}
 	}
@@ -65,7 +65,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<ElementBuffer> ElementBuffer::Create()
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLElementBuffer>();
+			case API_OPENGL: return std::make_unique<GLElementBuffer>();
 			default : return nullptr;
 		}
 	}
@@ -73,7 +73,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<ElementBuffer> ElementBuffer::Create(unsigned int size)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLElementBuffer>(size);
+			case API_OPENGL: return std::make_unique<GLElementBuffer>(size);
 			default : return nullptr;
 		}
 	}
@@ -81,7 +81,7 @@ namespace Lynx::Graphics {
 	std::unique_ptr<ElementBuffer> ElementBuffer::Create(const void* indices, unsigned int indexNumber)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLElementBuffer>(indices, indexNumber);
+			case API_OPENGL: return std::make_unique<GLElementBuffer>(indices, indexNumber);
 			default : return nullptr;
 		}
 	}
@@ -89,7 +89,7 @@ namespace Lynx::Graphics {
     std::unique_ptr<ElementBuffer> ElementBuffer::Create(std::vector<unsigned int>* indices)
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLElementBuffer>(indices);
+			case API_OPENGL: return std::make_unique<GLElementBuffer>(indices);
 			default : return nullptr;
 		}
 	}

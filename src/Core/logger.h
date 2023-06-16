@@ -9,20 +9,19 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <time.h>
+#include <fstream>
 #include <stdbool.h>
 #include <string>
+#include <array>
 #include <thread>
 #include <queue>
 #include <mutex>
 #include <map>
 #include "lynx_common.h"
 
-#define CONSOLE_BUFSIZE 1048576
-#define CONSOLE_MAXLINES 16384
-#define CONSOLE_INPUTSIZE 16384
-
-namespace Lynx {
+#define LOG_MAXSINKS 16
+#define LOG_LINESIZE 4096
+#define BUF_MAXLINES 32768
 
 typedef enum {
 	LOG_FATAL,
@@ -33,63 +32,63 @@ typedef enum {
 	LOG_ALL
 } LogLevel;
 
-/*
- * Quake-based console with a circular buffer
- *
- */
-class LYNXENGINE_API Console {
+class LogSink;
+	
+class LYNXENGINE_API Logger {
 public:
-    struct con_lineinfo {
-	LogLevel level;
-	char* start;
-	int len;
-    };
+	void Log(LogLevel level, const char* fmt, ...);
+	void Log(LogLevel level, std::string str) {Log(level, str.c_str());}
 
-    struct con_buffer {
-	con_lineinfo* lines;
-	char* text;
-	int firstline = 0;
-	int linecount = 0;
-    };
+	char* getLevelStr(LogLevel level);
 
-    con_lineinfo *getLine(int n);
-    con_lineinfo *getTail();
-
-    char* getLevelStr(LogLevel level);
-public:
-    void Init();
-    void SetLevel(LogLevel level);
-    void Quiet(bool enable);
-    void PushLine(LogLevel level, const char* str);
-    void Log(LogLevel level, const char* fmt, ...);
-    void Log(LogLevel level, std::string str) {Log(level, str.c_str());}
-    void DeleteFirst();
-    void DeleteLast();
-    char* BytesLeft(int len);
-    void PrintBuffer();
-    
-    void GetLine(int l);
-    int GetLastLine();
-    
-    void Render();
-
-    void Shutdown();
+	void RegisterSink(LogSink *out);
 private:
-    con_buffer buffer;
-    std::mutex out_mutex;
-    LogLevel m_level;
-    bool quiet = false;
+	LogSink* m_sinks[LOG_MAXSINKS];
+	short int  m_sinkCount = 0;
 };
 
-extern Console console;
+class LogSink {
+public:
+	LogSink(LogLevel level) : m_level(level) {}
+	virtual void Log(const char* msg) = 0;
+	LogLevel GetLevel() { return m_level; }
+	void SetLevel(LogLevel level) { m_level = level; }
+private:
+	LogLevel m_level;
+};
+
+class StreamSink : public LogSink {
+public:
+	StreamSink(LogLevel level, std::ostream &stream) : LogSink(level), m_stream(stream) {}
+
+	void Log(const char* msg) override;
+private:
+	std::ostream &m_stream;
+};
+
+class BufferSink : public LogSink {
+public:
+	BufferSink(LogLevel level) : LogSink(level) {}
+
+	void Log(const char* msg) override;
+
+	std::string GetLine(size_t index);
+private:
+	std::array<std::string, BUF_MAXLINES> buf;
+	size_t index;
+};
+
+extern Logger logger;
+extern StreamSink log_stdout;
+extern StreamSink log_stderr;
+extern BufferSink log_conbuf;
+
 // TODO : Add log streams
 
-}
-
-#define log_debug(...) Lynx::console.Log(Lynx::LOG_DEBUG, __VA_ARGS__)
-#define log_info(...)  Lynx::console.Log(Lynx::LOG_INFO,  __VA_ARGS__)
-#define log_warn(...)  Lynx::console.Log(Lynx::LOG_WARN,  __VA_ARGS__)
-#define log_error(...) Lynx::console.Log(Lynx::LOG_ERROR, __VA_ARGS__)
-#define log_fatal(...) Lynx::console.Log(Lynx::LOG_FATAL, __VA_ARGS__)
+#define log_debug(...) logger.Log(LOG_DEBUG, __VA_ARGS__)
+#define log_info(...)  logger.Log(LOG_INFO,	 __VA_ARGS__)
+#define log_warn(...)  logger.Log(LOG_WARN,	 __VA_ARGS__)
+#define log_error(...) logger.Log(LOG_ERROR, __VA_ARGS__)
+#define log_fatal(...) logger.Log(LOG_FATAL, __VA_ARGS__)
 
 #endif

@@ -2,10 +2,11 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "gl_graphics_api.h"
-#include "Graphics/shader.h"
 #include "Core/logger.h"
 #include "Core/assert.h"
+#include "gl_graphics_api.h"
+#include "shader.h"
+#include "mesh.h"
 
 GLenum checkerror_(const char* f, int l)
 {
@@ -28,7 +29,7 @@ GLenum checkerror_(const char* f, int l)
     return errorCode;
 }
 
-namespace Lynx::Graphics::OpenGL {
+namespace Lynx {
 
     std::map<ShaderType, GLenum> shader_type_map = {
         {SHADER_NULL,       NULL                },
@@ -48,6 +49,244 @@ namespace Lynx::Graphics::OpenGL {
         {TEXTURE_CUBE_MAP_ARRAY,    GL_TEXTURE_CUBE_MAP_ARRAY}
     };
 
+	GLShaderProgram::GLShaderProgram()
+    {
+        id = glCreateProgram(); 
+#ifdef API_DEBUG
+        log_debug("[GL] Initialized shader program with ID %d", id);
+#endif
+    }
+
+    GLShaderProgram::~GLShaderProgram()
+    {
+        glDeleteProgram(id);
+#ifdef API_DEBUG
+        log_debug("[GL] Deleted shader program with ID %d", id);
+#endif
+    }
+
+    void GLShaderProgram::AttachShader(unsigned int shaderID)
+    {
+        glAttachShader(id, shaderID);
+#ifdef API_DEBUG
+        log_debug("[GL] Attached shader program with ID %d to %d", shaderID, id);
+#endif
+    }
+
+    void GLShaderProgram::Use()
+    {
+        glUseProgram(id);
+#ifdef API_DEBUG
+        log_debug("[GL] Used shader program with ID %d", id);
+#endif
+    }
+    
+    bool GLShaderProgram::Link()
+    {
+        glLinkProgram(id);
+		int success;
+        glGetProgramiv(id, GL_LINK_STATUS, &success);
+		if(!success){
+			glGetProgramInfoLog(id, MAX_ERR_BUFSIZE, NULL, error_log);
+			log_error("Error while linking shaders! : %s", error_log);
+		}
+#ifdef API_DEBUG
+        log_debug("[GL] Linked shader program with ID %d; Success : %d", id, success);
+#endif
+        glCheckError();
+		return (bool)success;
+    }	
+
+	GLVertexBuffer::GLVertexBuffer(const void* data, unsigned int size)
+    {
+		glGenBuffers(1, &VBO_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+		log_debug("[GL] Initialized vertex buffer");
+	}
+
+    GLVertexBuffer::GLVertexBuffer(std::vector<Vertex>* vertices)
+    {
+		glGenBuffers(1, &VBO_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &(vertices->at(0)), GL_STATIC_DRAW);
+		log_debug("[GL] Initialized vertex buffer");
+	}
+
+    GLVertexBuffer::GLVertexBuffer(std::vector<Vertex>* vertices, MeshType type)
+	{
+		glGenBuffers(1, &VBO_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferData(GL_ARRAY_BUFFER, vertices->size() * sizeof(Vertex), &vertices->at(0), GL_STATIC_DRAW);
+		Configure(type);
+		log_debug("[GL] Initialized vertex buffer");
+	}
+
+	GLVertexBuffer::GLVertexBuffer(unsigned int size)
+	{
+		glGenBuffers(1, &VBO_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
+		log_debug("[GL] Initialized vertex buffer");
+	}
+
+	GLVertexBuffer::GLVertexBuffer()
+	{
+		glGenBuffers(1, &VBO_ID);
+		log_debug("[GL] Initialized vertex buffer");
+	}
+
+	GLVertexBuffer::~GLVertexBuffer()
+	{
+		glDeleteBuffers(1, &VBO_ID);
+	}
+
+	void GLVertexBuffer::SetData(const void* data, unsigned int size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferData(GL_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	}
+
+	void GLVertexBuffer::DynamicDraw(bool dynamic_draw)
+	{
+		dynamic = dynamic_draw;
+	}
+
+	void GLVertexBuffer::AddData(const void* data, unsigned int size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID);  
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
+	void GLVertexBuffer::Bind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_ID); 
+	}
+
+	void GLVertexBuffer::Unbind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0); 
+	}
+
+	void GLVertexBuffer::Configure(MeshType type)
+	{
+		switch( type ){
+
+			case MESH_2D_SPRITE:
+				// Vertex attribute
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float),  (void*)0); 
+	    		glEnableVertexAttribArray(0);
+				break;
+			case MESH_3D:
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+				glEnableVertexAttribArray(0);
+				break;
+			case MESH_3D_NORMAL:
+				// Vertex attribute
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+				glEnableVertexAttribArray(0);
+				// Normal attribute
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+				glEnableVertexAttribArray(1);
+				break;
+			case MESH_3D_TEXTURED:
+				// Vertex attribute
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	    		glEnableVertexAttribArray(0);
+	    		// Texture attribute
+	    		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
+	    		glEnableVertexAttribArray(2);
+				break;
+			case MESH_3D_TEXTURED_NORMAL:
+				// Vertex attribute
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+				glEnableVertexAttribArray(0);
+				// Normal attribute
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+				glEnableVertexAttribArray(1);
+				// Texture attribute
+				glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureCoords));
+				glEnableVertexAttribArray(2);
+				break;
+		}
+	}
+ 
+    GLElementBuffer::GLElementBuffer(const void* indices, unsigned int indexNumber){
+        glGenBuffers(1, &ID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexNumber, indices, GL_STATIC_DRAW);
+		log_debug("[GL] Initialized element buffer");
+    }
+
+    GLElementBuffer::GLElementBuffer(std::vector<unsigned int>* indices){
+        glGenBuffers(1, &ID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size() * sizeof(unsigned int), &(indices->at(0)), GL_STATIC_DRAW );
+		log_debug("[GL] Initialized element buffer");
+    }
+
+    GLElementBuffer::GLElementBuffer(unsigned int size){
+        glGenBuffers(1, &ID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW );
+		log_debug("[GL] Initialized element buffer");
+    }
+
+    GLElementBuffer::GLElementBuffer()
+    {
+        glGenBuffers(1, &ID);
+		log_debug("[GL] Initialized element buffer");
+    }
+
+    GLElementBuffer::~GLElementBuffer()
+	{
+        glDeleteBuffers(1, &ID);
+    }
+
+	void GLElementBuffer::DynamicDraw(bool dynamic_draw)
+	{
+		dynamic = dynamic_draw;
+	}
+
+	void GLElementBuffer::SetData(const void* data, unsigned int size)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	}
+
+    void GLElementBuffer::AddData(const void* data, unsigned int size)
+    {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);  
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+    }
+
+    void GLElementBuffer::Bind() {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
+    }
+
+    void GLElementBuffer::Unbind(){
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
+    }
+
+	GLVertexArray::GLVertexArray(){
+		glGenVertexArrays(1, &VAO_ID);
+		glBindVertexArray(VAO_ID);
+		log_debug("[GL] Initialized vertex array");
+	}
+
+	GLVertexArray::~GLVertexArray(){
+		glDeleteVertexArrays(1, &VAO_ID);
+		log_debug("[GL] Destroyed vertex array");
+	}
+
+	void GLVertexArray::Bind(){
+		glBindVertexArray(VAO_ID);
+	}
+
+	void GLVertexArray::Unbind(){
+		glBindVertexArray(0);
+	}
+
     void GLRendererAPI::Init()
     {
         glewExperimental = true;
@@ -55,7 +294,7 @@ namespace Lynx::Graphics::OpenGL {
 
         glEnable(GL_DEPTH_TEST);
 	
-	glEnable(GL_BLEND);
+		glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
     	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	// Enable face culling
@@ -216,7 +455,18 @@ namespace Lynx::Graphics::OpenGL {
 
     int GLRendererAPI::GetShaderUniformLocation(unsigned int programID, const char* uniformName)
     {
-        return glGetUniformLocation(programID, uniformName);
+        GLint uniform = glGetUniformLocation(programID, uniformName);
+		if(uniform == -1)
+			log_error("GLRendererAPI : Could not retrieve uniform %s", uniformName);
+		return uniform;
     }
+
+	int GLRendererAPI::GetShaderAttribLocation(unsigned int programID, const char* attribName)
+	{
+		GLint attrib = glGetAttribLocation(programID, attribName);
+		if(attrib == -1)
+			log_error("GLRendererAPI : Could not retrieve attrib %s", attribName);
+		return attrib;
+	}
 
 }

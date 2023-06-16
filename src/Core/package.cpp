@@ -6,6 +6,8 @@
 
 #define PKG_VER 0
 
+// This is completely broken and unused for now, ignore
+
 namespace Lynx {
 
 pkg_file_t *g_pkg_head;

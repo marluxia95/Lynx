@@ -10,7 +10,7 @@
 
 #define MAX_LOG_SIZE 2048
 
-namespace Lynx::Graphics
+namespace Lynx
 {
 
     enum ShaderType : unsigned int
@@ -60,7 +60,8 @@ namespace Lynx::Graphics
 
         virtual unsigned int CompileShader(const char *shadersource, ShaderType type) = 0;
         virtual int GetShaderUniformLocation(unsigned int programID, const char *uniformName) = 0;
-        virtual void SetShaderUniformBool(int location, bool value) = 0; // Can't use virtual templates :( sad
+		virtual int GetShaderAttribLocation(unsigned int ProgramID, const char *attribName) = 0;
+		virtual void SetShaderUniformBool(int location, bool value) = 0; // Can't use virtual templates :( sad
         virtual void SetShaderUniformInt(int location, int value) = 0;
         virtual void SetShaderUniformFloat(int location, float value) = 0;
         virtual void SetShaderUniformVec2(int location, glm::vec2 value) = 0;
@@ -112,7 +113,8 @@ namespace Lynx::Graphics
 
         static unsigned int CompileShader(const char *shadersource, ShaderType type);
         static int GetShaderUniformLocation(unsigned int programID, const char *uniformName);
-
+		static int GetShaderAttribLocation(unsigned int ProgramID, const char *attribName);
+		
         template <typename T>
         static void SetShaderUniform(int locatiom, T value);
 

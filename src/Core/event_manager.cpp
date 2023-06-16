@@ -17,62 +17,62 @@ unsigned int EventManager::last_ev_id = 0;
 
 EventListener EventManager::AddListener(const EventType& type, EventCallbackFunc&& func)
 {
-    EventListener n_listener = EventListener(func, last_ev_id++);
-    listeners[type].push_back(n_listener);
-    return n_listener;
+	EventListener n_listener = EventListener(func, last_ev_id++);
+	listeners[type].push_back(n_listener);
+	return n_listener;
 }
 
 void EventManager::RemoveListener(const EventType& type, EventListener listener)
 {
-    auto p = std::find(listeners[type].begin(), listeners[type].end(), listener);
+	auto p = std::find(listeners[type].begin(), listeners[type].end(), listener);
 
-    if(p == listeners[type].end())
-        return;
+	if(p == listeners[type].end())
+		return;
 
-    listeners[type].erase(p);
+	listeners[type].erase(p);
 }
 
 void EventManager::SendEvent(const Event& event)
 {
 #ifdef LYNX_MULTITHREAD
-    std::unique_lock<std::mutex> lock(queue_mutex);
-    event_queue.push(event);
+	std::unique_lock<std::mutex> lock(queue_mutex);
+	event_queue.push(event);
 #else
-    EventType type = event.GetType();
+	EventType type = event.GetType();
 
-    if(listeners.find(type) == listeners.end())
-        return;
+	if(listeners.find(type) == listeners.end())
+		return;
 
-    for(int i = 0; i < listeners[type].size(); i++){
-        auto listener = listeners[type][i];
+	for(int i = 0; i < listeners[type].size(); i++){
+		auto listener = listeners[type][i];
 
-        listener(event);
-    }
+		listener(event);
+	}
 #endif
 }
 
 #ifdef LYNX_MULTITHREAD
 void EventManager::UpdateListeners()
 {
-    std::unique_lock<std::mutex> lock(queue_mutex);
+	std::unique_lock<std::mutex> lock(queue_mutex);
 
-    if(event_queue.empty())
-        return;
+	if(event_queue.empty())
+		return;
 
 
-    Event event = event_queue.back();
-    EventType type = event.GetType();
+	Event event = event_queue.back();
+	EventType type = event.GetType();
 
-    if(listeners.find(type) == listeners.end())
-        return;
+	if(listeners.find(type) == listeners.end())
+		return;
 
-    for(int i = 0; i < listeners[type].size(); i++){
-        auto listener = listeners[type][i];
+	for(int i = 0; i < listeners[type].size(); i++){
+		auto listener = listeners[type][i];
 
-        listener(event);
-    }
+		listener(event);
+	}
 
-    event_queue.pop();
+	event_queue.pop();
 }
 #endif
 

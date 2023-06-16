@@ -20,14 +20,14 @@
 #include "Core/assert.h"
 #include "Utils/path.hpp"
 
-#include "gl_shader.h"
+#include "gl_graphics_api.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	std::unique_ptr<ShaderProgram> ShaderProgram::Create()
 	{
 		switch ( IRendererAPI::GetAPI() ) {
-			case API_OPENGL: return std::make_unique<OpenGL::GLShaderProgram>();
+			case API_OPENGL: return std::make_unique<GLShaderProgram>();
 			default : return nullptr;
 		}
 	}
@@ -145,7 +145,7 @@ namespace Lynx::Graphics {
 		success = program->Link();
 
 		for( auto& shobj : shader_objs ) {
-			Graphics::RendererAPI::DestroyShader(shobj.shader);
+			RendererAPI::DestroyShader(shobj.shader);
 		}
 
 		return success;
@@ -173,17 +173,24 @@ namespace Lynx::Graphics {
 	}
 
     // FIXME : Fix uniform caching for formatted uniform names 
-	int Shader::getUniformLocation(const char* uniformName)
+	int Shader::GetUniformLocation(const char* uniformName)
 	{
-		if(!success) return NULL;
+		if(!success) return -1;
         int loc;
 
         if(uniform_cache_map.find(uniformName) == uniform_cache_map.end()) {
-			loc = Graphics::RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
+			loc = RendererAPI::GetShaderUniformLocation(program->GetID(), uniformName);
         }
 
         //if(loc<0) log_error("getUniformLocation() : Invalid uniform %s", uniformName);
         return loc;
+	}
+
+	int Shader::GetAttribLocation(const char* attribName)
+	{
+		if(!success) return -1;
+
+		return RendererAPI::GetShaderAttribLocation(program->GetID(), attribName);
 	}
 
 }

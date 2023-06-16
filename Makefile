@@ -3,7 +3,7 @@ BUILD_DIR = ./build
 CXX=g++
 AR=ar
 
-SRC = $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
+SRC = $(wildcard src/*.cpp) $(wildcard src/*/*.cpp) $(wildcard demo/**.cpp)
 OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(SRC:.cpp=.o)))
 PCH = src/lynx.h
 PCH_OBJ = $(addprefix $(BUILD_DIR)/,$(notdir $(PCH)))
@@ -20,7 +20,7 @@ DEMO_EXE = $(BUILD_DIR)/demo
 
 DOCXX = $(CXX) $< -c $(CXXFLAGS) -o $@
 
-$(DEMO_EXE): $(DEMO_OBJ)
+$(DEMO_EXE): $(STATIC_LIB)
 	$(CXX) -o $@ $(DEMO_OBJ) $(CXXFLAGS) $(LIBFLAGS)
 
 $(BUILD_DIR)/%.o: demo/%.cpp | $(STATIC_LIB)
@@ -49,5 +49,5 @@ clean: dist
 	rm $(STATIC_LIB)
 
 dist:
-	rm $(OBJ) build/*.d
+	rm $(DEMO_EXE) $(OBJ) $(DEMO_OBJ) build/*.d
 

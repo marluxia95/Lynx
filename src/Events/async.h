@@ -7,8 +7,8 @@
 namespace Lynx {
     class AsyncTextureLoadEvent : public Event {
         public:
-            AsyncTextureLoadEvent(std::shared_ptr<Graphics::TextureBase> tex) : Event(AsyncTextureLoad), Tex(tex) {}
-			std::shared_ptr<Graphics::TextureBase> Tex;
+            AsyncTextureLoadEvent(std::shared_ptr<TextureBase> tex) : Event(AsyncTextureLoad), Tex(tex) {}
+			std::shared_ptr<TextureBase> Tex;
     };
 }
 

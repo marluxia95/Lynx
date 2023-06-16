@@ -54,7 +54,7 @@ void ResourceManager::Update(float dt)
 	if(texdata_queue.empty())
 		return;
 
-	Graphics::TextureBase* tex;
+	TextureBase* tex;
 	{
 		std::unique_lock<std::mutex> lock(queue_mutex);
 		tex = texdata_queue.front();
@@ -89,16 +89,16 @@ const char* ResourceManager::getFileName(const char* path)
  *
  * @param vpath Vertex shader path
  * @param fpath Fragment shader path
- * @return std::shared_ptr<Graphics::Shader>
+ * @return std::shared_ptr<Shader>
  */
-std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
+std::shared_ptr<Shader> ResourceManager::LoadShader(const char* vpath, const char* fpath)
 {
 	std::string name = std::string(vpath);
-	const auto shader_found = GetResource<Graphics::Shader>(vpath);
+	const auto shader_found = GetResource<Shader>(vpath);
 	if(shader_found != NULL)
 		return shader_found;
 
-	auto n_shader = std::make_shared<Graphics::Shader>(vpath, fpath);
+	auto n_shader = std::make_shared<Shader>(vpath, fpath);
 	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_shader);
 	
 	return n_shader;
@@ -109,11 +109,11 @@ std::shared_ptr<Graphics::Shader> ResourceManager::LoadShader(const char* vpath,
  *
  * @param path Texture path
  * @param type Texture type
- * @return std::shared_ptr<Graphics::TextureBase>
+ * @return std::shared_ptr<TextureBase>
  */
-std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* path, Graphics::TextureType type)
+std::shared_ptr<TextureBase> ResourceManager::LoadTexture(const char* path, TextureType type)
 {
-	std::shared_ptr<Graphics::TextureBase> texture = GetResource<Graphics::TextureBase>(path);
+	std::shared_ptr<TextureBase> texture = GetResource<TextureBase>(path);
 	if( texture ) {
 		if( texture->IsValid() )
 			return texture;
@@ -122,7 +122,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	std::string name = std::string(path);
 	
 #ifdef LYNX_MULTITHREAD
-	auto n_tex = std::make_shared<Graphics::Texture>(type);
+	auto n_tex = std::make_shared<Texture>(type);
 	TexObj* obj = new TexObj{n_tex, path};
 
 	log_debug("Texture %s", obj->path.c_str());
@@ -130,7 +130,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 	log_debug("Starting to load texture %s in async mode", path);
 	thpool->PushJob([this](void* data){
 		TexObj* tdata = (TexObj*)data;
-		std::shared_ptr<Graphics::TextureBase> tex = tdata->tex;
+		std::shared_ptr<TextureBase> tex = tdata->tex;
 
 		log_debug("Processing texture %s", tdata->path.c_str());
 
@@ -144,7 +144,7 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
 		return;
 	}, obj);
 #else
-	auto n_tex = std::make_shared<Graphics::Texture>(path, type);
+	auto n_tex = std::make_shared<Texture>(path, type);
 	n_tex->Generate();
 #endif
 	
@@ -161,19 +161,19 @@ std::shared_ptr<Graphics::TextureBase> ResourceManager::LoadTexture(const char* 
  * @param vertices
  * @param indices
  * @param type
- * @return std::shared_ptr<Graphics::Mesh>
+ * @return std::shared_ptr<Mesh>
  */
-std::shared_ptr<Graphics::Mesh>
-ResourceManager::LoadMesh(const char* name, std::vector<Graphics::Vertex>* vertices,
+std::shared_ptr<Mesh>
+ResourceManager::LoadMesh(const char* name, std::vector<Vertex>* vertices,
 	std::vector<unsigned int>* indices,
-	Graphics::MeshType type)
+	MeshType type)
 {
 	std::string res_name = name;
-	const auto found = GetResource<Graphics::Mesh>(name);
+	const auto found = GetResource<Mesh>(name);
 	if(found != NULL)
 		return found;
 
-	auto n_mesh = std::make_shared<Graphics::Mesh>(name, vertices, indices, type);
+	auto n_mesh = std::make_shared<Mesh>(name, vertices, indices, type);
 	resource_map[Resource::GetLastID()] = std::static_pointer_cast<Resource>(n_mesh);
 	
 	return n_mesh;

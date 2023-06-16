@@ -4,24 +4,23 @@
 #include "Core/assert.h"
 #include "renderer.h"
 #include "mesh.h"
-#include "material.h"
 #include "model.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 Entity* ModelLoader::LoadModel(const char* path)
 {
-    auto cached_mesh = Lynx::Application::GetSingleton()->GetResourceManager()->GetResource<Graphics::Mesh>(path);
-    if(cached_mesh)
+	auto cached_mesh = Lynx::Application::GetSingleton()->GetResourceManager()->GetResource<Mesh>(path);
+	if(cached_mesh)
 	{
-        Entity* ent = m_entityManager->CreateEntity();
-        Renderable* rndl = new Renderable();
-        rndl->SetMesh(cached_mesh);
-        ent->SetRenderObj(rndl);
-        return ent;
-    }
+		Entity* ent = m_entityManager->CreateEntity();
+		Renderable* rndl = new Renderable();
+		rndl->SetMesh(cached_mesh);
+		ent->SetRenderObj(rndl);
+		return ent;
+	}
 
-    const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
+	const aiScene *ai_scene = m_importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);	
 
 	if(!ai_scene || ai_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !ai_scene->mRootNode)
 	{
@@ -69,14 +68,14 @@ Entity* ModelLoader::LoadNode(const char* path, aiNode* node, const aiScene* ai_
 Renderable* ModelLoader::ParseMesh(const char* path, const aiScene* ai_scene, aiMesh* mesh)
 {
 	Application* applicationInstance = Lynx::Application::GetSingleton();
-	std::vector<Graphics::Vertex>* vertices = new std::vector<Graphics::Vertex>();
+	std::vector<Vertex>* vertices = new std::vector<Vertex>();
 	std::vector<unsigned int>* indices = new std::vector<unsigned int>();
 	log_debug("ModelLoader : Starting to process mesh");
 	// Process vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		//log_debug("Creating vertex %d", i);
-		Graphics::Vertex vertex;
+		Vertex vertex;
 		glm::vec3 vector;
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
@@ -114,7 +113,7 @@ Renderable* ModelLoader::ParseMesh(const char* path, const aiScene* ai_scene, ai
 
 	// Dirty af
 	Renderable* rndl = new Renderable();
-	rndl->SetMesh( Lynx::Application::GetSingleton()->GetResourceManager()->LoadMesh(path, vertices, indices, Graphics::MESH_3D_TEXTURED_NORMAL) );
+	rndl->SetMesh( Lynx::Application::GetSingleton()->GetResourceManager()->LoadMesh(path, vertices, indices, MESH_3D_TEXTURED_NORMAL) );
 	return rndl;
 }
 

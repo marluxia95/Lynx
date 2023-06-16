@@ -2,9 +2,9 @@
 #include "Core/logger.h"
 #include "Core/application.h"
 #include "gl_graphics_api.h"
+#define MAXWIDTH 1024
 
-
-namespace Lynx::Graphics {
+namespace Lynx {
 	Shader* genericShader = NULL;
 	Shader* genericNoTextureShader = NULL;
 	Shader* genericFontShader = NULL;
@@ -23,64 +23,110 @@ namespace Lynx::Graphics {
 	Font::Font(FT_Library *ft, const std::string name, int size) :
 		name(name), size(size)
 	{
+		log_debug("Font::Font : Generating atlas");
 		if(FT_New_Face(*ft, name.c_str(), 0, &face))
 			log_error("Freetype : Unable to load font %s", name.c_str());
 
 		FT_Set_Pixel_Sizes(face, 0, size);
-		
-		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-		for(uint8_t c = 0; c < 128; c++)
-		{
-			if(FT_Load_Char(face, c, FT_LOAD_RENDER))
-			{
-				log_error("Freetype : Failed to load glyph from font %s", name.c_str());
+
+		FT_GlyphSlot g = face->glyph;
+		unsigned int roww = 0;
+		unsigned int rowh = 0;
+
+		memset(c, 0, sizeof c);
+
+		for(int i = 32; i < 128; i++) {
+			if(FT_Load_Char(face, i, FT_LOAD_RENDER)) {
+				log_error("Freetype : Unable to load character %c", i);
 				continue;
 			}
-			GLuint texture;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexImage2D(
-					GL_TEXTURE_2D,
-					0,
-					GL_RED,
-					face->glyph->bitmap.width,
-					face->glyph->bitmap.rows,
-					0,
-					GL_RED,
-					GL_UNSIGNED_BYTE,
-					face->glyph->bitmap.buffer
-					);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			Glyph glyph = {
-				texture,
-				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-				glm::ivec2(face->glyph->bitmap_left,  face->glyph->bitmap_top ),
-				face->glyph->advance.x
-			};
-			glyphs.insert(std::pair<char, Glyph>(c, glyph));
+			if(roww + g->bitmap.width + 1 >= MAXWIDTH) {
+				w = std::max(w, roww);
+				h += rowh;
+				roww = 0;
+				rowh = 0;
+			}
+
+			roww += g->bitmap.width + 1;
+			rowh = std::max(rowh, g->bitmap.rows);
 		}
-		log_debug("Loaded typeface %s (%dpx)", name.c_str(), size);
+
+		w = std::max(w, roww);
+		h += rowh;
+
+		glActiveTexture(GL_TEXTURE0);
+		glGenTextures(1, &tex);
+		glBindTexture(GL_TEXTURE_2D, tex);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, w, h, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+		int ox = 0;
+		int oy = 0;
+
+		rowh = 0;
+
+		for(int i = 32; i < 128; i++) {
+			if(FT_Load_Char(face, i, FT_LOAD_RENDER))
+				continue;
+			if(ox + g->bitmap.width + 1 >= MAXWIDTH) {
+				oy += rowh;
+				rowh = 0;
+				ox = 0;
+			}
+
+            glCheckError();
+			glTexSubImage2D(GL_TEXTURE_2D, 0, ox, oy, g->bitmap.width, g->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+
+			// Glyph advance
+			c[i].ax = g->advance.x >> 6;
+			c[i].ay = g->advance.y >> 6;
+
+			// Bitmap metrics
+                        c[i].bw = g->bitmap.width;
+			c[i].bh = g->bitmap.rows;
+
+			// Glyph bearing
+			c[i].bl = g->bitmap_left;
+			c[i].bt = g->bitmap_top;
+
+			// Texture offset
+			c[i].tx = ox / (float)w;
+			c[i].ty = oy / (float)h;
+
+			rowh = std::max(rowh, g->bitmap.rows);
+			ox += g->bitmap.width + 1;
+		}
 		FT_Done_Face(face);
 
 		VAO = VertexArray::Create();
-		VBO = VertexBuffer::Create();
+                VBO = VertexBuffer::Create();
 		VBO->DynamicDraw(true);
-		VBO->SetData(NULL, sizeof(float) * 6 *4);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+		VBO->SetData(NULL, sizeof(float)* 6*4);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 		glEnableVertexAttribArray(0);
 		VAO->Unbind();
 		VBO->Unbind();
+
+		glCheckError();
+
+		log_debug("generated font atlas %s", name.c_str());
 	}
-	
+
+
 	FontManager::FontManager()
 	{
 		if(FT_Init_FreeType(&ft))
 			log_error("Freetype: Failed to initialize");
-			
-		defaultFont = LoadFont("res/fonts/ProggyTiny.ttf", 32);
+
+		defaultFont = LoadFont("res/fonts/ProggyTiny.ttf", 64);
 	}
 
 	FontManager::~FontManager()
@@ -123,7 +169,7 @@ namespace Lynx::Graphics {
 			"	gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);\n"
 			"	TexCoords = vertex.zw;\n"
 			"}\n";
-		
+
 		const char* genericFontShader_fragment_source = 
 			"#version 330 core\n"
 			"in vec2 TexCoords;\n"
@@ -133,9 +179,7 @@ namespace Lynx::Graphics {
 			"uniform float alpha;\n"
 			"void main()\n"
 			"{\n"
-		//	"	if(texture(text, TexCoords).r < 0.5) discard;\n"
-			"	vec4 sampled = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
-			"	color = vec4(textColor, alpha) * sampled;\n"
+			"	color = vec4(textColor, alpha * texture(text, TexCoords));\n"
 			"}\n";
 
 		const char* genericShader_vertex_source =
@@ -175,7 +219,7 @@ namespace Lynx::Graphics {
 			"	gl_Position = projection * vec4(position.xy, 0, 1);\n"
 			"	frag_color = color;\n"
 			"}\n";
-		
+
 		const char* genericNoTextureShader_fragment_source = 
 			"#version 330 core\n"
 			"in vec4 frag_color;\n"
@@ -194,8 +238,8 @@ namespace Lynx::Graphics {
 		genericFontShader = new Shader();
 		genericFontShader->PushRawSource("genericfont", genericFontShader_vertex_source, SHADER_VERTEX);
 		genericFontShader->PushRawSource("genericfont", genericFontShader_fragment_source, SHADER_FRAGMENT);
-		genericFontShader->Link();	
-		
+		genericFontShader->Link();
+
 		genericNoTextureShader = new Shader();
 		genericNoTextureShader->PushRawSource("genericnotexture", genericNoTextureShader_vertex_source, SHADER_VERTEX);
 		genericNoTextureShader->PushRawSource("genericnotexture", genericNoTextureShader_fragment_source, SHADER_FRAGMENT);
@@ -203,6 +247,7 @@ namespace Lynx::Graphics {
 
 		ui_draw_VAO = VertexArray::Create();
 		ui_draw_VBO = VertexBuffer::Create();
+
 		ui_draw_VBO->DynamicDraw(true);
 		ui_draw_VBO->SetData(NULL, sizeof(float) * 6 * 8);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
@@ -243,13 +288,13 @@ namespace Lynx::Graphics {
 		if(last_state.enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
 	}
 
-	void DrawImg(float x, float y, std::shared_ptr<TextureBase> img, float width, float height, glm::vec4 color) 
+	void DrawTex(float x, float y, unsigned int texture_id, float width, float height, glm::vec4 color) 
 	{
 		glm::mat4 projection = getProjection();
-		
 		genericNoTextureShader->Use();
 		genericNoTextureShader->SetUniform("projection", projection);
 		RendererAPI::UseTexture(0);
+		RendererAPI::BindTexture(TEXTURE_2D, texture_id);
 		ui_draw_VAO->Bind();
 
 		GLfloat vertices[] = {
@@ -265,25 +310,22 @@ namespace Lynx::Graphics {
 		ui_draw_VBO->Bind();
 		ui_draw_VBO->AddData(vertices, sizeof(vertices));
 		ui_draw_VBO->Unbind();
-		img->Use();
 		RendererAPI::DrawArrays(6);
 
 		ui_draw_VAO->Unbind();
-		RendererAPI::BindTexture(TEXTURE_2D, 0);
-	
 	}
 
 	void DrawFill(float x, float y, float width, float height, glm::vec4 color) 
 	{
 		glm::mat4 projection = getProjection();
-		
+
 		genericShader->Use();
 		genericShader->SetUniform("projection", projection);
 
 		ui_draw_VAO->Bind();
 		GLfloat vertices[] = {
-			x,		y + height,	color.x,	color.y,	color.z,	color.w,	0.0f,	0.0f,
-			x,		y,		color.x,	color.y,	color.z,	color.w,	0.0f,	1.0f,
+			x,y + height,	color.x,	color.y,	color.z,	color.w,	0.0f,	0.0f,
+			x,		y,color.x,	color.y,	color.z,	color.w,	0.0f,	1.0f,
 			x + width,	y,		color.x,	color.y,	color.z,	color.w,	1.0f,	1.0f,
 
 			x,		y + height,	color.x,	color.y,	color.z,	color.w,	0.0f,	0.0f,
@@ -299,48 +341,65 @@ namespace Lynx::Graphics {
 		ui_draw_VAO->Unbind();
 	}
 
-	void DrawString(float x, float y, std::string text, Font* font, float scale, glm::vec3 color, float alpha)
+	void DrawString(float x, float y, const char *text, Font* font, float scale, glm::vec3 color, float alpha)
 	{
+		struct point {
+			float x;
+			float y;
+			float tx;
+			float ty;
+		};
+
 		glm::mat4 projection = getProjection();
-		std::map<char, Glyph> glyphs = font->glyphs;
+		Glyph *glyphs = font->c;
+
 		genericFontShader->Use();
 		genericFontShader->SetUniform("textColor", color);
 		genericFontShader->SetUniform("alpha", alpha);
 		genericFontShader->SetUniform("projection", projection);
-		RendererAPI::UseTexture(0);
 		font->VAO->Bind();
 
-		std::string::const_iterator c;
-		for ( c = text.begin(); c != text.end(); c++ )
-		{
-			Glyph g = glyphs[*c];
+		float atlas_w = font->w;
+		float atlas_h = font->h;
 
-			GLfloat xpos = x + g.bearing.x * scale;
-			GLfloat ypos = y - (g.size.y - g.bearing.y) * scale;
+		Glyph g;
+		float xpos, ypos, w, h, tbw, tbh;
 
-			GLfloat w = g.size.x * scale;
-			GLfloat h = g.size.y * scale;
+		int n = 0;
+		size_t n_verts = 6 * strlen(text);
+		point vertices[n_verts];
 
-			GLfloat vertices[6][4] = {
-				{ xpos,		ypos + h,	0.0,	0.0 },
-				{ xpos, 	ypos,		0.0,	1.0 },
-				{ xpos + w,	ypos,		1.0,	1.0 },
+		for (const char *c = text; *c; c++) {
+			g = glyphs[*c];
 
-				{ xpos,		ypos + h,	0.0,	0.0 },
-				{ xpos + w,	ypos,		1.0,	1.0 },
-				{ xpos + w, 	ypos + h,	1.0,	0.0 }
-			};
+			xpos = x + g.bl * scale;
+			ypos = y - (g.bh - g.bt) * scale;
 
-			RendererAPI::BindTexture(TEXTURE_2D, g.textureID);
-			font->VBO->Bind();
-			font->VBO->AddData(vertices, sizeof(vertices));
-			font->VBO->Unbind();
+			w = g.bw * scale;
+			h = g.bh * scale;
+			tbw = g.bw / atlas_w;// Texture coordinates for bearing
+			tbh = g.bh / atlas_h; 
 
-			RendererAPI::DrawArrays(6);
-			x += (g.advance >> 6) * scale;
+			x += g.ax * scale;
+			y += g.ay * scale;
+
+			vertices[n++] = {xpos, ypos + h, g.tx, g.ty      };
+			vertices[n++] = {xpos, ypos,     g.tx, g.ty + tbh};
+			vertices[n++] = {xpos+w, ypos, g.tx+tbw, g.ty + tbh};
+
+			vertices[n++] = {xpos, ypos + h, g.tx, g.ty};
+			vertices[n++] = {xpos + w, ypos, g.tx+tbw, g.ty+tbh};
+			vertices[n++] = {xpos + w, ypos + h, g.tx+tbw, g.ty};
 		}
+
+		RendererAPI::UseTexture(0);
+		RendererAPI::BindTexture(TEXTURE_2D, font->tex);
+
+		font->VBO->SetData(vertices, sizeof(vertices));
+		API_CheckErrors();
+		RendererAPI::DrawArrays(n);
+		font->VBO->Unbind();
 		font->VAO->Unbind();
-		RendererAPI::BindTexture(TEXTURE_2D, 0);
 		API_CheckErrors();
 	}
 

@@ -14,7 +14,7 @@
 #define LYNX_VERSION_MINOR   0
 #define LYNX_VERSION_RELEASE 4
 
-// Only enable if you want to use multithread features. This is still in development
+// Only enable if you want to use multithread features. This is still in development ( as everything lol )
 //#define LYNX_MULTITHREAD
 
 // Enable if you want to debug rendering process

@@ -3,7 +3,7 @@
 
 #include "mesh.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	class Cube : public Mesh {
 	public:

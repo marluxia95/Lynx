@@ -13,14 +13,23 @@
 #include "buffers.h"
 #include "texture.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 	
 	struct Glyph
 	{
-		unsigned int textureID;
-		glm::ivec2 size;
-		glm::ivec2 bearing;
-		long int advance;
+		// Advance
+		float ax;
+		float ay;
+
+		// Bitmap
+		float bw;
+		float bh;
+		float bl;
+		float bt;
+
+		// Offset
+		float tx;
+		float ty;
 	};
 
 	
@@ -29,12 +38,16 @@ namespace Lynx::Graphics {
 
 		Font(FT_Library *ft, const std::string name, int size);
 
+		unsigned int tex;
 		FT_Face face;
-		std::map<char, Glyph> glyphs;
+		Glyph c[128];
 		std::string name;
-		int size;
-		std::unique_ptr<VertexArray>  VAO;
-		std::unique_ptr<VertexBuffer> VBO;
+		int size = 0;
+	        unsigned int w = 0;
+	        unsigned int h = 0;
+		int attrib = -1;
+	        std::unique_ptr<VertexBuffer> VBO;
+		std::unique_ptr<VertexArray> VAO;
 	};
 
 	// TODO : Use the resource manager to load fonts instead
@@ -57,13 +70,13 @@ namespace Lynx::Graphics {
 	 * Initializes shaders for later draw operations
 	 */
 	void DrawInit();
+	
 	void DrawInitRender();
 	void DrawFinishRender();
-	void DrawImg(float x, float y, std::shared_ptr<TextureBase> img, float width, float height, glm::vec4 color);
-	
+	void DrawTex(float x, float y, unsigned int texture_id, float width, float height, glm::vec4 color);
 	void DrawFill(float x, float y, float width, float height, glm::vec4 color);
 	
-	void DrawString(float x, float y, std::string text, Font* font, float scale, glm::vec3 color, float alpha);
+	void DrawString(float x, float y, const char* text, Font* font, float scale, glm::vec3 color, float alpha);
 	
 	/*
 	 * Frees all shaders and data.

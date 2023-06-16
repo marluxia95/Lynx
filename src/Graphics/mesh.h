@@ -12,7 +12,7 @@
 
 using namespace glm;
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	class VertexBuffer;
 	class ElementBuffer;

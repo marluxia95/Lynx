@@ -7,7 +7,7 @@
 #include "shader.h"
 #include "texture.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	class LYNXENGINE_API Skybox {
 		public:

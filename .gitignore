@@ -18,3 +18,4 @@ docs/doxygen/
 .vs/
 x64/
 vg*
+*/*/#*

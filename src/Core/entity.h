@@ -5,130 +5,123 @@
 
 namespace Lynx {
 
-    namespace Physics {
-        class PhysicsObject;
-    }
+	class PhysicsObject;
+	class Renderable;
+	class EntityManager;
+	typedef uint64_t EntityID;
 
-    namespace Graphics {
-        class Renderable;
-    }
+	// TODO : Make the entity class derived from a Transform class to keep all things tidied up
 
-    typedef uint64_t EntityID;
+	class LYNXENGINE_API Entity {
+	protected:
+		glm::mat4 calcLocalModelMatrix() const;
+		void updateModel();
 
-    class EntityManager;
+	public:
+		Entity(EntityManager* entity_manager, EntityID id, bool renderable=false);
+		Entity(EntityManager* entity_manager, EntityID id, const char* name, bool renderable=false);
+		~Entity();
 
-    // TODO : Make the entity class derived from a Transform class to keep all things tidied up
+		const char* GetName();
 
-    class LYNXENGINE_API Entity {
-    protected:
-        glm::mat4 calcLocalModelMatrix() const;
-        void updateModel();
+		void SetName(const char* name);
 
-    public:
-        Entity(EntityManager* entity_manager, EntityID id, bool renderable=false);
-        Entity(EntityManager* entity_manager, EntityID id, const char* name, bool renderable=false);
-        ~Entity();
+		EntityID GetId();
 
-        const char* GetName();
+		void Delete();
 
-        void SetName(const char* name);
+		virtual void Think() {}
 
-        EntityID GetId();
+		glm::vec3 GetGlobalPosition() const;
 
-        void Delete();
+		//void SetGlobalPosition(glm::vec3 position);
 
-        virtual void Think() {}
+		glm::vec3 GetGlobalRotation() const;
 
-        glm::vec3 GetGlobalPosition() const;
+		//void SetGlobalRotation(glm::quat rotation);
 
-        //void SetGlobalPosition(glm::vec3 position);
+		glm::vec3 GetGlobalScaling() const;
 
-        glm::vec3 GetGlobalRotation() const;
+		//void SetGlobalScaling(glm::vec3 scale);
 
-        //void SetGlobalRotation(glm::quat rotation);
+		glm::vec3 GetLocalPosition() const;
 
-        glm::vec3 GetGlobalScaling() const;
+		void SetLocalPosition(glm::vec3 pos);
 
-        //void SetGlobalScaling(glm::vec3 scale);
+		glm::vec3 GetLocalRotation() const;
 
-        glm::vec3 GetLocalPosition() const;
+		void SetLocalRotation(glm::vec3 rot);
 
-        void SetLocalPosition(glm::vec3 pos);
+		glm::vec3 GetLocalScaling() const;
 
-        glm::vec3 GetLocalRotation() const;
+		void SetLocalScaling(glm::vec3 scale);
 
-        void SetLocalRotation(glm::vec3 rot);
+		/**
+		 * @brief Gets the entity's model matrix
+		 *
+		 * @return glm::mat4
+		 */
+		glm::mat4 GetModelMatrix();
 
-        glm::vec3 GetLocalScaling() const;
+		/**
+		 * @brief Gets the Render handler pointer , returns NULL if
+		 *		  its not meant to be rendered
+		 *
+		 * @return RenderHndlPtr
+		 */
+		Renderable *GetRenderHndl() const;
 
-        void SetLocalScaling(glm::vec3 scale);
+		/**
+		 * @brief Checks if the object is renderable
+		 *
+		 * @return true
+		 * @return false
+		 */
+		bool IsRenderable() const;
 
-        /**
-         * @brief Gets the entity's model matrix
-         *
-         * @return glm::mat4
-         */
-        glm::mat4 GetModelMatrix();
+		void MakeRenderable(bool renderable);
 
-        /**
-         * @brief Gets the Render handler pointer , returns NULL if
-         *        its not meant to be rendered
-         *
-         * @return RenderHndlPtr
-         */
-        Graphics::Renderable *GetRenderHndl() const;
+		std::vector<Entity*>* GetChildren();
 
-        /**
-         * @brief Checks if the object is renderable
-         *
-         * @return true
-         * @return false
-         */
-        bool IsRenderable() const;
+		void AddChild(Entity* child);
 
-        void MakeRenderable(bool renderable);
+		uint GetChildrenCount();
 
-        std::vector<Entity*>* GetChildren();
+		Entity* GetChildByIndex(uint index);
 
-        void AddChild(Entity* child);
+		/**
+		 * @brief Sets the Renderable object
+		 *
+		 * @param render_obj
+		 */
+		void SetRenderObj(Renderable* render_obj);
 
-        uint GetChildrenCount();
+		void SetPhysicsObj(PhysicsObject* phys_obj);
+		virtual void UpdatePhysics();
 
-        Entity* GetChildByIndex(uint index);
+		// DEBUG
+		void PrintHierarchy();
+	protected:
+		friend class EntityManager;
+	protected:
+		glm::vec3 m_position = glm::vec3(0);
+		glm::vec3 m_rotation = glm::vec3(0);
+		glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };
+		glm::mat4 m_model = glm::mat4(1.0f);
 
-        /**
-         * @brief Sets the Renderable object
-         *
-         * @param render_obj
-         */
-        void SetRenderObj(Graphics::Renderable* render_obj);
+		bool m_isRenderable = false;
 
-        void SetPhysicsObj(Physics::PhysicsObject* phys_obj);
-        virtual void UpdatePhysics();
+		const char* m_name = "Unnamed";
 
-        // DEBUG
-        void PrintHierarchy();
-    protected:
-        friend class EntityManager;
-    protected:
-        glm::vec3 m_position = glm::vec3(0);
-        glm::vec3 m_rotation = glm::vec3(0);
-        glm::vec3 m_scale = { 1.0f, 1.0f, 1.0f };
-        glm::mat4 m_model = glm::mat4(1.0f);
+		Renderable* m_renderable = NULL;
+		PhysicsObject* m_physicsObject = NULL;
 
-        bool m_isRenderable = false;
+		Entity* m_parent = NULL;
+		std::vector<Entity*> m_children;
 
-        const char* m_name = "Unnamed";
-
-        Graphics::Renderable* m_renderable = NULL;
-        Physics::PhysicsObject* m_physicsObject = NULL;
-
-        Entity* m_parent = NULL;
-        std::vector<Entity*> m_children;
-
-        EntityManager* m_entityManager = nullptr;
-        EntityID m_id = 0;
-    };
+		EntityManager* m_entityManager = nullptr;
+		EntityID m_id = 0;
+	};
 
 }
 

@@ -13,7 +13,7 @@
 
 #define TEXTURE_DEFAULT TEXTURE_2D
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	int TextureBase::total_textures = 0;
 

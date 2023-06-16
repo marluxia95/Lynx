@@ -8,7 +8,7 @@
 #include "Core/resource.h"
 #include "lynx_common.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
     enum TextureType : unsigned int;
 
@@ -46,7 +46,7 @@ namespace Lynx::Graphics {
 			int id;
 	};
 
-	class Texture : public Lynx::Graphics::TextureBase {
+	class Texture : public TextureBase {
 	private:
 		void genDDSTex();
 		void loadSTBTex(const std::string path);

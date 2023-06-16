@@ -14,9 +14,10 @@
 
 #include "Core/entity.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
     class Material;
+	class Renderable;
 
     class LYNXENGINE_API ModelLoader {
 	public:

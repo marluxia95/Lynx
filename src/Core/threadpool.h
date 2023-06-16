@@ -26,47 +26,47 @@
 
 namespace Lynx {
 
-    class LYNXENGINE_API ThreadPool {
-        private:
-            typedef struct {
-                std::function<void(void*)> func;
-                void* args;
-                int id;
-            } Job;
+	class LYNXENGINE_API ThreadPool {
+		private:
+			typedef struct {
+				std::function<void(void*)> func;
+				void* args;
+				int id;
+			} Job;
 
-            class Worker {
-                public:
-                    std::thread thread;
-                    int id;
-                    ThreadPool* pool;
-            };
+			class Worker {
+				public:
+					std::thread thread;
+					int id;
+					ThreadPool* pool;
+			};
 
-            static void thread_work(Worker* worker_s);
-        
-        public:
-            ThreadPool(int n_threads = std::thread::hardware_concurrency());
-            ~ThreadPool();
-            void PushJob(std::function<void(void*)>, void* job_args);
-            void Wait();
-            int GetWorkerID(std::thread::id tid);
+			static void thread_work(Worker* worker_s);
+		
+		public:
+			ThreadPool(int n_threads = std::thread::hardware_concurrency());
+			~ThreadPool();
+			void PushJob(std::function<void(void*)>, void* job_args);
+			void Wait();
+			int GetWorkerID(std::thread::id tid);
 
-        private:
-            std::queue<Job> jobs;
-            std::vector<Worker*> workers;
-            std::map<std::thread::id, int> thread_id_map;
-            std::mutex mutex;
-            std::condition_variable idle;
-            std::condition_variable job;
-            std::atomic<bool> shouldDestroy = false;
-            std::atomic<bool> ready = false;
-            int n_threads;
-            int t_jobs = 0;
-            int alive_threads = 0;
-            int working_threads = 0;
+		private:
+			std::queue<Job> jobs;
+			std::vector<Worker*> workers;
+			std::map<std::thread::id, int> thread_id_map;
+			std::mutex mutex;
+			std::condition_variable idle;
+			std::condition_variable job;
+			std::atomic<bool> shouldDestroy = false;
+			std::atomic<bool> ready = false;
+			int n_threads;
+			int t_jobs = 0;
+			int alive_threads = 0;
+			int working_threads = 0;
 
-    };
+	};
 
-    bool IsMainThread(std::thread::id thread);
+	bool IsMainThread(std::thread::id thread);
 
 }
 

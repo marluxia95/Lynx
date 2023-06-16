@@ -16,72 +16,71 @@
 #include "lynx_common.h"
 
 namespace Lynx {
-    namespace Graphics {
-        class Renderer;
-		class FontManager;
-    }
 
-    class ThreadPool;
-    class WindowManager;
-    class ResourceManager;
-    class EntityManager;
+	class Renderer;
+	class FontManager;
+
+	class ThreadPool;
+	class WindowManager;
+	class ResourceManager;
+	class EntityManager;
 
 	enum State{
 		STATE_ACTIVE,
-        STATE_PAUSED,
-        STATE_CLOSED
+		STATE_PAUSED,
+		STATE_CLOSED
 	};
 
-    enum {
-        APPLICATION_FULLSCREEN,
-        APPLICATION_BORDERLESS = 1 << 1,
-        APPLICATION_VSYNC = 1 << 2
-    };
+	enum {
+		APPLICATION_FULLSCREEN,
+		APPLICATION_BORDERLESS = 1 << 1,
+		APPLICATION_VSYNC = 1 << 2
+	};
 
-    class ResourceManager;
+	class ResourceManager;
 
 	class LYNXENGINE_API Application {
-    public:
-        Application();
+	public:
+		Application();
 		~Application();
 
-        virtual void Initialize(int flags);
+		virtual void Initialize(int flags);
 
 		virtual void Run();
 
-        float GetDeltaTime() { return delta_time; }
+		float GetDeltaTime() { return delta_time; }
 
-        void SetApplicationState(State state) { applicationState = state; }
+		void SetApplicationState(State state) { applicationState = state; }
 
-        std::shared_ptr<ResourceManager> GetResourceManager() { return m_resourceManager; }
+		std::shared_ptr<ResourceManager> GetResourceManager() { return m_resourceManager; }
 
-        std::thread::id GetThread() { return thread_id; };
+		std::thread::id GetThread() { return thread_id; };
 
-        void SetRenderer(std::shared_ptr<Graphics::Renderer> renderer);
-        std::shared_ptr<Graphics::Renderer> GetRenderer() { return m_renderer; }
+		void SetRenderer(std::shared_ptr<Renderer> renderer);
+		std::shared_ptr<Renderer> GetRenderer() { return m_renderer; }
 
-		std::shared_ptr<Graphics::FontManager> GetFontManager() { return m_fontManager; }
-        unsigned int GetResolutionHeight();
-        unsigned int GetResolutionWidth();
+		std::shared_ptr<FontManager> GetFontManager() { return m_fontManager; }
+		unsigned int GetResolutionHeight();
+		unsigned int GetResolutionWidth();
 
-        static Application* GetSingleton() { return s_applicationInstance; }
-    protected:
-        void CalculateFrameTime();
+		static Application* GetSingleton() { return s_applicationInstance; }
+	protected:
+		void CalculateFrameTime();
 
-    public:
-        friend class ResourceManager;
-    private:
-        static Application* s_applicationInstance;
-    protected:
-        float delta_time, last_FrameTime = 0.0f;
+	public:
+		friend class ResourceManager;
+	private:
+		static Application* s_applicationInstance;
+	protected:
+		float delta_time, last_FrameTime = 0.0f;
 		State applicationState;
-        std::thread::id thread_id;
-        std::unique_ptr<ThreadPool> m_threadPool;	
-        std::unique_ptr<WindowManager> m_windowManager;
-		std::shared_ptr<Graphics::FontManager> m_fontManager;
+		std::thread::id thread_id;
+		std::unique_ptr<ThreadPool> m_threadPool;	
+		std::unique_ptr<WindowManager> m_windowManager;
+		std::shared_ptr<FontManager> m_fontManager;
 		std::shared_ptr<ResourceManager> m_resourceManager;
-        std::shared_ptr<Graphics::Renderer> m_renderer;
-        std::shared_ptr<EntityManager> m_entityManager;
+		std::shared_ptr<Renderer> m_renderer;
+		std::shared_ptr<EntityManager> m_entityManager;
 
 	};
 

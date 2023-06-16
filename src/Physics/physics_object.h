@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include "lynx_common.h"
 
-namespace Lynx::Physics {
+namespace Lynx {
 
     class LYNXENGINE_API PhysicsObject {
     public:

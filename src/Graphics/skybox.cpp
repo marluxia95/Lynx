@@ -4,7 +4,7 @@
 #include "cube.h"
 #include "skybox.h"
 
-using namespace Lynx::Graphics;
+using namespace Lynx;
 
 Skybox::Skybox(std::shared_ptr<TextureBase> texture) : cube_texture(texture)
 {

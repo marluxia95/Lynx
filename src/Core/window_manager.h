@@ -13,7 +13,7 @@ namespace Lynx {
 
 			void SetTitle(const char* title);
 
-            void Destroy();
+			void Destroy();
 
 			bool ShouldClose();
 

@@ -12,7 +12,7 @@ using namespace glm;
 // Wrappers, just in case I wanted to add support for 
 // another API, which is odd.
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
     class VertexBuffer;
     class ElementBuffer;

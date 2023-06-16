@@ -4,7 +4,7 @@
 #include <memory>
 #include "lynx_common.h"
 
-namespace Lynx::Graphics {
+namespace Lynx {
 
 	class LYNXENGINE_API VertexArray {
 	public:
