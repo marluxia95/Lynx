@@ -5,6 +5,9 @@ Just a simple game engine made in C++ and OpenGL.
 Link model is taken from here `https://www.models-resource.com/nintendo_64/`
 
 NOTE: Current version in this repository is unstable and will probably not compile properly, please download the latest stable release from the `Releases` tab. 
+
+This project is no longer actively maintained.
+
 ## Features
 
 - Model Loading ( assimp )
